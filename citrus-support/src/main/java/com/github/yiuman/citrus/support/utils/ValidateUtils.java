@@ -11,6 +11,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * 检验工具
@@ -31,7 +32,6 @@ public final class ValidateUtils {
 
     /**
      * 校验实体，返回实体所有属性的校验结果
-     *
      */
     public static <T> ValidationResult validateEntity(T obj) {
         //解析校验结果
@@ -41,16 +41,21 @@ public final class ValidateUtils {
 
     /**
      * 校验指定实体的指定属性是否存在异常
-     *
      */
     public static <T> ValidationResult validateProperty(T obj, String propertyName) {
         Set<ConstraintViolation<T>> validateSet = validator.validateProperty(obj, propertyName, Default.class);
         return buildValidationResult(validateSet);
     }
 
+    public static <T, E extends Exception> void validateEntityAndThrows(T obj, Function<ValidationResult, E> func) throws E {
+        ValidationResult validationResult = validateEntity(obj);
+        if (validationResult.isHasErrors()) {
+            throw func.apply(validationResult);
+        }
+    }
+
     /**
      * 将异常结果封装返回
-     *
      */
     private static <T> ValidationResult buildValidationResult(Set<ConstraintViolation<T>> validateSet) {
         ValidationResult validationResult = new ValidationResult();
@@ -78,7 +83,6 @@ public final class ValidateUtils {
 
         /**
          * 获取异常消息组装
-         *
          */
         public String getMessage() {
             if (errorMsg == null || errorMsg.isEmpty()) {

@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus.rbac.service;
 
-import com.github.yiuman.citrus.rbac.entity.User;
 import com.github.yiuman.citrus.security.authorize.AuthorizeHook;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -28,21 +27,6 @@ public class HasLoginHook implements AuthorizeHook {
             return false;
         }
 
-        Object principal = authentication.getPrincipal();
-
-        //匿名不给进
-        if ("anonymousUser".equals(principal)) {
-            return false;
-        }
-
-        User user = null;
-        if (principal instanceof User) {
-            user = (User) principal;
-        } else if (principal instanceof String) {
-            user = userService.getUserByUUID((String) principal);
-        }
-
-        return user != null;
-
+        return userService.getUser(authentication).isPresent();
     }
 }

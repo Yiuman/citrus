@@ -3,19 +3,16 @@ package com.github.yiuman.citrus.security.authenticate;
 import com.github.yiuman.citrus.security.jwt.JwtProvider;
 import com.github.yiuman.citrus.security.verify.VerificationException;
 import com.github.yiuman.citrus.support.utils.ValidateUtils;
+import com.github.yiuman.citrus.support.utils.WebUtils;
 import io.jsonwebtoken.Claims;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.support.WebRequestDataBinder;
-import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,15 +62,9 @@ public class AuthenticateProcessorImpl implements AuthenticateProcessor {
     @Override
     public Object covertRequestModeEntity(Class<?> entityClass, HttpServletRequest request) {
         //构造认证模式实体
-        final Object supportEntity = BeanUtils.instantiateClass(entityClass);
-        WebRequestDataBinder dataBinder = new WebRequestDataBinder(supportEntity);
-        dataBinder.bind(new ServletWebRequest(request));
+        final Object supportEntity = WebUtils.requestDataBind(entityClass,request);
         //校验实体参数
-        ValidateUtils.ValidationResult validationResult = ValidateUtils.validateEntity(supportEntity);
-        if (validationResult.isHasErrors()) {
-            throw new VerificationException(validationResult.getMessage());
-        }
-
+        ValidateUtils.validateEntityAndThrows(supportEntity,result->new VerificationException(result.getMessage()));
         return supportEntity;
     }
 

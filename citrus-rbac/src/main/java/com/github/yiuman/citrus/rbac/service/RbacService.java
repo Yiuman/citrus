@@ -2,13 +2,13 @@ package com.github.yiuman.citrus.rbac.service;
 
 import com.github.yiuman.citrus.rbac.entity.Resource;
 import com.github.yiuman.citrus.rbac.entity.User;
-import com.github.yiuman.citrus.security.authorize.AuthorizeHook;
 import com.github.yiuman.citrus.security.authorize.AuthorizeServiceHook;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 /**
  * 鉴权服务类
@@ -41,20 +41,8 @@ public class RbacService implements AuthorizeServiceHook {
                 return true;
             }
 
-            Object principal = authentication.getPrincipal();
-            User user = null;
-            if (principal instanceof User) {
-                user = (User) principal;
-            } else if (principal instanceof String) {
-                user = userService.getUserByUUID((String) principal);
-            }
-
-            if (user == null) {
-                return false;
-            }
-
-
-            return roleService.hasPermission(user.getUserId(), resource.getResourceId());
+            Optional<User> user = userService.getUser(authentication);
+            return user.filter(value -> roleService.hasPermission(value.getUserId(), resource.getResourceId())).isPresent();
         } catch (Exception e) {
             log.error("RbacService Exception", e);
             return false;
