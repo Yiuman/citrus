@@ -11,10 +11,6 @@
 
     <artifactId>citrus-security</artifactId>
 
-    <properties>
-        <jjwt.version>0.11.0</jjwt.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.github.yiuman</groupId>

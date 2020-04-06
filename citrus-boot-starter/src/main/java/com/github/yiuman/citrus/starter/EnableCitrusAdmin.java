@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.starter;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;

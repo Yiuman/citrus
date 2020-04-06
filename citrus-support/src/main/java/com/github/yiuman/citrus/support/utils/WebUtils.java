@@ -6,8 +6,11 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Web相关操作工具
@@ -48,10 +51,14 @@ public final class WebUtils {
         return object;
     }
 
-    public static <T> T requestDataBind(final T object, HttpServletRequest request) {
+    public static <T> void requestDataBind(final T object, HttpServletRequest request) throws Exception {
         //构造实体
         WebRequestDataBinder dataBinder = new WebRequestDataBinder(object);
         dataBinder.bind(new ServletWebRequest(request));
-        return object;
+    }
+
+    public static String getCookie(HttpServletRequest request,String name){
+        Optional<Cookie> optionalCookie = Arrays.stream(request.getCookies()).filter(cookie -> name.equals(cookie.getName())).findFirst();
+        return optionalCookie.map(Cookie::getValue).orElse(null);
     }
 }

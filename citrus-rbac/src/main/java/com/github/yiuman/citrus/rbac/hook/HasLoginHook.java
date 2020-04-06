@@ -1,5 +1,6 @@
-package com.github.yiuman.citrus.rbac.service;
+package com.github.yiuman.citrus.rbac.hook;
 
+import com.github.yiuman.citrus.rbac.service.UserService;
 import com.github.yiuman.citrus.security.authorize.AuthorizeHook;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;

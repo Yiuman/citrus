@@ -4,6 +4,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class RedisVerificationRepository implements VerificationRepository {
 
-    private static final String VERIFICATION_PARAMETER = "verifyId";
+    private static final String VERIFICATION_PARAMETER = "verifyId:";
 
     private final RedisTemplate<String, Object> redisTemplate;
 
@@ -23,8 +24,8 @@ public class RedisVerificationRepository implements VerificationRepository {
     }
 
     @Override
-    public void save(HttpServletRequest httpServletRequest, Verification<?> verification) {
-        redisTemplate.opsForValue().set(getRedisKey(httpServletRequest), verification.getValue(), 60, TimeUnit.SECONDS);
+    public void save(HttpServletRequest request, HttpServletResponse response, Verification<?> verification) {
+        redisTemplate.opsForValue().set(getRedisKey(request), verification.getValue(), 60, TimeUnit.SECONDS);
     }
 
     @Override

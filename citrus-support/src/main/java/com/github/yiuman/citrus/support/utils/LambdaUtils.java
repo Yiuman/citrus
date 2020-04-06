@@ -3,10 +3,12 @@ package com.github.yiuman.citrus.support.utils;
 import com.github.yiuman.citrus.support.wrapper.BiConsumerWrapper;
 import com.github.yiuman.citrus.support.wrapper.ConsumerWrapper;
 import com.github.yiuman.citrus.support.wrapper.FunctionWrapper;
+import com.github.yiuman.citrus.support.wrapper.SupplierWrapper;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Lambda工具
@@ -43,10 +45,10 @@ public final class LambdaUtils {
      * @param <T>      类型
      * @return Consumer<T>
      */
-    public static <T,U> BiConsumer<T,U> biConsumerWrapper(BiConsumerWrapper<T,U, Exception> consumer) {
-        return (t,u) -> {
+    public static <T, U> BiConsumer<T, U> biConsumerWrapper(BiConsumerWrapper<T, U, Exception> consumer) {
+        return (t, u) -> {
             try {
-                consumer.accept(t,u);
+                consumer.accept(t, u);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
@@ -58,6 +60,17 @@ public final class LambdaUtils {
         return t -> {
             try {
                 return functionWrapper.apply(t);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        };
+    }
+
+    public static <T> Supplier<T> supplierWrapper(SupplierWrapper<T, Exception>
+                                                          supplierWrapper) {
+        return () -> {
+            try {
+                return supplierWrapper.get();
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }

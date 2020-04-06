@@ -1,7 +1,10 @@
-package com.github.yiuman.citrus.rbac.service;
+package com.github.yiuman.citrus.rbac.hook;
 
 import com.github.yiuman.citrus.rbac.entity.Resource;
 import com.github.yiuman.citrus.rbac.entity.User;
+import com.github.yiuman.citrus.rbac.service.ResourceService;
+import com.github.yiuman.citrus.rbac.service.RoleService;
+import com.github.yiuman.citrus.rbac.service.UserService;
 import com.github.yiuman.citrus.security.authorize.AuthorizeServiceHook;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -18,7 +21,7 @@ import java.util.Optional;
  */
 @Service
 @Slf4j
-public class RbacService implements AuthorizeServiceHook {
+public class RbacHook implements AuthorizeServiceHook {
 
     private final UserService userService;
 
@@ -26,7 +29,7 @@ public class RbacService implements AuthorizeServiceHook {
 
     private final ResourceService resourceService;
 
-    public RbacService(UserService userService, RoleService roleService, ResourceService resourceService) {
+    public RbacHook(UserService userService, RoleService roleService, ResourceService resourceService) {
         this.userService = userService;
         this.roleService = roleService;
         this.resourceService = resourceService;

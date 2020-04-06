@@ -1,4 +1,4 @@
-package com.github.yiuman.citrus.rbac.query;
+package com.github.yiuman.citrus.rbac.dto;
 
 import com.github.yiuman.citrus.support.crud.QueryParam;
 import lombok.Data;

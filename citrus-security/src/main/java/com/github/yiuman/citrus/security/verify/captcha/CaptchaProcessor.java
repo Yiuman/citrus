@@ -23,13 +23,14 @@ public class CaptchaProcessor extends AbstractStringVerificationProcessor<Captch
 
     @Override
     public Captcha generate(HttpServletRequest httpServletRequest) {
-       return new CaptchaGenerator(verifyProperties).generate(httpServletRequest);
+        return new CaptchaGenerator(verifyProperties).generate(httpServletRequest);
     }
+
 
     @Override
     public void send(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
         Captcha captcha = generate(httpServletRequest);
-        verificationRepository.save(httpServletRequest, captcha);
+        verificationRepository.save(httpServletRequest,httpServletResponse, captcha);
         ImageIO.write(captcha.getImage(), "JPEG", httpServletResponse.getOutputStream());
     }
 }

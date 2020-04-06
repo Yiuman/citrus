@@ -1,8 +1,8 @@
 package com.github.yiuman.citrus.rbac.controller;
 
 import com.github.yiuman.citrus.rbac.dto.UserDto;
-import com.github.yiuman.citrus.rbac.query.UserQuery;
-import com.github.yiuman.citrus.rbac.service.HasLoginHook;
+import com.github.yiuman.citrus.rbac.dto.UserQuery;
+import com.github.yiuman.citrus.rbac.hook.HasLoginHook;
 import com.github.yiuman.citrus.rbac.service.UserService;
 import com.github.yiuman.citrus.security.authorize.Authorize;
 import com.github.yiuman.citrus.support.crud.BaseCrudController;

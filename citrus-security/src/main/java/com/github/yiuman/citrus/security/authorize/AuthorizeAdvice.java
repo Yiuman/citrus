@@ -26,13 +26,48 @@ import java.util.Optional;
 @Component
 public class AuthorizeAdvice {
 
-
+    /**
+     * 声明拦截
+     * 1.方法上有使用@Authorize
+     * 2.类上有使用@Authorize
+     */
     @Pointcut("@annotation(com.github.yiuman.citrus.security.authorize.Authorize) " +
-            "|| @within(com.github.yiuman.citrus.security.authorize.Authorize)")
+            "|| @within(com.github.yiuman.citrus.security.authorize.Authorize) ")
     public void authorizePointCut() {
     }
 
-    @Around("authorizePointCut()")
+    /**
+     * 拦截BaseCrudController中的所有方法
+     */
+    @Pointcut("execution(* com.github.yiuman.citrus.support.crud.BaseCrudController.*(..))")
+    public void baseCrudPointCut() {
+
+    }
+
+    /**
+     * 拦截请求的方法
+     */
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping)" +
+            "||@annotation(org.springframework.web.bind.annotation.GetMapping)" +
+            "|| @annotation(org.springframework.web.bind.annotation.PostMapping)" +
+            "|| @annotation(org.springframework.web.bind.annotation.PutMapping) " +
+            "|| @annotation(org.springframework.web.bind.annotation.DeleteMapping) ")
+    public void requestPointCut() {
+
+    }
+
+    /**
+     * 组合拦截：
+     * 1.方法上有使用@Authorize
+     * 2.类上有使用@Authorize
+     * 3.拦截BaseCrudController中的有@RequestMapping的标记的方法
+     */
+    @Pointcut("authorizePointCut() || (baseCrudPointCut() && requestPointCut())")
+    public void combination() {
+
+    }
+
+    @Around("combination()")
     public Object hasPermission(ProceedingJoinPoint point) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) point.getSignature();
         Method method = methodSignature.getMethod();

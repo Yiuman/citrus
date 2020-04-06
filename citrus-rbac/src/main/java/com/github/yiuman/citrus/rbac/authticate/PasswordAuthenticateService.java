@@ -1,8 +1,8 @@
-package com.github.yiuman.citrus.rbac.service;
+package com.github.yiuman.citrus.rbac.authticate;
 
 import com.github.yiuman.citrus.rbac.entity.User;
+import com.github.yiuman.citrus.rbac.service.UserService;
 import com.github.yiuman.citrus.security.authenticate.AuthenticateService;
-import com.github.yiuman.citrus.security.authenticate.LoginEntity;
 import com.github.yiuman.citrus.security.verify.VerificationProcessor;
 import com.github.yiuman.citrus.security.verify.captcha.Captcha;
 import com.github.yiuman.citrus.support.utils.WebUtils;
@@ -14,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 /**

@@ -45,6 +45,8 @@ public interface CrudService<T, K> {
      */
     List<T> getList() throws Exception;
 
+    List<T> getList(Wrapper<T> queryWrapper) throws Exception;
+
     /**
      * 根据 entity 条件，查询全部记录（并翻页）
      *

@@ -1,10 +1,8 @@
 package com.github.yiuman.citrus.support.crud;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.io.Serializable;
 import java.util.List;
@@ -40,6 +38,11 @@ public abstract class BaseCrudService<M extends BaseMapper<E>, E, K> extends Bas
 
     @Override
     public <P extends IPage<E>> P selectPage(P page, Wrapper<E> queryWrapper) {
-        return getBaseMapper().selectPage(page,queryWrapper);
+        return getBaseMapper().selectPage(page, queryWrapper);
+    }
+
+    @Override
+    public List<E> getList(Wrapper<E> queryWrapper) throws Exception {
+        return list(queryWrapper);
     }
 }

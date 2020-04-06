@@ -3,9 +3,13 @@ package com.github.yiuman.citrus.starter;
 import com.github.yiuman.citrus.security.authorize.AuthorizeConfigManager;
 import com.github.yiuman.citrus.security.jwt.JwtSecurityConfigurerAdapter;
 import com.github.yiuman.citrus.security.properties.CitrusProperties;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -13,7 +17,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * 自动配置
@@ -24,6 +35,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 @Configuration
 @ConditionalOnBean(EnableCitrusAdmin.class)
 @EnableConfigurationProperties(CitrusProperties.class)
+@EnableAutoConfiguration(exclude = {UserDetailsServiceAutoConfiguration.class})
 public class CitrusAutoConfiguration {
 
     /**
@@ -53,6 +65,8 @@ public class CitrusAutoConfiguration {
                     // 禁用 CSRF
                     .csrf()
                     .disable()
+                    .formLogin()
+                    .disable()
                     .exceptionHandling()
                     .authenticationEntryPoint(authenticationEntryPoint)
                     .and()
@@ -68,6 +82,21 @@ public class CitrusAutoConfiguration {
             super.configure(auth);
 //            auth.
 //            auth.(passwordEncoder);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(AuthenticationEntryPoint.class)
+        public AuthenticationEntryPoint entryPoint() {
+            return new UnAuthenticationEntryPoint();
+        }
+
+        @Component
+        private static class UnAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+            @Override
+            public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+            }
         }
     }
 

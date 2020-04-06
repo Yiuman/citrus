@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.security.authenticate;
 
-import com.github.yiuman.citrus.security.jwt.JwtProvider;
+import com.github.yiuman.citrus.security.jwt.JwtUtils;
 import com.github.yiuman.citrus.security.verify.VerificationException;
 import com.github.yiuman.citrus.support.utils.ValidateUtils;
 import com.github.yiuman.citrus.support.utils.WebUtils;
@@ -32,16 +32,13 @@ public class AuthenticateProcessorImpl implements AuthenticateProcessor {
      */
     private final static String AUTHENTICATION_MODE_PARAMETER_KEY = "mode";
 
-    private final JwtProvider jwtProvider;
-
     /**
      * 认证服务类
      */
     private final List<AuthenticateService> authenticateServices;
 
-    public AuthenticateProcessorImpl(JwtProvider jwtProvider, List<AuthenticateService> authenticateServices) {
+    public AuthenticateProcessorImpl(List<AuthenticateService> authenticateServices) {
         Assert.notNull(authenticateServices, "AuthenticateService must not be null");
-        this.jwtProvider = jwtProvider;
         this.authenticateServices = authenticateServices;
     }
 
@@ -79,16 +76,17 @@ public class AuthenticateProcessorImpl implements AuthenticateProcessor {
     public String token(HttpServletRequest request) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(AUTHENTICATION_MODE_PARAMETER_KEY, request.getParameter(AUTHENTICATION_MODE_PARAMETER_KEY));
-        return jwtProvider.generateToken(authenticate(request), claims);
+        Authentication authenticate = authenticate(request);
+        return JwtUtils.generateToken((String) authenticate.getCredentials(), claims);
     }
 
     @Override
     public Optional<Authentication> resolve(HttpServletRequest request) {
-        String token = jwtProvider.resolveToken(request);
-        if (StringUtils.hasText(token) && jwtProvider.validateToken(token)) {
-            Claims claims = jwtProvider.getClaims(token);
+        String token = JwtUtils.resolveToken(request);
+        if (StringUtils.hasText(token) && JwtUtils.validateToken(token)) {
+            Claims claims = JwtUtils.getClaims(token);
             String mode = (String) claims.get(AUTHENTICATION_MODE_PARAMETER_KEY);
-            String identity = (String) claims.get(jwtProvider.getIdentityKey());
+            String identity = (String) claims.get(JwtUtils.getIdentityKey());
             AuthenticateService service = findByMode(mode);
             return service.resolve(token, identity);
         }

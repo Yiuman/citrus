@@ -26,8 +26,8 @@ public abstract class AbstractStringVerificationProcessor<T extends AbstractStri
     }
 
     @Override
-    public void send(HttpServletRequest httpServletRequest, HttpServletResponse response) throws Exception {
-        T generate = generate(httpServletRequest);
+    public void send(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        T generate = generate(request);
         response.getWriter().write(generate.getValue());
     }
 
@@ -42,16 +42,16 @@ public abstract class AbstractStringVerificationProcessor<T extends AbstractStri
             throw new VerificationException(String.format("%s验证码的值不能为空", verificationType));
         }
 
-        if (LocalDateTime.now().isAfter(verification.validTimeInSeconds())) {
+        if (verification == null || LocalDateTime.now().isAfter(verification.validTimeInSeconds())) {
             throw new VerificationException("验证码超时");
         }
 
         Object value = verification.getValue();
         if (value instanceof String) {
-            value =  ((String) value).toLowerCase();
+            value = ((String) value).toLowerCase();
         }
 
-        if (!value.equals(verificationParameter)){
+        if (!value.equals(verificationParameter)) {
             throw new VerificationException("验证码错误");
         }
     }

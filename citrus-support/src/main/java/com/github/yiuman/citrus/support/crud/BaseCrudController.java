@@ -1,13 +1,15 @@
 package com.github.yiuman.citrus.support.crud;
 
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.yiuman.citrus.support.exception.ValidateException;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
 import com.github.yiuman.citrus.support.utils.ValidateUtils;
 import com.github.yiuman.citrus.support.utils.WebUtils;
-import com.google.common.base.VerifyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
@@ -17,10 +19,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.BindException;
+import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * 基础的RestfulCrud控制器
@@ -28,15 +34,22 @@ import java.util.Arrays;
  * @author yiuman
  * @date 2020/4/4
  */
+@SuppressWarnings("unchecked")
 public abstract class BaseCrudController<S extends CrudService<T, K>, T, K> {
 
-    private static final String PAGE_NO_PARAMETER = "pageNo";
+    private static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
 
     @Autowired
     @NotNull
     protected S service;
 
     private Class<?> paramClass;
+
+    private Class<T> entityClass = currentEntityClass();
+
+    private Class<T> currentEntityClass() {
+        return (Class<T>) ReflectionKit.getSuperClassGenericType(getClass(), 1);
+    }
 
     protected void setParamClass(Class<?> paramClass) {
         if (paramClass.isInterface() || Modifier.isAbstract(paramClass.getModifiers())) {
@@ -70,6 +83,21 @@ public abstract class BaseCrudController<S extends CrudService<T, K>, T, K> {
     }
 
     /**
+     * 导出
+     */
+    @GetMapping(value = "/export")
+    public void export(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
+        String fileName = Optional.ofNullable(WebUtils.getRequestParam("fileName"))
+                .orElse(String.valueOf(System.currentTimeMillis()));
+        response.setContentType(APPLICATION_VND_MS_EXCEL);
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+        response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(fileName, "utf-8") + ".xls");
+        EasyExcel.write(response.getOutputStream(), entityClass).sheet("表").doWrite(service.getList(queryWrapper(request)));
+    }
+
+    /**
      * 构造查询wrapper
      *
      * @return QueryWrapper
@@ -82,7 +110,7 @@ public abstract class BaseCrudController<S extends CrudService<T, K>, T, K> {
         QueryWrapper<T> wrapper = new QueryWrapper<>();
         Object params = WebUtils.requestDataBind(paramClass, request);
         //检验参数
-        ValidateUtils.validateEntityAndThrows(params, result -> new VerifyException(result.getMessage()));
+        ValidateUtils.validateEntityAndThrows(params, result -> new ValidateException(result.getMessage()));
         handleWrapper(wrapper, params);
         return wrapper;
     }
@@ -105,7 +133,7 @@ public abstract class BaseCrudController<S extends CrudService<T, K>, T, K> {
                     } else {
                         field.setAccessible(true);
                         Object value = field.get(params);
-                        if(ObjectUtils.isEmpty(value)){
+                        if (ObjectUtils.isEmpty(value)) {
                             return;
                         }
                         Method conditionMethod = wrapper

@@ -28,7 +28,7 @@ public class AuthenticateController {
     }
 
     @PostMapping("#{citrusProperties.security.authenticateEndpoint}")
-    public ResponseEntity<JwtToken> authenticate(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<JwtToken> authenticate(HttpServletRequest request) {
         return ResponseEntity.ok(new JwtToken(authenticateProcessor.token(request)));
     }
 
@@ -44,7 +44,7 @@ public class AuthenticateController {
     static class ExceptionAdvice {
 
         /**
-         * 位置异常处理
+         * 异常处理
          */
 
         @ExceptionHandler(value = AuthenticationException.class)

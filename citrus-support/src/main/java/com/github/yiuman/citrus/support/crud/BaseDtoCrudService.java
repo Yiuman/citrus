@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.yiuman.citrus.support.utils.CovertUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.beans.BeanUtils;
 
@@ -48,30 +49,32 @@ public class BaseDtoCrudService<M extends BaseMapper<E>, E, D, K>
 
     @Override
     public D get(K key) throws Exception {
-        E entity = getById((Serializable) key);
-        D dto = dtoClass.newInstance();
-        BeanUtils.copyProperties(entity, dto);
-        return dto;
+        return CovertUtils.convert(dtoClass, getById((Serializable) key));
     }
 
     @Override
     public List<D> getList() throws Exception {
-        return list().parallelStream().map(LambdaUtils.functionWrapper(user -> {
-            D dto = dtoClass.newInstance();
-            BeanUtils.copyProperties(user, dto);
-            return dto;
-        })).collect(Collectors.toList());
+        return list().parallelStream()
+                .map(LambdaUtils.functionWrapper(user -> CovertUtils.convert(dtoClass, user)))
+                .collect(Collectors.toList());
     }
 
     @Override
     public <P extends IPage<D>> P selectPage(P page, Wrapper<D> queryWrapper) {
+        //拷贝
         Page<E> entityPage = new Page<>();
         BeanUtils.copyProperties(page, entityPage);
-        QueryWrapper<E> wrapper = (QueryWrapper<E>) queryWrapper;
-        getBaseMapper().selectPage(entityPage,wrapper );
+        getBaseMapper().selectPage(entityPage, (QueryWrapper<E>) queryWrapper);
+        //反拷贝
         BeanUtils.copyProperties(entityPage, page);
         return page;
     }
 
+    @Override
+    public List<D> getList(Wrapper<D> queryWrapper) throws Exception {
+        return list((QueryWrapper<E>) queryWrapper).parallelStream()
+                .map(LambdaUtils.functionWrapper(user -> CovertUtils.convert(dtoClass, user)))
+                .collect(Collectors.toList());
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.github.yiuman.citrus.security.authenticate;
+package com.github.yiuman.citrus.rbac.authticate;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

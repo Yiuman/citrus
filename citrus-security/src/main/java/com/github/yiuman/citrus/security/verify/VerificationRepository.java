@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.security.verify;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 验证信息仓库
@@ -15,7 +16,7 @@ public interface VerificationRepository {
      *
      * @param verification 验证信息
      */
-    void save(HttpServletRequest httpServletRequest,Verification<?> verification);
+    void save(HttpServletRequest request, HttpServletResponse response,Verification<?> verification);
 
     /**
      * 根据当前请求获取验证信息
