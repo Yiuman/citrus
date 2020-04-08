@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus.support.crud;
 
-import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -17,14 +16,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.BindException;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -35,19 +33,17 @@ import java.util.Optional;
  * @date 2020/4/4
  */
 @SuppressWarnings("unchecked")
-public abstract class BaseCrudController<S extends CrudService<T, K>, T, K> {
-
-    private static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
+public abstract class BaseCrudController<T, K> {
 
     @Autowired
     @NotNull
-    protected S service;
+    protected CrudService<T, K> service;
 
     private Class<?> paramClass;
 
-    private Class<T> entityClass = currentEntityClass();
+    private Class<T> modelClass = currentModelClass();
 
-    private Class<T> currentEntityClass() {
+    private Class<T> currentModelClass() {
         return (Class<T>) ReflectionKit.getSuperClassGenericType(getClass(), 1);
     }
 
@@ -56,6 +52,10 @@ public abstract class BaseCrudController<S extends CrudService<T, K>, T, K> {
             return;
         }
         this.paramClass = paramClass;
+    }
+
+    public CrudService<T, K> getService() {
+        return this.service;
     }
 
     @GetMapping
@@ -71,13 +71,13 @@ public abstract class BaseCrudController<S extends CrudService<T, K>, T, K> {
         return ResponseEntity.ok(service.saveEntity(entity));
     }
 
-    @DeleteMapping("{key}")
+    @DeleteMapping("/{key}")
     public ResponseEntity<Void> delete(@PathVariable @NotNull K key) throws Exception {
         service.delete(key);
         return ResponseEntity.ok();
     }
 
-    @GetMapping("{key}")
+    @GetMapping("/{key}")
     public ResponseEntity<T> get(@PathVariable K key) throws Exception {
         return ResponseEntity.ok(service.get(key));
     }
@@ -90,11 +90,16 @@ public abstract class BaseCrudController<S extends CrudService<T, K>, T, K> {
         // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
         String fileName = Optional.ofNullable(WebUtils.getRequestParam("fileName"))
                 .orElse(String.valueOf(System.currentTimeMillis()));
-        response.setContentType(APPLICATION_VND_MS_EXCEL);
-        response.setCharacterEncoding("utf-8");
-        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-        response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(fileName, "utf-8") + ".xls");
-        EasyExcel.write(response.getOutputStream(), entityClass).sheet("表").doWrite(service.getList(queryWrapper(request)));
+        WebUtils.exportExcel(response, modelClass, service.getList(queryWrapper(request)), fileName);
+    }
+
+    /**
+     * 导入
+     */
+    @GetMapping(value = "/import")
+    public void imp(MultipartFile file) throws Exception {
+        //CrudReadDataListener不能被spring管理，要每次读取excel都要new,然后里面用到spring可以构造方法传进去
+        WebUtils.importExcel(file, modelClass, new CrudReadDataListener<>(service));
     }
 
     /**

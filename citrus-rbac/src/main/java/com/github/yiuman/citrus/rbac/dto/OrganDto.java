@@ -9,4 +9,26 @@ import lombok.Data;
 @Data
 public class OrganDto {
 
+    private Integer organId;
+
+    /**
+     * 组织名
+     */
+    private String organName;
+
+    /**
+     * 组织代码
+     */
+    private String organCode;
+
+    /**
+     * 上级ID
+     */
+    private Integer parentId;
+
+    /**
+     * 描述说明
+     */
+    private String describe;
+
 }

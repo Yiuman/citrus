@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.rbac.dto;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * 用户Dto
@@ -28,5 +29,9 @@ public class UserDto {
 
     @NotBlank
     private String email;
+
+    private List<Long> roleIds;
+
+    private Long organId;
 
 }

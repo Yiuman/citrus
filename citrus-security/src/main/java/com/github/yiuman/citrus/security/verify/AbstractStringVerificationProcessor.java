@@ -51,7 +51,7 @@ public abstract class AbstractStringVerificationProcessor<T extends AbstractStri
             value = ((String) value).toLowerCase();
         }
 
-        if (!value.equals(verificationParameter)) {
+        if (!value.equals(verificationParameter.toLowerCase())) {
             throw new VerificationException("验证码错误");
         }
     }

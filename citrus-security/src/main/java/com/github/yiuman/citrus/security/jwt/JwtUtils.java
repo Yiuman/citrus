@@ -1,7 +1,7 @@
 package com.github.yiuman.citrus.security.jwt;
 
 import com.github.yiuman.citrus.support.cache.InMemoryCache;
-import com.github.yiuman.citrus.support.utils.CovertUtils;
+import com.github.yiuman.citrus.support.utils.ConvertUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -36,7 +36,7 @@ public final class JwtUtils {
      */
     private static InMemoryCache<String, Object> jwt = InMemoryCache
             .get(JWT_CACHE_NAMESPACE,
-                    LambdaUtils.consumerWrapper(cache -> CovertUtils.objectToMap(new JwtProperties()).forEach(cache::save)),
+                    LambdaUtils.consumerWrapper(cache -> ConvertUtils.objectToMap(new JwtProperties()).forEach(cache::save)),
                     true);
 
     public static String generateToken(String identity, Map<String, Object> claims) {

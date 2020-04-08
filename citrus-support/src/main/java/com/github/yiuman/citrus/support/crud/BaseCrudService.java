@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,11 +14,14 @@ import java.util.List;
  * @author yiuman
  * @date 2020/4/4
  */
-public abstract class BaseCrudService<M extends BaseMapper<E>, E, K> extends BaseKeyService<M, E, K> implements CrudService<E, K> {
+public abstract class BaseCrudService<M extends BaseMapper<E>, E, K>
+        extends BaseKeyService<M, E, K> implements CrudService<E, K> {
 
     @Override
     public K saveEntity(E entity) throws Exception {
+        beforeSave(entity);
         save(entity);
+        afterSave(entity);
         return key(entity);
     }
 
@@ -44,5 +48,10 @@ public abstract class BaseCrudService<M extends BaseMapper<E>, E, K> extends Bas
     @Override
     public List<E> getList(Wrapper<E> queryWrapper) throws Exception {
         return list(queryWrapper);
+    }
+
+    @Override
+    public void batchSave(Collection<E> entityList) throws Exception {
+        saveBatch(entityList);
     }
 }

@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -16,18 +18,36 @@ import java.util.List;
 public interface CrudService<T, K> {
 
     /**
+     * 保存前做的操作
+     *
+     * @param entity 当前实体
+     */
+    default void beforeSave(T entity) throws Exception {
+    }
+
+    /**
      * 保存
      *
      * @param entity 实体
      * @return 主键
      */
+    @Transactional
     K saveEntity(T entity) throws Exception;
+
+    /**
+     * 保存后做的操作
+     *
+     * @param entity 当前实体
+     */
+    default void afterSave(T entity) throws Exception {
+    }
 
     /**
      * 删除
      *
      * @param key 主键
      */
+    @Transactional
     void delete(K key) throws Exception;
 
     /**
@@ -54,5 +74,7 @@ public interface CrudService<T, K> {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     <P extends IPage<T>> P selectPage(P page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+
+    void batchSave(Collection<T> entityList) throws Exception;
 
 }

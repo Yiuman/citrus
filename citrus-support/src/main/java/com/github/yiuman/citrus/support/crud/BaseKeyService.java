@@ -2,13 +2,18 @@ package com.github.yiuman.citrus.support.crud;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.BeanUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yiuman.citrus.support.model.Key;
 import com.github.yiuman.citrus.support.model.Primary;
-import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 
 /**
  * 基础主键查找抽象类
@@ -24,7 +29,7 @@ public abstract class BaseKeyService<M extends BaseMapper<E>, E, K> extends Serv
     protected final Class<K> keyClass = currentKeyClass();
 
     private Class<K> currentKeyClass() {
-        return (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 3);
+        return (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 2);
     }
 
     /**
@@ -41,23 +46,31 @@ public abstract class BaseKeyService<M extends BaseMapper<E>, E, K> extends Serv
      * @return 主键
      */
     @Override
-    public K key(E entity) {
+    public K key(E entity) throws IllegalAccessException {
         AtomicReference<K> key = new AtomicReference<>();
-        ReflectionUtils.doWithFields(entityClass,
-                field -> {
-                    field.setAccessible(true);
-                    key.set((K) field.get(entity));
-                },
-                field -> field.getType() == keyClass
-                        && (field.getAnnotation(Primary.class) != null
-                        || field.getAnnotation(TableId.class) != null
-                        || DEFAULT_KEY_NAME.equals(field.getName())));
-        K keyValue = key.get();
-        if (key == null) {
+        final List<Predicate<Field>> filterPredicate = Arrays
+                .asList((field -> field.getType() == keyClass && field.getAnnotation(Primary.class) != null),
+                        (field -> field.getType() == keyClass && DEFAULT_KEY_NAME.equals(field.getName())),
+                        (field -> field.getType() == keyClass && field.getAnnotation(TableId.class) != null));
+
+        boolean hasPrimaryField = false;
+        for (Predicate<Field> predicate : filterPredicate) {
+            Optional<Field> optionalField = Arrays.stream(entityClass.getDeclaredFields()).filter(predicate).findFirst();
+            if (optionalField.isPresent()) {
+                hasPrimaryField = true;
+                Field field = optionalField.get();
+                field.setAccessible(true);
+                key.set((K) field.get(entity));
+                break;
+            }
+        }
+
+        if (!hasPrimaryField) {
             throw new RuntimeException(String.format("Cannot found the entity's primary key from entity's class '%s'," +
                     "you can tagging the annotation [%s or %s] for the field which is the primary key," +
                     "or define a field with the name 'id'", entityClass, Primary.class, TableId.class));
         }
-        return keyValue;
+
+        return key.get();
     }
 }

@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus.rbac.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -16,10 +15,12 @@ import lombok.Data;
 @TableName("sys_user_role")
 public class UserRole {
 
-    @TableId(type = IdType.AUTO)
-    private Integer userId;
+    @TableId
+    private Long userId;
 
-    private Integer roleId;
+    @TableId
+    private Long roleId;
 
-    private Integer organId;
+    @TableId
+    private Long organId;
 }

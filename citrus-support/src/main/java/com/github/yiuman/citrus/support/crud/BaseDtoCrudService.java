@@ -6,11 +6,12 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.yiuman.citrus.support.utils.CovertUtils;
+import com.github.yiuman.citrus.support.utils.ConvertUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  * @date 2020/4/4
  */
 @SuppressWarnings("unchecked")
-public class BaseDtoCrudService<M extends BaseMapper<E>, E, D, K>
+public abstract class BaseDtoCrudService<M extends BaseMapper<E>, E, D, K>
         extends BaseKeyService<M, E, K>
         implements CrudService<D, K> {
 
@@ -36,10 +37,24 @@ public class BaseDtoCrudService<M extends BaseMapper<E>, E, D, K>
 
     @Override
     public K saveEntity(D dto) throws Exception {
+        beforeSave(dto);
         E realEntity = (E) entityClass.newInstance();
         BeanUtils.copyProperties(dto, realEntity);
+
+        beforeInsertEntity(dto, realEntity);
         save(realEntity);
+        afterSave(dto);
         return key(realEntity);
+    }
+
+    /**
+     * 在插入真正的实体前的操作
+     *
+     * @param dto    传输类
+     * @param entity 实体
+     */
+    protected void beforeInsertEntity(D dto, E entity) {
+
     }
 
     @Override
@@ -49,13 +64,13 @@ public class BaseDtoCrudService<M extends BaseMapper<E>, E, D, K>
 
     @Override
     public D get(K key) throws Exception {
-        return CovertUtils.convert(dtoClass, getById((Serializable) key));
+        return ConvertUtils.convert(dtoClass, getById((Serializable) key));
     }
 
     @Override
     public List<D> getList() throws Exception {
         return list().parallelStream()
-                .map(LambdaUtils.functionWrapper(user -> CovertUtils.convert(dtoClass, user)))
+                .map(LambdaUtils.functionWrapper(user -> ConvertUtils.convert(dtoClass, user)))
                 .collect(Collectors.toList());
     }
 
@@ -73,8 +88,13 @@ public class BaseDtoCrudService<M extends BaseMapper<E>, E, D, K>
     @Override
     public List<D> getList(Wrapper<D> queryWrapper) throws Exception {
         return list((QueryWrapper<E>) queryWrapper).parallelStream()
-                .map(LambdaUtils.functionWrapper(user -> CovertUtils.convert(dtoClass, user)))
+                .map(LambdaUtils.functionWrapper(user -> ConvertUtils.convert(dtoClass, user)))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void batchSave(Collection<D> entityList) throws Exception {
+        saveBatch((List<E>) ConvertUtils.listConvert(entityClass, entityList));
     }
 
 }

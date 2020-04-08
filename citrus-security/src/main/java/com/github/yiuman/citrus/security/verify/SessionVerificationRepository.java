@@ -1,11 +1,8 @@
 package com.github.yiuman.citrus.security.verify;
 
-import com.github.yiuman.citrus.support.utils.WebUtils;
-
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.UUID;
+import javax.servlet.http.HttpSession;
 
 /**
  * Session的验证信息存储仓库
@@ -25,16 +22,14 @@ public class SessionVerificationRepository implements VerificationRepository {
 
     @Override
     public void save(HttpServletRequest request, HttpServletResponse response, Verification<?> verification) {
-        String randomVerifyId = UUID.randomUUID().toString();
-        request.getSession().setAttribute(SESSION_VERIFICATION_PARAMETER + randomVerifyId, verification);
-        response.addCookie(new Cookie(SESSION_VERIFICATION_PARAMETER, randomVerifyId));
-
+        HttpSession session = request.getSession();
+        session.setAttribute(SESSION_VERIFICATION_PARAMETER + session.getId(), verification);
     }
 
     @Override
     public Verification<?> find(HttpServletRequest request) {
-        String verifyId  = WebUtils.getCookie(request, SESSION_VERIFICATION_PARAMETER);
-        return (Verification<?>) request.getSession().getAttribute(SESSION_VERIFICATION_PARAMETER+verifyId);
+        HttpSession session = request.getSession();
+        return (Verification<?>) request.getSession().getAttribute(SESSION_VERIFICATION_PARAMETER + session.getId());
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.rbac.controller;
 
 import com.github.yiuman.citrus.rbac.dto.ResourceDto;
-import com.github.yiuman.citrus.rbac.service.ResourceService;
 import com.github.yiuman.citrus.support.crud.BaseCrudController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/rest/resources")
-public class ResourceController extends BaseCrudController<ResourceService, ResourceDto, Long> {
+public class ResourceController extends BaseCrudController<ResourceDto, Long> {
 
 }
