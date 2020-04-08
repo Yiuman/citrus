@@ -20,7 +20,7 @@
 
         <dependency>
             <groupId>com.github.yiuman</groupId>
-            <artifactId>citrus-rbac</artifactId>
+            <artifactId>citrus-system</artifactId>
             <version>${citrus.security.version}</version>
         </dependency>
 

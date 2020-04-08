@@ -14,7 +14,7 @@
         <module>citrus-security</module>
         <module>citrus-main</module>
         <module>citrus-boot-starter</module>
-        <module>citrus-rbac</module>
+        <module>citrus-system</module>
         <module>citrus-support</module>
     </modules>
 

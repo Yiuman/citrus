@@ -40,7 +40,6 @@ public abstract class BaseDtoCrudService<M extends BaseMapper<E>, E, D, K>
         beforeSave(dto);
         E realEntity = (E) entityClass.newInstance();
         BeanUtils.copyProperties(dto, realEntity);
-
         beforeInsertEntity(dto, realEntity);
         save(realEntity);
         afterSave(dto);
