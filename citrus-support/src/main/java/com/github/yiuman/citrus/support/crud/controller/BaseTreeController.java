@@ -16,7 +16,7 @@ import java.util.List;
  * @author yiuman
  * @date 2020/4/9
  */
-public class BaseTreeController<S extends CrudService<T, K> & TreeService<T, K>, T extends Tree<K>, K>
+public abstract class BaseTreeController<S extends CrudService<T, K> & TreeService<T, K>, T extends Tree<K>, K>
         extends BaseCrudController<S, T, K> {
 
     private boolean isLazy = true;
