@@ -1,4 +1,4 @@
-package com.github.yiuman.citrus.support.crud;
+package com.github.yiuman.citrus.support.crud.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -15,12 +15,13 @@ import java.util.List;
  * @date 2020/4/4
  */
 public abstract class BaseCrudService<M extends BaseMapper<E>, E, K>
-        extends BaseKeyService<M, E, K> implements CrudService<E, K> {
+        extends BaseKeyService<M, E, K>
+        implements CrudService<E, K> {
 
     @Override
     public K saveEntity(E entity) throws Exception {
         beforeSave(entity);
-        save(entity);
+        saveOrUpdate(entity);
         afterSave(entity);
         return key(entity);
     }

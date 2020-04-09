@@ -1,4 +1,4 @@
-package com.github.yiuman.citrus.support.crud;
+package com.github.yiuman.citrus.support.crud.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;

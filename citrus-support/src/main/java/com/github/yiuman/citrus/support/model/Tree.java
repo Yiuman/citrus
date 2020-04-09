@@ -30,6 +30,8 @@ public interface Tree<K> {
 
     void setDeep(Integer deep);
 
-    <T extends Tree<K>> List<T> getChildren();
+    List<? extends Tree<K>> getChildren();
+
+    void setChildren(List<? extends Tree<K>> children);
 
 }

@@ -1,4 +1,4 @@
-package com.github.yiuman.citrus.support.crud;
+package com.github.yiuman.citrus.support.crud.service;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -30,6 +30,10 @@ public abstract class BaseKeyService<M extends BaseMapper<E>, E, K> extends Serv
 
     private Class<K> currentKeyClass() {
         return (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 2);
+    }
+
+    public Class<E> getEntityClass(){
+        return (Class<E>) entityClass;
     }
 
     /**

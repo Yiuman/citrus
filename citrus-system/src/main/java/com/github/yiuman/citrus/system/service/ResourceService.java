@@ -3,7 +3,7 @@ package com.github.yiuman.citrus.system.service;
 import com.github.yiuman.citrus.system.dto.ResourceDto;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.mapper.ResourceMapper;
-import com.github.yiuman.citrus.support.crud.BaseDtoCrudService;
+import com.github.yiuman.citrus.support.crud.service.BaseDtoCrudService;
 import org.springframework.stereotype.Service;
 
 /**

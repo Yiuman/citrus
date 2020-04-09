@@ -1,9 +1,9 @@
 package com.github.yiuman.citrus.system.service;
 
+import com.github.yiuman.citrus.support.crud.service.BaseDtoCrudService;
 import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.entity.Role;
 import com.github.yiuman.citrus.system.mapper.RoleMapper;
-import com.github.yiuman.citrus.support.crud.BaseDtoCrudService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,7 +27,7 @@ public class RoleService extends BaseDtoCrudService<RoleMapper, Role, RoleDto, L
     }
 
     public boolean hasPermission(Long userId, String resourceId) {
-        return baseMapper.hasPermission(userId, resourceId);
+        return getBaseMapper().hasPermission(userId, resourceId);
     }
 
 }

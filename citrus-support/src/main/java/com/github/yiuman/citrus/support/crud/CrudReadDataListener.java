@@ -2,7 +2,7 @@ package com.github.yiuman.citrus.support.crud;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
-import lombok.SneakyThrows;
+import com.github.yiuman.citrus.support.crud.service.CrudService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -27,7 +27,6 @@ public class CrudReadDataListener<T, K> extends AnalysisEventListener<T> {
         this.service = service;
     }
 
-    @SneakyThrows
     @Override
     public void invoke(T data, AnalysisContext context) {
         list.add(data);

@@ -39,10 +39,11 @@ public class AuthorizeAdvice {
     /**
      * 拦截BaseCrudController中的所有方法
      */
-    @Pointcut("execution(* com.github.yiuman.citrus.support.crud.BaseCrudController.*(..))")
-    public void baseCrudPointCut() {
+    @Pointcut("execution(* com.github.yiuman.citrus.support.crud.controller.*.*(..))")
+    public void crudPointCut() {
 
     }
+
 
     /**
      * 拦截请求的方法
@@ -62,7 +63,7 @@ public class AuthorizeAdvice {
      * 2.类上有使用@Authorize
      * 3.拦截BaseCrudController中的有@RequestMapping的标记的方法
      */
-    @Pointcut("authorizePointCut() || (baseCrudPointCut() && requestPointCut())")
+    @Pointcut("authorizePointCut() || (crudPointCut() && requestPointCut()))")
     public void combination() {
 
     }

@@ -1,8 +1,12 @@
-package com.github.yiuman.citrus.support.crud;
+package com.github.yiuman.citrus.support.crud.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.yiuman.citrus.support.crud.CrudReadDataListener;
+import com.github.yiuman.citrus.support.crud.service.CrudService;
+import com.github.yiuman.citrus.support.crud.QueryParam;
+import com.github.yiuman.citrus.support.crud.QueryParamHandler;
 import com.github.yiuman.citrus.support.exception.ValidateException;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
@@ -33,15 +37,15 @@ import java.util.Optional;
  * @date 2020/4/4
  */
 @SuppressWarnings("unchecked")
-public abstract class BaseCrudController<T, K> {
+public abstract class BaseCrudController<S extends CrudService<T, K>,T, K> {
 
     @Autowired
     @NotNull
-    protected CrudService<T, K> service;
+    protected S service;
 
-    private Class<?> paramClass;
+    protected Class<?> paramClass;
 
-    private Class<T> modelClass = currentModelClass();
+    protected Class<T> modelClass = currentModelClass();
 
     private Class<T> currentModelClass() {
         return (Class<T>) ReflectionKit.getSuperClassGenericType(getClass(), 1);

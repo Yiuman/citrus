@@ -7,6 +7,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
+ * Citrus的配置信息集中
+ *
  * @author yiuman
  * @date 2020/3/22
  */

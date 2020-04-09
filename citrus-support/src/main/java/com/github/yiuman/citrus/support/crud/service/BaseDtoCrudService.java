@@ -1,4 +1,4 @@
-package com.github.yiuman.citrus.support.crud;
+package com.github.yiuman.citrus.support.crud.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -53,7 +53,6 @@ public abstract class BaseDtoCrudService<M extends BaseMapper<E>, E, D, K>
      * @param entity 实体
      */
     protected void beforeInsertEntity(D dto, E entity) {
-
     }
 
     @Override

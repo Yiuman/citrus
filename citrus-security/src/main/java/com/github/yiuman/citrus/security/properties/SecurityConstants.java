@@ -8,8 +8,6 @@ package com.github.yiuman.citrus.security.properties;
  */
 public interface SecurityConstants {
 
-    String DEFAULT_LOGIN_TYPE_NAME = "loginType";
-
     String AUTHENTICATE_ENDPOINT = "/rest/authenticate";
 
     String VERIFY_ENDPOINT_PREFIX = "/rest/verify";

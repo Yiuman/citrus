@@ -1,10 +1,9 @@
-package com.github.yiuman.citrus.support.crud;
+package com.github.yiuman.citrus.support.crud.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.yiuman.citrus.support.model.Tree;
-import com.github.yiuman.citrus.support.model.TreeService;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.util.CollectionUtils;
 
@@ -34,8 +33,46 @@ public abstract class BaseTreeCrudService<M extends BaseMapper<E>, E extends Tre
     }
 
     @Override
+    public synchronized void reInit() throws Exception {
+        reInit(getRoot());
+    }
+
+    protected void reInit(E current) throws Exception {
+        saveEntity(current);
+        List<E> children = loadByParent(current.getId());
+        if (!CollectionUtils.isEmpty(children)) {
+            children.forEach(LambdaUtils.consumerWrapper(this::reInit));
+        }
+    }
+
+    @Override
     public void beforeSave(E entity) throws Exception {
         this.insert(entity);
+    }
+
+    @Override
+    public E load(boolean isLazy) {
+        E current = getRoot();
+        load(current, isLazy);
+        return current;
+    }
+
+    @Override
+    public void load(E current) {
+        load(current, true);
+    }
+
+    @Override
+    public void load(E current, boolean isLazy) {
+        if (isLazy) {
+            current.setChildren(loadByParent(current.getId()));
+        } else {
+            List<E> children = children(current, current.getDeep() + 1);
+            if (!CollectionUtils.isEmpty(children)) {
+                children.parallelStream().forEach(this::load);
+            }
+            current.setChildren(children);
+        }
     }
 
     @Override
@@ -48,7 +85,7 @@ public abstract class BaseTreeCrudService<M extends BaseMapper<E>, E extends Tre
         int rightValue = 1;
         int deep = 1;
         //4.更新父节点
-        if (parent != null) {
+        if (parent != null && current.getId() != parent.getId()) {
             beforeSaveOrUpdate(parent);
             rightValue = parent.getRightValue();
             deep = parent.getDeep() + 1;
@@ -103,17 +140,24 @@ public abstract class BaseTreeCrudService<M extends BaseMapper<E>, E extends Tre
     }
 
     @Override
+    public List<E> loadByParent(K parentKey) {
+        QueryWrapper<E> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(getParentField(), parentKey);
+        return list(queryWrapper);
+    }
+
+    @Override
     public List<E> children(E current) {
         // target.left > this.left  and target.right < this.right
         return list(new QueryWrapper<E>()
-                .gt(getLeftField(), current.getRightValue())
+                .gt(getLeftField(), current.getLeftValue())
                 .lt(getRightField(), current.getRightValue()));
     }
 
     @Override
     public List<E> children(E current, int deep) {
         return list(new QueryWrapper<E>()
-                .gt(getLeftField(), current.getRightValue())
+                .gt(getLeftField(), current.getLeftValue())
                 .lt(getRightField(), current.getRightValue())
                 .eq(getDeepField(), deep));
     }

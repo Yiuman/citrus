@@ -4,7 +4,7 @@ import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.entity.UserRole;
 import com.github.yiuman.citrus.system.mapper.UserMapper;
-import com.github.yiuman.citrus.support.crud.BaseDtoCrudService;
+import com.github.yiuman.citrus.support.crud.service.BaseDtoCrudService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 

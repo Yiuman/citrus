@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.starter;
 import com.github.yiuman.citrus.security.authorize.AuthorizeConfigManager;
 import com.github.yiuman.citrus.security.jwt.JwtSecurityConfigurerAdapter;
 import com.github.yiuman.citrus.security.properties.CitrusProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -11,7 +12,6 @@ import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServic
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -77,27 +77,7 @@ public class CitrusAutoConfiguration {
             authorizeConfigManager.config(http.authorizeRequests());
         }
 
-        @Override
-        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-            super.configure(auth);
-//            auth.
-//            auth.(passwordEncoder);
-        }
 
-        @Bean
-        @ConditionalOnMissingBean(AuthenticationEntryPoint.class)
-        public AuthenticationEntryPoint entryPoint() {
-            return new UnAuthenticationEntryPoint();
-        }
-
-        @Component
-        private static class UnAuthenticationEntryPoint implements AuthenticationEntryPoint {
-
-            @Override
-            public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
-            }
-        }
     }
 
 
@@ -111,6 +91,21 @@ public class CitrusAutoConfiguration {
     private static class StatefulSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(AuthenticationEntryPoint.class)
+    public AuthenticationEntryPoint entryPoint() {
+        return new UnAuthenticationEntryPoint();
+    }
+
+    @Component
+    private static class UnAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+        @Override
+        public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+        }
     }
 
 }

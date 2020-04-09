@@ -1,4 +1,6 @@
-package com.github.yiuman.citrus.support.model;
+package com.github.yiuman.citrus.support.crud.service;
+
+import com.github.yiuman.citrus.support.model.Tree;
 
 import java.util.List;
 
@@ -15,7 +17,7 @@ public interface TreeService<T extends Tree<K>, K> {
      */
     T getRoot();
 
-    default String getDeepField(){
+    default String getDeepField() {
         return "deep";
     }
 
@@ -32,6 +34,42 @@ public interface TreeService<T extends Tree<K>, K> {
     }
 
     /**
+     * 从新构建预遍历树
+     */
+    void reInit() throws Exception;
+
+    /**
+     * 加载树
+     *
+     * @param isLazy 是否懒加载
+     * @return 树
+     */
+    T load(boolean isLazy) throws Exception;
+
+    /**
+     * 加载某个节点下所有数据
+     *
+     * @param current 当前节点
+     */
+    void load(T current) throws Exception;
+
+    /**
+     * 加载某个节点的下级节点
+     *
+     * @param current 当前节点
+     * @param isLazy  是否懒加载
+     */
+    void load(T current, boolean isLazy) throws Exception;
+
+    /**
+     * 根据父节点ID加载子列表
+     *
+     * @param parentKey 父节点ID
+     * @return 子列表
+     */
+    List<T> loadByParent(K parentKey);
+
+    /**
      * 插入当前节点
      */
     void insert(T current) throws Exception;
@@ -39,7 +77,7 @@ public interface TreeService<T extends Tree<K>, K> {
     /**
      * 移动
      */
-    void move(T current,K moveTo) throws Exception;
+    void move(T current, K moveTo) throws Exception;
 
     /**
      * 删除

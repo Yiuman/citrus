@@ -2,7 +2,7 @@ package com.github.yiuman.citrus.system.service;
 
 import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.mapper.OrganMapper;
-import com.github.yiuman.citrus.support.crud.BaseTreeCrudService;
+import com.github.yiuman.citrus.support.crud.service.BaseTreeCrudService;
 import org.springframework.stereotype.Component;
 
 /**

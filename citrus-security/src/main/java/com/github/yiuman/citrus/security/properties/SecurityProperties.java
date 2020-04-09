@@ -11,11 +11,11 @@ public class SecurityProperties {
      */
     private boolean stateless = true;
 
-    private String loginTypeName = SecurityConstants.DEFAULT_LOGIN_TYPE_NAME;
-
     private String authenticateEndpoint = SecurityConstants.AUTHENTICATE_ENDPOINT;
 
     private String verifyEndpointPrefix = SecurityConstants.VERIFY_ENDPOINT_PREFIX;
+
+    private String[] excludedUris = new String[]{};
 
     public SecurityProperties() {
     }
@@ -26,14 +26,6 @@ public class SecurityProperties {
 
     public void setStateless(boolean stateless) {
         this.stateless = stateless;
-    }
-
-    public String getLoginTypeName() {
-        return loginTypeName;
-    }
-
-    public void setLoginTypeName(String loginTypeName) {
-        this.loginTypeName = loginTypeName;
     }
 
     public String getAuthenticateEndpoint() {
@@ -50,5 +42,13 @@ public class SecurityProperties {
 
     public void setVerifyEndpointPrefix(String verifyEndpointPrefix) {
         this.verifyEndpointPrefix = verifyEndpointPrefix;
+    }
+
+    public String[] getExcludedUris() {
+        return excludedUris;
+    }
+
+    public void setExcludedUris(String[] excludedUris) {
+        this.excludedUris = excludedUris;
     }
 }

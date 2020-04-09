@@ -11,11 +11,13 @@ import java.util.List;
  * @author yiuman
  * @date 2020/3/30
  */
-public abstract class BaseTree<T extends Tree<K>, K> implements Tree<K> {
+public abstract class BaseTree<T extends BaseTree<T, K>, K> implements Tree<K> {
 
     private Integer leftValue;
 
     private Integer rightValue;
+
+    private Integer deep;
 
     @TableField(exist = false)
     private List<T> children;
@@ -23,31 +25,49 @@ public abstract class BaseTree<T extends Tree<K>, K> implements Tree<K> {
     public BaseTree() {
     }
 
+    @Override
     public Integer getLeftValue() {
         return leftValue;
     }
 
+    @Override
     public void setLeftValue(Integer leftValue) {
         this.leftValue = leftValue;
     }
 
+    @Override
     public Integer getRightValue() {
         return rightValue;
     }
 
+    @Override
     public void setRightValue(Integer rightValue) {
         this.rightValue = rightValue;
     }
 
+    @Override
     public boolean isLeaf() {
         return this.getLeftValue() != null && this.getRightValue() != null && this.getRightValue() - this.getLeftValue() == 1;
     }
 
+    @Override
+    public Integer getDeep() {
+        return deep;
+    }
+
+    @Override
+    public void setDeep(Integer deep) {
+        this.deep = deep;
+    }
+
+    @Override
     public List<T> getChildren() {
         return children;
     }
 
-    public void setChildren(List<T> children) {
-        this.children = children;
+    @SuppressWarnings("unchecked")
+    @Override
+    public void setChildren(List<? extends Tree<K>> children) {
+        this.children = (List<T>) children;
     }
 }
