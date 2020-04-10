@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.support.crud.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yiuman.citrus.support.crud.CrudReadDataListener;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
@@ -149,7 +150,7 @@ public abstract class BaseCrudController<S extends CrudService<T, K>,T, K> {
                                 .getClass()
                                 .getMethod(annotation.type(), boolean.class, Object.class, Object.class);
                         conditionMethod.setAccessible(true);
-                        conditionMethod.invoke(wrapper, annotation.condition(), field.getName(), field.get(params));
+                        conditionMethod.invoke(wrapper, annotation.condition(), StringUtils.camelToUnderline(field.getName()), field.get(params));
                     }
                 }));
     }

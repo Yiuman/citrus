@@ -1,8 +1,11 @@
 package com.github.yiuman.citrus.support.crud.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.github.yiuman.citrus.support.crud.mapper.BaseTreeMapper;
 import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.util.CollectionUtils;
@@ -19,7 +22,7 @@ import java.util.stream.Collectors;
  * @author yiuman
  * @date 2020/4/7
  */
-public abstract class BaseTreeCrudService<M extends BaseMapper<E>, E extends Tree<K>, K>
+public abstract class BaseTreeCrudService<M extends BaseTreeMapper<E>, E extends Tree<K>, K>
         extends BaseCrudService<M, E, K>
         implements TreeService<E, K> {
 
@@ -43,11 +46,6 @@ public abstract class BaseTreeCrudService<M extends BaseMapper<E>, E extends Tre
         if (!CollectionUtils.isEmpty(children)) {
             children.forEach(LambdaUtils.consumerWrapper(this::reInit));
         }
-    }
-
-    @Override
-    public void beforeSave(E entity) throws Exception {
-        this.insert(entity);
     }
 
     @Override
@@ -75,10 +73,17 @@ public abstract class BaseTreeCrudService<M extends BaseMapper<E>, E extends Tre
         }
     }
 
+
+    @Override
+    public void beforeSave(E entity) throws Exception {
+        this.insert(entity);
+    }
+
     @Override
     public void insert(E current) throws Exception {
         //1.获取当前父节点
-        E parent = Optional.ofNullable(get(current.getParentId()))
+        E parent = Optional
+                .ofNullable(get(current.getParentId()))
                 .orElse(getRoot());
         //2.更新所有左值大于当前父节点左值的节点左值 +2
         //3.更新所有右值大于当前父节点右值的节点右值 +2
@@ -215,6 +220,38 @@ public abstract class BaseTreeCrudService<M extends BaseMapper<E>, E extends Tre
         update(new UpdateWrapper<E>()
                 .setSql(String.format(UPDATE_REDUCTION_FORMAT, getRightField(), getRightField(), 2))
                 .gt(getRightField(), current.getRightValue()));
+    }
+
+    @Override
+    public E treeQuery(Wrapper<E> wrapper) {
+        if (wrapper == null) {
+            return load(false);
+        }
+        //查询符合条件的列表
+        List<E> list = list(wrapper);
+        //找到列表ID
+        List<K> ids = list.parallelStream().map(Tree::getId).collect(Collectors.toList());
+        TableInfo table = SqlHelper.table(entityClass);
+
+        //将查询到的列表的项的所有父节点查出来
+        String parentSql = "t1.leftValue > t2. leftValue and t1.rightValue < t2.rightValue"
+                .replaceAll("leftValue",getLeftField())
+                .replaceAll("rightValue",getRightField());
+        list.addAll(getBaseMapper().list(table.getTableName(), new QueryWrapper<E>().apply(parentSql)
+                .in("t1." + table.getKeyColumn(), ids)));
+        E root = getRoot();
+        //传list进去前需要去重
+        initTreeFromList(root, list.parallelStream().distinct().collect(Collectors.toList()));
+        return root;
+    }
+
+    protected void initTreeFromList(E start, List<E> list) {
+        List<E> childrenOfStart = list.parallelStream()
+                .filter(current -> current.getParentId() != null && current.getParentId().equals(start.getId())).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(childrenOfStart)) {
+            start.setChildren(childrenOfStart);
+            childrenOfStart.parallelStream().forEach(next -> initTreeFromList(next, list));
+        }
     }
 
 }

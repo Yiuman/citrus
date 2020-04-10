@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.support.crud.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.yiuman.citrus.support.model.Tree;
 
 import java.util.List;
@@ -45,6 +47,13 @@ public interface TreeService<T extends Tree<K>, K> {
      * @return 树
      */
     T load(boolean isLazy) throws Exception;
+
+    /**
+     * 树查询
+     * @param wrapper  查询Wrapper
+     * @return 树结构
+     */
+    T treeQuery(Wrapper<T> wrapper) throws Exception;
 
     /**
      * 加载某个节点下所有数据

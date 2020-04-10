@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -28,22 +29,42 @@ public abstract class BaseTreeController<S extends CrudService<T, K> & TreeServi
         isLazy = lazy;
     }
 
+    /**
+     * 加载树,支持查询
+     */
     @GetMapping("/tree")
-    public ResponseEntity<T> load() throws Exception {
+    public ResponseEntity<T> load(HttpServletRequest request) throws Exception {
+        if (paramClass != null) {
+            return ResponseEntity.ok(service.treeQuery(queryWrapper(request)));
+        }
         return ResponseEntity.ok(service.load(isLazy));
     }
 
+    /**
+     * 根据父级ID加载子列表
+     *
+     * @param parentKey 父ID
+     */
     @GetMapping("/tree/{parentKey}")
     public ResponseEntity<List<T>> loadByParentKey(@PathVariable @NotNull K parentKey) {
         return ResponseEntity.ok(service.loadByParent(parentKey));
     }
 
+    /**
+     * 移动
+     *
+     * @param currentId 当前ID
+     * @param moveToId  移动到的位置的Id
+     */
     @PutMapping("/tree/move")
     public ResponseEntity<Void> move(@NotNull K currentId, @NotNull K moveToId) throws Exception {
         service.move(service.get(currentId), moveToId);
         return ResponseEntity.ok();
     }
 
+    /**
+     * 从新初始化左右值深度等
+     */
     @PostMapping("/tree/init")
     public ResponseEntity<Void> reInit() throws Exception {
         service.reInit();

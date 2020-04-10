@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.system.dto;
 
+import com.github.yiuman.citrus.support.crud.QueryParam;
 import lombok.Data;
 
 /**
@@ -8,5 +9,8 @@ import lombok.Data;
  */
 @Data
 public class OrganQuery {
+
+    @QueryParam
+    private String organName;
 
 }
