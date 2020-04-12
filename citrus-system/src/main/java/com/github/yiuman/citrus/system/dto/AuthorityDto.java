@@ -1,23 +1,20 @@
-package com.github.yiuman.citrus.system.entity;
+package com.github.yiuman.citrus.system.dto;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import java.util.Set;
 
 /**
- * 系统权限
+ * 权限dto
  *
  * @author yiuman
- * @date 2020/3/30
+ * @date 2020/4/11
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@TableName("sys_authority")
-public class Authority extends AbstractAuditingEntity{
+public class AuthorityDto {
 
-    @TableId(type = IdType.AUTO)
     private Long authorityId;
 
     /**
@@ -29,4 +26,8 @@ public class Authority extends AbstractAuditingEntity{
 
     private String describe;
 
+    /**
+     * 资源列表
+     */
+    private Set<Long> resourceIds;
 }

@@ -4,14 +4,12 @@ import com.github.yiuman.citrus.support.crud.QueryParam;
 import lombok.Data;
 
 /**
- * 角色列表查询类
- *
  * @author yiuman
- * @date 2020/4/6
+ * @date 2020/4/11
  */
 @Data
-public class RoleQuery {
+public class ResourceQuery {
 
     @QueryParam
-    private String roleName;
+    private String resourceName;
 }

@@ -3,7 +3,6 @@ package com.github.yiuman.citrus.starter;
 import com.github.yiuman.citrus.security.authorize.AuthorizeConfigManager;
 import com.github.yiuman.citrus.security.jwt.JwtSecurityConfigurerAdapter;
 import com.github.yiuman.citrus.security.properties.CitrusProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,7 +44,7 @@ public class CitrusAutoConfiguration {
     @ConditionalOnProperty(prefix = "citrus.security", name = "stateless", havingValue = "true", matchIfMissing = true)
     @EnableWebSecurity
     @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-    public static class StatelessSecurityConfiguration extends WebSecurityConfigurerAdapter {
+    private static class StatelessSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         private final AuthenticationEntryPoint authenticationEntryPoint;
 

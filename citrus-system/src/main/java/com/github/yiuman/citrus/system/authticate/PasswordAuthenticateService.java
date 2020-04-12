@@ -41,14 +41,14 @@ public class PasswordAuthenticateService implements AuthenticateService {
 
     @Override
     public Authentication authenticate(Object object) {
-        LoginEntity loginEntity = (LoginEntity) supportEntityType().cast(object);
+        PasswordLoginEntity passwordLoginEntity = (PasswordLoginEntity) supportEntityType().cast(object);
 
         HttpServletRequest request = WebUtils.getRequest();
         verificationProcessor.validate(request);
 
-        User user = userService.getUserByLoginId(loginEntity.getLoginId())
+        User user = userService.getUserByLoginId(passwordLoginEntity.getLoginId())
                 .orElseThrow(() -> new UsernameNotFoundException("找不到用户"));
-        if (!passwordEncoder.matches(loginEntity.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(passwordLoginEntity.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("用户名或密码错误");
         }
 
@@ -73,7 +73,7 @@ public class PasswordAuthenticateService implements AuthenticateService {
 
     @Override
     public Class<?> supportEntityType() {
-        return LoginEntity.class;
+        return PasswordLoginEntity.class;
     }
 
 }

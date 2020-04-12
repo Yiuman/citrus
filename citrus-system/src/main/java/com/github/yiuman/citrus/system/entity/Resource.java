@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
 public class Resource extends AbstractAuditingEntity{
 
     @TableId(type = IdType.ASSIGN_UUID)
-    private String resourceId;
+    private Long resourceId;
 
     /**
      * 资源名

@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
  */
 @Data
 @NoArgsConstructor
-public class LoginEntity {
+public class PasswordLoginEntity {
 
     @NotBlank
     private String loginId;

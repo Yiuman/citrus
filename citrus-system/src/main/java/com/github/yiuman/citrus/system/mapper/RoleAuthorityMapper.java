@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.system.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.system.entity.RoleAuthority;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -9,6 +9,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @date 2020/3/31
  */
 @Mapper
-public interface RoleAuthorityMapper extends BaseMapper<RoleAuthority> {
+public interface RoleAuthorityMapper extends CrudMapper<RoleAuthority> {
 
 }

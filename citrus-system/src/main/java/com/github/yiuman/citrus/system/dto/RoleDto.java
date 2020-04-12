@@ -6,6 +6,8 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
+ * 角色实体传输类
+ *
  * @author yiuman
  * @date 2020/4/6
  */

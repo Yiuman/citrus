@@ -20,6 +20,9 @@ public class User extends AbstractAuditingEntity  {
     @TableId(type = IdType.AUTO)
     private Long userId;
 
+    /**
+     * 登录ID
+     */
     private String loginId;
 
     private String password;

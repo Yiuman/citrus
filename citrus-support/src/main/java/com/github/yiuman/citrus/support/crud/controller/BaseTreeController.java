@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.support.crud.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.crud.service.TreeService;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
@@ -14,6 +15,8 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
+ * 基础树结构控制器
+ *
  * @author yiuman
  * @date 2020/4/9
  */
@@ -34,8 +37,9 @@ public abstract class BaseTreeController<S extends CrudService<T, K> & TreeServi
      */
     @GetMapping("/tree")
     public ResponseEntity<T> load(HttpServletRequest request) throws Exception {
-        if (paramClass != null) {
-            return ResponseEntity.ok(service.treeQuery(queryWrapper(request)));
+        QueryWrapper<T> queryWrapper = queryWrapper(request);
+        if (queryWrapper != null) {
+            return ResponseEntity.ok(service.treeQuery(queryWrapper));
         }
         return ResponseEntity.ok(service.load(isLazy));
     }

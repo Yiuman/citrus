@@ -55,6 +55,15 @@ public abstract class BaseDtoCrudService<M extends BaseMapper<E>, E, D, K>
     protected void beforeInsertEntity(D dto, E entity) {
     }
 
+    /**
+     * 保存后的操作
+     *
+     * @param dto    传输类
+     * @param entity 实体
+     */
+    protected void afterSave(D dto, E entity) {
+    }
+
     @Override
     public void delete(K key) throws Exception {
         removeById((Serializable) key);

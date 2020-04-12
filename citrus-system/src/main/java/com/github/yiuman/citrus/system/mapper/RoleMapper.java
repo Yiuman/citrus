@@ -15,5 +15,5 @@ public interface RoleMapper extends BaseMapper<Role> {
 
     @Select("select count(1) from UserRole ur where ur.roleId in (select ra.roleId from RoleAuthority ra where ra.authorityId in " +
             "(select ar.authorityId from sys_authority_resource ar where ar.resourceId = ${resourceId}))")
-    boolean hasPermission(@Param("userId")Long userId,@Param("resourceId") String resourceId);
+    boolean hasPermission(@Param("userId")Long userId,@Param("resourceId") Long resourceId);
 }

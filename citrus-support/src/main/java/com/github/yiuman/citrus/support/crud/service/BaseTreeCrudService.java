@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import com.github.yiuman.citrus.support.crud.mapper.BaseTreeMapper;
+import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
 import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.util.CollectionUtils;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * @author yiuman
  * @date 2020/4/7
  */
-public abstract class BaseTreeCrudService<M extends BaseTreeMapper<E>, E extends Tree<K>, K>
+public abstract class BaseTreeCrudService<M extends TreeMapper<E>, E extends Tree<K>, K>
         extends BaseCrudService<M, E, K>
         implements TreeService<E, K> {
 

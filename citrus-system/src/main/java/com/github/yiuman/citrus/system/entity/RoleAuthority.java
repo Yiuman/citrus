@@ -13,12 +13,16 @@ import lombok.Data;
 @TableName("sys_role_auth")
 public class RoleAuthority {
 
-    private Integer roleId;
+    private Long roleId;
 
     private Role role;
 
-    private Integer authorityId;
+    private Long authorityId;
 
     private Authority authority;
 
+    public RoleAuthority(Long roleId, Long authorityId) {
+        this.roleId = roleId;
+        this.authorityId = authorityId;
+    }
 }

@@ -32,6 +32,9 @@ public class UserDto {
 
     private List<Long> roleIds;
 
-    private Long organId;
+    /**
+     * 所属组织ID
+     */
+    private List<Long> organIds;
 
 }
