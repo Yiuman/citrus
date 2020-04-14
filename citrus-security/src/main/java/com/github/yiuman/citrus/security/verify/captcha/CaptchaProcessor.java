@@ -26,7 +26,6 @@ public class CaptchaProcessor extends AbstractStringVerificationProcessor<Captch
         return new CaptchaGenerator(verifyProperties).generate(httpServletRequest);
     }
 
-
     @Override
     public void send(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
         Captcha captcha = generate(httpServletRequest);

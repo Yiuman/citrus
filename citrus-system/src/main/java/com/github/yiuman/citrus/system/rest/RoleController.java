@@ -1,8 +1,8 @@
-package com.github.yiuman.citrus.system.controller;
+package com.github.yiuman.citrus.system.rest;
 
 import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.dto.RoleQuery;
-import com.github.yiuman.citrus.support.crud.controller.BaseCrudController;
+import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.system.service.RoleService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

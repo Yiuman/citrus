@@ -1,7 +1,5 @@
 package com.github.yiuman.citrus.security.jwt;
 
-import org.springframework.stereotype.Component;
-
 /**
  * Jwt相关配置
  *
@@ -34,12 +32,12 @@ public class JwtProperties {
     /**
      * 过期时间
      */
-    private long tokenValidateInSeconds = 604800L;
+    private long tokenValidateInSeconds = JwtConstants.VALIDATE_IN_SECONDS;
 
     /**
      * 记住我的时间
      */
-    private long rememberMeValidateInSeconds = 2592000L;
+    private long rememberMeValidateInSeconds = JwtConstants.REMEMBER_ME_VALIDATE_IN_SECONDS;
 
     public JwtProperties() {
     }
@@ -92,6 +90,9 @@ public class JwtProperties {
         this.rememberMeValidateInSeconds = rememberMeValidateInSeconds;
     }
 
+    /**
+     * JWT配置默认常量
+     */
     interface JwtConstants {
 
         String TOKEN_HEADER = "Authorization";
@@ -102,7 +103,7 @@ public class JwtProperties {
 
         String IDENTITY_KEY = "Identity";
 
-        Long VALIDATE_IN_SECONDS =604800L;
+        Long VALIDATE_IN_SECONDS = 604800L;
 
         Long REMEMBER_ME_VALIDATE_IN_SECONDS = 2592000L;
     }

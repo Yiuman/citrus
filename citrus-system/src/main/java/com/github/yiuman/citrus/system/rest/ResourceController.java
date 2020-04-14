@@ -1,7 +1,7 @@
-package com.github.yiuman.citrus.system.controller;
+package com.github.yiuman.citrus.system.rest;
 
 import com.github.yiuman.citrus.system.dto.ResourceDto;
-import com.github.yiuman.citrus.support.crud.controller.BaseCrudController;
+import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.system.dto.ResourceQuery;
 import com.github.yiuman.citrus.system.service.ResourceService;
 import org.springframework.web.bind.annotation.RequestMapping;

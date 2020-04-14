@@ -1,10 +1,10 @@
-package com.github.yiuman.citrus.system.controller;
+package com.github.yiuman.citrus.system.rest;
 
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.dto.UserQuery;
 import com.github.yiuman.citrus.system.hook.HasLoginHook;
 import com.github.yiuman.citrus.security.authorize.Authorize;
-import com.github.yiuman.citrus.support.crud.controller.BaseCrudController;
+import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.system.service.UserService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

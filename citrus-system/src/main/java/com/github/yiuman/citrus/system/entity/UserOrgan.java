@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**

@@ -1,8 +1,9 @@
-package com.github.yiuman.citrus.support.crud.controller;
+package com.github.yiuman.citrus.support.crud.rest;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yiuman.citrus.support.crud.CrudReadDataListener;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
@@ -59,7 +60,7 @@ public abstract class BaseCrudController<S extends CrudService<T, K>,T, K> {
         this.paramClass = paramClass;
     }
 
-    public CrudService<T, K> getService() {
+    public S getService() {
         return this.service;
     }
 
@@ -117,7 +118,7 @@ public abstract class BaseCrudController<S extends CrudService<T, K>,T, K> {
             return null;
         }
 
-        QueryWrapper<T> wrapper = new QueryWrapper<>();
+        QueryWrapper<T> wrapper = Wrappers.query();
         Object params = WebUtils.requestDataBind(paramClass, request);
         //检验参数
         ValidateUtils.validateEntityAndThrows(params, result -> new ValidateException(result.getMessage()));

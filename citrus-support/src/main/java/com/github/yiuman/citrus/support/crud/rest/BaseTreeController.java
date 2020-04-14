@@ -1,4 +1,4 @@
-package com.github.yiuman.citrus.support.crud.controller;
+package com.github.yiuman.citrus.support.crud.rest;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.yiuman.citrus.support.crud.service.CrudService;

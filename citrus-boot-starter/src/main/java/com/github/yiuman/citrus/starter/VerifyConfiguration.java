@@ -5,6 +5,7 @@ import com.github.yiuman.citrus.security.verify.RedisVerificationRepository;
 import com.github.yiuman.citrus.security.verify.SessionVerificationRepository;
 import com.github.yiuman.citrus.security.verify.VerificationProcessor;
 import com.github.yiuman.citrus.security.verify.VerificationRepository;
+import com.github.yiuman.citrus.security.verify.captcha.Base64CaptchaProcessor;
 import com.github.yiuman.citrus.security.verify.captcha.Captcha;
 import com.github.yiuman.citrus.security.verify.captcha.CaptchaProcessor;
 import com.github.yiuman.citrus.security.verify.sms.SmsVerifyCode;
@@ -52,6 +53,11 @@ public class VerifyConfiguration {
     public VerificationProcessor<Captcha> captchaProcessor() {
         return new CaptchaProcessor(redisRepository(), citrusProperties.getVerify());
     }
+
+//    @Bean("base64Captcha")
+//    public VerificationProcessor<Captcha> base64CaptchaProcessor() {
+//        return new Base64CaptchaProcessor(redisRepository(), citrusProperties.getVerify());
+//    }
 
 
 }

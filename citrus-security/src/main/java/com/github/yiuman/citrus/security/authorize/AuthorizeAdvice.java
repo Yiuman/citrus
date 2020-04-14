@@ -39,7 +39,7 @@ public class AuthorizeAdvice {
     /**
      * 拦截BaseCrudController中的所有方法
      */
-    @Pointcut("execution(* com.github.yiuman.citrus.support.crud.controller.*.*(..))")
+    @Pointcut("execution(* com.github.yiuman.citrus.support.crud.rest.*.*(..))")
     public void crudPointCut() {
 
     }

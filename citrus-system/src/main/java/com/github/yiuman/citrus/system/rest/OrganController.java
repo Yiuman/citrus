@@ -1,6 +1,6 @@
-package com.github.yiuman.citrus.system.controller;
+package com.github.yiuman.citrus.system.rest;
 
-import com.github.yiuman.citrus.support.crud.controller.BaseTreeController;
+import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.system.dto.OrganQuery;
 import com.github.yiuman.citrus.system.entity.Organization;
@@ -28,7 +28,6 @@ public class OrganController extends BaseTreeController<OrganService, Organizati
 
     @GetMapping("/hello")
     public ResponseEntity<List<Organization>> hello() throws Exception {
-        OrganService service = (OrganService) getService();
-        return ResponseEntity.ok(service.getList());
+        return ResponseEntity.ok(getService().getList());
     }
 }
