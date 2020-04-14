@@ -36,6 +36,11 @@ public abstract class BaseDtoCrudService<M extends BaseMapper<E>, E, D, K>
     }
 
     @Override
+    protected Class<K> currentKeyClass() {
+        return (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 3);
+    }
+
+    @Override
     public K saveEntity(D dto) throws Exception {
         beforeSave(dto);
         E realEntity = (E) entityClass.newInstance();

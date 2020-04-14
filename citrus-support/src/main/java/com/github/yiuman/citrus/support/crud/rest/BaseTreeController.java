@@ -20,8 +20,8 @@ import java.util.List;
  * @author yiuman
  * @date 2020/4/9
  */
-public abstract class BaseTreeController<S extends CrudService<T, K> & TreeService<T, K>, T extends Tree<K>, K>
-        extends BaseCrudController<S, T, K> {
+public abstract class BaseTreeController<T extends Tree<K>, K>
+        extends BaseCrudController<T, K> {
 
     private boolean isLazy = true;
 
@@ -32,6 +32,13 @@ public abstract class BaseTreeController<S extends CrudService<T, K> & TreeServi
         isLazy = lazy;
     }
 
+    protected abstract <S extends CrudService<T, K> & TreeService<T, K>> S getCrudService();
+
+    @Override
+    protected  CrudService<T, K> getService() {
+        return getCrudService();
+    }
+
     /**
      * 加载树,支持查询
      */
@@ -39,9 +46,9 @@ public abstract class BaseTreeController<S extends CrudService<T, K> & TreeServi
     public ResponseEntity<T> load(HttpServletRequest request) throws Exception {
         QueryWrapper<T> queryWrapper = queryWrapper(request);
         if (queryWrapper != null) {
-            return ResponseEntity.ok(service.treeQuery(queryWrapper));
+            return ResponseEntity.ok(getCrudService().treeQuery(queryWrapper));
         }
-        return ResponseEntity.ok(service.load(isLazy));
+        return ResponseEntity.ok(getCrudService().load(isLazy));
     }
 
     /**
@@ -51,7 +58,7 @@ public abstract class BaseTreeController<S extends CrudService<T, K> & TreeServi
      */
     @GetMapping("/tree/{parentKey}")
     public ResponseEntity<List<T>> loadByParentKey(@PathVariable @NotNull K parentKey) {
-        return ResponseEntity.ok(service.loadByParent(parentKey));
+        return ResponseEntity.ok(getCrudService().loadByParent(parentKey));
     }
 
     /**
@@ -62,7 +69,7 @@ public abstract class BaseTreeController<S extends CrudService<T, K> & TreeServi
      */
     @PutMapping("/tree/move")
     public ResponseEntity<Void> move(@NotNull K currentId, @NotNull K moveToId) throws Exception {
-        service.move(service.get(currentId), moveToId);
+        getCrudService().move(getCrudService().get(currentId), moveToId);
         return ResponseEntity.ok();
     }
 
@@ -71,7 +78,7 @@ public abstract class BaseTreeController<S extends CrudService<T, K> & TreeServi
      */
     @PostMapping("/tree/init")
     public ResponseEntity<Void> reInit() throws Exception {
-        service.reInit();
+        getCrudService().reInit();
         return ResponseEntity.ok();
     }
 

@@ -6,16 +6,15 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yiuman.citrus.support.crud.CrudReadDataListener;
-import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.crud.QueryParam;
 import com.github.yiuman.citrus.support.crud.QueryParamHandler;
+import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.exception.ValidateException;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
 import com.github.yiuman.citrus.support.utils.ValidateUtils;
 import com.github.yiuman.citrus.support.utils.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,11 +38,7 @@ import java.util.Optional;
  * @date 2020/4/4
  */
 @SuppressWarnings("unchecked")
-public abstract class BaseCrudController<S extends CrudService<T, K>,T, K> {
-
-    @Autowired
-    @NotNull
-    protected S service;
+public abstract class BaseCrudController<T, K> {
 
     protected Class<?> paramClass;
 
@@ -60,32 +55,30 @@ public abstract class BaseCrudController<S extends CrudService<T, K>,T, K> {
         this.paramClass = paramClass;
     }
 
-    public S getService() {
-        return this.service;
-    }
+    protected abstract CrudService<T, K>  getService();
 
     @GetMapping
     public ResponseEntity<Page<T>> list(HttpServletRequest request) throws Exception {
         //获取pageNo
         Page<T> page = new Page<>();
         WebUtils.requestDataBind(page, request);
-        return ResponseEntity.ok(service.selectPage(page, queryWrapper(request)));
+        return ResponseEntity.ok(getService().selectPage(page, queryWrapper(request)));
     }
 
     @PostMapping
     public ResponseEntity<K> save(@Validated T entity) throws Exception {
-        return ResponseEntity.ok(service.saveEntity(entity));
+        return ResponseEntity.ok(getService().saveEntity(entity));
     }
 
     @DeleteMapping("/{key}")
     public ResponseEntity<Void> delete(@PathVariable @NotNull K key) throws Exception {
-        service.delete(key);
+        getService().delete(key);
         return ResponseEntity.ok();
     }
 
     @GetMapping("/{key}")
     public ResponseEntity<T> get(@PathVariable K key) throws Exception {
-        return ResponseEntity.ok(service.get(key));
+        return ResponseEntity.ok(getService().get(key));
     }
 
     /**
@@ -96,7 +89,7 @@ public abstract class BaseCrudController<S extends CrudService<T, K>,T, K> {
         // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
         String fileName = Optional.ofNullable(WebUtils.getRequestParam("fileName"))
                 .orElse(String.valueOf(System.currentTimeMillis()));
-        WebUtils.exportExcel(response, modelClass, service.getList(queryWrapper(request)), fileName);
+        WebUtils.exportExcel(response, modelClass, getService().getList(queryWrapper(request)), fileName);
     }
 
     /**
@@ -105,7 +98,7 @@ public abstract class BaseCrudController<S extends CrudService<T, K>,T, K> {
     @GetMapping(value = "/import")
     public void imp(MultipartFile file) throws Exception {
         //CrudReadDataListener不能被spring管理，要每次读取excel都要new,然后里面用到spring可以构造方法传进去
-        WebUtils.importExcel(file, modelClass, new CrudReadDataListener<>(service));
+        WebUtils.importExcel(file, modelClass, new CrudReadDataListener<>(getService()));
     }
 
     /**

@@ -15,10 +15,17 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/rest/auth")
-public class AuthorityController extends BaseCrudController<AuthorityService, AuthorityDto, Long> {
+public class AuthorityController extends BaseCrudController<AuthorityDto, Long> {
 
-    public AuthorityController() {
+    private final AuthorityService authorityService;
+
+    public AuthorityController(AuthorityService authorityService) {
         setParamClass(AuthorityQuery.class);
+        this.authorityService = authorityService;
     }
 
+    @Override
+    protected AuthorityService getService() {
+        return authorityService;
+    }
 }

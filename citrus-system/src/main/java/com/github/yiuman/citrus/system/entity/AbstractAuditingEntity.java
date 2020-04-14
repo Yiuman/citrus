@@ -19,14 +19,13 @@ public class AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @CreatedBy
-    @TableField("created_by")
+    @TableField(value = "created_by",fill = FieldFill.INSERT)
     private Long createdBy;
 
     @TableField(value = "created_time",fill = FieldFill.INSERT)
     private LocalDateTime createdTime = LocalDateTime.now();
 
-    @TableField("last_modified_by")
+    @TableField(value="last_modified_by",fill = FieldFill.INSERT_UPDATE)
     private Long lastModifiedBy;
 
     @TableField(value = "last_modified_time",fill = FieldFill.INSERT_UPDATE)

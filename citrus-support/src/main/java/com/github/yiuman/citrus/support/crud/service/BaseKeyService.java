@@ -27,7 +27,7 @@ public abstract class BaseKeyService<M extends BaseMapper<E>, E, K> extends Serv
 
     protected final Class<K> keyClass = currentKeyClass();
 
-    private Class<K> currentKeyClass() {
+    protected Class<K> currentKeyClass() {
         return (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 2);
     }
 

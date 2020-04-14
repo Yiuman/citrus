@@ -1,8 +1,8 @@
 package com.github.yiuman.citrus.system.rest;
 
+import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.dto.RoleQuery;
-import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.system.service.RoleService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,11 +15,17 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/rest/roles")
-public class RoleController extends BaseCrudController<RoleService,RoleDto, Long> {
+public class RoleController extends BaseCrudController<RoleDto, Long> {
 
-    public RoleController() {
+    private final RoleService roleService;
+
+    public RoleController(RoleService roleService) {
+        this.roleService = roleService;
         setParamClass(RoleQuery.class);
     }
 
-
+    @Override
+    protected RoleService getService() {
+        return roleService;
+    }
 }
