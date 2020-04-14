@@ -4,7 +4,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * Spring相关工具
@@ -31,7 +30,7 @@ public class SpringUtils implements ApplicationContextAware {
         return context;
     }
 
-    public static  <T> T getBean(Class<T> tClass) {
+    public static <T> T getBean(Class<T> tClass) {
         return context.getBean(tClass);
     }
 

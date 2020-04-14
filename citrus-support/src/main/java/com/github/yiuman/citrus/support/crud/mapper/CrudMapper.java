@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -31,12 +32,7 @@ public interface CrudMapper<T> extends BaseMapper<T> {
             String keyProperty = tableInfo.getKeyProperty();
             Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
             Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
-            if (StringUtils.checkValNull(idVal) || Objects.isNull(selectById((Serializable) idVal))) {
-                insert(entity);
-            } else {
-                updateById(entity);
-            }
-            return true;
+            return StringUtils.checkValNull(idVal) || Objects.isNull(selectById((Serializable) idVal)) ? SqlHelper.retBool(insert(entity)) : SqlHelper.retBool(updateById(entity));
         }
         return false;
     }
