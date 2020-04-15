@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.system.service;
 
-import com.github.yiuman.citrus.support.crud.service.BaseDtoCrudService;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.entity.Role;
 import com.github.yiuman.citrus.system.entity.RoleAuthority;
@@ -18,25 +19,34 @@ import java.util.List;
  * @date 2020/3/31
  */
 @Service
-public class RoleService extends BaseDtoCrudService<RoleMapper, Role, RoleDto, Long> {
+public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
+
+    private final RoleMapper roleMapper;
 
     private final RoleAuthorityMapper roleAuthorityMapper;
 
-    public RoleService(RoleAuthorityMapper roleAuthorityMapper) {
+    public RoleService(RoleMapper roleMapper, RoleAuthorityMapper roleAuthorityMapper) {
+        this.roleMapper = roleMapper;
         this.roleAuthorityMapper = roleAuthorityMapper;
     }
 
     @Override
-    public void afterSave(RoleDto entity) throws Exception {
+    public void afterSave(RoleDto entity) {
         List<Long> authIds = entity.getAuthIds();
-        if(!CollectionUtils.isEmpty(authIds)){
-            authIds.forEach(authId->roleAuthorityMapper.saveEntity(new RoleAuthority(entity.getRoleId(),authId)));
+        if (!CollectionUtils.isEmpty(authIds)) {
+            authIds.forEach(authId -> roleAuthorityMapper.saveEntity(new RoleAuthority(entity.getRoleId(), authId)));
         }
 
     }
 
-    public boolean hasPermission(Long userId, Long resourceId) {
-        return getBaseMapper().hasPermission(userId, resourceId);
+    @Override
+    protected BaseMapper<Role> getBaseMapper() {
+        return roleMapper;
     }
+
+    public boolean hasPermission(Long userId, Long resourceId) {
+        return roleMapper.hasPermission(userId, resourceId);
+    }
+
 
 }

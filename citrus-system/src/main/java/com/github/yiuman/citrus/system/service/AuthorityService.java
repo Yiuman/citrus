@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.system.service;
 
-import com.github.yiuman.citrus.support.crud.service.BaseDtoCrudService;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.AuthorityDto;
 import com.github.yiuman.citrus.system.entity.Authority;
 import com.github.yiuman.citrus.system.entity.AuthorityResource;
@@ -18,21 +19,29 @@ import java.util.Set;
  * @date 2020/4/11
  */
 @Service
-public class AuthorityService extends BaseDtoCrudService<AuthorityMapper, Authority, AuthorityDto, Long> {
+public class AuthorityService extends BaseDtoService<Authority, Long, AuthorityDto> {
+
+    private final AuthorityMapper authorityMapper;
 
     private final AuthorityResourceMapper authorityResourceMapper;
 
-    public AuthorityService(AuthorityResourceMapper authorityResourceMapper) {
+    public AuthorityService(AuthorityMapper authorityMapper, AuthorityResourceMapper authorityResourceMapper) {
+        this.authorityMapper = authorityMapper;
         this.authorityResourceMapper = authorityResourceMapper;
     }
 
     @Override
-    public void afterSave(AuthorityDto entity) throws Exception {
+    public void afterSave(AuthorityDto entity) {
         //保存资源与权限的关系
         Set<Long> resourceIds = entity.getResourceIds();
         if (!CollectionUtils.isEmpty(resourceIds)) {
             resourceIds.forEach(resourceId -> authorityResourceMapper.saveEntity(new AuthorityResource(entity.getAuthorityId(), resourceId)));
         }
 
+    }
+
+    @Override
+    protected BaseMapper<Authority> getBaseMapper() {
+        return authorityMapper;
     }
 }

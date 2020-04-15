@@ -1,8 +1,9 @@
 package com.github.yiuman.citrus.system.service;
 
+import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
+import com.github.yiuman.citrus.support.crud.service.BaseTreeService;
 import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.mapper.OrganMapper;
-import com.github.yiuman.citrus.support.crud.service.BaseTreeCrudService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,6 +11,16 @@ import org.springframework.stereotype.Component;
  * @date 2020/4/6
  */
 @Component
-public class OrganService extends BaseTreeCrudService<OrganMapper, Organization, Long> {
+public class OrganService extends BaseTreeService<Organization, Long> {
 
+    private final OrganMapper organMapper;
+
+    public OrganService(OrganMapper organMapper) {
+        this.organMapper = organMapper;
+    }
+
+    @Override
+    protected TreeMapper<Organization> getTreeMapper() {
+        return organMapper;
+    }
 }

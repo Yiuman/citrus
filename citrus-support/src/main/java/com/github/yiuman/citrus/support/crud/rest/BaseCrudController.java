@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -38,7 +39,7 @@ import java.util.Optional;
  * @date 2020/4/4
  */
 @SuppressWarnings("unchecked")
-public abstract class BaseCrudController<T, K> {
+public abstract class BaseCrudController<T, K extends Serializable> {
 
     protected Class<?> paramClass;
 
@@ -55,24 +56,24 @@ public abstract class BaseCrudController<T, K> {
         this.paramClass = paramClass;
     }
 
-    protected abstract CrudService<T, K>  getService();
+    protected abstract CrudService<T, K> getService();
 
     @GetMapping
-    public ResponseEntity<Page<T>> list(HttpServletRequest request) throws Exception {
+    public ResponseEntity<Page<T>> page(HttpServletRequest request) throws Exception {
         //获取pageNo
         Page<T> page = new Page<>();
         WebUtils.requestDataBind(page, request);
-        return ResponseEntity.ok(getService().selectPage(page, queryWrapper(request)));
+        return ResponseEntity.ok(getService().page(page, queryWrapper(request)));
     }
 
     @PostMapping
     public ResponseEntity<K> save(@Validated T entity) throws Exception {
-        return ResponseEntity.ok(getService().saveEntity(entity));
+        return ResponseEntity.ok(getService().save(entity));
     }
 
     @DeleteMapping("/{key}")
     public ResponseEntity<Void> delete(@PathVariable @NotNull K key) throws Exception {
-        getService().delete(key);
+        getService().remove(getService().get(key));
         return ResponseEntity.ok();
     }
 
@@ -89,7 +90,7 @@ public abstract class BaseCrudController<T, K> {
         // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
         String fileName = Optional.ofNullable(WebUtils.getRequestParam("fileName"))
                 .orElse(String.valueOf(System.currentTimeMillis()));
-        WebUtils.exportExcel(response, modelClass, getService().getList(queryWrapper(request)), fileName);
+        WebUtils.exportExcel(response, modelClass, getService().list(queryWrapper(request)), fileName);
     }
 
     /**

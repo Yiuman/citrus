@@ -1,6 +1,8 @@
 package com.github.yiuman.citrus.system.service;
 
-import com.github.yiuman.citrus.support.crud.service.BaseDtoCrudService;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
+import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.ResourceDto;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.mapper.ResourceMapper;
@@ -21,26 +23,28 @@ import java.util.Set;
  * @date 2020/3/31
  */
 @Service
-public class ResourceService extends BaseDtoCrudService<ResourceMapper, Resource, ResourceDto, Long> {
+public class ResourceService extends BaseDtoService<Resource, Long, ResourceDto> {
+
+    private final ResourceMapper resourceMapper;
 
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
-    public ResourceService(RequestMappingHandlerMapping requestMappingHandlerMapping) {
+    public ResourceService(ResourceMapper resourceMapper, RequestMappingHandlerMapping requestMappingHandlerMapping) {
+        this.resourceMapper = resourceMapper;
         this.requestMappingHandlerMapping = requestMappingHandlerMapping;
     }
 
     public Resource selectByUri(String requestURI, String method) {
-        return query().ge("path", requestURI).ge("operation", method).ge("type", 0).one();
+        return ChainWrappers.queryChain(resourceMapper).ge("path", requestURI).ge("operation", method).ge("type", 0).one();
     }
 
     /**
      * 保存实体后查看是否是继承BaseCrudController的 若是则自动生成增删改查的操作权限
      *
      * @param entity 当前实体
-     * @throws Exception 数据库操作异常
      */
     @Override
-    public void afterSave(ResourceDto entity) throws Exception {
+    public void afterSave(ResourceDto entity) {
         PathMatcher pathMatcher = requestMappingHandlerMapping.getPathMatcher();
         Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
         handlerMethods.forEach((key, value) -> {
@@ -50,5 +54,10 @@ public class ResourceService extends BaseDtoCrudService<ResourceMapper, Resource
 
             }
         });
+    }
+
+    @Override
+    protected BaseMapper<Resource> getBaseMapper() {
+        return resourceMapper;
     }
 }

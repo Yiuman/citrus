@@ -5,6 +5,7 @@ import com.alibaba.excel.event.AnalysisEventListener;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  * @date 2020/4/8
  */
 @Slf4j
-public class CrudReadDataListener<T, K> extends AnalysisEventListener<T> {
+public class CrudReadDataListener<T, K extends Serializable> extends AnalysisEventListener<T> {
 
     private final static int BATCH_COUNT = 3000;
 

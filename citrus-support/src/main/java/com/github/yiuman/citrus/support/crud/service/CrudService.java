@@ -1,80 +1,60 @@
 package com.github.yiuman.citrus.support.crud.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collection;
-import java.util.List;
+import java.io.Serializable;
 
 /**
- * 基础CRUD服务类
+ * 实体增删改查Service
  *
  * @author yiuman
- * @date 2020/4/4
+ * @date 2020/4/15
  */
-public interface CrudService<T, K> {
+public interface CrudService<E, K extends Serializable> extends EditableService<E, K>, KeyBasedService<E, K> {
 
     /**
-     * 保存前做的操作
-     *
-     * @param entity 当前实体
-     */
-    default void beforeSave(T entity) throws Exception {
-    }
-
-    /**
-     * 保存
+     * 保存前的操作
      *
      * @param entity 实体
-     * @return 主键
+     * @return 若为true则继续执行下面的操作，否则不执行
      */
-    @Transactional
-    K saveEntity(T entity) throws Exception;
-
-    /**
-     * 保存后做的操作
-     *
-     * @param entity 当前实体
-     */
-    default void afterSave(T entity) throws Exception {
+    default boolean beforeSave(E entity) throws Exception {
+        return true;
     }
 
     /**
-     * 删除
+     * 保存后的操作
      *
-     * @param key 主键
+     * @param entity 实体
      */
-    @Transactional
-    void delete(K key) throws Exception;
+    default void afterSave(E entity) {
+
+    }
 
     /**
-     * 根据主键查询
+     * 更新前的操作
      *
-     * @param key 主键
-     * @return 实体
+     * @param entity 实体
+     * @return 若为true则继续执行下面的操作，否则不执行
      */
-    T get(K key) throws Exception;
+    default boolean beforeUpdate(E entity) {
+        return true;
+    }
 
     /**
-     * 列表
+     * 更新后的操作
      *
-     * @return 实体列表
+     * @param entity 实体
      */
-    List<T> getList() throws Exception;
+    default void afterUpdate(E entity) {
 
-    List<T> getList(Wrapper<T> queryWrapper) throws Exception;
+    }
 
     /**
-     * 根据 entity 条件，查询全部记录（并翻页）
+     * 删除前的操作
      *
-     * @param page         分页查询条件（可以为 RowBounds.DEFAULT）
-     * @param queryWrapper 实体对象封装操作类（可以为 null）
+     * @param entity 实体
+     * @return 若为true则继续执行下面的操作，否则不执行
      */
-    <P extends IPage<T>> P selectPage(P page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
-
-    void batchSave(Collection<T> entityList) throws Exception;
-
+    default boolean beforeRemove(E entity) {
+        return true;
+    }
 }

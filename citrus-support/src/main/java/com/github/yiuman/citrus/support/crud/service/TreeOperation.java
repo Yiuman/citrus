@@ -3,15 +3,16 @@ package com.github.yiuman.citrus.support.crud.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.github.yiuman.citrus.support.model.Tree;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
- * 属性操作逻辑类
+ * 属性操作接口
  *
  * @author yiuman
- * @date 2020/4/7
+ * @date 2020/4/15
  */
-public interface TreeService<T extends Tree<K>, K> {
+public interface TreeOperation<T extends Tree<K>, K extends Serializable> {
 
     /**
      * 根节点
@@ -79,19 +80,9 @@ public interface TreeService<T extends Tree<K>, K> {
     List<T> loadByParent(K parentKey);
 
     /**
-     * 插入当前节点
-     */
-    void insert(T current) throws Exception;
-
-    /**
      * 移动
      */
     void move(T current, K moveTo) throws Exception;
-
-    /**
-     * 删除
-     */
-    void delete(T current) throws Exception;
 
     /**
      * 查询某个节点的后代
@@ -131,5 +122,4 @@ public interface TreeService<T extends Tree<K>, K> {
      * @return 兄弟节点
      */
     List<T> siblings(T current);
-
 }

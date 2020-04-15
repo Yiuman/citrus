@@ -1,7 +1,8 @@
 package com.github.yiuman.citrus.system.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.yiuman.citrus.support.crud.service.BaseDtoCrudService;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.entity.UserOrgan;
@@ -24,7 +25,9 @@ import java.util.stream.Collectors;
  * @date 2020/3/31
  */
 @Service
-public class UserService extends BaseDtoCrudService<UserMapper, User, UserDto, Long> {
+public class UserService extends BaseDtoService<User, Long, UserDto> {
+
+    private final UserMapper userMapper;
 
     /**
      * 用户角色mapper
@@ -36,7 +39,8 @@ public class UserService extends BaseDtoCrudService<UserMapper, User, UserDto, L
      */
     private final UserOrganMapper userOrganMapper;
 
-    public UserService(UserRoleMapper userRoleMapper, UserOrganMapper userOrganMapper) {
+    public UserService(UserMapper userMapper, UserRoleMapper userRoleMapper, UserOrganMapper userOrganMapper) {
+        this.userMapper = userMapper;
         this.userRoleMapper = userRoleMapper;
         this.userOrganMapper = userOrganMapper;
     }
@@ -66,11 +70,11 @@ public class UserService extends BaseDtoCrudService<UserMapper, User, UserDto, L
     }
 
     public User getUserByUUID(String uuid) {
-        return getBaseMapper().getUserByUUID(uuid);
+        return userMapper.getUserByUUID(uuid);
     }
 
     public Optional<User> getUserByLoginId(String loginId) {
-        return Optional.ofNullable(getBaseMapper().getUserByLoginId(loginId));
+        return Optional.ofNullable(userMapper.getUserByLoginId(loginId));
     }
 
     /**
@@ -94,5 +98,10 @@ public class UserService extends BaseDtoCrudService<UserMapper, User, UserDto, L
         }
 
         return Optional.ofNullable(user);
+    }
+
+    @Override
+    protected BaseMapper<User> getBaseMapper() {
+        return userMapper;
     }
 }

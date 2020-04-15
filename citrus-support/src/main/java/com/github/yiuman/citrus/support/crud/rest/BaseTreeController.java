@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.support.crud.rest;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
+import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
 import com.github.yiuman.citrus.support.crud.service.TreeService;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.Tree;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -20,7 +22,7 @@ import java.util.List;
  * @author yiuman
  * @date 2020/4/9
  */
-public abstract class BaseTreeController<T extends Tree<K>, K>
+public abstract class BaseTreeController<T extends Tree<K>, K extends Serializable>
         extends BaseCrudController<T, K> {
 
     private boolean isLazy = true;
@@ -32,10 +34,10 @@ public abstract class BaseTreeController<T extends Tree<K>, K>
         isLazy = lazy;
     }
 
-    protected abstract <S extends CrudService<T, K> & TreeService<T, K>> S getCrudService();
+    protected abstract TreeCrudService<T,K> getCrudService();
 
     @Override
-    protected  CrudService<T, K> getService() {
+    protected CrudService<T, K> getService() {
         return getCrudService();
     }
 
