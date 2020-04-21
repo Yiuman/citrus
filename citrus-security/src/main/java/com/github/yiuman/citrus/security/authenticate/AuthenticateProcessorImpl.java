@@ -1,9 +1,6 @@
 package com.github.yiuman.citrus.security.authenticate;
 
 import com.github.yiuman.citrus.security.jwt.JwtUtils;
-import com.github.yiuman.citrus.security.verify.VerificationException;
-import com.github.yiuman.citrus.support.utils.ValidateUtils;
-import com.github.yiuman.citrus.support.utils.WebUtils;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -59,20 +56,6 @@ public class AuthenticateProcessorImpl implements AuthenticateProcessor {
                         new AuthenticationServiceException(String.format("Cannot found Authenticate's model of %s", mode)));
     }
 
-    @Override
-    public Object covertRequestModeEntity(Class<?> entityClass, HttpServletRequest request) {
-        //构造认证模式实体
-        try {
-            final Object supportEntity = WebUtils.requestDataBind(entityClass, request);
-            //校验实体参数
-            ValidateUtils.validateEntityAndThrows(supportEntity, result -> new VerificationException(result.getMessage()));
-            return supportEntity;
-        } catch (Exception e) {
-            log.error("covertRequestModeError", e);
-            return null;
-        }
-
-    }
 
     @Override
     public Authentication authenticate(HttpServletRequest request) throws AuthenticationException {
@@ -90,8 +73,7 @@ public class AuthenticateProcessorImpl implements AuthenticateProcessor {
             }
         }
 
-        AuthenticateService matchingService = findByMode(modeParameter);
-        return matchingService.authenticate(covertRequestModeEntity(matchingService.supportEntityType(), httpServletRequest));
+        return findByMode(modeParameter).authenticate(httpServletRequest);
 
     }
 

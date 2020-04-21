@@ -39,6 +39,15 @@ public final class ValidateUtils {
         return buildValidationResult(validateSet);
     }
 
+
+    /**
+     * 校验实体，返回实体所有属性的校验结果
+     */
+    public static <T> void defaultValidateEntity(T obj) {
+        //解析校验结果
+        validateEntityAndThrows(obj,result->new RuntimeException(result.getMessage()));
+    }
+
     /**
      * 校验指定实体的指定属性是否存在异常
      */

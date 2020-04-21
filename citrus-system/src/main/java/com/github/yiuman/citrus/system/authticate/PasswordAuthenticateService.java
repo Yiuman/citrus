@@ -1,11 +1,13 @@
 package com.github.yiuman.citrus.system.authticate;
 
-import com.github.yiuman.citrus.system.entity.User;
-import com.github.yiuman.citrus.system.service.UserService;
 import com.github.yiuman.citrus.security.authenticate.AuthenticateService;
 import com.github.yiuman.citrus.security.verify.VerificationProcessor;
 import com.github.yiuman.citrus.security.verify.captcha.Captcha;
 import com.github.yiuman.citrus.support.utils.WebUtils;
+import com.github.yiuman.citrus.system.entity.User;
+import com.github.yiuman.citrus.system.service.UserService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +25,7 @@ import java.util.Optional;
  * @date 2020/3/30
  */
 @Service
+@Slf4j
 public class PasswordAuthenticateService implements AuthenticateService {
 
     private static final String SUPPORT_MODE = "password";
@@ -40,11 +43,16 @@ public class PasswordAuthenticateService implements AuthenticateService {
     }
 
     @Override
-    public Authentication authenticate(Object object) {
-        PasswordLoginEntity passwordLoginEntity = (PasswordLoginEntity) supportEntityType().cast(object);
-
-        HttpServletRequest request = WebUtils.getRequest();
+    public Authentication authenticate(HttpServletRequest request) {
         verificationProcessor.validate(request);
+
+        PasswordLoginEntity passwordLoginEntity;
+        try {
+            passwordLoginEntity = WebUtils.convertRequestModeEntity(PasswordLoginEntity.class, request);
+        } catch (Exception e) {
+            //此处可能出现实体入参校验异常
+            throw new AuthenticationServiceException(e.getMessage());
+        }
 
         User user = userService.getUserByLoginId(passwordLoginEntity.getLoginId())
                 .orElseThrow(() -> new UsernameNotFoundException("找不到用户"));
@@ -54,6 +62,7 @@ public class PasswordAuthenticateService implements AuthenticateService {
 
         return new UsernamePasswordAuthenticationToken(user, user.getUuid());
     }
+
 
     @Override
     public Optional<Authentication> resolve(String token, String identity) {
@@ -69,11 +78,6 @@ public class PasswordAuthenticateService implements AuthenticateService {
     @Override
     public String supportMode() {
         return SUPPORT_MODE;
-    }
-
-    @Override
-    public Class<?> supportEntityType() {
-        return PasswordLoginEntity.class;
     }
 
 }

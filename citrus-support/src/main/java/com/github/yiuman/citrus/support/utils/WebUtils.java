@@ -57,6 +57,15 @@ public final class WebUtils {
         return getServletRequestAttributes().getAttribute(name, scope);
     }
 
+    public static  <T> T convertRequestModeEntity(Class<T> entityClass, HttpServletRequest request) throws Exception {
+        //构造认证模式实体
+        final T supportEntity = WebUtils.requestDataBind(entityClass, request);
+        //校验实体参数
+        ValidateUtils.defaultValidateEntity(supportEntity);
+        return supportEntity;
+
+    }
+
     public static <T> T requestDataBind(Class<T> objectClass, HttpServletRequest request) throws Exception {
         //构造实体
         T t;

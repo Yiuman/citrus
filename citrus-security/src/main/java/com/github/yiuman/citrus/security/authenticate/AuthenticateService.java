@@ -4,7 +4,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 /**
@@ -18,19 +17,19 @@ public interface AuthenticateService {
     /**
      * 通过登录模式对应的对象进行认证
      *
-     * @param authenticateModeObject 登录模式对应的对象 如：password模式对应LoginEntity;
+     * @param request 当前的请求
      * @return 认证对象
      * @throws AuthenticationException 认证异常
      */
-    Authentication authenticate(Object authenticateModeObject) throws AuthenticationException;
+    Authentication authenticate(HttpServletRequest request) throws AuthenticationException;
 
     /**
      * 解析当前请求的用户信息
      *
-     * @param token 令牌
+     * @param token    令牌
      * @param identity identity身份标识
      */
-    Optional<Authentication> resolve(String token ,String identity);
+    Optional<Authentication> resolve(String token, String identity);
 
 
     /**
@@ -44,8 +43,5 @@ public interface AuthenticateService {
      * 支持的认证模式，与请求的参数mode对应，表示支持的授权模式
      */
     String supportMode();
-
-
-    Class<?> supportEntityType();
 
 }
