@@ -3,7 +3,6 @@ package com.github.yiuman.citrus.support.crud.rest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
-import com.github.yiuman.citrus.support.crud.service.TreeService;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.Tree;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +33,7 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
         isLazy = lazy;
     }
 
-    protected abstract TreeCrudService<T,K> getCrudService();
+    protected abstract TreeCrudService<T, K> getCrudService();
 
     @Override
     protected CrudService<T, K> getService() {

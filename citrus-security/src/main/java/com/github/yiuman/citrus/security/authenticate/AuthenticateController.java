@@ -28,6 +28,7 @@ public class AuthenticateController {
 
     @PostMapping("#{citrusProperties.security.authenticateEndpoint}")
     public ResponseEntity<JwtToken> authenticate(HttpServletRequest request) {
+        //若是JSON请求，需要重新构造一个request
         return ResponseEntity.ok(new JwtToken(authenticateProcessor.token(request)));
     }
 

@@ -2,12 +2,15 @@ package com.github.yiuman.citrus.support.utils;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.read.listener.ReadListener;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.support.WebRequestDataBinder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.AbstractMultipartHttpServletRequest;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +30,9 @@ import java.util.Optional;
 public final class WebUtils {
 
     private static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
+
+    //忽略实体没有的字段
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
     private WebUtils() {
     }
@@ -51,16 +57,19 @@ public final class WebUtils {
         return getServletRequestAttributes().getAttribute(name, scope);
     }
 
-    public static <T> T requestDataBind(Class<T> objectClass, HttpServletRequest request) {
+    public static <T> T requestDataBind(Class<T> objectClass, HttpServletRequest request) throws Exception {
         //构造实体
-        final T object = BeanUtils.instantiateClass(objectClass);
-        WebRequestDataBinder dataBinder = new WebRequestDataBinder(object);
-        dataBinder.bind(new ServletWebRequest(request));
-        return object;
+        T t;
+        if (request instanceof AbstractMultipartHttpServletRequest) {
+            t = BeanUtils.instantiateClass(objectClass);
+            requestDataBind(t, request);
+        } else {
+            t = OBJECT_MAPPER.readValue(request.getInputStream(), objectClass);
+        }
+        return t;
     }
 
     public static <T> void requestDataBind(final T object, HttpServletRequest request) throws Exception {
-        //构造实体
         WebRequestDataBinder dataBinder = new WebRequestDataBinder(object);
         dataBinder.bind(new ServletWebRequest(request));
     }
@@ -79,6 +88,6 @@ public final class WebUtils {
     }
 
     public static <T> void importExcel(MultipartFile file, Class<T> clazz, ReadListener<T> readListener) throws IOException {
-        EasyExcel.read(file.getInputStream(),clazz,readListener);
+        EasyExcel.read(file.getInputStream(), clazz, readListener);
     }
 }

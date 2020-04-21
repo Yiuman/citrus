@@ -30,6 +30,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -72,8 +73,13 @@ public abstract class BaseCrudController<T, K extends Serializable> {
     }
 
     @DeleteMapping("/{key}")
-    public ResponseEntity<Void> delete(@PathVariable @NotNull K key) throws Exception {
-        getService().remove(getService().get(key));
+    public ResponseEntity<Boolean> delete(@PathVariable @NotNull K key) throws Exception {
+        return ResponseEntity.ok(getService().remove(getService().get(key)));
+    }
+
+    @PostMapping("/batch_delete")
+    public ResponseEntity<Void> batchDelete(@NotNull List<K> keys) throws Exception {
+        getService().batchRemove(keys);
         return ResponseEntity.ok();
     }
 
@@ -107,7 +113,7 @@ public abstract class BaseCrudController<T, K extends Serializable> {
      *
      * @return QueryWrapper
      */
-    protected QueryWrapper<T> queryWrapper(HttpServletRequest request) {
+    protected QueryWrapper<T> queryWrapper(HttpServletRequest request) throws Exception {
         if (paramClass == null) {
             return null;
         }

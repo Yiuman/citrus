@@ -31,7 +31,7 @@ public interface AuthenticateProcessor {
      * @param request     当前请求
      * @return 认证模式实体
      */
-    Object covertRequestModeEntity(Class<?> entityClass, HttpServletRequest request);
+    Object covertRequestModeEntity(Class<?> entityClass, HttpServletRequest request) ;
 
     /**
      * 根据请求转化成Security认证实体

@@ -5,12 +5,14 @@ import com.github.yiuman.citrus.security.verify.VerificationException;
 import com.github.yiuman.citrus.support.utils.ValidateUtils;
 import com.github.yiuman.citrus.support.utils.WebUtils;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.support.AbstractMultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -25,6 +27,7 @@ import java.util.Optional;
  * @date 2020/4/3
  */
 @Service
+@Slf4j
 public class AuthenticateProcessorImpl implements AuthenticateProcessor {
 
     /**
@@ -59,16 +62,36 @@ public class AuthenticateProcessorImpl implements AuthenticateProcessor {
     @Override
     public Object covertRequestModeEntity(Class<?> entityClass, HttpServletRequest request) {
         //构造认证模式实体
-        final Object supportEntity = WebUtils.requestDataBind(entityClass,request);
-        //校验实体参数
-        ValidateUtils.validateEntityAndThrows(supportEntity,result->new VerificationException(result.getMessage()));
-        return supportEntity;
+        try {
+            final Object supportEntity = WebUtils.requestDataBind(entityClass, request);
+            //校验实体参数
+            ValidateUtils.validateEntityAndThrows(supportEntity, result -> new VerificationException(result.getMessage()));
+            return supportEntity;
+        } catch (Exception e) {
+            log.error("covertRequestModeError", e);
+            return null;
+        }
+
     }
 
     @Override
-    public Authentication authenticate(final HttpServletRequest request) throws AuthenticationException {
-        AuthenticateService matchingService = findByMode(request.getParameter(AUTHENTICATION_MODE_PARAMETER_KEY));
-        return matchingService.authenticate(covertRequestModeEntity(matchingService.supportEntityType(), request));
+    public Authentication authenticate(HttpServletRequest request) throws AuthenticationException {
+        String modeParameter;
+        HttpServletRequest httpServletRequest = request;
+        if (request instanceof AbstractMultipartHttpServletRequest) {
+            modeParameter = request.getParameter(AUTHENTICATION_MODE_PARAMETER_KEY);
+        } else {
+            try {
+                //此处非Multipart就构造一个Json的RequestWrapper 用与适配多种请求方式
+                httpServletRequest = new JsonServletRequestWrapper(request);
+                modeParameter = httpServletRequest.getParameter(AUTHENTICATION_MODE_PARAMETER_KEY);
+            } catch (Exception e) {
+                throw new AuthenticationServiceException("BAD REQUEST");
+            }
+        }
+
+        AuthenticateService matchingService = findByMode(modeParameter);
+        return matchingService.authenticate(covertRequestModeEntity(matchingService.supportEntityType(), httpServletRequest));
 
     }
 

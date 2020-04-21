@@ -1,9 +1,7 @@
 package com.github.yiuman.citrus.system.rest;
 
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
-import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
-import com.github.yiuman.citrus.support.crud.service.TreeService;
 import com.github.yiuman.citrus.system.dto.OrganQuery;
 import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.service.OrganService;
