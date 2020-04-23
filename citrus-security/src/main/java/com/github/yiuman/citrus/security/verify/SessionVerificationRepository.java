@@ -34,6 +34,7 @@ public class SessionVerificationRepository implements VerificationRepository {
 
     @Override
     public void remove(HttpServletRequest request) {
-        request.getSession().removeAttribute(SESSION_VERIFICATION_PARAMETER);
+        HttpSession session = request.getSession();
+        session.removeAttribute(SESSION_VERIFICATION_PARAMETER + session.getId());
     }
 }

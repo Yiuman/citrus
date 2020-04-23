@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.system.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -25,6 +26,7 @@ public class UserDto {
     private String mobile;
 
     @NotBlank
+    @JsonIgnore
     private String password;
 
     @NotBlank

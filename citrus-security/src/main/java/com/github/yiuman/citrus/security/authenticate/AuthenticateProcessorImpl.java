@@ -59,29 +59,24 @@ public class AuthenticateProcessorImpl implements AuthenticateProcessor {
 
     @Override
     public Authentication authenticate(HttpServletRequest request) throws AuthenticationException {
-        String modeParameter;
-        HttpServletRequest httpServletRequest = request;
-        if (request instanceof AbstractMultipartHttpServletRequest) {
-            modeParameter = request.getParameter(AUTHENTICATION_MODE_PARAMETER_KEY);
-        } else {
+        return findByMode(request.getParameter(AUTHENTICATION_MODE_PARAMETER_KEY)).authenticate(request);
+    }
+
+    @Override
+    public String token(HttpServletRequest request) {
+        HttpServletRequest actualRequest = request;
+        if (!(request instanceof AbstractMultipartHttpServletRequest)) {
             try {
                 //此处非Multipart就构造一个Json的RequestWrapper 用与适配多种请求方式
-                httpServletRequest = new JsonServletRequestWrapper(request);
-                modeParameter = httpServletRequest.getParameter(AUTHENTICATION_MODE_PARAMETER_KEY);
+                actualRequest = new JsonServletRequestWrapper(request);
             } catch (Exception e) {
                 throw new AuthenticationServiceException("BAD REQUEST");
             }
         }
 
-        return findByMode(modeParameter).authenticate(httpServletRequest);
-
-    }
-
-    @Override
-    public String token(HttpServletRequest request) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put(AUTHENTICATION_MODE_PARAMETER_KEY, request.getParameter(AUTHENTICATION_MODE_PARAMETER_KEY));
-        Authentication authenticate = authenticate(request);
+        claims.put(AUTHENTICATION_MODE_PARAMETER_KEY, actualRequest.getParameter(AUTHENTICATION_MODE_PARAMETER_KEY));
+        Authentication authenticate = authenticate(actualRequest);
         return JwtUtils.generateToken((String) authenticate.getCredentials(), claims);
     }
 
@@ -92,8 +87,13 @@ public class AuthenticateProcessorImpl implements AuthenticateProcessor {
             Claims claims = JwtUtils.getClaims(token);
             String mode = (String) claims.get(AUTHENTICATION_MODE_PARAMETER_KEY);
             String identity = (String) claims.get(JwtUtils.getIdentityKey());
-            AuthenticateService service = findByMode(mode);
-            return service.resolve(token, identity);
+            try {
+                AuthenticateService service = findByMode(mode);
+                return service.resolve(token, identity);
+            } catch (Exception e) {
+                return Optional.empty();
+            }
+
         }
         return Optional.empty();
     }

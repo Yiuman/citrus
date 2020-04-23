@@ -24,7 +24,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     public JwtAuthenticationFilter(AuthenticateProcessor authenticateProcessor) {
         this.authenticateProcessor = authenticateProcessor;
-
     }
 
     @Override

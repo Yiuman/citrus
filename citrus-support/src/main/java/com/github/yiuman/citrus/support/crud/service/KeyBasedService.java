@@ -32,9 +32,8 @@ public interface KeyBasedService<E, K extends Serializable> extends EntityTypeSe
      */
     @SuppressWarnings("unchecked")
     default K getKey(E entity) throws Exception {
-        Class<K> keyType = getKeyType();
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(keyType);
-        return (K) ReflectionKit.getMethodValue(keyType, entity, tableInfo.getKeyProperty());
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityType());
+        return (K) ReflectionKit.getMethodValue(getEntityType(), entity, tableInfo.getKeyProperty());
     }
 
 }

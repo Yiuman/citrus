@@ -103,7 +103,7 @@ public class JwtProperties {
 
         String IDENTITY_KEY = "Identity";
 
-        Long VALIDATE_IN_SECONDS = 604800L;
+        Long VALIDATE_IN_SECONDS = 2592000L;
 
         Long REMEMBER_ME_VALIDATE_IN_SECONDS = 2592000L;
     }

@@ -50,7 +50,7 @@ public class AuthenticateController {
         @ExceptionHandler(value = AuthenticationException.class)
         @ResponseBody
         public ResponseEntity<Void> exceptionHandler(AuthenticationException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(),e);
             return ResponseEntity.error(ResponseStatusCode.UN_AUTHENTICATION, e.getMessage());
         }
 

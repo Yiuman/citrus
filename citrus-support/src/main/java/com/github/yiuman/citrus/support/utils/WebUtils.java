@@ -2,9 +2,13 @@ package com.github.yiuman.citrus.support.utils;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.read.listener.ReadListener;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.github.yiuman.citrus.support.http.JsonServletRequestWrapper;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.support.WebRequestDataBinder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -32,7 +36,8 @@ public final class WebUtils {
     private static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
 
     //忽略实体没有的字段
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
 
     private WebUtils() {
     }
@@ -57,7 +62,7 @@ public final class WebUtils {
         return getServletRequestAttributes().getAttribute(name, scope);
     }
 
-    public static  <T> T convertRequestModeEntity(Class<T> entityClass, HttpServletRequest request) throws Exception {
+    public static <T> T convertRequestModeEntity(Class<T> entityClass, HttpServletRequest request) throws Exception {
         //构造认证模式实体
         final T supportEntity = WebUtils.requestDataBind(entityClass, request);
         //校验实体参数
@@ -68,19 +73,29 @@ public final class WebUtils {
 
     public static <T> T requestDataBind(Class<T> objectClass, HttpServletRequest request) throws Exception {
         //构造实体
-        T t;
-        if (request instanceof AbstractMultipartHttpServletRequest) {
-            t = BeanUtils.instantiateClass(objectClass);
-            requestDataBind(t, request);
-        } else {
-            t = OBJECT_MAPPER.readValue(request.getInputStream(), objectClass);
-        }
+        T t = BeanUtils.instantiateClass(objectClass);
+        requestDataBind(t, request);
         return t;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> void requestDataBind(final T object, HttpServletRequest request) throws Exception {
         WebRequestDataBinder dataBinder = new WebRequestDataBinder(object);
-        dataBinder.bind(new ServletWebRequest(request));
+        if (request instanceof AbstractMultipartHttpServletRequest || request.getMethod().equals(HttpMethod.GET.name())) {
+            dataBinder.bind(new ServletWebRequest(request));
+        } else {
+            try {
+                if (!(request instanceof JsonServletRequestWrapper)) {
+                    request = new JsonServletRequestWrapper(request);
+                }
+
+                T realT = (T) OBJECT_MAPPER.readValue(request.getInputStream(), object.getClass());
+                BeanUtils.copyProperties(realT, object);
+            } catch (MismatchedInputException ignore) {
+            }
+
+        }
+
     }
 
     public static String getCookie(HttpServletRequest request, String name) {

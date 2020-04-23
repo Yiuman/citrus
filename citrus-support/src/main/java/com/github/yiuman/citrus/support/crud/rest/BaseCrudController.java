@@ -120,6 +120,9 @@ public abstract class BaseCrudController<T, K extends Serializable> {
 
         QueryWrapper<T> wrapper = Wrappers.query();
         Object params = WebUtils.requestDataBind(paramClass, request);
+        if (params == null) {
+            return wrapper;
+        }
         //检验参数
         ValidateUtils.validateEntityAndThrows(params, result -> new ValidateException(result.getMessage()));
         handleWrapper(wrapper, params);

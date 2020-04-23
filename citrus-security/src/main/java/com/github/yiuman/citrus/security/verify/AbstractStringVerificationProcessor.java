@@ -54,6 +54,8 @@ public abstract class AbstractStringVerificationProcessor<T extends AbstractStri
         if (!value.equals(verificationParameter.toLowerCase())) {
             throw new VerificationException("验证码错误");
         }
+
+        verificationRepository.remove(request);
     }
 
     @SuppressWarnings("unchecked")

@@ -131,7 +131,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         BeanUtils.copyProperties(page, entityPage);
         ekBaseService.page(entityPage, (QueryWrapper<E>) queryWrapper);
         //反拷贝
-        BeanUtils.copyProperties(entityPage, page);
+        page.setRecords(ConvertUtils.listConvert(dtoClass,entityPage.getRecords()));
         return page;
     }
 }
