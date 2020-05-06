@@ -51,7 +51,7 @@ public final class JwtUtils {
                 .setSubject(identity)
                 .setClaims(claims)
                 .signWith(signKey(), SignatureAlgorithm.HS512)
-                .setExpiration(new Date(System.currentTimeMillis() + expireInSeconds))
+                .setExpiration(new Date(System.currentTimeMillis() + expireInSeconds * 1000))
                 .compact();
     }
 

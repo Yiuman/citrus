@@ -20,8 +20,6 @@ public class UserDto {
     @NotBlank
     private String username;
 
-    private String age;
-
     @NotBlank
     private String mobile;
 

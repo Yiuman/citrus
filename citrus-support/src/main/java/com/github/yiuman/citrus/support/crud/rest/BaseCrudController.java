@@ -11,6 +11,7 @@ import com.github.yiuman.citrus.support.crud.QueryParamHandler;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.exception.ValidateException;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
+import com.github.yiuman.citrus.support.model.SortBy;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
 import com.github.yiuman.citrus.support.utils.ValidateUtils;
@@ -29,6 +30,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -42,9 +44,20 @@ import java.util.Optional;
 @SuppressWarnings("unchecked")
 public abstract class BaseCrudController<T, K extends Serializable> {
 
+    /**
+     * 查询参数类型
+     */
     protected Class<?> paramClass;
 
+    /**
+     * 模型类型
+     */
     protected Class<T> modelClass = currentModelClass();
+
+    /**
+     * 默认的排序的集合
+     */
+    protected List<SortBy> sortBIES = new ArrayList<>();
 
     private Class<T> currentModelClass() {
         return (Class<T>) ReflectionKit.getSuperClassGenericType(getClass(), 1);
@@ -58,6 +71,17 @@ public abstract class BaseCrudController<T, K extends Serializable> {
     }
 
     protected abstract CrudService<T, K> getService();
+
+    /**
+     * 添加排序项
+     * 在构造中使用
+     *
+     * @param column 列
+     * @param isDesc 是否倒序
+     */
+    protected void addSortBy(String column, boolean isDesc) {
+        sortBIES.add(new SortBy(column, isDesc));
+    }
 
     @GetMapping
     public ResponseEntity<Page<T>> page(HttpServletRequest request) throws Exception {
@@ -78,13 +102,13 @@ public abstract class BaseCrudController<T, K extends Serializable> {
     }
 
     @PostMapping("/batch_delete")
-    public ResponseEntity<Void> batchDelete(@NotNull List<K> keys) throws Exception {
+    public ResponseEntity<Void> batchDelete(@NotNull List<K> keys) {
         getService().batchRemove(keys);
         return ResponseEntity.ok();
     }
 
     @GetMapping("/{key}")
-    public ResponseEntity<T> get(@PathVariable K key) throws Exception {
+    public ResponseEntity<T> get(@PathVariable K key) {
         return ResponseEntity.ok(getService().get(key));
     }
 
@@ -125,8 +149,23 @@ public abstract class BaseCrudController<T, K extends Serializable> {
         }
         //检验参数
         ValidateUtils.validateEntityAndThrows(params, result -> new ValidateException(result.getMessage()));
-        handleWrapper(wrapper, params);
+        //拼接查询条件
+        handleQueryWrapper(wrapper, params);
+
+        handleSortWrapper(wrapper, request);
+
         return wrapper;
+    }
+
+    protected void handleSortWrapper(QueryWrapper<T> wrapper, HttpServletRequest request) throws Exception {
+        //构造默认的排序
+        sortBIES.forEach(sortByItem -> wrapper.orderBy(true, !sortByItem.getSortDesc(), StringUtils.camelToUnderline(sortByItem.getSortBy())));
+        //拼接排序条件
+        SortBy sortBy = WebUtils.requestDataBind(SortBy.class, request);
+        if (sortBy != null && org.springframework.util.StringUtils.hasText(sortBy.getSortBy())) {
+            wrapper.orderBy(true, !sortBy.getSortDesc(), StringUtils.camelToUnderline(sortBy.getSortBy()));
+        }
+
     }
 
     /**
@@ -135,7 +174,7 @@ public abstract class BaseCrudController<T, K extends Serializable> {
      * @param wrapper QueryWrapper
      * @param params  参数对象
      */
-    protected void handleWrapper(final QueryWrapper<T> wrapper, Object params) {
+    protected void handleQueryWrapper(final QueryWrapper<T> wrapper, Object params) {
         Arrays.stream(paramClass.getDeclaredFields())
                 .filter(field -> field.getAnnotation(QueryParam.class) != null)
                 .forEach(LambdaUtils.consumerWrapper(field -> {
