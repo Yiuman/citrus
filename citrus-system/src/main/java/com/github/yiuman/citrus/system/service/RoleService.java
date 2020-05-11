@@ -8,6 +8,7 @@ import com.github.yiuman.citrus.system.entity.RoleAuthority;
 import com.github.yiuman.citrus.system.mapper.RoleAuthorityMapper;
 import com.github.yiuman.citrus.system.mapper.RoleMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;

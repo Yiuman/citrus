@@ -24,7 +24,6 @@ public class UserDto {
     private String mobile;
 
     @NotBlank
-    @JsonIgnore
     private String password;
 
     @NotBlank

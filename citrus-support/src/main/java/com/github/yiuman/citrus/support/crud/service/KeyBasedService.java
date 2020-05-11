@@ -14,8 +14,6 @@ import java.io.Serializable;
  */
 public interface KeyBasedService<E, K extends Serializable> extends EntityTypeService<E> {
 
-    String DEFAULT_KEY_FIELD_NAME = "id";
-
     /**
      * 获取主键类型
      */
@@ -34,6 +32,10 @@ public interface KeyBasedService<E, K extends Serializable> extends EntityTypeSe
     default K getKey(E entity) throws Exception {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityType());
         return (K) ReflectionKit.getMethodValue(getEntityType(), entity, tableInfo.getKeyProperty());
+    }
+
+    default String getKeyName() throws Exception{
+        return TableInfoHelper.getTableInfo(getEntityType()).getKeyProperty();
     }
 
 }

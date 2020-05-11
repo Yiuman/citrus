@@ -45,7 +45,7 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
      */
     @GetMapping("/tree")
     public ResponseEntity<T> load(HttpServletRequest request) throws Exception {
-        QueryWrapper<T> queryWrapper = queryWrapper(request);
+        QueryWrapper<T> queryWrapper = getQueryWrapper(request);
         if (queryWrapper != null) {
             return ResponseEntity.ok(getCrudService().treeQuery(queryWrapper));
         }

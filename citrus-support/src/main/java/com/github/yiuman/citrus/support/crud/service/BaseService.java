@@ -77,10 +77,7 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
 
     @Override
     public boolean remove(E entity) throws Exception {
-        if (this.beforeRemove(entity)) {
-            return false;
-        }
-        return getMapper().deleteById(getKey(entity)) > 1;
+        return this.beforeRemove(entity) && getMapper().deleteById(getKey(entity)) > 1;
     }
 
     @Override

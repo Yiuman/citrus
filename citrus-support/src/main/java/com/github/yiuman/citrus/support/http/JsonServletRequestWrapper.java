@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,6 +31,8 @@ public class JsonServletRequestWrapper extends HttpServletRequestWrapper {
 
     private final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+    private List<?> array;
+
     /**
      * Constructs a request object wrapping the given request.
      *
@@ -44,8 +47,23 @@ public class JsonServletRequestWrapper extends HttpServletRequestWrapper {
     private void parseRequest(HttpServletRequest request) throws IOException {
         String body = IOUtils.toString(request.getInputStream(), Charset.defaultCharset());
         this.bytes = body.getBytes();
-        OBJECT_MAPPER.readValue(body, new TypeReference<Map<String, Object>>() {
-        }).forEach((key, value) -> getParameterMap().put(key, new String[]{String.valueOf(value)}));
+        //单单传数组
+        if (body.startsWith("[") && body.endsWith("]")) {
+            setArray(OBJECT_MAPPER.readValue(body, List.class));
+        } else {
+            OBJECT_MAPPER.readValue(body, new TypeReference<Map<String, Object>>() {
+            }).forEach((key, value) -> getParameterMap().put(key, new String[]{String.valueOf(value)}));
+        }
+
+
+    }
+
+    public List<?> getArray() {
+        return array;
+    }
+
+    public void setArray(List<?> array) {
+        this.array = array;
     }
 
     @Override

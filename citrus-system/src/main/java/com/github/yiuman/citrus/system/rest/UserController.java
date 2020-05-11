@@ -3,12 +3,25 @@ package com.github.yiuman.citrus.system.rest;
 import com.github.yiuman.citrus.security.authorize.Authorize;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
+import com.github.yiuman.citrus.support.model.DialogView;
+import com.github.yiuman.citrus.support.model.Page;
+import com.github.yiuman.citrus.support.utils.Buttons;
+import com.github.yiuman.citrus.support.utils.CrudUtils;
+import com.github.yiuman.citrus.support.widget.Inputs;
+import com.github.yiuman.citrus.support.widget.Selects;
+import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.dto.UserQuery;
+import com.github.yiuman.citrus.system.entity.Role;
 import com.github.yiuman.citrus.system.hook.HasLoginHook;
+import com.github.yiuman.citrus.system.service.RoleService;
 import com.github.yiuman.citrus.system.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 用户控制层
@@ -19,12 +32,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/users")
 @Authorize(HasLoginHook.class)
+@Slf4j
 public class UserController extends BaseCrudController<UserDto, Long> {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    private final RoleService roleService;
+
+    public UserController(UserService userService, RoleService roleService) {
         this.userService = userService;
+        this.roleService = roleService;
         setParamClass(UserQuery.class);
     }
 
@@ -32,4 +49,43 @@ public class UserController extends BaseCrudController<UserDto, Long> {
     protected CrudService<UserDto, Long> getService() {
         return userService;
     }
+
+    @Override
+    protected Page<UserDto> createPage() throws Exception {
+        Page<UserDto> page = super.createPage();
+        page.addHeader("ID", "userId");
+        page.addHeader("用户名", "username", true);
+        page.addHeader("手机号码", "mobile");
+        page.addHeader("邮箱", "email");
+        page.addHeader("所属角色", "roleNames", (entity) -> {
+            List<Role> roleByUser = userService.getRoleByUser(entity);
+            entity.setRoleIds(roleByUser.parallelStream().map(Role::getRoleId).collect(Collectors.toList()));
+            return roleByUser.parallelStream().map(Role::getRoleName).collect(Collectors.joining(","));
+        });
+
+        page.addWidget(new Inputs("用户名", "username"));
+        //添加默认按钮
+        page.addButton(Buttons.defaultButtons());
+        //添加默认行内操作
+        page.addActions(Buttons.defaultActions());
+        return page;
+    }
+
+    @Override
+    protected DialogView createDialogView() throws Exception {
+        DialogView dialogView = new DialogView();
+        dialogView.addEditField("用户名", "username");
+        dialogView.addEditField("密码", "password");
+        dialogView.addEditField("手机号码", "mobile");
+        dialogView.addEditField("邮箱", "email");
+        dialogView.addEditField("选择角色", "roleIds", CrudUtils.getWidget(this, "getRoleSelects"));
+        dialogView.addEditField("选择机构", "organIds");
+        return dialogView;
+    }
+
+    @Selects(bind = "roleIds", key = "roleId", label = "roleName", text = "所属角色", multiple = true)
+    public List<RoleDto> getRoleSelects() {
+        return roleService.list();
+    }
+
 }

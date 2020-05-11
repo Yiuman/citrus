@@ -1,6 +1,8 @@
 package com.github.yiuman.citrus.support.utils;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
@@ -31,7 +33,13 @@ public class SpringUtils implements ApplicationContextAware {
     }
 
     public static <T> T getBean(Class<T> tClass) {
-        return context.getBean(tClass);
+        T bean;
+        try {
+            bean=context.getBean(tClass);
+        }catch (NoSuchBeanDefinitionException ex){
+            bean = context.getAutowireCapableBeanFactory().createBean(tClass);
+        }
+        return bean;
     }
 
     public static <T> T getBean(Class<T> tClass, String name) {

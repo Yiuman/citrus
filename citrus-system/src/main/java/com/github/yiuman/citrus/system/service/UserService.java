@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.UserDto;
+import com.github.yiuman.citrus.system.entity.Role;
 import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.entity.UserOrgan;
 import com.github.yiuman.citrus.system.entity.UserRole;
@@ -98,6 +99,10 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
         }
 
         return Optional.ofNullable(user);
+    }
+
+    public List<Role>  getRoleByUser(UserDto userDto){
+        return userMapper.getRolesByUserId(userDto.getUserId());
     }
 
     @Override

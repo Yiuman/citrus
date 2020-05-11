@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
 public class Role extends AbstractAuditingEntity{
 
     @TableId(type = IdType.AUTO)
-    private Integer roleId;
+    private Long roleId;
 
     /**
      * 角色名

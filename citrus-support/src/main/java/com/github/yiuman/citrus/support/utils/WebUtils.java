@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.github.yiuman.citrus.support.http.JsonServletRequestWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.support.WebRequestDataBinder;
@@ -31,6 +32,7 @@ import java.util.Optional;
  * @author yiuman
  * @date 2020/4/4
  */
+@Slf4j
 public final class WebUtils {
 
     private static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
@@ -72,6 +74,9 @@ public final class WebUtils {
     }
 
     public static <T> T requestDataBind(Class<T> objectClass, HttpServletRequest request) throws Exception {
+        if (objectClass == null || request == null) {
+            return null;
+        }
         //构造实体
         T t = BeanUtils.instantiateClass(objectClass);
         requestDataBind(t, request);
@@ -89,9 +94,15 @@ public final class WebUtils {
                     request = new JsonServletRequestWrapper(request);
                 }
 
-                T realT = (T) OBJECT_MAPPER.readValue(request.getInputStream(), object.getClass());
-                BeanUtils.copyProperties(realT, object);
-            } catch (MismatchedInputException ignore) {
+                if (object.getClass().isArray()) {
+                    BeanUtils.copyProperties(object, ((JsonServletRequestWrapper) request).getArray());
+                } else {
+                    T realT = (T) OBJECT_MAPPER.readValue(request.getInputStream(), object.getClass());
+                    BeanUtils.copyProperties(realT, object);
+                }
+
+            } catch (MismatchedInputException ex) {
+                log.info("请求数据转换异常", ex);
             }
 
         }

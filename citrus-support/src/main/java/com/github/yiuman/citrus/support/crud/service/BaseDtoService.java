@@ -92,10 +92,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
 
     @Override
     public boolean remove(D entity) throws Exception {
-        if (!this.beforeRemove(entity)) {
-            return false;
-        }
-        return ekBaseService.remove(dtoToEntity().apply(entity));
+        return this.beforeRemove(entity) && ekBaseService.remove(dtoToEntity().apply(entity));
     }
 
     @Override
@@ -131,8 +128,8 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         BeanUtils.copyProperties(page, entityPage);
         ekBaseService.page(entityPage, (QueryWrapper<E>) queryWrapper);
         //反拷贝
-        BeanUtils.copyProperties(entityPage,page);
-        page.setRecords(ConvertUtils.listConvert(dtoClass,entityPage.getRecords()));
+        BeanUtils.copyProperties(entityPage, page);
+        page.setRecords(ConvertUtils.listConvert(dtoClass, entityPage.getRecords()));
         return page;
     }
 }

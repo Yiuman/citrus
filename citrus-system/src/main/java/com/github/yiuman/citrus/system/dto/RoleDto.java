@@ -40,6 +40,6 @@ public class RoleDto {
     /**
      * 权限ID
      */
-    List<Long> authIds;
+    private List<Long> authIds;
 
 }

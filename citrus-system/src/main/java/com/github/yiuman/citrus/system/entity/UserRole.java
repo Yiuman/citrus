@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -23,4 +24,12 @@ public class UserRole {
 
     @TableId
     private Long organId;
+
+    public UserRole() {
+    }
+
+    public UserRole(Long userId, Long roleId) {
+        this.userId = userId;
+        this.roleId = roleId;
+    }
 }
