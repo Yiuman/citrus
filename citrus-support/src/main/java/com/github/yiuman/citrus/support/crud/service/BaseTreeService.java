@@ -13,6 +13,7 @@ import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -78,7 +79,7 @@ public abstract class BaseTreeService<E extends Tree<K>, K extends Serializable>
 
     @Override
     public K save(E entity) throws Exception {
-        if (!this.beforeSave(entity)) {
+        if (entity.getId()!=null || !this.beforeSave(entity)) {
             return null;
         }
         return ekBaseService.save(entity);
@@ -173,6 +174,9 @@ public abstract class BaseTreeService<E extends Tree<K>, K extends Serializable>
         }
         //查询符合条件的列表
         List<E> list = list(wrapper);
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        }
         //找到列表ID
         List<K> ids = list.parallelStream().map(Tree::getId).collect(Collectors.toList());
         TableInfo table = SqlHelper.table(ekBaseService.getEntityType());
@@ -181,14 +185,23 @@ public abstract class BaseTreeService<E extends Tree<K>, K extends Serializable>
         String parentSql = "t1.leftValue > t2. leftValue and t1.rightValue < t2.rightValue"
                 .replaceAll("leftValue", getLeftField())
                 .replaceAll("rightValue", getRightField());
-        list.addAll(getTreeMapper().list(table.getTableName(), new QueryWrapper<E>().apply(parentSql)
-                .in("t1." + table.getKeyColumn(), ids)));
-        E root = getRoot();
-        //传list进去前需要去重
-        initTreeFromList(root, list.parallelStream().distinct().collect(Collectors.toList()));
+        list.addAll(
+                getTreeMapper()
+                        .list(table.getTableName()
+                                , new QueryWrapper<E>().apply(parentSql)
+                                        .in("t1." + table.getKeyColumn(), ids)));
+        final E root = getRoot();
+        //传list进去前需要去重,并排除根节点
+        initTreeFromList(root, list.parallelStream().distinct().filter(item -> item.getId() != root.getId()).collect(Collectors.toList()));
         return root;
     }
 
+    /**
+     * 此处记得去重，实体记得重写equals&hasCode
+     *
+     * @param start 挂载的节点
+     * @param list  节点列表
+     */
     protected void initTreeFromList(E start, List<E> list) {
         List<E> childrenOfStart = list.parallelStream()
                 .filter(current -> current.getParentId() != null && current.getParentId().equals(start.getId())).collect(Collectors.toList());
@@ -204,9 +217,15 @@ public abstract class BaseTreeService<E extends Tree<K>, K extends Serializable>
     }
 
     @Override
-    public void load(E current, boolean isLazy) throws Exception {
+    public void load(E current, boolean isLazy) {
         if (isLazy) {
-            current.setChildren(loadByParent(current.getId()));
+            List<E> children = loadByParent(current.getId());
+            children.parallelStream().forEach(childNode -> {
+                if (!childNode.isLeaf()) {
+                    childNode.setChildren(new ArrayList<>());
+                }
+            });
+            current.setChildren(children);
         } else {
             List<E> children = children(current, current.getDeep() + 1);
             if (!CollectionUtils.isEmpty(children)) {
@@ -272,4 +291,5 @@ public abstract class BaseTreeService<E extends Tree<K>, K extends Serializable>
     public List<E> siblings(E current) {
         return list(new QueryWrapper<E>().eq(getParentField(), current.getParentId()));
     }
+
 }

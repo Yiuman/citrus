@@ -2,6 +2,9 @@ package com.github.yiuman.citrus.system.rest;
 
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
+import com.github.yiuman.citrus.support.model.DialogView;
+import com.github.yiuman.citrus.support.model.TreeDisplay;
+import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.system.dto.OrganQuery;
 import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.service.OrganService;
@@ -22,7 +25,6 @@ public class OrganController extends BaseTreeController<Organization, Long> {
 
     public OrganController(OrganService organService) {
         setParamClass(OrganQuery.class);
-        setLazy(false);
         this.organService = organService;
     }
 
@@ -31,5 +33,21 @@ public class OrganController extends BaseTreeController<Organization, Long> {
         return organService;
     }
 
+    @Override
+    protected TreeDisplay<Organization> createTree() throws Exception {
+        TreeDisplay<Organization> tree = super.createTree();
+        tree.setItemText("organName");
+        tree.addWidget("组织名称", "organName");
+        tree.addButton(Buttons.defaultButtons());
+        return tree;
+    }
 
+    @Override
+    protected DialogView createDialogView() throws Exception {
+        DialogView dialogView = new DialogView();
+        dialogView.addEditField("组织机构名称","organName");
+        dialogView.addEditField("组织机构名称","organCode");
+        dialogView.addEditField("备注","remark");
+        return dialogView;
+    }
 }

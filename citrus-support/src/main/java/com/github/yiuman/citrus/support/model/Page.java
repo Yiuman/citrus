@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.support.model;
 
+import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.support.widget.Widget;
 import org.springframework.util.ReflectionUtils;
 
@@ -120,6 +121,19 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
         this.recordExtend = recordExtend;
     }
 
+    @Override
+    public List<T> getRecords() {
+        List<T> records = super.getRecords();
+        this.recordFunctions.parallelStream().forEach(func -> {
+            records.forEach(record -> {
+                Map<String, Object> objectObjectHashMap = new HashMap<>(1);
+                objectObjectHashMap.put(func.getFiledName(), func.getFunction().apply(record));
+                this.recordExtend.put(getKey(record), objectObjectHashMap);
+            });
+        });
+        return records;
+    }
+
     public void addHeader(String text, String field) {
         headers.add(new Header(text, field));
     }
@@ -141,30 +155,9 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
         addWidget(widget, false);
     }
 
-    @Override
-    public List<T> getRecords() {
-        List<T> records = super.getRecords();
-        this.recordFunctions.parallelStream().forEach(func -> {
-            records.forEach(record -> {
-                Map<String, Object> objectObjectHashMap = new HashMap<>(1);
-                objectObjectHashMap.put(func.getFiledName(), func.getFunction().apply(record));
-                this.recordExtend.put(getKey(record), objectObjectHashMap);
-            });
-        });
-        return records;
-    }
-
-    private String getKey(T entity) {
-        try {
-            if (keyFiled == null) {
-                keyFiled = ReflectionUtils.findField(entity.getClass(), itemKey);
-                keyFiled.setAccessible(true);
-            }
-            return keyFiled.get(entity).toString();
-        } catch (Exception ex) {
-            return entity.toString();
-        }
-
+    public <W extends Widget<?>> void addWidget(String text,String fieldName){
+        Inputs inputs = new Inputs(text, fieldName);
+        addWidget(inputs, false);
     }
 
     public <W extends Widget<?>> void addWidget(W widget, boolean refresh) {
@@ -192,5 +185,18 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
 
     public void addActions(List<Button> actions) {
         actions.forEach(this::addAction);
+    }
+
+    private String getKey(T entity) {
+        try {
+            if (keyFiled == null) {
+                keyFiled = ReflectionUtils.findField(entity.getClass(), itemKey);
+                keyFiled.setAccessible(true);
+            }
+            return keyFiled.get(entity).toString();
+        } catch (Exception ex) {
+            return entity.toString();
+        }
+
     }
 }

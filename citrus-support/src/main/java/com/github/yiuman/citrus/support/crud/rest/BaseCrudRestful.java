@@ -157,14 +157,17 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
     }
 
     protected QueryWrapper<T> getQueryWrapper(Object params) {
-        QueryWrapper<T> wrapper = Wrappers.query();
         if (params == null) {
-            return wrapper;
+            return null;
         }
+        QueryWrapper<T> wrapper = Wrappers.query();
         //检验参数
         ValidateUtils.validateEntityAndThrows(params, result -> new ValidateException(result.getMessage()));
         //拼接查询条件
         handleQueryWrapper(wrapper, params);
+        if(!org.springframework.util.StringUtils.hasText(wrapper.getTargetSql())){
+            return null;
+        }
         return wrapper;
     }
 
@@ -192,7 +195,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
      * @param wrapper QueryWrapper
      * @param params  参数对象
      */
-    protected void handleQueryWrapper(final QueryWrapper<T> wrapper, Object params) {
+    protected void handleQueryWrapper(final QueryWrapper<T> wrapper, Object params)  {
         Arrays.stream(paramClass.getDeclaredFields())
                 .filter(field -> field.getAnnotation(QueryParam.class) != null)
                 .forEach(LambdaUtils.consumerWrapper(field -> {

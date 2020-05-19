@@ -10,6 +10,7 @@ import com.github.yiuman.citrus.support.http.JsonServletRequestWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpMethod;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.support.WebRequestDataBinder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -77,6 +78,11 @@ public final class WebUtils {
         if (objectClass == null || request == null) {
             return null;
         }
+        //若是get请求或者是form-data则先检验下有没参数
+        boolean hasParameterRequest = request instanceof AbstractMultipartHttpServletRequest || request.getMethod().equals(HttpMethod.GET.name());
+        if (hasParameterRequest && CollectionUtils.isEmpty(request.getParameterMap())) {
+            return null;
+        }
         //构造实体
         T t = BeanUtils.instantiateClass(objectClass);
         requestDataBind(t, request);
@@ -84,9 +90,9 @@ public final class WebUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> void requestDataBind(final T object, HttpServletRequest request) throws Exception {
-        WebRequestDataBinder dataBinder = new WebRequestDataBinder(object);
+    public static <T> void requestDataBind(T object, HttpServletRequest request) throws Exception {
         if (request instanceof AbstractMultipartHttpServletRequest || request.getMethod().equals(HttpMethod.GET.name())) {
+            WebRequestDataBinder dataBinder = new WebRequestDataBinder(object);
             dataBinder.bind(new ServletWebRequest(request));
         } else {
             try {

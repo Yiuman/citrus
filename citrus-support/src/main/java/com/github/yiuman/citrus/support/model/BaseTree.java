@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.support.model;
 
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public abstract class BaseTree<T extends BaseTree<T, K>, K> implements Tree<K> {
 
     private Integer deep;
 
+    @JsonDeserialize
     @TableField(exist = false)
     private List<T> children;
 
@@ -70,4 +72,6 @@ public abstract class BaseTree<T extends BaseTree<T, K>, K> implements Tree<K> {
     public void setChildren(List<? extends Tree<K>> children) {
         this.children = (List<T>) children;
     }
+
+
 }

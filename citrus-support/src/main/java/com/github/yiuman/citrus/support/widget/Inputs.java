@@ -8,6 +8,8 @@ package com.github.yiuman.citrus.support.widget;
  */
 public class Inputs extends BaseWidget<String> {
 
+    private boolean clearable =true;
+
     public Inputs() {
     }
 
@@ -15,6 +17,13 @@ public class Inputs extends BaseWidget<String> {
         super(text, key, null);
     }
 
+    public boolean isClearable() {
+        return clearable;
+    }
+
+    public void setClearable(boolean clearable) {
+        this.clearable = clearable;
+    }
 
     @Override
     public String getWidgetName() {

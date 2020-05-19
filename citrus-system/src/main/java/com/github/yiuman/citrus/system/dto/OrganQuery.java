@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class OrganQuery {
 
-    @QueryParam
+    @QueryParam(type = "like")
     private String organName;
 
 }

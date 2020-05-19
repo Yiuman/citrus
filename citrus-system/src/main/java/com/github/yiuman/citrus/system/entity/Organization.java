@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.github.yiuman.citrus.support.model.BaseTree;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -15,12 +14,11 @@ import lombok.NoArgsConstructor;
  * @author yiuman
  * @date 2020/3/30
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("sys_organ")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Organization extends BaseTree<Organization,Long> {
+public class Organization extends BaseTree<Organization, Long> {
 
     @TableId(type = IdType.AUTO)
     private Long organId;
@@ -53,7 +51,21 @@ public class Organization extends BaseTree<Organization,Long> {
 
     @Override
     public Long getId() {
-       return organId;
+        return organId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Organization)) return false;
+
+        Organization that = (Organization) o;
+
+        return organId != null ? organId.equals(that.organId) : that.organId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return organId != null ? organId.hashCode() : 0;
+    }
 }

@@ -5,6 +5,7 @@ import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.Tree;
+import com.github.yiuman.citrus.support.model.TreeDisplay;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,16 +41,27 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
         return getCrudService();
     }
 
+    protected TreeDisplay<T> createTree() throws Exception {
+        TreeDisplay<T> treeDisplay = new TreeDisplay<>();
+        treeDisplay.setItemKey(getService().getKeyName());
+        return treeDisplay;
+    }
+
     /**
      * 加载树,支持查询
      */
     @GetMapping("/tree")
-    public ResponseEntity<T> load(HttpServletRequest request) throws Exception {
+    public ResponseEntity<TreeDisplay<T>> load(HttpServletRequest request) throws Exception {
+        TreeDisplay<T> tree = this.createTree();
         QueryWrapper<T> queryWrapper = getQueryWrapper(request);
         if (queryWrapper != null) {
-            return ResponseEntity.ok(getCrudService().treeQuery(queryWrapper));
+            tree.setTree(getCrudService().treeQuery(queryWrapper));
+            return ResponseEntity.ok(tree);
         }
-        return ResponseEntity.ok(getCrudService().load(isLazy));
+
+        tree.setTree(getCrudService().load(isLazy));
+        tree.setDialogView(createDialogView());
+        return ResponseEntity.ok(tree);
     }
 
     /**
