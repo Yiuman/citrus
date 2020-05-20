@@ -16,6 +16,8 @@ import java.util.Map;
  */
 public class TreeDisplay<T> {
 
+    private boolean lazy;
+
     /**
      * 实体的主键
      */
@@ -55,6 +57,14 @@ public class TreeDisplay<T> {
     private DialogView dialogView;
 
     public TreeDisplay() {
+    }
+
+    public boolean isLazy() {
+        return lazy;
+    }
+
+    public void setLazy(boolean lazy) {
+        this.lazy = lazy;
     }
 
     public String getItemKey() {

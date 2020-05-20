@@ -34,8 +34,12 @@ public interface KeyBasedService<E, K extends Serializable> extends EntityTypeSe
         return (K) ReflectionKit.getMethodValue(getEntityType(), entity, tableInfo.getKeyProperty());
     }
 
-    default String getKeyName() throws Exception{
+    default String getKeyProperty() throws Exception {
         return TableInfoHelper.getTableInfo(getEntityType()).getKeyProperty();
+    }
+
+    default String getKeyColumn() throws Exception {
+        return TableInfoHelper.getTableInfo(getEntityType()).getKeyColumn();
     }
 
 }

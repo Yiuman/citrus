@@ -24,7 +24,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 基础的RESTFUL
@@ -66,7 +65,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
 
     protected Page<T> createPage() throws Exception {
         Page<T> page = new Page<>();
-        page.setItemKey(getService().getKeyName());
+        page.setItemKey(getService().getKeyProperty());
         //构造页面小部件
         CrudUtils.getCrudWidgets(this)
                 .forEach(widget -> page.addWidget(widget, true));
@@ -120,8 +119,10 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
     @Override
     public void exp(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
-        String fileName = Optional.ofNullable(WebUtils.getRequestParam("fileName"))
-                .orElse(String.valueOf(System.currentTimeMillis()));
+        String fileName = WebUtils.getRequestParam("fileName");
+        if (StringUtils.isBlank(fileName)) {
+            fileName = String.valueOf(System.currentTimeMillis());
+        }
         WebUtils.exportExcel(response, modelClass, getService().list(getQueryWrapper(request)), fileName);
     }
 
@@ -165,7 +166,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
         ValidateUtils.validateEntityAndThrows(params, result -> new ValidateException(result.getMessage()));
         //拼接查询条件
         handleQueryWrapper(wrapper, params);
-        if(!org.springframework.util.StringUtils.hasText(wrapper.getTargetSql())){
+        if (!org.springframework.util.StringUtils.hasText(wrapper.getTargetSql())) {
             return null;
         }
         return wrapper;
@@ -195,7 +196,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
      * @param wrapper QueryWrapper
      * @param params  参数对象
      */
-    protected void handleQueryWrapper(final QueryWrapper<T> wrapper, Object params)  {
+    protected void handleQueryWrapper(final QueryWrapper<T> wrapper, Object params) {
         Arrays.stream(paramClass.getDeclaredFields())
                 .filter(field -> field.getAnnotation(QueryParam.class) != null)
                 .forEach(LambdaUtils.consumerWrapper(field -> {

@@ -21,7 +21,7 @@ public interface DeletableService<E, K> {
      *
      * @param keys 数据主键集合
      */
-    void batchRemove(Iterable<K> keys);
+    void batchRemove(Iterable<K> keys) throws Exception;
 
     /**
      * 删除全部记录

@@ -25,7 +25,7 @@ import java.util.List;
 public abstract class BaseTreeController<T extends Tree<K>, K extends Serializable>
         extends BaseCrudController<T, K> {
 
-    private boolean isLazy = true;
+    private boolean isLazy;
 
     public BaseTreeController() {
     }
@@ -43,7 +43,7 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
 
     protected TreeDisplay<T> createTree() throws Exception {
         TreeDisplay<T> treeDisplay = new TreeDisplay<>();
-        treeDisplay.setItemKey(getService().getKeyName());
+        treeDisplay.setItemKey(getService().getKeyProperty());
         return treeDisplay;
     }
 
@@ -60,6 +60,7 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
         }
 
         tree.setTree(getCrudService().load(isLazy));
+        tree.setLazy(isLazy);
         tree.setDialogView(createDialogView());
         return ResponseEntity.ok(tree);
     }

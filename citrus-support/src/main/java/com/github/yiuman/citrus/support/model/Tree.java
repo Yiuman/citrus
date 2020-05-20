@@ -32,6 +32,6 @@ public interface Tree<K> {
 
     List<? extends Tree<K>> getChildren();
 
-    void setChildren(List<? extends Tree<K>> children);
+//    void setChildren(List<? extends Tree<K>> children);
 
 }

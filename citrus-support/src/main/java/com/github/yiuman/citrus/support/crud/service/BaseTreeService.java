@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
+import com.github.yiuman.citrus.support.model.BaseTree;
 import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.util.CollectionUtils;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
  * @author yiuman
  * @date 2020/4/15
  */
-public abstract class BaseTreeService<E extends Tree<K>, K extends Serializable> implements TreeCrudService<E, K> {
+public abstract class BaseTreeService<E extends BaseTree<E, K>, K extends Serializable> implements TreeCrudService<E, K> {
 
     private final static String UPDATE_ADD_FORMAT = "%s=%s+%s";
 
@@ -49,17 +50,18 @@ public abstract class BaseTreeService<E extends Tree<K>, K extends Serializable>
 
     @Override
     public boolean beforeSave(E entity) throws Exception {
+        if (entity.getId() != null) {
+            return true;
+        }
         //1.获取当前父节点
         E parent = Optional
                 .ofNullable(get(entity.getParentId()))
                 .orElse(getRoot());
-        //2.更新所有左值大于当前父节点左值的节点左值 +2
-        //3.更新所有右值大于当前父节点右值的节点右值 +2
         int rightValue = 1;
         int deep = 1;
         //4.更新父节点
         if (parent != null && entity.getId() != parent.getId()) {
-            ekBaseService.save(entity);
+            beforeSaveOrUpdate(parent);
             rightValue = parent.getRightValue();
             deep = parent.getDeep() + 1;
             parent.setRightValue(rightValue + 2);
@@ -79,7 +81,7 @@ public abstract class BaseTreeService<E extends Tree<K>, K extends Serializable>
 
     @Override
     public K save(E entity) throws Exception {
-        if (entity.getId()!=null || !this.beforeSave(entity)) {
+        if (!this.beforeSave(entity)) {
             return null;
         }
         return ekBaseService.save(entity);
@@ -93,14 +95,7 @@ public abstract class BaseTreeService<E extends Tree<K>, K extends Serializable>
     @Override
     public boolean beforeRemove(E entity) {
         //1.更新所有右值小于当前父节点右值的节点左值 -2
-        getTreeMapper().update(null, new UpdateWrapper<E>()
-                .setSql(String.format(UPDATE_ADD_FORMAT, getLeftField(), getLeftField(), 2))
-                .gt(getLeftField(), entity.getRightValue()));
-
-        //2.更新所有右值小于当前父节点右值的节点右值 +2
-        getTreeMapper().update(null, new UpdateWrapper<E>()
-                .setSql(String.format(UPDATE_REDUCTION_FORMAT, getRightField(), getRightField(), 2))
-                .gt(getRightField(), entity.getRightValue()));
+        this.beforeDeleteOrMove(entity);
         return true;
     }
 
@@ -109,12 +104,16 @@ public abstract class BaseTreeService<E extends Tree<K>, K extends Serializable>
         if (!this.beforeRemove(entity)) {
             return false;
         }
+
         return ekBaseService.remove(entity);
     }
 
     @Override
-    public void batchRemove(Iterable<K> keys) {
-        ekBaseService.batchRemove(keys);
+    public void batchRemove(Iterable<K> keys) throws Exception {
+        List<K> keyList = new ArrayList<>();
+        keys.forEach(keyList::add);
+        List<E> list = list(new QueryWrapper<E>().in(getKeyColumn(), keyList));
+        list.forEach(LambdaUtils.consumerWrapper(this::remove));
     }
 
     @Override
@@ -163,6 +162,9 @@ public abstract class BaseTreeService<E extends Tree<K>, K extends Serializable>
     @Override
     public E load(boolean isLazy) throws Exception {
         E current = getRoot();
+        if (current == null) {
+            return null;
+        }
         load(current, isLazy);
         return current;
     }
@@ -243,8 +245,7 @@ public abstract class BaseTreeService<E extends Tree<K>, K extends Serializable>
     @Override
     public void move(E current, K moveTo) throws Exception {
         //更新树
-        beforeRemove(current);
-
+        this.beforeDeleteOrMove(current);
         //变更父ID
         current.setParentId(moveTo);
         ekBaseService.save(current);
@@ -290,6 +291,41 @@ public abstract class BaseTreeService<E extends Tree<K>, K extends Serializable>
     @Override
     public List<E> siblings(E current) {
         return list(new QueryWrapper<E>().eq(getParentField(), current.getParentId()));
+    }
+
+    /**
+     * 当前节点保存前的做的操作
+     *
+     * @param parent 当前节点的父节点
+     */
+    private void beforeSaveOrUpdate(E parent) {
+
+        //2.更新所有左值大于当前父节点右值的节点左值 +2
+        getTreeMapper().update(null,new UpdateWrapper<E>()
+                .setSql(String.format(UPDATE_ADD_FORMAT, getLeftField(), getLeftField(), 2))
+                .gt(getLeftField(), parent.getRightValue()));
+
+        //3.更新所有右值大于当前父节点右值的节点右值 +2
+        getTreeMapper().update(null,new UpdateWrapper<E>()
+                .setSql(String.format(UPDATE_ADD_FORMAT, getRightField(), getRightField(), 2))
+                .gt(getRightField(), parent.getRightValue()));
+    }
+
+    /**
+     * 删除或移动前做的操作
+     *
+     * @param current 当前节点
+     */
+    private void beforeDeleteOrMove(E current) {
+        //1.更新所有右值小于当前父节点右值的节点左值 -2
+        getTreeMapper().update(null,new UpdateWrapper<E>()
+                .setSql(String.format(UPDATE_REDUCTION_FORMAT, getLeftField(), getLeftField(), 2))
+                .gt(getLeftField(), current.getRightValue()));
+
+        //2.更新所有右值小于当前父节点右值的节点右值 +2
+        getTreeMapper().update(null,new UpdateWrapper<E>()
+                .setSql(String.format(UPDATE_REDUCTION_FORMAT, getRightField(), getRightField(), 2))
+                .gt(getRightField(), current.getRightValue()));
     }
 
 }

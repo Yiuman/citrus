@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.github.yiuman.citrus.support.model.BaseTree;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * 组织（部门）
@@ -16,8 +14,6 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @TableName("sys_organ")
-@AllArgsConstructor
-@NoArgsConstructor
 public class Organization extends BaseTree<Organization, Long> {
 
     @TableId(type = IdType.AUTO)
@@ -52,6 +48,9 @@ public class Organization extends BaseTree<Organization, Long> {
     @Override
     public Long getId() {
         return organId;
+    }
+
+    public Organization() {
     }
 
     @Override
