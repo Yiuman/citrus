@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2020/4/6
  */
 @RestController
-@RequestMapping("/rest/organ")
+@RequestMapping("/rest/organs")
 public class OrganController extends BaseTreeController<Organization, Long> {
 
     private final OrganService organService;
@@ -46,7 +46,7 @@ public class OrganController extends BaseTreeController<Organization, Long> {
     protected DialogView createDialogView() throws Exception {
         DialogView dialogView = new DialogView();
         dialogView.addEditField("组织机构名称","organName");
-        dialogView.addEditField("组织机构名称","organCode");
+        dialogView.addEditField("组织机构代码","organCode");
         dialogView.addEditField("备注","remark");
         return dialogView;
     }

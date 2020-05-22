@@ -3,7 +3,7 @@ package com.github.yiuman.citrus.support.model;
 import java.util.List;
 
 /**
- * 树形结构，左右值算法
+ * 树形结构
  *
  * @author yiuman
  * @date 2020/4/7
@@ -16,22 +16,9 @@ public interface Tree<K> {
 
     void setParentId(K parentId);
 
-    Integer getLeftValue();
-
-    void setLeftValue(Integer leftValue);
-
-    Integer getRightValue();
-
-    void setRightValue(Integer rightValue);
-
     boolean isLeaf();
-
-    Integer getDeep();
-
-    void setDeep(Integer deep);
 
     List<? extends Tree<K>> getChildren();
 
-//    void setChildren(List<? extends Tree<K>> children);
 
 }

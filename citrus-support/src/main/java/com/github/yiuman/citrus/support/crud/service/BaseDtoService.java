@@ -78,7 +78,6 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         throw new UnsupportedOperationException("Method not implemented.");
     }
 
-
     @Override
     public K update(D entity) throws Exception {
         if (!this.beforeUpdate(entity)) {

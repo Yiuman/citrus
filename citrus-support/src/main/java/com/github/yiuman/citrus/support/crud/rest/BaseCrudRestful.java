@@ -14,6 +14,7 @@ import com.github.yiuman.citrus.support.model.EditField;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.model.SortBy;
 import com.github.yiuman.citrus.support.utils.*;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -84,6 +85,11 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
     public Page<T> page(HttpServletRequest request) throws Exception {
         //获取pageNo
         Page<T> page = createPage();
+        //添加默表头
+        if (CollectionUtils.isEmpty(page.getHeaders())) {
+            ReflectionUtils.doWithFields(modelClass, field -> page.addHeader(field.getName(), field.getName()));
+        }
+
         WebUtils.requestDataBind(page, request);
         QueryWrapper<T> queryWrapper = getQueryWrapper(request);
         handleSortWrapper(queryWrapper, request);

@@ -12,6 +12,6 @@ import lombok.Data;
 @Data
 public class RoleQuery {
 
-    @QueryParam
+    @QueryParam(type = "like")
     private String roleName;
 }

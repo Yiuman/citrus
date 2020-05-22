@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.system.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.github.yiuman.citrus.support.model.BaseTree;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,7 +16,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_resource")
-public class Resource extends AbstractAuditingEntity{
+public class Resource extends BaseTree<Resource, Long> {
 
     @TableId(type = IdType.ASSIGN_UUID)
     private Long resourceId;
@@ -33,7 +34,7 @@ public class Resource extends AbstractAuditingEntity{
     /**
      * 父资源ID
      */
-    private String parentId;
+    private Long parentId;
 
     /**
      * 资源路径
@@ -45,4 +46,13 @@ public class Resource extends AbstractAuditingEntity{
      */
     private String operation;
 
+    @Override
+    public Long getId() {
+        return this.resourceId;
+    }
+
+    @Override
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
 }

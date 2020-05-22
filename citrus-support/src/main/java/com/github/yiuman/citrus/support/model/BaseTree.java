@@ -1,24 +1,16 @@
 package com.github.yiuman.citrus.support.model;
 
-
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
 /**
- * 树形结构，左右值算法
- *
+ * 基础树形结构
  * @author yiuman
- * @date 2020/3/30
+ * @date 2020/5/22
  */
-public abstract class BaseTree<T extends BaseTree<T, K>, K> implements Tree<K> {
-
-    private Integer leftValue;
-
-    private Integer rightValue;
-
-    private Integer deep;
+public abstract class BaseTree<T extends BaseTree<T,K>, K> implements Tree<K> {
 
     @TableField(exist = false)
     private List<T> children;
@@ -27,38 +19,8 @@ public abstract class BaseTree<T extends BaseTree<T, K>, K> implements Tree<K> {
     }
 
     @Override
-    public Integer getLeftValue() {
-        return leftValue;
-    }
-
-    @Override
-    public void setLeftValue(Integer leftValue) {
-        this.leftValue = leftValue;
-    }
-
-    @Override
-    public Integer getRightValue() {
-        return rightValue;
-    }
-
-    @Override
-    public void setRightValue(Integer rightValue) {
-        this.rightValue = rightValue;
-    }
-
-    @Override
     public boolean isLeaf() {
-        return this.getLeftValue() != null && this.getRightValue() != null && this.getRightValue() - this.getLeftValue() == 1;
-    }
-
-    @Override
-    public Integer getDeep() {
-        return deep;
-    }
-
-    @Override
-    public void setDeep(Integer deep) {
-        this.deep = deep;
+       return CollectionUtils.isEmpty(getChildren());
     }
 
     @Override
@@ -69,5 +31,4 @@ public abstract class BaseTree<T extends BaseTree<T, K>, K> implements Tree<K> {
     public void setChildren(List<T> children) {
         this.children = children;
     }
-
 }

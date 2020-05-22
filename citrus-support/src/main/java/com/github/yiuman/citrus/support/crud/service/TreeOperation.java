@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 属性操作接口
+ * 树形操作接口
  *
  * @author yiuman
  * @date 2020/4/15

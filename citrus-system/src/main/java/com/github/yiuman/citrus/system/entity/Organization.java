@@ -3,7 +3,7 @@ package com.github.yiuman.citrus.system.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.github.yiuman.citrus.support.model.BaseTree;
+import com.github.yiuman.citrus.support.model.BasePreOrderTree;
 import lombok.Data;
 
 /**
@@ -14,7 +14,7 @@ import lombok.Data;
  */
 @Data
 @TableName("sys_organ")
-public class Organization extends BaseTree<Organization, Long> {
+public class Organization extends BasePreOrderTree<Organization, Long> {
 
     @TableId(type = IdType.AUTO)
     private Long organId;
@@ -33,12 +33,6 @@ public class Organization extends BaseTree<Organization, Long> {
      * 上级ID
      */
     private Long parentId;
-
-    private Integer leftValue;
-
-    private Integer rightValue;
-
-    private Integer deep;
 
     /**
      * 描述说明

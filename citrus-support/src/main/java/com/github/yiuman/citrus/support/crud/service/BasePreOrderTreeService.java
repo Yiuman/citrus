@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
-import com.github.yiuman.citrus.support.model.BaseTree;
+import com.github.yiuman.citrus.support.model.BasePreOrderTree;
 import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.util.CollectionUtils;
@@ -20,10 +20,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
+ * 左右值预遍历树逻辑层
+ *
  * @author yiuman
  * @date 2020/4/15
  */
-public abstract class BaseTreeService<E extends BaseTree<E, K>, K extends Serializable> implements TreeCrudService<E, K> {
+public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, K extends Serializable> implements TreeCrudService<E, K> {
 
     private final static String UPDATE_ADD_FORMAT = "%s=%s+%s";
 
@@ -37,12 +39,12 @@ public abstract class BaseTreeService<E extends BaseTree<E, K>, K extends Serial
 
         @Override
         public Class<E> getEntityType() {
-            return BaseTreeService.this.getEntityType();
+            return BasePreOrderTreeService.this.getEntityType();
         }
 
         @Override
         public Class<K> getKeyType() {
-            return BaseTreeService.this.getKeyType();
+            return BasePreOrderTreeService.this.getKeyType();
         }
     };
 
@@ -301,12 +303,12 @@ public abstract class BaseTreeService<E extends BaseTree<E, K>, K extends Serial
     private void beforeSaveOrUpdate(E parent) {
 
         //2.更新所有左值大于当前父节点右值的节点左值 +2
-        getTreeMapper().update(null,new UpdateWrapper<E>()
+        getTreeMapper().update(null, new UpdateWrapper<E>()
                 .setSql(String.format(UPDATE_ADD_FORMAT, getLeftField(), getLeftField(), 2))
                 .gt(getLeftField(), parent.getRightValue()));
 
         //3.更新所有右值大于当前父节点右值的节点右值 +2
-        getTreeMapper().update(null,new UpdateWrapper<E>()
+        getTreeMapper().update(null, new UpdateWrapper<E>()
                 .setSql(String.format(UPDATE_ADD_FORMAT, getRightField(), getRightField(), 2))
                 .gt(getRightField(), parent.getRightValue()));
     }
@@ -318,12 +320,12 @@ public abstract class BaseTreeService<E extends BaseTree<E, K>, K extends Serial
      */
     private void beforeDeleteOrMove(E current) {
         //1.更新所有右值小于当前父节点右值的节点左值 -2
-        getTreeMapper().update(null,new UpdateWrapper<E>()
+        getTreeMapper().update(null, new UpdateWrapper<E>()
                 .setSql(String.format(UPDATE_REDUCTION_FORMAT, getLeftField(), getLeftField(), 2))
                 .gt(getLeftField(), current.getRightValue()));
 
         //2.更新所有右值小于当前父节点右值的节点右值 +2
-        getTreeMapper().update(null,new UpdateWrapper<E>()
+        getTreeMapper().update(null, new UpdateWrapper<E>()
                 .setSql(String.format(UPDATE_REDUCTION_FORMAT, getRightField(), getRightField(), 2))
                 .gt(getRightField(), current.getRightValue()));
     }
