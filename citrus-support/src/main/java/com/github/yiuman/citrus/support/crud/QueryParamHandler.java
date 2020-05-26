@@ -12,5 +12,14 @@ import java.lang.reflect.Field;
  */
 public interface QueryParamHandler {
 
+    /**
+     * 根据@QueryParam注解的定义构造查询条件
+     *
+     * @param queryParam   查询注解
+     * @param object       当前查询参数对象
+     * @param field        当前这个查询参数对象的需要处理的属性
+     * @param queryWrapper mybatis-plus查询构造器
+     * @throws Exception 大多为反射异常
+     */
     void handle(QueryParam queryParam, Object object, Field field, QueryWrapper<?> queryWrapper) throws Exception;
 }

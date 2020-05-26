@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ExceptionAdvice {
 
-    private final static ObjectMapper objectMapper = new ObjectMapper();
+    private final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     /**
      * Rest异常处理
@@ -48,7 +48,7 @@ public class ExceptionAdvice {
                 .parallelStream()
                 .map(error -> new ErrorResult(error.getField(), error.getDefaultMessage()))
                 .collect(Collectors.toList());
-        return ResponseEntity.error(ResponseStatusCode.BAD_REQUEST, objectMapper.writeValueAsString(errorResults));
+        return ResponseEntity.error(ResponseStatusCode.BAD_REQUEST, OBJECT_MAPPER.writeValueAsString(errorResults));
     }
 
     private static class ErrorResult {

@@ -34,8 +34,8 @@ public class ResourceService extends BaseDtoService<Resource, Long, ResourceDto>
         this.requestMappingHandlerMapping = requestMappingHandlerMapping;
     }
 
-    public Resource selectByUri(String requestURI, String method) {
-        return ChainWrappers.queryChain(resourceMapper).ge("path", requestURI).ge("operation", method).ge("type", 0).one();
+    public Resource selectByUri(String requestUri, String method) {
+        return ChainWrappers.queryChain(resourceMapper).eq("path", requestUri).eq("operation", method).eq("type", 0).one();
     }
 
     /**

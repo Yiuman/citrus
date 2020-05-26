@@ -27,8 +27,8 @@ public class Base64CaptchaProcessor extends CaptchaProcessor {
     @Override
     public void send(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
         Captcha captcha = generate(httpServletRequest);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();//io流
-        ImageIO.write(captcha.getImage(), "png", byteArrayOutputStream);//写入流中//转换成字节
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(captcha.getImage(), "png", byteArrayOutputStream);
         httpServletResponse.getWriter().write(objectMapper.writeValueAsString(ResponseEntity.ok(Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray()))));
     }
 

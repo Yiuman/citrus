@@ -1,6 +1,9 @@
 package com.github.yiuman.citrus.system.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
@@ -11,9 +14,11 @@ import javax.validation.constraints.NotBlank;
  * @date 2020/4/6
  */
 @Data
+@NoArgsConstructor
 public class ResourceDto {
 
-    private String resourceId;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long resourceId;
 
     /**
      * 资源名
@@ -29,7 +34,7 @@ public class ResourceDto {
     /**
      * 父资源ID
      */
-    private String parentId;
+    private Long parentId;
 
     /**
      * 资源路径
@@ -40,4 +45,12 @@ public class ResourceDto {
      * 操作类型
      */
     private String operation;
+
+    public ResourceDto(@NotBlank String resourceName, Integer type, Long parentId, String path, String operation) {
+        this.resourceName = resourceName;
+        this.type = type;
+        this.parentId = parentId;
+        this.path = path;
+        this.operation = operation;
+    }
 }

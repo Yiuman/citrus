@@ -3,9 +3,12 @@ package com.github.yiuman.citrus.system.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.github.yiuman.citrus.support.model.BaseTree;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * 资源(可能是接口、菜单、操作等)
@@ -14,11 +17,13 @@ import lombok.EqualsAndHashCode;
  * @date 2020/3/23
  */
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_resource")
 public class Resource extends BaseTree<Resource, Long> {
 
-    @TableId(type = IdType.ASSIGN_UUID)
+    @JsonSerialize(using = ToStringSerializer.class)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long resourceId;
 
     /**
@@ -45,6 +50,14 @@ public class Resource extends BaseTree<Resource, Long> {
      * 操作类型
      */
     private String operation;
+
+    public Resource(String resourceName, Integer type, Long parentId, String path, String operation) {
+        this.resourceName = resourceName;
+        this.type = type;
+        this.parentId = parentId;
+        this.path = path;
+        this.operation = operation;
+    }
 
     @Override
     public Long getId() {

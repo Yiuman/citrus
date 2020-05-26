@@ -23,18 +23,18 @@ public class SessionVerificationRepository implements VerificationRepository {
     @Override
     public void save(HttpServletRequest request, HttpServletResponse response, Verification<?> verification) {
         HttpSession session = request.getSession();
-        session.setAttribute(SESSION_VERIFICATION_PARAMETER + session.getId(), verification);
+        session.setAttribute(SESSION_VERIFICATION_PARAMETER, verification);
     }
 
     @Override
     public Verification<?> find(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        return (Verification<?>) request.getSession().getAttribute(SESSION_VERIFICATION_PARAMETER + session.getId());
+        return (Verification<?>) session.getAttribute(SESSION_VERIFICATION_PARAMETER);
     }
 
     @Override
     public void remove(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        session.removeAttribute(SESSION_VERIFICATION_PARAMETER + session.getId());
+        session.removeAttribute(SESSION_VERIFICATION_PARAMETER);
     }
 }

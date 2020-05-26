@@ -16,6 +16,8 @@ import java.util.Map;
  */
 public class TreeDisplay<T> {
 
+    private boolean displayRoot = true;
+
     private boolean lazy;
 
     /**
@@ -57,6 +59,14 @@ public class TreeDisplay<T> {
     private DialogView dialogView;
 
     public TreeDisplay() {
+    }
+
+    public boolean isDisplayRoot() {
+        return displayRoot;
+    }
+
+    public void setDisplayRoot(boolean displayRoot) {
+        this.displayRoot = displayRoot;
     }
 
     public boolean isLazy() {

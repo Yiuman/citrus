@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.system.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.RoleDto;
@@ -8,7 +9,6 @@ import com.github.yiuman.citrus.system.entity.RoleAuthority;
 import com.github.yiuman.citrus.system.mapper.RoleAuthorityMapper;
 import com.github.yiuman.citrus.system.mapper.RoleMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -23,6 +23,7 @@ import java.util.List;
 public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
 
     private final RoleMapper roleMapper;
+
 
     private final RoleAuthorityMapper roleAuthorityMapper;
 
@@ -45,7 +46,11 @@ public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
         return roleMapper;
     }
 
-    public boolean hasPermission(Long userId, Long resourceId) {
+    public boolean hasPermission(Long userId, Long resourceId) throws Exception {
+        if (roleAuthorityMapper.selectCount(new QueryWrapper<RoleAuthority>().eq(getKeyColumn(), resourceId)) == 0) {
+            return true;
+        }
+
         return roleMapper.hasPermission(userId, resourceId);
     }
 

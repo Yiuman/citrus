@@ -28,6 +28,7 @@ public interface AuthenticateService {
      *
      * @param token    令牌
      * @param identity identity身份标识
+     * @return Optional包装的身份认证信息
      */
     Optional<Authentication> resolve(String token, String identity);
 
@@ -41,6 +42,7 @@ public interface AuthenticateService {
 
     /**
      * 支持的认证模式，与请求的参数mode对应，表示支持的授权模式
+     * @return 认证模式字符串 如密码模式 "password"
      */
     String supportMode();
 

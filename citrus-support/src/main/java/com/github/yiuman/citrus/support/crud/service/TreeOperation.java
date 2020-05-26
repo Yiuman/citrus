@@ -16,27 +16,51 @@ public interface TreeOperation<T extends Tree<K>, K extends Serializable> {
 
     /**
      * 根节点
+     *
+     * @return 节点点实例
      */
     T getRoot();
 
+    /**
+     * 获取代表深度的属性名 默认为deep
+     *
+     * @return 深度字段属性名
+     */
     default String getDeepField() {
         return "deep";
     }
 
+    /**
+     * 获取代表父节点ID的属性名 默认为parent_id
+     *
+     * @return 父节点ID的属性名
+     */
     default String getParentField() {
         return "parent_id";
     }
 
+    /**
+     * 获取代表左值的属性名 默认为left_value
+     *
+     * @return 左值的属性名
+     */
     default String getLeftField() {
         return "left_value";
     }
 
+    /**
+     * 获取代表右值的属性名 默认为right_value
+     *
+     * @return 右值的属性名
+     */
     default String getRightField() {
         return "right_value";
     }
 
     /**
      * 从新构建预遍历树
+     *
+     * @throws Exception 一般为数据库异常或反射异常
      */
     void reInit() throws Exception;
 
@@ -45,6 +69,7 @@ public interface TreeOperation<T extends Tree<K>, K extends Serializable> {
      *
      * @param isLazy 是否懒加载
      * @return 树
+     * @throws Exception 一般为数据库异常或反射异常
      */
     T load(boolean isLazy) throws Exception;
 
@@ -53,6 +78,7 @@ public interface TreeOperation<T extends Tree<K>, K extends Serializable> {
      *
      * @param wrapper 查询Wrapper
      * @return 树结构
+     * @throws Exception 一般为数据库异常或反射异常
      */
     T treeQuery(Wrapper<T> wrapper) throws Exception;
 
@@ -60,6 +86,7 @@ public interface TreeOperation<T extends Tree<K>, K extends Serializable> {
      * 加载某个节点下所有数据
      *
      * @param current 当前节点
+     * @throws Exception 一般为数据库异常或反射异常
      */
     void load(T current) throws Exception;
 
@@ -68,6 +95,7 @@ public interface TreeOperation<T extends Tree<K>, K extends Serializable> {
      *
      * @param current 当前节点
      * @param isLazy  是否懒加载
+     * @throws Exception 一般为数据库异常或反射异常
      */
     void load(T current, boolean isLazy) throws Exception;
 
@@ -81,11 +109,18 @@ public interface TreeOperation<T extends Tree<K>, K extends Serializable> {
 
     /**
      * 移动
+     *
+     * @param current 当前节点
+     * @param moveTo  移动到的节点
+     * @throws Exception 一般为数据库异常或反射异常
      */
     void move(T current, K moveTo) throws Exception;
 
     /**
      * 查询某个节点的后代
+     *
+     * @param current 当前节点
+     * @return 获取当前节点的后代节点
      */
     List<T> children(T current);
 

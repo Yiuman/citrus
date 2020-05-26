@@ -17,7 +17,7 @@ import java.util.List;
 public interface UserMapper extends BaseMapper<User> {
 
     @Select("select * from sys_user user where user.uuid = '${uuid}'")
-    User getUserByUUID(@Param("uuid") String uuid);
+    User getUserByUuid(@Param("uuid") String uuid);
 
     @Select("select * from sys_user user where user.login_id = '${loginId}'")
     User getUserByLoginId(@Param("loginId") String loginId);

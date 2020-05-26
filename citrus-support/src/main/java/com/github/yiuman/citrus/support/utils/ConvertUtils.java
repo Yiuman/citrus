@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.support.utils;
 
+import com.google.common.collect.Maps;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -37,7 +39,7 @@ public final class ConvertUtils {
      * @param <S> 类型
      */
     public static <S> Map<String, Object> objectToMap(S s) throws IntrospectionException, InvocationTargetException, IllegalAccessException {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = Maps.newHashMap();
         BeanInfo beanInfo = Introspector.getBeanInfo(s.getClass());
         PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
         for (PropertyDescriptor pd : pds) {

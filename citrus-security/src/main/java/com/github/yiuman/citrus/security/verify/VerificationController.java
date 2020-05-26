@@ -42,8 +42,8 @@ public class VerificationController {
     public ResponseEntity<String> base64Image(HttpServletRequest request) throws IOException {
         CaptchaGenerator captchaGenerator = new CaptchaGenerator(citrusProperties.getVerify());
         Captcha captcha = captchaGenerator.generate(request);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();//io流
-        ImageIO.write(captcha.getImage(), "png", byteArrayOutputStream);//写入流中//转换成字节
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(captcha.getImage(), "png", byteArrayOutputStream);
         return ResponseEntity.ok(Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray()));
     }
 

@@ -40,6 +40,10 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         }
     };
 
+    /**
+     * Mybatis Mapper
+     * @return Mybatis Mapper
+     */
     protected abstract BaseMapper<E> getBaseMapper();
 
     @SuppressWarnings("unchecked")
@@ -75,7 +79,8 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
 
     @Override
     public boolean batchSave(Iterable<D> entityIterable) {
-        throw new UnsupportedOperationException("Method not implemented.");
+        entityIterable.forEach(LambdaUtils.consumerWrapper(this::save));
+        return true;
     }
 
     @Override

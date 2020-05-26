@@ -25,6 +25,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 基础的RESTFUL
@@ -47,7 +48,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
     /**
      * 默认的排序的集合
      */
-    protected List<SortBy> sortBIES = new ArrayList<>();
+    protected List<SortBy> sortByList = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
     private Class<T> currentModelClass() {
@@ -62,6 +63,11 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
 
     }
 
+    /**
+     * 获取CRUD逻辑层服务类
+     *
+     * @return 实现了 CrudService的逻辑层
+     */
     protected abstract CrudService<T, K> getService();
 
     protected Page<T> createPage() throws Exception {
@@ -91,7 +97,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
         }
 
         WebUtils.requestDataBind(page, request);
-        QueryWrapper<T> queryWrapper = getQueryWrapper(request);
+        QueryWrapper<T> queryWrapper = Optional.ofNullable(getQueryWrapper(request)).orElse(new QueryWrapper<>());
         handleSortWrapper(queryWrapper, request);
         return getService().page(page, queryWrapper);
     }
@@ -140,7 +146,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
      * @param isDesc 是否倒序
      */
     protected void addSortBy(String column, boolean isDesc) {
-        sortBIES.add(new SortBy(column, isDesc));
+        sortByList.add(new SortBy(column, isDesc));
     }
 
     /**
@@ -150,7 +156,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
      * @param column 列
      */
     protected void addSortBy(String column) {
-        sortBIES.add(new SortBy(column, false));
+        sortByList.add(new SortBy(column, false));
     }
 
 
@@ -187,7 +193,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
      */
     protected void handleSortWrapper(QueryWrapper<T> wrapper, HttpServletRequest request) throws Exception {
         //构造默认的排序
-        sortBIES.forEach(sortByItem -> wrapper.orderBy(true, !sortByItem.getSortDesc(), StringUtils.camelToUnderline(sortByItem.getSortBy())));
+        sortByList.forEach(sortByItem -> wrapper.orderBy(true, !sortByItem.getSortDesc(), StringUtils.camelToUnderline(sortByItem.getSortBy())));
         //拼接排序条件
         SortBy sortBy = WebUtils.requestDataBind(SortBy.class, request);
         if (sortBy != null && org.springframework.util.StringUtils.hasText(sortBy.getSortBy())) {

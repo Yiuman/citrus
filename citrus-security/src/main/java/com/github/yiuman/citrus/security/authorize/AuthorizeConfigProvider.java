@@ -17,6 +17,9 @@ public interface AuthorizeConfigProvider {
      * 在整个授权配置中，应该有且仅有一个针对anyRequest的配置，
      * 如果所有的实现都没有针对anyRequest的配置，系统会自动增加一个anyRequest().authenticated()的配置；
      * 如果有多个针对anyRequest的配置，则会抛出异常。
+     *
+     * @param config SpringSecurity中的HttpSecurity配置
+     * @return 是否配置成功
      */
     boolean config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config);
 }

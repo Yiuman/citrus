@@ -5,7 +5,6 @@ import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
 import com.github.yiuman.citrus.support.model.DialogView;
 import com.github.yiuman.citrus.support.model.TreeDisplay;
 import com.github.yiuman.citrus.support.utils.Buttons;
-import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.service.MenuService;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,9 +43,9 @@ public class MenuController extends BaseTreeController<Resource, Long> {
     @Override
     protected DialogView createDialogView() throws Exception {
         DialogView view = new DialogView();
-        view.addEditField("菜单名称","resourceName");
-        view.addEditField("路径","path");
-        view.addEditField("路径","path");
-        return super.createDialogView();
+        view.addEditField("菜单名称", "resourceName");
+        view.addEditField("路径", "path");
+        view.addEditField("路径", "path");
+        return view;
     }
 }

@@ -26,7 +26,7 @@ import java.util.Optional;
  */
 @Service
 @Slf4j
-public class PasswordAuthenticateService implements AuthenticateService {
+public class PasswordAuthenticateServiceImpl implements AuthenticateService {
 
     private static final String SUPPORT_MODE = "password";
 
@@ -36,7 +36,7 @@ public class PasswordAuthenticateService implements AuthenticateService {
 
     private final VerificationProcessor<Captcha> verificationProcessor;
 
-    public PasswordAuthenticateService(UserService userService, PasswordEncoder passwordEncoder, VerificationProcessor<Captcha> verificationProcessor) {
+    public PasswordAuthenticateServiceImpl(UserService userService, PasswordEncoder passwordEncoder, VerificationProcessor<Captcha> verificationProcessor) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.verificationProcessor = verificationProcessor;
@@ -66,8 +66,8 @@ public class PasswordAuthenticateService implements AuthenticateService {
 
     @Override
     public Optional<Authentication> resolve(String token, String identity) {
-        User userByUUID = userService.getUserByUUID(identity);
-        return Optional.of(new UsernamePasswordAuthenticationToken(userByUUID, token, null));
+        User user = userService.getUserByUuid(identity);
+        return Optional.of(new UsernamePasswordAuthenticationToken(user, token, null));
     }
 
     @Override

@@ -1,14 +1,17 @@
 package com.github.yiuman.citrus.system.hook;
 
+import com.github.yiuman.citrus.security.authorize.AuthorizeServiceHook;
+import com.github.yiuman.citrus.support.utils.LambdaUtils;
+import com.github.yiuman.citrus.support.utils.SpringUtils;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.service.ResourceService;
 import com.github.yiuman.citrus.system.service.RoleService;
 import com.github.yiuman.citrus.system.service.UserService;
-import com.github.yiuman.citrus.security.authorize.AuthorizeServiceHook;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -38,6 +41,7 @@ public class RbacHook implements AuthorizeServiceHook {
     @Override
     public boolean hasPermission(HttpServletRequest httpServletRequest, Authentication authentication) {
         try {
+            RequestMappingHandlerMapping requestMappingHandlerMapping = SpringUtils.getBean(RequestMappingHandlerMapping.class);
             //没有配置资源的情况下都可以访问
             Resource resource = resourceService.selectByUri(httpServletRequest.getRequestURI(), httpServletRequest.getMethod());
             if (resource == null) {
@@ -45,7 +49,8 @@ public class RbacHook implements AuthorizeServiceHook {
             }
 
             Optional<User> user = userService.getUser(authentication);
-            return user.filter(value -> roleService.hasPermission(value.getUserId(), resource.getResourceId())).isPresent();
+
+            return user.filter(LambdaUtils.predicateWrapper(value -> roleService.hasPermission(value.getUserId(), resource.getResourceId()))).isPresent();
         } catch (Exception e) {
             log.error("RbacService Exception", e);
             return false;

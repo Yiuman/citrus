@@ -6,7 +6,7 @@ package com.github.yiuman.citrus.security.verify;
  */
 public class VerifyProperties {
 
-    private String store = "session";
+    private String store = Store.SESSION;
 
     private int verifyCodeSize = 4;
 
@@ -47,5 +47,13 @@ public class VerifyProperties {
 
     public void setCaptchaHeight(int captchaHeight) {
         this.captchaHeight = captchaHeight;
+    }
+
+    public interface Store {
+
+        String SESSION = "session";
+
+        String REDIS = "redis";
+
     }
 }

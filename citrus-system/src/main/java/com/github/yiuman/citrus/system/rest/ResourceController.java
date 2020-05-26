@@ -36,7 +36,13 @@ public class ResourceController extends BaseCrudController<ResourceDto, Long> {
     protected Page<ResourceDto> createPage() throws Exception {
         Page<ResourceDto> page = super.createPage();
         page.addHeader("资源名","resourceName");
-        page.addHeader("资源类型","type");
+        page.addHeader("资源类型","typeText",(entity)->{
+            String typeString = "";
+            if(entity.getType()!=null && entity.getType()==0){
+                typeString = "菜单";
+            }
+            return typeString;
+        });
         page.addHeader("资源路径","path");
 
         page.addWidget("资源名","resourceName");

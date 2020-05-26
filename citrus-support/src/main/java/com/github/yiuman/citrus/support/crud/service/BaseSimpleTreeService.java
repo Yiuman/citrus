@@ -2,7 +2,6 @@ package com.github.yiuman.citrus.support.crud.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.yiuman.citrus.support.model.BasePreOrderTree;
 import com.github.yiuman.citrus.support.model.BaseTree;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.beans.BeanUtils;
@@ -46,19 +45,19 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
         return initSimpleTreeByList(list(wrapper));
     }
 
-    protected E initSimpleTreeByList(List<E> list){
+    protected E initSimpleTreeByList(List<E> list) {
         E root = getRoot();
-        final Set<E> existsEntity= new LinkedHashSet<>(list);
-        list.parallelStream().forEach(item-> existsEntity.addAll(parents(item)));
-        this.mountByList(root,existsEntity);
+        final Set<E> existsEntity = new LinkedHashSet<>(list);
+        list.parallelStream().forEach(item -> existsEntity.addAll(parents(item)));
+        this.mountByList(root, existsEntity);
         return root;
 
     }
 
-    private void mountByList(E current,final Set<E> sets){
+    private void mountByList(E current, final Set<E> sets) {
         List<E> children = sets.parallelStream().filter(item -> item.getParentId().equals(current.getId())).collect(Collectors.toList());
         current.setChildren(children);
-        children.parallelStream().forEach(item->mountByList(item,sets));
+        children.parallelStream().forEach(item -> mountByList(item, sets));
     }
 
     @Override
@@ -68,7 +67,7 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
 
     @Override
     public void load(E current, boolean isLazy) throws Exception {
-        List<E> children = loadByParent(current.getParentId());
+        List<E> children = loadByParent(current.getId());
         current.setChildren(children);
         if (!isLazy) {
             children.forEach(LambdaUtils.consumerWrapper(item -> load(item, false)));
@@ -78,7 +77,7 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
     @Override
     public List<E> loadByParent(K parentKey) {
         QueryWrapper<E> queryWrapper = new QueryWrapper<>();
-        return parentKey==null?list(queryWrapper.isNull(getParentField())):list(queryWrapper.eq(getParentField(), parentKey));
+        return parentKey == null ? list(queryWrapper.isNull(getParentField())) : list(queryWrapper.eq(getParentField(), parentKey));
     }
 
     @Override

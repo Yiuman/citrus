@@ -61,16 +61,19 @@ public final class VerifyUtils {
         Graphics2D g2 = image.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.setColor(Color.GRAY);// 设置边框色
+        // 设置边框色
+        g2.setColor(Color.GRAY);
         g2.fillRect(0, 0, width, height);
 
+        // 设置背景色
         Color c = getRandColor(200, 250);
-        g2.setColor(c);// 设置背景色
+        g2.setColor(c);
         g2.fillRect(0, 2, width, height - 4);
 
         //绘制干扰线
         Random random = new Random();
-        g2.setColor(getRandColor(160, 200));// 设置线条的颜色
+        // 设置线条的颜色
+        g2.setColor(getRandColor(160, 200));
         for (int i = 0; i < 20; i++) {
             int x = random.nextInt(width - 1);
             int y = random.nextInt(height - 1);
@@ -80,7 +83,8 @@ public final class VerifyUtils {
         }
 
         // 添加噪点
-        float yawpRate = 0.05f;// 噪声率
+        // 噪声率
+        float yawpRate = 0.05f;
         int area = (int) (yawpRate * width * height);
         for (int i = 0; i < area; i++) {
             int x = random.nextInt(width);
@@ -89,7 +93,8 @@ public final class VerifyUtils {
             image.setRGB(x, y, rgb);
         }
 
-        shear(g2, width, height, c);// 使图片扭曲
+        // 使图片扭曲
+        shear(g2, width, height, c);
 
         g2.setColor(getRandColor(100, 160));
         int fontSize = height - 4;
@@ -108,10 +113,8 @@ public final class VerifyUtils {
     }
 
     private static Color getRandColor(int fc, int bc) {
-        if (fc > 255)
-            fc = 255;
-        if (bc > 255)
-            bc = 255;
+        fc = Math.min(fc, 255);
+        bc = Math.min(bc, 255);
         int r = fc + random.nextInt(bc - fc);
         int g = fc + random.nextInt(bc - fc);
         int b = fc + random.nextInt(bc - fc);
@@ -166,7 +169,7 @@ public final class VerifyUtils {
 
     private static void shearY(Graphics g, int w1, int h1, Color color) {
 
-        int period = random.nextInt(40) + 10; // 50;
+        int period = random.nextInt(40) + 10;
 
         boolean borderGap = true;
         int frames = 20;

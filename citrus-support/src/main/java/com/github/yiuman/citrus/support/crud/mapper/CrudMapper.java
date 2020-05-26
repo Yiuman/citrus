@@ -23,6 +23,7 @@ public interface CrudMapper<T> extends BaseMapper<T> {
      * 保存实体
      *
      * @param entity 实体对象
+     * @return 保存成功返回true，否则false
      */
     default boolean saveEntity(T entity) {
         if (null != entity) {
@@ -40,8 +41,8 @@ public interface CrudMapper<T> extends BaseMapper<T> {
     /**
      * 批量保存实体
      *
-     * @param entityList ignore
-     * @return ignore
+     * @param entityList 实体集合
+     * @return 保存成功返回true，否则false
      */
     @Transactional(rollbackFor = Exception.class)
     default boolean saveBatch(Collection<T> entityList) {

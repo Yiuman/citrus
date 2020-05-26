@@ -14,9 +14,11 @@ public interface VerificationRepository {
     /**
      * 保存到仓库
      *
+     * @param request      当前请求
+     * @param response     当前响应
      * @param verification 验证信息
      */
-    void save(HttpServletRequest request, HttpServletResponse response,Verification<?> verification);
+    void save(HttpServletRequest request, HttpServletResponse response, Verification<?> verification);
 
     /**
      * 根据当前请求获取验证信息
@@ -27,6 +29,11 @@ public interface VerificationRepository {
     Verification<?> find(HttpServletRequest request);
 
 
+    /**
+     * 移除当前请求相关会话的验证贮存的信息
+     *
+     * @param request 当前请求
+     */
     void remove(HttpServletRequest request);
 
 }

@@ -13,6 +13,7 @@ public interface EditableService<E, K> extends DeletableService<E, K>, SelectSer
      *
      * @param entity 实体
      * @return 主键
+     * @throws Exception 数据库异常或实体操作异常
      */
     K save(E entity) throws Exception;
 
@@ -29,6 +30,7 @@ public interface EditableService<E, K> extends DeletableService<E, K>, SelectSer
      *
      * @param entity 实体
      * @return 主键
+     * @throws Exception 数据库异常或实体操作异常
      */
     default K update(E entity) throws Exception {
         return this.save(entity);

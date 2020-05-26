@@ -45,6 +45,7 @@ public interface AuthenticateProcessor {
      * 根据当前请求解析为Security认证对象
      *
      * @param request 当前请求
+     * @return Optional包装的身份认证信息
      */
     Optional<Authentication> resolve(HttpServletRequest request);
 

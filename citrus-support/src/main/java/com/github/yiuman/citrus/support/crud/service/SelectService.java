@@ -43,6 +43,7 @@ public interface SelectService<E, K> {
      *
      * @param page         分页查询条件（可以为 RowBounds.DEFAULT）
      * @param queryWrapper 实体对象封装操作类（可以为 null）
+     * @return 实现了IPage接口的页面对象
      */
     <P extends IPage<E>> P page(P page, @Param(Constants.WRAPPER) Wrapper<E> queryWrapper);
 

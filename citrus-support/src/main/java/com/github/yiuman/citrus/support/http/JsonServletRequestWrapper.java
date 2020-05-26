@@ -25,6 +25,16 @@ import java.util.Map;
  */
 public class JsonServletRequestWrapper extends HttpServletRequestWrapper {
 
+    /**
+     * JSON数组的开始
+     */
+    private static final String JSON_ARRAY_START = "[";
+
+    /**
+     * JSON字符串的结束
+     */
+    private static final String JSON_ARRAY_END = "]";
+
     private Map<String, String[]> parameterMap;
 
     private byte[] bytes;
@@ -48,14 +58,12 @@ public class JsonServletRequestWrapper extends HttpServletRequestWrapper {
         String body = IOUtils.toString(request.getInputStream(), Charset.defaultCharset());
         this.bytes = body.getBytes();
         //单单传数组
-        if (body.startsWith("[") && body.endsWith("]")) {
+        if (body.startsWith(JSON_ARRAY_START) && body.endsWith(JSON_ARRAY_END)) {
             setArray(OBJECT_MAPPER.readValue(body, List.class));
         } else {
             OBJECT_MAPPER.readValue(body, new TypeReference<Map<String, Object>>() {
             }).forEach((key, value) -> getParameterMap().put(key, new String[]{String.valueOf(value)}));
         }
-
-
     }
 
     public List<?> getArray() {
@@ -84,10 +92,11 @@ public class JsonServletRequestWrapper extends HttpServletRequestWrapper {
     @Override
     public String[] getParameterValues(String name) {
         String[] results = parameterMap.get(name);
-        if (results == null || results.length <= 0)
+        if (results == null || results.length <= 0){
             return null;
-        else
+        }else{
             return results;
+        }
     }
 
     @Override

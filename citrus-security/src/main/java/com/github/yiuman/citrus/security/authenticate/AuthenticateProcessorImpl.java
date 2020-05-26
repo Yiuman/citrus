@@ -74,7 +74,7 @@ public class AuthenticateProcessorImpl implements AuthenticateProcessor {
             }
         }
 
-        Map<String, Object> claims = new HashMap<>();
+        Map<String, Object> claims = new HashMap<>(16);
         claims.put(AUTHENTICATION_MODE_PARAMETER_KEY, actualRequest.getParameter(AUTHENTICATION_MODE_PARAMETER_KEY));
         Authentication authenticate = authenticate(actualRequest);
         return JwtUtils.generateToken((String) authenticate.getCredentials(), claims);

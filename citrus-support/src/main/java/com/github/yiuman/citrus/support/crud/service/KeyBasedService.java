@@ -16,6 +16,8 @@ public interface KeyBasedService<E, K extends Serializable> extends EntityTypeSe
 
     /**
      * 获取主键类型
+     *
+     * @return 主键的类型Class
      */
     @SuppressWarnings("unchecked")
     default Class<K> getKeyType() {
@@ -29,16 +31,26 @@ public interface KeyBasedService<E, K extends Serializable> extends EntityTypeSe
      * @return 主键
      */
     @SuppressWarnings("unchecked")
-    default K getKey(E entity) throws Exception {
+    default K getKey(E entity) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityType());
         return (K) ReflectionKit.getMethodValue(getEntityType(), entity, tableInfo.getKeyProperty());
     }
 
-    default String getKeyProperty() throws Exception {
+    /**
+     * 获取主键的属性名称
+     *
+     * @return 主键的属性名称 即TableId对应的Field
+     */
+    default String getKeyProperty() {
         return TableInfoHelper.getTableInfo(getEntityType()).getKeyProperty();
     }
 
-    default String getKeyColumn() throws Exception {
+    /**
+     * 获取当前实体的主键列名
+     *
+     * @return 主键列名 即TableId
+     */
+    default String getKeyColumn() {
         return TableInfoHelper.getTableInfo(getEntityType()).getKeyColumn();
     }
 

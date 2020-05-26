@@ -89,12 +89,24 @@ public class Header {
         this.width = width;
     }
 
+    /**
+     * 排列格式
+     */
     enum Align {
 
+        /**
+         * 排头
+         */
         start,
 
+        /**
+         * 居中
+         */
         center,
 
+        /**
+         * 排尾
+         */
         end
     }
 }

@@ -34,6 +34,11 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
         isLazy = lazy;
     }
 
+    /**
+     * 获取树形CRUD的逻辑层实现类
+     *
+     * @return 实现了TreeCrudService的逻辑服务类
+     */
     protected abstract TreeCrudService<T, K> getCrudService();
 
     @Override

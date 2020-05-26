@@ -1,10 +1,7 @@
 package com.github.yiuman.citrus.starter;
 
 import com.github.yiuman.citrus.security.properties.CitrusProperties;
-import com.github.yiuman.citrus.security.verify.RedisVerificationRepository;
-import com.github.yiuman.citrus.security.verify.SessionVerificationRepository;
-import com.github.yiuman.citrus.security.verify.VerificationProcessor;
-import com.github.yiuman.citrus.security.verify.VerificationRepository;
+import com.github.yiuman.citrus.security.verify.*;
 import com.github.yiuman.citrus.security.verify.captcha.Base64CaptchaProcessor;
 import com.github.yiuman.citrus.security.verify.captcha.Captcha;
 import com.github.yiuman.citrus.security.verify.captcha.CaptchaProcessor;
@@ -37,7 +34,7 @@ public class VerifyConfiguration {
     @Bean
     @SuppressWarnings("unchecked")
     public VerificationRepository redisRepository() {
-        if ("redis".equals(citrusProperties.getVerify().getStore())) {
+        if (VerifyProperties.Store.REDIS.equals(citrusProperties.getVerify().getStore())) {
             return new RedisVerificationRepository((RedisTemplate<String, Object>) redisTemplate);
         }
         return new SessionVerificationRepository();

@@ -1,14 +1,8 @@
 package com.github.yiuman.citrus.support.utils;
 
-import com.github.yiuman.citrus.support.wrapper.BiConsumerWrapper;
-import com.github.yiuman.citrus.support.wrapper.ConsumerWrapper;
-import com.github.yiuman.citrus.support.wrapper.FunctionWrapper;
-import com.github.yiuman.citrus.support.wrapper.SupplierWrapper;
+import com.github.yiuman.citrus.support.wrapper.*;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 /**
  * Lambda工具
@@ -60,6 +54,16 @@ public final class LambdaUtils {
         return t -> {
             try {
                 return functionWrapper.apply(t);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        };
+    }
+
+    public static <T> Predicate<T> predicateWrapper(PredicateWrapper<T, Exception> predicateWrapper) {
+        return t -> {
+            try {
+                return predicateWrapper.test(t);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }

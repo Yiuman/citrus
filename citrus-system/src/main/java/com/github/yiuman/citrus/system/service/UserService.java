@@ -28,6 +28,11 @@ import java.util.stream.Collectors;
 @Service
 public class UserService extends BaseDtoService<User, Long, UserDto> {
 
+    /**
+     * 匿名登录的认证对象principal
+     */
+    private final static String ANONYMOUS = "anonymousUser";
+
     private final UserMapper userMapper;
 
     /**
@@ -70,8 +75,8 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
         }
     }
 
-    public User getUserByUUID(String uuid) {
-        return userMapper.getUserByUUID(uuid);
+    public User getUserByUuid(String uuid) {
+        return userMapper.getUserByUuid(uuid);
     }
 
     public Optional<User> getUserByLoginId(String loginId) {
@@ -88,14 +93,14 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
         User user = null;
         Object principal = authentication.getPrincipal();
         //匿名不给进
-        if ("anonymousUser".equals(principal)) {
+        if (ANONYMOUS.equals(principal)) {
             return Optional.empty();
         }
 
         if (principal instanceof User) {
             user = (User) principal;
         } else if (principal instanceof String) {
-            user = getUserByUUID((String) principal);
+            user = getUserByUuid((String) principal);
         }
 
         return Optional.ofNullable(user);

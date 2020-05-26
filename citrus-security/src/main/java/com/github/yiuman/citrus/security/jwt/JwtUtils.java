@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.security.jwt;
 import com.github.yiuman.citrus.support.cache.InMemoryCache;
 import com.github.yiuman.citrus.support.utils.ConvertUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
+import com.google.common.collect.Maps;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -44,7 +45,7 @@ public final class JwtUtils {
     }
 
     public static String generateToken(String identity, Long expireInSeconds, Map<String, Object> claims) {
-        claims = Optional.ofNullable(claims).orElse(new HashMap<>());
+        claims = Optional.ofNullable(claims).orElse(Maps.newHashMap());
         claims.put(getIdentityKey(), identity);
         expireInSeconds = Optional.ofNullable(expireInSeconds).orElse((Long) jwt.find("tokenValidateInSeconds"));
         return Jwts.builder()

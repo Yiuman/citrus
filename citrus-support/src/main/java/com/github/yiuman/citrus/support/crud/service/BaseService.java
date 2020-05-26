@@ -25,6 +25,11 @@ import java.util.stream.Collectors;
  */
 public abstract class BaseService<E, K extends Serializable> implements CrudService<E, K> {
 
+    /**
+     * 获取响应实体的Mapper
+     *
+     * @return 实体的Mapper
+     */
     protected abstract BaseMapper<E> getMapper();
 
     @Transactional

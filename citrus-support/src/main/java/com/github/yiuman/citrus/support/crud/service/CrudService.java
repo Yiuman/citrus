@@ -15,6 +15,7 @@ public interface CrudService<E, K extends Serializable> extends EditableService<
      *
      * @param entity 实体
      * @return 若为true则继续执行下面的操作，否则不执行
+     * @throws Exception 可能为数据库操作异常或其他异常
      */
     default boolean beforeSave(E entity) throws Exception {
         return true;
