@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.system.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -13,10 +14,12 @@ import lombok.Data;
 @TableName("sys_user_organ")
 public class UserOrgan {
 
+    @TableId
     private Long userId;
 
     private User user;
 
+    @TableId
     private Long organId;
 
     private Organization organ;

@@ -48,7 +48,7 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService {
 
         PasswordLoginEntity passwordLoginEntity;
         try {
-            passwordLoginEntity = WebUtils.convertRequestModeEntity(PasswordLoginEntity.class, request);
+            passwordLoginEntity = WebUtils.bindDataAndValidate(PasswordLoginEntity.class, request);
         } catch (Exception e) {
             //此处可能出现实体入参校验异常
             throw new AuthenticationServiceException(e.getMessage());

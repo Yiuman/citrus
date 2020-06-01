@@ -28,4 +28,5 @@ public class AuthorityDto {
      * 资源列表
      */
     private Set<Long> resourceIds;
+
 }

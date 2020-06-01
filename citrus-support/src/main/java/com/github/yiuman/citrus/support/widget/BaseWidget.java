@@ -14,7 +14,7 @@ public abstract class BaseWidget<M> implements Widget<M> {
     private String text;
 
     /**
-     * 键
+     * 键，用于控件值对应的KEY
      */
     private String key;
 

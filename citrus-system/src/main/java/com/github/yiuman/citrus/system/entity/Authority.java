@@ -25,8 +25,6 @@ public class Authority extends AbstractAuditingEntity{
      */
     private String authorityName;
 
-    private Integer scopeId;
-
     private String describe;
 
 }

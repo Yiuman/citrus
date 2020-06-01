@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus.system.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -16,6 +15,8 @@ import java.util.List;
 public class UserDto {
 
     private Long userId;
+
+    private String loginId;
 
     @NotBlank
     private String username;

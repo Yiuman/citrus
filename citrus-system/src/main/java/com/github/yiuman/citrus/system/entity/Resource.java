@@ -59,6 +59,7 @@ public class Resource extends BaseTree<Resource, Long> {
         this.operation = operation;
     }
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @Override
     public Long getId() {
         return this.resourceId;

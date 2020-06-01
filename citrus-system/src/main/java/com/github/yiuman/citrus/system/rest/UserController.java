@@ -9,11 +9,14 @@ import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.support.widget.Selects;
+import com.github.yiuman.citrus.support.widget.TreeNode;
 import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.dto.UserQuery;
+import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.entity.Role;
 import com.github.yiuman.citrus.system.hook.HasLoginHook;
+import com.github.yiuman.citrus.system.service.OrganService;
 import com.github.yiuman.citrus.system.service.RoleService;
 import com.github.yiuman.citrus.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -39,9 +42,12 @@ public class UserController extends BaseCrudController<UserDto, Long> {
 
     private final RoleService roleService;
 
-    public UserController(UserService userService, RoleService roleService) {
+    private final OrganService organService;
+
+    public UserController(UserService userService, RoleService roleService, OrganService organService) {
         this.userService = userService;
         this.roleService = roleService;
+        this.organService = organService;
         setParamClass(UserQuery.class);
     }
 
@@ -74,18 +80,26 @@ public class UserController extends BaseCrudController<UserDto, Long> {
     @Override
     protected DialogView createDialogView() throws Exception {
         DialogView dialogView = new DialogView();
+        dialogView.addEditField("登录名","loginId");
         dialogView.addEditField("用户名", "username");
         dialogView.addEditField("密码", "password");
         dialogView.addEditField("手机号码", "mobile");
         dialogView.addEditField("邮箱", "email");
         dialogView.addEditField("选择角色", "roleIds", CrudUtils.getWidget(this, "getRoleSelects"));
-        dialogView.addEditField("选择机构", "organIds");
+        dialogView.addEditField("选择机构", "organIds",getOrganTree());
         return dialogView;
     }
 
     @Selects(bind = "roleIds", key = "roleId", label = "roleName", text = "所属角色", multiple = true)
     public List<RoleDto> getRoleSelects() {
         return roleService.list();
+    }
+
+    public TreeNode<Organization> getOrganTree() throws Exception {
+        TreeNode<Organization> organizationTreeNode = new TreeNode<>("选择机构", "organIds", organService.treeQuery(null));
+        organizationTreeNode.setModelKeyField("organId");
+        organizationTreeNode.setModelTextField("organName");
+        return organizationTreeNode;
     }
 
 }

@@ -113,6 +113,20 @@ CREATE TABLE `sys_auth_scope`
 
 -- ----------------------------
 
+-- ------------数据范围表----------------
+DROP TABLE IF EXISTS `sys_scope`;
+CREATE TABLE `sys_scope`
+(
+  `scope_id`  bigint(20) NOT NULL COMMENT '数据范围ID',
+  `scope_name`  varchar (500) NOT NULL COMMENT '范围名称',
+  `organ_id` bigint(20) NOT NULL COMMENT '组织ID',
+  PRIMARY KEY (`scope_id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  ROW_FORMAT = DYNAMIC COMMENT ='数据范围表';
+
+-- ----------------------------
+
 -- ------------权限表----------------
 DROP TABLE IF EXISTS `sys_authority`;
 CREATE TABLE `sys_authority`
@@ -143,7 +157,7 @@ CREATE TABLE `sys_user_role`
   PRIMARY KEY (`user_id`, `role_id`, `organ_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
-  ROW_FORMAT = DYNAMIC COMMENT ='角色表';
+  ROW_FORMAT = DYNAMIC COMMENT ='用户角色关系表';
 
 -- ----------------------------
 

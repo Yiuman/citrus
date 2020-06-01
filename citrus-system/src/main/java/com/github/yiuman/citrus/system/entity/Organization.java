@@ -3,6 +3,8 @@ package com.github.yiuman.citrus.system.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.github.yiuman.citrus.support.model.BasePreOrderTree;
 import lombok.Data;
 
@@ -16,6 +18,7 @@ import lombok.Data;
 @TableName("sys_organ")
 public class Organization extends BasePreOrderTree<Organization, Long> {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableId(type = IdType.AUTO)
     private Long organId;
 
@@ -39,7 +42,9 @@ public class Organization extends BasePreOrderTree<Organization, Long> {
      */
     private String remark;
 
+
     @Override
+    @JsonSerialize(using = ToStringSerializer.class)
     public Long getId() {
         return organId;
     }

@@ -15,8 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -55,24 +54,25 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
     public void afterSave(UserDto entity) {
         //保存组织机构信息
         List<Long> organIds = entity.getOrganIds();
-        if (!CollectionUtils.isEmpty(organIds)) {
-            organIds.forEach(organId -> {
-                userOrganMapper.saveEntity(new UserOrgan(entity.getUserId(), organId));
-                //先删除旧的角色数据
-                userRoleMapper.delete(new QueryWrapper<UserRole>()
-                        .eq("user_id", entity.getUserId())
-                        .eq("organ_id", organId));
-                //保存组织机构角色数据
-                List<UserRole> userRoles = entity.getRoleIds().parallelStream().map(roleId -> {
-                    UserRole userRole = new UserRole();
-                    userRole.setUserId(entity.getUserId());
-                    userRole.setRoleId(roleId);
-                    userRole.setOrganId(organId);
-                    return userRole;
-                }).collect(Collectors.toList());
-                userRoleMapper.saveBatch(userRoles);
-            });
+        if (CollectionUtils.isEmpty(organIds)) {
+            organIds = Collections.singletonList(-1L);
         }
+        organIds.forEach(organId -> {
+//            userOrganMapper.saveEntity(new UserOrgan(entity.getUserId(), organId));
+            //先删除旧的角色数据
+            userRoleMapper.delete(new QueryWrapper<UserRole>()
+                    .eq("user_id", entity.getUserId())
+                    .eq("organ_id", organId));
+            //保存组织机构角色数据
+            List<UserRole> userRoles = entity.getRoleIds().parallelStream().map(roleId -> {
+                UserRole userRole = new UserRole();
+                userRole.setUserId(entity.getUserId());
+                userRole.setRoleId(roleId);
+                userRole.setOrganId(organId);
+                return userRole;
+            }).collect(Collectors.toList());
+            userRoleMapper.saveBatch(userRoles);
+        });
     }
 
     public User getUserByUuid(String uuid) {
@@ -106,7 +106,7 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
         return Optional.ofNullable(user);
     }
 
-    public List<Role>  getRoleByUser(UserDto userDto){
+    public List<Role> getRoleByUser(UserDto userDto) {
         return userMapper.getRolesByUserId(userDto.getUserId());
     }
 

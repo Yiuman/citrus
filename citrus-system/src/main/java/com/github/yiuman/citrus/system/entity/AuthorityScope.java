@@ -1,13 +1,12 @@
 package com.github.yiuman.citrus.system.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * 数据范围
- * 定义某个角色对某个权限的作用范围
+ * 权限资源及数据范围的关联关系
+ * 定义对某个权限的作用范围
  *
  * @author yiuman
  * @date 2020/3/30
@@ -16,17 +15,25 @@ import lombok.Data;
 @TableName("sys_auth_scope")
 public class AuthorityScope {
 
-    @TableId(type = IdType.AUTO)
-    private Integer scopeId;
+    /**
+     * 数据范围的ID
+     * @see Scope
+     */
+    @TableId
+    private Long scopeId;
 
     /**
-     * 范围名称
+     * 权限ID
+     * @see Authority
      */
-    private String scopeName;
+    @TableId
+    private Long authId;
 
     /**
-     * 所属组织
+     * 数据范围对应的资源
+     * @see Resource
      */
-    private Integer organId;
+    @TableId
+    private Long resourceId;
 
 }

@@ -11,13 +11,13 @@ import java.util.List;
  */
 public final class Buttons {
 
-    private static Button ADD = new Button("新增", "add", "#81b90c","plus");
+    private static Button ADD = new Button("新增", "add", "primary","plus");
 
     private static Button EDIT = new Button("","edit","#81b90c","pencil");
 
-    private static Button DELETE = new Button("", "delete", "#ec6e18","delete-circle");
+    private static Button DELETE = new Button("", "delete", "error","delete-circle");
 
-    private static Button DELETE_BATCH = new Button("删除", "batchDelete", "#ec6e18","trash-can");
+    private static Button DELETE_BATCH = new Button("删除", "batchDelete", "error","trash-can");
 
     private static Button IMPORT = new Button("导入", "import","","file-upload");
 

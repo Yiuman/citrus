@@ -40,4 +40,6 @@ public class Role extends AbstractAuditingEntity{
      */
     private Integer orderId;
 
+    private Boolean admin;
+
 }

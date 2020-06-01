@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.system.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
 import com.github.yiuman.citrus.support.crud.rest.CrudRestful;
 import com.github.yiuman.citrus.support.crud.service.BaseSimpleTreeService;
@@ -97,6 +98,21 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
 
     }
 
+    /**
+     * 根据菜单主键获取操作资源
+     *
+     * @param key 菜单主键
+     * @return 操作资源列表
+     */
+    public List<Resource> getOperationByKey(Long key) {
+        return super.list(Wrappers.<Resource>query().eq(getParentField(), key).eq("type", 2));
+    }
+
+    /**
+     * 保存菜单默认的资源
+     *
+     * @param menu 当前菜单
+     */
     private void createCrudDefaultResource(Resource menu) {
         final Integer resourceType = 2;
         resourceService.batchSave(Arrays.asList(
@@ -110,6 +126,11 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
         ));
     }
 
+    /**
+     * 保存树形菜单资源的默认资源
+     *
+     * @param menu 当前树形菜单资源
+     */
     private void createTreeDefaultResource(Resource menu) {
         final Integer resourceType = 2;
         resourceService.batchSave(Arrays.asList(
