@@ -5,10 +5,7 @@ import com.github.yiuman.citrus.support.widget.Widget;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -114,6 +111,7 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     }
 
     public Map<String, Map<String, Object>> getRecordExtend() {
+
         return recordExtend;
     }
 
@@ -123,14 +121,12 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
 
     @Override
     public List<T> getRecords() {
-        List<T> records = super.getRecords();
-        this.recordFunctions.parallelStream().forEach(func -> {
-            records.forEach(record -> {
-                Map<String, Object> objectObjectHashMap = new HashMap<>(1);
-                objectObjectHashMap.put(func.getFiledName(), func.getFunction().apply(record));
-                this.recordExtend.put(getKey(record), objectObjectHashMap);
-            });
-        });
+        final List<T> records = super.getRecords();
+        this.recordFunctions.forEach(func -> records.forEach(record -> {
+            Map<String, Object> objectObjectHashMap = Optional.ofNullable(this.recordExtend.get(getKey(record))).orElse(new HashMap<>(1));
+            objectObjectHashMap.put(func.getFiledName(), func.getFunction().apply(record));
+            this.recordExtend.put(getKey(record), objectObjectHashMap);
+        }));
         return records;
     }
 

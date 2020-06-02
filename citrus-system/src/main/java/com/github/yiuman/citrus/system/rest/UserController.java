@@ -69,6 +69,12 @@ public class UserController extends BaseCrudController<UserDto, Long> {
             return roleByUser.parallelStream().map(Role::getRoleName).collect(Collectors.joining(","));
         });
 
+        page.addHeader("所属机构", "organNames", (entity) -> {
+            List<Organization> organByUser = userService.getOrganByUser(entity);
+            entity.setOrganIds(organByUser.parallelStream().map(Organization::getOrganId).collect(Collectors.toList()));
+            return organByUser.parallelStream().map(Organization::getOrganName).collect(Collectors.joining(","));
+        });
+
         page.addWidget(new Inputs("用户名", "username"));
         //添加默认按钮
         page.addButton(Buttons.defaultButtons());
@@ -80,13 +86,13 @@ public class UserController extends BaseCrudController<UserDto, Long> {
     @Override
     protected DialogView createDialogView() throws Exception {
         DialogView dialogView = new DialogView();
-        dialogView.addEditField("登录名","loginId");
+        dialogView.addEditField("登录名", "loginId");
         dialogView.addEditField("用户名", "username");
         dialogView.addEditField("密码", "password");
         dialogView.addEditField("手机号码", "mobile");
         dialogView.addEditField("邮箱", "email");
         dialogView.addEditField("选择角色", "roleIds", CrudUtils.getWidget(this, "getRoleSelects"));
-        dialogView.addEditField("选择机构", "organIds",getOrganTree());
+        dialogView.addEditField("选择机构", "organIds", getOrganTree());
         return dialogView;
     }
 
@@ -97,6 +103,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
 
     public TreeNode<Organization> getOrganTree() throws Exception {
         TreeNode<Organization> organizationTreeNode = new TreeNode<>("选择机构", "organIds", organService.treeQuery(null));
+        organizationTreeNode.setMultipleSelect(true);
         organizationTreeNode.setModelKeyField("organId");
         organizationTreeNode.setModelTextField("organName");
         return organizationTreeNode;

@@ -10,6 +10,8 @@ import com.github.yiuman.citrus.support.model.BaseTree;
  */
 public class TreeNode<M extends BaseTree<?, ?>> extends BaseWidget<M> {
 
+    private boolean multipleSelect;
+
     /**
      * 模型的显示名称
      */
@@ -29,7 +31,15 @@ public class TreeNode<M extends BaseTree<?, ?>> extends BaseWidget<M> {
 
     @Override
     public String getWidgetName() {
-        return "FormSelectTree";
+        return "tree-select";
+    }
+
+    public boolean isMultipleSelect() {
+        return multipleSelect;
+    }
+
+    public void setMultipleSelect(boolean multipleSelect) {
+        this.multipleSelect = multipleSelect;
     }
 
     public String getModelTextField() {

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
 import com.github.yiuman.citrus.support.model.BasePreOrderTree;
@@ -189,11 +190,8 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         String parentSql = "t1.leftValue > t2. leftValue and t1.rightValue < t2.rightValue"
                 .replaceAll("leftValue", getLeftField())
                 .replaceAll("rightValue", getRightField());
-        list.addAll(
-                getTreeMapper()
-                        .list(table.getTableName()
-                                , new QueryWrapper<E>().apply(parentSql)
-                                        .in("t1." + table.getKeyColumn(), ids)));
+        list.addAll(getTreeMapper()
+                .list(table.getTableName(), Wrappers.<E>query().apply(parentSql).in("t1." + table.getKeyColumn(), ids)));
         final E root = getRoot();
         //传list进去前需要去重,并排除根节点
         initTreeFromList(root, list.parallelStream().distinct().filter(item -> item.getId() != root.getId()).collect(Collectors.toList()));
@@ -233,7 +231,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         } else {
             List<E> children = children(current, current.getDeep() + 1);
             if (!CollectionUtils.isEmpty(children)) {
-                children.parallelStream().forEach(LambdaUtils.consumerWrapper(this::load));
+                children.parallelStream().forEach(LambdaUtils.consumerWrapper(child -> this.load(child, isLazy)));
             }
             current.setChildren(children);
         }

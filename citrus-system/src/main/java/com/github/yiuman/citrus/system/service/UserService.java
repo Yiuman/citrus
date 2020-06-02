@@ -4,18 +4,19 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.UserDto;
+import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.entity.Role;
 import com.github.yiuman.citrus.system.entity.User;
-import com.github.yiuman.citrus.system.entity.UserOrgan;
 import com.github.yiuman.citrus.system.entity.UserRole;
 import com.github.yiuman.citrus.system.mapper.UserMapper;
-import com.github.yiuman.citrus.system.mapper.UserOrganMapper;
 import com.github.yiuman.citrus.system.mapper.UserRoleMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -42,12 +43,9 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
     /**
      * 用户组织机构mapper
      */
-    private final UserOrganMapper userOrganMapper;
-
-    public UserService(UserMapper userMapper, UserRoleMapper userRoleMapper, UserOrganMapper userOrganMapper) {
+    public UserService(UserMapper userMapper, UserRoleMapper userRoleMapper) {
         this.userMapper = userMapper;
         this.userRoleMapper = userRoleMapper;
-        this.userOrganMapper = userOrganMapper;
     }
 
     @Override
@@ -73,6 +71,12 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
             }).collect(Collectors.toList());
             userRoleMapper.saveBatch(userRoles);
         });
+    }
+
+
+    @Override
+    protected BaseMapper<User> getBaseMapper() {
+        return userMapper;
     }
 
     public User getUserByUuid(String uuid) {
@@ -110,8 +114,8 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
         return userMapper.getRolesByUserId(userDto.getUserId());
     }
 
-    @Override
-    protected BaseMapper<User> getBaseMapper() {
-        return userMapper;
+
+    public List<Organization> getOrganByUser(UserDto entity) {
+        return userMapper.getOrgansByUserId(entity.getUserId());
     }
 }
