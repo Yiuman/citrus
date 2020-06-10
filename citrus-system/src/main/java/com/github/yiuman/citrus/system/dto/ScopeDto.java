@@ -3,7 +3,10 @@ package com.github.yiuman.citrus.system.dto;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.github.yiuman.citrus.system.entity.Organization;
+import com.github.yiuman.citrus.system.entity.ScopeDefine;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @author yiuman
@@ -24,5 +27,7 @@ public class ScopeDto {
      */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long organId;
+
+    private List<ScopeDefine> scopeDefines;
 
 }

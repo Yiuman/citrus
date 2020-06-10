@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.system.dto;
 
 import lombok.Data;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -25,8 +26,20 @@ public class AuthorityDto {
     private String describe;
 
     /**
-     * 资源列表
+     * 资源
+     * 主键是资源的ID，例如菜单ID
+     *
+     * @see com.github.yiuman.citrus.system.entity.Resource
+     * 值是资源的数据范围及可操作资源的集合
      */
-    private Set<Long> resourceIds;
+    private Map<Long, ResourceScopeAndOperations> resources;
 
+    @Data
+    static class ResourceScopeAndOperations {
+
+        private Long scopeId;
+
+        private Set<Long> operations;
+
+    }
 }

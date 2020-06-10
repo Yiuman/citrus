@@ -2,15 +2,22 @@ package com.github.yiuman.citrus.system.rest;
 
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
+import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.DialogView;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.Buttons;
+import com.github.yiuman.citrus.support.utils.ConvertUtils;
 import com.github.yiuman.citrus.system.dto.ScopeDto;
 import com.github.yiuman.citrus.system.entity.Organization;
+import com.github.yiuman.citrus.system.enums.ScopeType;
 import com.github.yiuman.citrus.system.service.OrganService;
 import com.github.yiuman.citrus.system.service.ScopeService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 数据范围CRUD
@@ -56,8 +63,13 @@ public class ScopeController extends BaseCrudController<ScopeDto, Long> {
     @Override
     protected DialogView createDialogView() throws Exception {
         DialogView dialogView = new DialogView();
-        dialogView.addEditField("数据范围名称","scopeName");
-        dialogView.addEditField("所属组织","organId", organService.getOrganTree("选择机构","organId",false));
+        dialogView.addEditField("数据范围名称", "scopeName");
+        dialogView.addEditField("所属组织", "organId", organService.getOrganTree("选择机构", "organId", false));
         return dialogView;
+    }
+
+    @GetMapping("/types")
+    public ResponseEntity<List<Map<String, ?>>> getScopeTypes() {
+        return ResponseEntity.ok(ConvertUtils.enumToListMap(ScopeType.class));
     }
 }

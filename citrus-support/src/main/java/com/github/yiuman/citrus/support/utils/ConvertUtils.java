@@ -1,14 +1,15 @@
 package com.github.yiuman.citrus.support.utils;
 
 import com.google.common.collect.Maps;
+import org.springframework.util.ReflectionUtils;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -50,5 +51,24 @@ public final class ConvertUtils {
             map.put(pd.getDisplayName(), invokeValue == null ? "" : invokeValue);
         }
         return map;
+    }
+
+    /**
+     * 枚举转ListMap
+     *
+     * @param enumClass 枚举类型
+     * @param <T>       枚举
+     * @return List-Map  Map中包括枚举类型的所有字段
+     */
+    public static <T extends Enum<?>> List<Map<String, ?>> enumToListMap(Class<T> enumClass) {
+        return Arrays.stream(enumClass.getEnumConstants()).map(enumObject -> {
+            Map<String, Object> map = Maps.newHashMap();
+            ReflectionUtils.doWithFields(enumClass, (field -> {
+                field.setAccessible(true);
+                map.put(field.getName(), field.get(enumObject));
+            }));
+
+            return map;
+        }).collect(Collectors.toList());
     }
 }
