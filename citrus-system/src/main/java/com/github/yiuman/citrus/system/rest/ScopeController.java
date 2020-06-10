@@ -40,7 +40,7 @@ public class ScopeController extends BaseCrudController<ScopeDto, Long> {
     protected Page<ScopeDto> createPage() throws Exception {
         Page<ScopeDto> page = super.createPage();
         page.addHeader("数据范围名称", "scopeName");
-        page.addHeader("所属组织", "organId", (entity) -> {
+        page.addHeader("所属组织", "organName", (entity) -> {
             if (-1 == entity.getOrganId()) {
                 return "系统通用数据范围";
             }
@@ -57,7 +57,7 @@ public class ScopeController extends BaseCrudController<ScopeDto, Long> {
     protected DialogView createDialogView() throws Exception {
         DialogView dialogView = new DialogView();
         dialogView.addEditField("数据范围名称","scopeName");
-        dialogView.addEditField("所属组织","organId");
+        dialogView.addEditField("所属组织","organId", organService.getOrganTree("选择机构","organId",false));
         return dialogView;
     }
 }

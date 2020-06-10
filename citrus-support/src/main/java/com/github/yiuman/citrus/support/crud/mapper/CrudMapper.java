@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -25,15 +26,20 @@ public interface CrudMapper<T> extends BaseMapper<T> {
      * @param entity 实体对象
      * @return 保存成功返回true，否则false
      */
-    default boolean saveEntity(T entity) {
+    default boolean saveEntity(T entity) throws Exception {
         if (null != entity) {
             Class<?> cls = entity.getClass();
             TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
             Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
+            //没找到主键的话直接插入
             String keyProperty = tableInfo.getKeyProperty();
-            Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
+            if (StringUtils.isBlank(keyProperty)) {
+                return SqlHelper.retBool(insert(entity));
+            }
             Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
-            return StringUtils.checkValNull(idVal) || Objects.isNull(selectById((Serializable) idVal)) ? SqlHelper.retBool(insert(entity)) : SqlHelper.retBool(updateById(entity));
+            return StringUtils.checkValNull(idVal) || Objects.isNull(selectById((Serializable) idVal))
+                    ? SqlHelper.retBool(insert(entity))
+                    : SqlHelper.retBool(updateById(entity));
         }
         return false;
     }
@@ -45,13 +51,9 @@ public interface CrudMapper<T> extends BaseMapper<T> {
      * @return 保存成功返回true，否则false
      */
     @Transactional(rollbackFor = Exception.class)
-    default boolean saveBatch(Collection<T> entityList) {
-        try {
-            entityList.forEach(this::saveEntity);
-            return true;
-        } catch (Exception ex) {
-            return false;
-        }
+    default boolean saveBatch(Collection<T> entityList) throws Exception {
+        entityList.forEach(LambdaUtils.consumerWrapper(this::saveEntity));
+        return true;
     }
 
 

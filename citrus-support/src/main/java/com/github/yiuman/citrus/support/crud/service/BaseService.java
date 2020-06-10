@@ -42,10 +42,13 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
             Class<?> cls = getEntityType();
             TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
             Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
+
+            //如果找不到主键就直接插入
             String keyProperty = tableInfo.getKeyProperty();
-            Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
+//            Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
             K keyValue = getKey(entity);
-            if (StringUtils.checkValNull(keyValue) || Objects.isNull(get(keyValue))) {
+
+            if (StringUtils.isBlank(keyProperty) || StringUtils.checkValNull(keyValue) || Objects.isNull(get(keyValue))) {
                 getMapper().insert(entity);
                 keyValue = getKey(entity);
             } else {

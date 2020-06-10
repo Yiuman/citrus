@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.system.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
+import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.entity.Role;
@@ -55,22 +56,22 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
         if (CollectionUtils.isEmpty(organIds)) {
             organIds = Collections.singletonList(-1L);
         }
-        organIds.forEach(organId -> {
-//            userOrganMapper.saveEntity(new UserOrgan(entity.getUserId(), organId));
-            //先删除旧的角色数据
-            userRoleMapper.delete(new QueryWrapper<UserRole>()
-                    .eq("user_id", entity.getUserId())
-                    .eq("organ_id", organId));
+        //先删除用户旧的角色部门数据
+        userRoleMapper.delete(new QueryWrapper<UserRole>()
+                .eq("user_id", entity.getUserId())
+                .in("organ_id", organIds));
+
+        organIds.forEach(LambdaUtils.consumerWrapper(organId -> {
             //保存组织机构角色数据
-            List<UserRole> userRoles = entity.getRoleIds().parallelStream().map(roleId -> {
+            List<UserRole> userRoles = entity.getRoleIds().stream().map(roleId -> {
                 UserRole userRole = new UserRole();
                 userRole.setUserId(entity.getUserId());
                 userRole.setRoleId(roleId);
                 userRole.setOrganId(organId);
                 return userRole;
             }).collect(Collectors.toList());
-            userRoleMapper.saveBatch(userRoles);
-        });
+            boolean b = userRoleMapper.saveBatch(userRoles);
+        }));
     }
 
 

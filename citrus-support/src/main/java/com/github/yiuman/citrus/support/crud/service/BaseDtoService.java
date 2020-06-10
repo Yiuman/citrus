@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yiuman.citrus.support.utils.ConvertUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
@@ -67,6 +68,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         });
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public K save(D entity) throws Exception {
         if (!beforeSave(entity)) {
@@ -77,12 +79,14 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         return key;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean batchSave(Iterable<D> entityIterable) {
         entityIterable.forEach(LambdaUtils.consumerWrapper(this::save));
         return true;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public K update(D entity) throws Exception {
         if (!this.beforeUpdate(entity)) {

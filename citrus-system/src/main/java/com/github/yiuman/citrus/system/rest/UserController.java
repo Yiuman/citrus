@@ -92,7 +92,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
         dialogView.addEditField("手机号码", "mobile");
         dialogView.addEditField("邮箱", "email");
         dialogView.addEditField("选择角色", "roleIds", CrudUtils.getWidget(this, "getRoleSelects"));
-        dialogView.addEditField("选择机构", "organIds", getOrganTree());
+        dialogView.addEditField("选择机构", "organIds",organService.getOrganTree("选择机构","organIds",true));
         return dialogView;
     }
 
@@ -101,12 +101,5 @@ public class UserController extends BaseCrudController<UserDto, Long> {
         return roleService.list();
     }
 
-    public TreeNode<Organization> getOrganTree() throws Exception {
-        TreeNode<Organization> organizationTreeNode = new TreeNode<>("选择机构", "organIds", organService.treeQuery(null));
-        organizationTreeNode.setMultipleSelect(true);
-        organizationTreeNode.setModelKeyField("organId");
-        organizationTreeNode.setModelTextField("organName");
-        return organizationTreeNode;
-    }
 
 }

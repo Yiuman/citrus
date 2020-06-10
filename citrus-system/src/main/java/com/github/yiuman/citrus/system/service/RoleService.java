@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 角色权限相关逻辑类
@@ -24,7 +25,6 @@ public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
 
     private final RoleMapper roleMapper;
 
-
     private final RoleAuthorityMapper roleAuthorityMapper;
 
     public RoleService(RoleMapper roleMapper, RoleAuthorityMapper roleAuthorityMapper) {
@@ -33,10 +33,10 @@ public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
     }
 
     @Override
-    public void afterSave(RoleDto entity) {
+    public void afterSave(RoleDto entity) throws Exception {
         List<Long> authIds = entity.getAuthIds();
         if (!CollectionUtils.isEmpty(authIds)) {
-            authIds.forEach(authId -> roleAuthorityMapper.saveEntity(new RoleAuthority(entity.getRoleId(), authId)));
+            roleAuthorityMapper.saveBatch(authIds.stream().map(authId -> new RoleAuthority(entity.getRoleId(), authId)).collect(Collectors.toList()));
         }
 
     }

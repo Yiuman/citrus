@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.system.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.github.yiuman.citrus.system.entity.Organization;
 import lombok.Data;
 
@@ -10,6 +12,7 @@ import lombok.Data;
 @Data
 public class ScopeDto {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long scopeId;
 
     private String scopeName;
@@ -19,6 +22,7 @@ public class ScopeDto {
      *
      * @see Organization
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long organId;
 
 }
