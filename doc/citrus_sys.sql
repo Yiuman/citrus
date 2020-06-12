@@ -98,21 +98,6 @@ create index IX_SYS_ORGAN_LEFTVALUE on sys_organ (left_value);
 create index IX_SYS_ORGAN_RIGHTVALUE on sys_organ (right_value);
 -- ----------------------------
 
-
--- ------------数据范围表----------------
-DROP TABLE IF EXISTS `sys_auth_scope`;
-CREATE TABLE `sys_auth_scope`
-(
-  `scope_id`  bigint(20) NOT NULL COMMENT '数据范围ID',
-  `scope_name`  bigint(20) NOT NULL COMMENT '角色ID',
-  `organ_id` bigint(20) NOT NULL COMMENT '组织ID',
-  PRIMARY KEY (`scope_id`) USING BTREE
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8
-  ROW_FORMAT = DYNAMIC COMMENT ='数据范围表';
-
--- ----------------------------
-
 -- ------------数据范围表----------------
 DROP TABLE IF EXISTS `sys_scope`;
 CREATE TABLE `sys_scope`
@@ -127,13 +112,29 @@ CREATE TABLE `sys_scope`
 
 -- ----------------------------
 
+-- ------------数据范围定义表----------------
+DROP TABLE IF EXISTS `sys_scope_define`;
+CREATE TABLE `sys_scope_define`
+(
+  `id` bigint(20) NOT NULL COMMENT '数据范围定义对象ID',
+  `scope_id`  bigint(20) NOT NULL COMMENT '关联的数据范围ID',
+  `organ_id` bigint(20) NOT NULL COMMENT '组织ID',
+  `scope_rule` int not null COMMENT '数据范围的规则（0：包含，1：排除）',
+  `scope_types` varchar(20)  COMMENT '范围类型（自身、包含子部门、包含父部门）',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  ROW_FORMAT = DYNAMIC COMMENT ='数据范围定义表';
+
+-- ----------------------------
+
 -- ------------权限表----------------
 DROP TABLE IF EXISTS `sys_authority`;
 CREATE TABLE `sys_authority`
 (
   `authority_id`           bigint(20) NOT NULL COMMENT '主键id',
-  `scope_id`           bigint(20) NOT NULL COMMENT '数据范围id',
   `authority_name`         varchar(50) DEFAULT NULL COMMENT '权限名字',
+  `remark`  varchar(2000) DEFAULT NULL COMMENT '权限名字',
   `create_time`        datetime    DEFAULT NULL COMMENT '创建时间',
   `create_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
   `last_modified_time` datetime    DEFAULT NULL COMMENT '最后的更新时间',
@@ -144,6 +145,23 @@ CREATE TABLE `sys_authority`
   ROW_FORMAT = DYNAMIC COMMENT ='权限表';
 
 create index IX_SYS_AUTHORITY_AUTHORITYNAME on sys_authority (authority_name);
+-- ----------------------------
+
+
+-- ------------权限资源关系表----------------
+DROP TABLE IF EXISTS `sys_auth_resource`;
+CREATE TABLE `sys_auth_resource`
+(
+  `authority_id`  bigint(20) NOT NULL COMMENT '权限ID',
+   `resource_id` bigint(20) NOT NULL COMMENT '资源ID',
+  `scope_id`  bigint(20)  COMMENT '数据范围ID',
+  `object_id` bigint(20)  COMMENT '关联的对象，如果资源类型为"操作"，即关联的对象为该"操作对应的资源ID 例如 菜单与新增、删除等操作，此实体中的resourceId为操作类型的ID，即此objectId为此操作对应的菜单',
+  `type` int(2)  COMMENT '资源类型，菜单为0；操作为2',
+  PRIMARY KEY (`authority_id`, `resource_id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  ROW_FORMAT = DYNAMIC COMMENT ='权限资源关系表';
+
 -- ----------------------------
 
 
@@ -175,18 +193,6 @@ CREATE TABLE `sys_role_auth`
 -- ----------------------------
 
 
--- ------------权限资源关系表----------------
-DROP TABLE IF EXISTS `sys_auth_resource`;
-CREATE TABLE `sys_auth_resource`
-(
-  `authority_id`  bigint(20) NOT NULL COMMENT '权限ID',
-  `resource_id` bigint(20) NOT NULL COMMENT '资源ID',
-  PRIMARY KEY (`authority_id`, `resource_id`) USING BTREE
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8
-  ROW_FORMAT = DYNAMIC COMMENT ='权限资源关系表';
-
--- ----------------------------
 
 
 

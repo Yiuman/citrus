@@ -1,7 +1,7 @@
 package com.github.yiuman.citrus.system.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.system.dto.UserDto;
@@ -57,7 +57,7 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
             organIds = Collections.singletonList(-1L);
         }
         //先删除用户旧的角色部门数据
-        userRoleMapper.delete(new QueryWrapper<UserRole>()
+        userRoleMapper.delete(Wrappers.<UserRole>query()
                 .eq("user_id", entity.getUserId())
                 .in("organ_id", organIds));
 

@@ -3,6 +3,8 @@ package com.github.yiuman.citrus.system.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,7 +19,8 @@ import lombok.EqualsAndHashCode;
 @TableName("sys_authority")
 public class Authority extends AbstractAuditingEntity{
 
-    @TableId(type = IdType.AUTO)
+    @JsonSerialize(using = StringSerializer.class)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long authorityId;
 
     /**
@@ -25,6 +28,6 @@ public class Authority extends AbstractAuditingEntity{
      */
     private String authorityName;
 
-    private String describe;
+    private String remark;
 
 }

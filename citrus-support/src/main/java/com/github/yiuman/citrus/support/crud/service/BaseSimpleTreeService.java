@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.support.crud.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.model.BaseTree;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.beans.BeanUtils;
@@ -76,7 +77,7 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
 
     @Override
     public List<E> loadByParent(K parentKey) {
-        QueryWrapper<E> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<E> queryWrapper = Wrappers.query();
         return parentKey == null ? list(queryWrapper.isNull(getParentField())) : list(queryWrapper.eq(getParentField(), parentKey));
     }
 

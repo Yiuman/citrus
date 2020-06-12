@@ -97,7 +97,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
         }
 
         WebUtils.requestDataBind(page, request);
-        QueryWrapper<T> queryWrapper = Optional.ofNullable(getQueryWrapper(request)).orElse(new QueryWrapper<>());
+        QueryWrapper<T> queryWrapper = Optional.ofNullable(getQueryWrapper(request)).orElse(Wrappers.query());
         handleSortWrapper(queryWrapper, request);
         return getService().page(page, queryWrapper);
     }

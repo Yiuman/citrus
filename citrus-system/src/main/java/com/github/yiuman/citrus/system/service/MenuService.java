@@ -50,7 +50,7 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
     @Override
     public List<Resource> list(Wrapper<Resource> wrapper) {
         if (wrapper == null) {
-            wrapper = new QueryWrapper<>();
+            wrapper = Wrappers.query();
         }
         //菜单为0
         ((QueryWrapper) wrapper).eq("type", 0);

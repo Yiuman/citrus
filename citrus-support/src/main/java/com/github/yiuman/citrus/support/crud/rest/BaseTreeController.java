@@ -25,7 +25,7 @@ import java.util.List;
 public abstract class BaseTreeController<T extends Tree<K>, K extends Serializable>
         extends BaseCrudController<T, K> {
 
-    private boolean isLazy;
+    private boolean isLazy = false;
 
     public BaseTreeController() {
     }

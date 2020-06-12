@@ -10,8 +10,10 @@ import com.github.yiuman.citrus.support.utils.ConvertUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.Function;
 
@@ -43,6 +45,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
 
     /**
      * Mybatis Mapper
+     *
      * @return Mybatis Mapper
      */
     protected abstract BaseMapper<E> getBaseMapper();
@@ -75,6 +78,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
             return null;
         }
         K key = ekBaseService.save(dtoToEntity().apply(entity));
+        setKey(entity, key);
         afterSave(entity);
         return key;
     }
@@ -93,6 +97,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
             return null;
         }
         K key = this.save(entity);
+        setKey(entity, key);
         afterUpdate(entity);
         return key;
     }
@@ -139,5 +144,12 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         BeanUtils.copyProperties(entityPage, page);
         page.setRecords(ConvertUtils.listConvert(dtoClass, entityPage.getRecords()));
         return page;
+    }
+
+    @Override
+    public void setKey(D entity, K key) throws Exception {
+        Field field = ReflectionUtils.findField(dtoClass, ekBaseService.getKeyProperty());
+        field.setAccessible(true);
+        field.set(entity, key);
     }
 }

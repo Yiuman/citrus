@@ -3,8 +3,10 @@ package com.github.yiuman.citrus.support.crud.service;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 
 /**
  * 基于主键的Service
@@ -34,6 +36,19 @@ public interface KeyBasedService<E, K extends Serializable> extends EntityTypeSe
     default K getKey(E entity) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityType());
         return (K) ReflectionKit.getMethodValue(getEntityType(), entity, tableInfo.getKeyProperty());
+    }
+
+    /**
+     * 设置主键值
+     *
+     * @param entity 实体
+     * @param key    主键
+     * @throws Exception 反射相关异常
+     */
+    default void setKey(E entity, K key) throws Exception {
+        Field field = ReflectionUtils.findField(getEntityType(), getKeyProperty());
+        field.setAccessible(true);
+        field.set(entity, key);
     }
 
     /**

@@ -18,7 +18,6 @@ import lombok.Data;
 @TableName("sys_organ")
 public class Organization extends BasePreOrderTree<Organization, Long> {
 
-    @JsonSerialize(using = ToStringSerializer.class)
     @TableId(type = IdType.AUTO)
     private Long organId;
 

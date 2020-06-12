@@ -3,9 +3,11 @@ package com.github.yiuman.citrus.system.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.github.yiuman.citrus.support.crud.EnumArrayHandler;
 import com.github.yiuman.citrus.system.enums.ScopeType;
 import lombok.Data;
-import org.apache.ibatis.type.ArrayTypeHandler;
 
 /**
  * 数据范围的定义，是排除部门或者包含子部门等
@@ -15,9 +17,10 @@ import org.apache.ibatis.type.ArrayTypeHandler;
  * @date 2020/5/28
  */
 @Data
-@TableName("sys_scope_define")
+@TableName(value = "sys_scope_define", autoResultMap = true)
 public class ScopeDefine {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableId
     private Long id;
 
@@ -26,10 +29,12 @@ public class ScopeDefine {
      *
      * @see AuthorityScope
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long scopeId;
 
     /**
      * 组织机构的ID  >0表示对应某个组织，-1表示当前用户部门
+     *
      * @see Organization
      */
     private Long organId;
@@ -43,7 +48,7 @@ public class ScopeDefine {
     /**
      * 数据范围的类型
      */
-    @TableField(typeHandler = ArrayTypeHandler.class)
+    @TableField(typeHandler = EnumArrayHandler.class)
     private ScopeType[] scopeTypes;
 
 }

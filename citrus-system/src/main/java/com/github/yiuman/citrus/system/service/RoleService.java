@@ -1,7 +1,7 @@
 package com.github.yiuman.citrus.system.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.entity.Role;
@@ -47,7 +47,7 @@ public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
     }
 
     public boolean hasPermission(Long userId, Long resourceId) throws Exception {
-        if (roleAuthorityMapper.selectCount(new QueryWrapper<RoleAuthority>().eq(getKeyColumn(), resourceId)) == 0) {
+        if (roleAuthorityMapper.selectCount(Wrappers.<RoleAuthority>query().eq(getKeyColumn(), resourceId)) == 0) {
             return true;
         }
 

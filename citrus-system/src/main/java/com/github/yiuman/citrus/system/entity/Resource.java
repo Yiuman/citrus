@@ -33,6 +33,8 @@ public class Resource extends BaseTree<Resource, Long> {
 
     /**
      * 资源类型
+     * 菜单:0
+     * 操作:2
      */
     private Integer type;
 

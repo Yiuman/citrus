@@ -115,7 +115,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     public void batchRemove(Iterable<K> keys) throws Exception {
         List<K> keyList = new ArrayList<>();
         keys.forEach(keyList::add);
-        List<E> list = list(new QueryWrapper<E>().in(getKeyColumn(), keyList));
+        List<E> list = list(Wrappers.<E>query().in(getKeyColumn(), keyList));
         list.forEach(LambdaUtils.consumerWrapper(this::remove));
     }
 
@@ -146,7 +146,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
 
     @Override
     public E getRoot() {
-        return getTreeMapper().selectOne(new QueryWrapper<E>().isNull(getParentField()));
+        return getTreeMapper().selectOne(Wrappers.<E>query().isNull(getParentField()));
     }
 
     @Override
@@ -239,7 +239,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
 
     @Override
     public List<E> loadByParent(K parentKey) {
-        return list(new QueryWrapper<E>().eq(getParentField(), parentKey));
+        return list(Wrappers.<E>query().eq(getParentField(), parentKey));
     }
 
     @Override
@@ -260,14 +260,14 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     @Override
     public List<E> children(E current) {
         // target.left > this.left  and target.right < this.right
-        return list(new QueryWrapper<E>()
+        return list(Wrappers.<E>query()
                 .gt(getLeftField(), current.getLeftValue())
                 .lt(getRightField(), current.getRightValue()));
     }
 
     @Override
     public List<E> children(E current, int deep) {
-        return list(new QueryWrapper<E>()
+        return list(Wrappers.<E>query()
                 .gt(getLeftField(), current.getLeftValue())
                 .lt(getRightField(), current.getRightValue())
                 .eq(getDeepField(), deep));
@@ -275,14 +275,14 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
 
     @Override
     public List<E> parents(E current) {
-        return list(new QueryWrapper<E>()
+        return list(Wrappers.<E>query()
                 .gt(getRightField(), current.getRightValue())
                 .le(getLeftField(), current.getLeftValue()));
     }
 
     @Override
     public List<E> parents(E current, int high) {
-        return list(new QueryWrapper<E>()
+        return list(Wrappers.<E>query()
                 .gt(getRightField(), current.getRightValue())
                 .le(getLeftField(), current.getLeftValue())
                 .eq(getDeepField(), high));
@@ -290,7 +290,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
 
     @Override
     public List<E> siblings(E current) {
-        return list(new QueryWrapper<E>().eq(getParentField(), current.getParentId()));
+        return list(Wrappers.<E>query().eq(getParentField(), current.getParentId()));
     }
 
     /**
@@ -301,12 +301,12 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     private void beforeSaveOrUpdate(E parent) {
 
         //2.更新所有左值大于当前父节点右值的节点左值 +2
-        getTreeMapper().update(null, new UpdateWrapper<E>()
+        getTreeMapper().update(null, Wrappers.<E>update()
                 .setSql(String.format(UPDATE_ADD_FORMAT, getLeftField(), getLeftField(), 2))
                 .gt(getLeftField(), parent.getRightValue()));
 
         //3.更新所有右值大于当前父节点右值的节点右值 +2
-        getTreeMapper().update(null, new UpdateWrapper<E>()
+        getTreeMapper().update(null, Wrappers.<E>update()
                 .setSql(String.format(UPDATE_ADD_FORMAT, getRightField(), getRightField(), 2))
                 .gt(getRightField(), parent.getRightValue()));
     }
@@ -318,12 +318,12 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
      */
     private void beforeDeleteOrMove(E current) {
         //1.更新所有右值小于当前父节点右值的节点左值 -2
-        getTreeMapper().update(null, new UpdateWrapper<E>()
+        getTreeMapper().update(null, Wrappers.<E>update()
                 .setSql(String.format(UPDATE_REDUCTION_FORMAT, getLeftField(), getLeftField(), 2))
                 .gt(getLeftField(), current.getRightValue()));
 
         //2.更新所有右值小于当前父节点右值的节点右值 +2
-        getTreeMapper().update(null, new UpdateWrapper<E>()
+        getTreeMapper().update(null, Wrappers.<E>update()
                 .setSql(String.format(UPDATE_REDUCTION_FORMAT, getRightField(), getRightField(), 2))
                 .gt(getRightField(), current.getRightValue()));
     }
