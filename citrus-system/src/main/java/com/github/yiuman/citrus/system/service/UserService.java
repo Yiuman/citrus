@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.system.service;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.yiuman.citrus.support.cache.Cache;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.system.dto.UserDto;
@@ -12,6 +13,7 @@ import com.github.yiuman.citrus.system.entity.UserRole;
 import com.github.yiuman.citrus.system.mapper.UserMapper;
 import com.github.yiuman.citrus.system.mapper.UserRoleMapper;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -97,6 +99,7 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
     public Optional<User> getUser(Authentication authentication) {
         User user = null;
         Object principal = authentication.getPrincipal();
+        SecurityContextHolder.getContext().getAuthentication();
         //匿名不给进
         if (ANONYMOUS.equals(principal)) {
             return Optional.empty();

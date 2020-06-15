@@ -37,6 +37,13 @@ public class RbacHook implements AuthorizeServiceHook {
         this.resourceService = resourceService;
     }
 
+    /**
+     * 系统级权限数据范围处理
+     *
+     * @param httpServletRequest 当前的请求
+     * @param authentication     当前的身份认证信息
+     * @return true/false
+     */
     @Override
     public boolean hasPermission(HttpServletRequest httpServletRequest, Authentication authentication) {
         try {

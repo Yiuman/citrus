@@ -1,5 +1,8 @@
 package com.github.yiuman.citrus.system.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.StringSerializer;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.github.yiuman.citrus.system.entity.AuthorityResource;
 import lombok.Data;
 
@@ -14,6 +17,7 @@ import java.util.List;
 @Data
 public class AuthorityDto {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long authorityId;
 
     /**

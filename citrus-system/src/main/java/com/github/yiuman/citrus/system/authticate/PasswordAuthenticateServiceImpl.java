@@ -32,6 +32,7 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService {
 
     private final UserService userService;
 
+
     private final PasswordEncoder passwordEncoder;
 
     private final VerificationProcessor<Captcha> verificationProcessor;

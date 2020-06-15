@@ -35,7 +35,7 @@ public class AuthorityController extends BaseCrudController<AuthorityDto, Long> 
     protected Page<AuthorityDto> createPage() throws Exception {
         Page<AuthorityDto> page = super.createPage();
         page.addHeader("权限名称", "authorityName");
-        page.addHeader("描述", "describe");
+        page.addHeader("描述", "remark");
 
         page.addWidget("权限名称", "authorityName");
 

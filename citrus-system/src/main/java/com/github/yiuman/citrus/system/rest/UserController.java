@@ -9,7 +9,6 @@ import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.support.widget.Selects;
-import com.github.yiuman.citrus.support.widget.TreeNode;
 import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.dto.UserQuery;
@@ -86,13 +85,13 @@ public class UserController extends BaseCrudController<UserDto, Long> {
     @Override
     protected DialogView createDialogView() throws Exception {
         DialogView dialogView = new DialogView();
-        dialogView.addEditField("登录名", "loginId");
-        dialogView.addEditField("用户名", "username");
-        dialogView.addEditField("密码", "password");
-        dialogView.addEditField("手机号码", "mobile");
+        dialogView.addEditField("登录名", "loginId").addRule("required");
+        dialogView.addEditField("用户名", "username").addRule("required");
+        dialogView.addEditField("密码", "password").addRule("required");
+        dialogView.addEditField("手机号码", "mobile").addRule("required","phone");
         dialogView.addEditField("邮箱", "email");
         dialogView.addEditField("选择角色", "roleIds", CrudUtils.getWidget(this, "getRoleSelects"));
-        dialogView.addEditField("选择机构", "organIds",organService.getOrganTree("选择机构","organIds",true));
+        dialogView.addEditField("选择机构", "organIds", organService.getOrganTree("选择机构", "organIds", true));
         return dialogView;
     }
 

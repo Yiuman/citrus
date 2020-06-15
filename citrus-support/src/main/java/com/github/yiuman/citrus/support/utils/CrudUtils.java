@@ -87,7 +87,7 @@ public final class CrudUtils {
                     label = ReflectionUtils.getField(labelField, item).toString();
                 }
 
-                selectItems.add(new Selections.SelectItem(selects.key(), label, value));
+                selectItems.add(new Selections.SelectItem(selects.key(), label, value.toString()));
             }));
         }
 

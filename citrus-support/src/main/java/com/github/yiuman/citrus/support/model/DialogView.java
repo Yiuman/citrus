@@ -89,8 +89,10 @@ public class DialogView {
         this.editFields.add(editField);
     }
 
-    public void addEditField(String text, String name) {
-        this.editFields.add(new EditField(text, name));
+    public EditField addEditField(String text, String name) {
+        EditField editField = new EditField(text, name);
+        this.editFields.add(editField);
+        return editField;
     }
 
     public void addEditField(String text, String name, Widget<?> widget) {

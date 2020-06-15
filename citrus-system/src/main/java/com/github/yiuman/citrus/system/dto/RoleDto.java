@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.system.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -40,6 +42,7 @@ public class RoleDto {
     /**
      * 权限ID
      */
+    @JsonSerialize(contentUsing = ToStringSerializer.class)
     private List<Long> authIds;
 
 }

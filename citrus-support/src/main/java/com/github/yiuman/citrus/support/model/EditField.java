@@ -1,6 +1,11 @@
 package com.github.yiuman.citrus.support.model;
 
 import com.github.yiuman.citrus.support.widget.Inputs;
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 编辑的字段，用于新增、编辑视图等
@@ -28,7 +33,7 @@ public class EditField {
     /**
      * 检验规则
      */
-    private String[] rules;
+    private List<String> rules;
 
     public EditField() {
     }
@@ -45,7 +50,7 @@ public class EditField {
         this.widget = widget;
     }
 
-    public EditField(String text, String name, Object widget, String[] rules) {
+    public EditField(String text, String name, Object widget, List<String> rules) {
         this.text = text;
         this.name = name;
         this.widget = widget;
@@ -76,11 +81,20 @@ public class EditField {
         this.widget = widget;
     }
 
-    public String[] getRules() {
+    public List<String> getRules() {
+        if (CollectionUtils.isEmpty(rules)) {
+            rules = new ArrayList<>();
+        }
         return rules;
     }
 
-    public void setRules(String[] rules) {
+    public void setRules(List<String> rules) {
         this.rules = rules;
+    }
+
+
+    public EditField addRule(String... rules) {
+        Arrays.stream(rules).forEach(rule -> getRules().add(rule));
+        return this;
     }
 }

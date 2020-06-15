@@ -33,6 +33,28 @@ public class AuthorityService extends BaseDtoService<Authority, Long, AuthorityD
     }
 
     @Override
+    public AuthorityDto get(Long key) {
+        AuthorityDto authorityDto = super.get(key);
+        //查询当前权限的资源列表，菜单资源及菜单操作
+        List<AuthorityResource> authorityResources = authorityResourceMapper.selectList(
+                Wrappers.<AuthorityResource>query()
+                        .eq(getKeyColumn(), authorityDto.getAuthorityId())
+                        .eq("type", 0)
+        );
+        authorityResources.forEach(item -> item.setOperations(
+                authorityResourceMapper.selectList(
+                        Wrappers.<AuthorityResource>query()
+                                .eq(getKeyColumn(), authorityDto.getAuthorityId())
+                                .eq("object_id", item.getResourceId())
+                                .eq("type", 2))
+                )
+        );
+
+        authorityDto.setResources(authorityResources);
+        return authorityDto;
+    }
+
+    @Override
     public void afterSave(AuthorityDto entity) throws Exception {
         //保存资源与权限的关系
         List<AuthorityResource> resources = entity.getResources();
@@ -46,7 +68,7 @@ public class AuthorityService extends BaseDtoService<Authority, Long, AuthorityD
         if (!CollectionUtils.isEmpty(resources)) {
             final List<AuthorityResource> allResource = new ArrayList<>(resources);
             resources.forEach(item -> allResource.addAll(item.getOperations()));
-            allResource.forEach(item->item.setAuthorityId(entity.getAuthorityId()));
+            allResource.forEach(item -> item.setAuthorityId(entity.getAuthorityId()));
             authorityResourceMapper.saveBatch(allResource);
         }
 
