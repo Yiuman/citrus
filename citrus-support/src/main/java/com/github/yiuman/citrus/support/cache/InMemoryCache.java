@@ -15,7 +15,7 @@ public class InMemoryCache<K, V> extends MapCache<K, V> {
 
     private final String namespace;
 
-    private final static String DEFAULT_NAMESPACE = "default";
+    public final static String DEFAULT_NAMESPACE = "default";
 
     private final static Map<String, InMemoryCache<?, ?>> CACHE_MAP = new ConcurrentHashMap<>(256);
 

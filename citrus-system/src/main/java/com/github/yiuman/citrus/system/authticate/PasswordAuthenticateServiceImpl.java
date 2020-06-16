@@ -4,6 +4,7 @@ import com.github.yiuman.citrus.security.authenticate.AuthenticateService;
 import com.github.yiuman.citrus.security.verify.VerificationProcessor;
 import com.github.yiuman.citrus.security.verify.captcha.Captcha;
 import com.github.yiuman.citrus.support.utils.WebUtils;
+import com.github.yiuman.citrus.system.cache.UserOnlineCache;
 import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -32,15 +33,17 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService {
 
     private final UserService userService;
 
-
     private final PasswordEncoder passwordEncoder;
 
     private final VerificationProcessor<Captcha> verificationProcessor;
 
-    public PasswordAuthenticateServiceImpl(UserService userService, PasswordEncoder passwordEncoder, VerificationProcessor<Captcha> verificationProcessor) {
+    private final UserOnlineCache userOnlineCache;
+
+    public PasswordAuthenticateServiceImpl(UserService userService, PasswordEncoder passwordEncoder, VerificationProcessor<Captcha> verificationProcessor, UserOnlineCache userOnlineCache) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.verificationProcessor = verificationProcessor;
+        this.userOnlineCache = userOnlineCache;
     }
 
     @Override
@@ -61,18 +64,24 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService {
             throw new BadCredentialsException("用户名或密码错误");
         }
 
+        userOnlineCache.save(user.getUuid(), user);
         return new UsernamePasswordAuthenticationToken(user, user.getUuid());
     }
 
 
     @Override
     public Optional<Authentication> resolve(String token, String identity) {
-        User user = userService.getUserByUuid(identity);
+        User user =userOnlineCache.find(identity);
+        if(user==null){
+            user= userService.getUserByUuid(identity);
+            userOnlineCache.save(user.getUuid(),user);
+        }
         return Optional.of(new UsernamePasswordAuthenticationToken(user, token, null));
     }
 
     @Override
     public void logout(Authentication authentication) {
+        userService.getUser(authentication).ifPresent(user-> userOnlineCache.remove(user.getUuid()));
         //Nothing to do
     }
 

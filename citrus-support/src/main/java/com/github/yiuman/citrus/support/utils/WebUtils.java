@@ -209,7 +209,9 @@ public final class WebUtils {
         }
 
         HandlerMethod handlerHandler = (HandlerMethod) handler.getHandler();
-        String combinePath = requestMappingHandlerMapping.getPathMatcher().combine(getAnnotatedElementMapping(handlerHandler.getBeanType()), getAnnotatedElementMapping(handlerHandler.getMethod()));
+        String combinePath = requestMappingHandlerMapping
+                .getPathMatcher()
+                .combine(getAnnotatedElementMapping(handlerHandler.getBeanType()), getAnnotatedElementMapping(handlerHandler.getMethod()));
         if (StringUtils.hasLength(combinePath) && !combinePath.startsWith("/")) {
             combinePath = "/" + combinePath;
         }

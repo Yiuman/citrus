@@ -5,9 +5,7 @@ import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.support.utils.WebUtils;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.User;
-import com.github.yiuman.citrus.system.service.ResourceService;
-import com.github.yiuman.citrus.system.service.RoleService;
-import com.github.yiuman.citrus.system.service.UserService;
+import com.github.yiuman.citrus.system.service.RbacMixinService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -25,16 +23,10 @@ import java.util.Optional;
 @Slf4j
 public class RbacHook implements AuthorizeServiceHook {
 
-    private final UserService userService;
+    private final RbacMixinService mixinService;
 
-    private final RoleService roleService;
-
-    private final ResourceService resourceService;
-
-    public RbacHook(UserService userService, RoleService roleService, ResourceService resourceService) {
-        this.userService = userService;
-        this.roleService = roleService;
-        this.resourceService = resourceService;
+    public RbacHook(RbacMixinService mixinService) {
+        this.mixinService = mixinService;
     }
 
     /**
@@ -54,13 +46,13 @@ public class RbacHook implements AuthorizeServiceHook {
             }
 
             //没有配置资源的情况下都可以访问
-            Resource resource = resourceService.selectByUri(mvcDefineMapping, httpServletRequest.getMethod());
+            Resource resource = mixinService.getResourceService().selectByUri(mvcDefineMapping, httpServletRequest.getMethod());
             if (resource == null) {
                 return true;
             }
 
-            Optional<User> user = userService.getUser(authentication);
-            return user.filter(LambdaUtils.predicateWrapper(value -> roleService.hasPermission(value.getUserId(), resource.getResourceId()))).isPresent();
+            Optional<User> user = mixinService.getUserService().getUser(authentication);
+            return user.filter(LambdaUtils.predicateWrapper(value -> mixinService.hasPermission(value.getUserId(), resource.getResourceId()))).isPresent();
         } catch (Exception e) {
             log.error("RbacService Exception", e);
             return false;
