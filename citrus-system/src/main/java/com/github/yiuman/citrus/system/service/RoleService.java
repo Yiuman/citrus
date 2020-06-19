@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -64,7 +65,7 @@ public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
      * @param userId 用户ID
      * @return 权限集合
      */
-    public List<Authority> getAuthoritiesByUserId(Long userId) {
+    public Set<Authority> getAuthoritiesByUserId(Long userId) {
         return roleMapper.selectAuthoritiesByUserId(userId);
     }
 

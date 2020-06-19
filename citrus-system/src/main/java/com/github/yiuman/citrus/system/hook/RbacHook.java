@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.system.hook;
 
 import com.github.yiuman.citrus.security.authorize.AuthorizeServiceHook;
-import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.support.utils.WebUtils;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.User;
@@ -51,8 +50,10 @@ public class RbacHook implements AuthorizeServiceHook {
                 return true;
             }
 
+            //没登录不给进,登录了校验权限
             Optional<User> user = mixinService.getUserService().getUser(authentication);
-            return user.filter(LambdaUtils.predicateWrapper(value -> mixinService.hasPermission(value.getUserId(), resource.getResourceId()))).isPresent();
+            return user.filter(value -> mixinService.hasPermission(value, resource)).isPresent();
+
         } catch (Exception e) {
             log.error("RbacService Exception", e);
             return false;

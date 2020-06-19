@@ -1,7 +1,7 @@
 package com.github.yiuman.citrus.system.cache;
 
 import com.github.yiuman.citrus.support.cache.EnvironmentCache;
-import com.github.yiuman.citrus.system.entity.User;
+import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @date 2020/6/15
  */
 @Component
-public class UserOnlineCache extends EnvironmentCache<String, User> {
+public class UserOnlineCache extends EnvironmentCache<String, UserOnlineInfo> {
 
     private final static String USER_ONLINE_CACHE = "userOnlineCache";
 

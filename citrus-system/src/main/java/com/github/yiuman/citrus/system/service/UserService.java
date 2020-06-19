@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
-import com.github.yiuman.citrus.system.cache.UserOnlineCache;
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.entity.Role;
@@ -99,7 +98,6 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
     public Optional<User> getUser(Authentication authentication) {
         User user = null;
         Object principal = authentication.getPrincipal();
-        SecurityContextHolder.getContext().getAuthentication();
         //匿名不给进
         if (ANONYMOUS.equals(principal)) {
             return Optional.empty();
@@ -118,8 +116,23 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
         return userMapper.getRolesByUserId(userDto.getUserId());
     }
 
-
-    public List<Organization> getOrganByUser(UserDto entity) {
-        return userMapper.getOrgansByUserId(entity.getUserId());
+    /**
+     * 获取当前用户实例
+     *
+     * @return User的Optional
+     */
+    public Optional<User> getCurrentUser() {
+        return getUser(SecurityContextHolder.getContext().getAuthentication());
     }
+
+    /**
+     * 获取当前用户的组织机构
+     *
+     * @param userId 用户ID
+     * @return 组织机构的集合
+     */
+    public List<Organization> getOrganByUser(Long userId) {
+        return userMapper.getOrgansByUserId(userId);
+    }
+
 }

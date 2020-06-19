@@ -15,6 +15,7 @@ CREATE TABLE `sys_user`
   `email`              varchar(45) DEFAULT NULL COMMENT '电子邮件',
   `mobile`             varchar(45) DEFAULT NULL COMMENT '手机',
   `uuid`               varchar(45) DEFAULT NULL COMMENT 'UUID',
+  `admin`              int(1)      DEFAULT 0 COMMENT '是否管理员',
   `status`             bigint      DEFAULT NULL COMMENT '状态',
   `create_time`        datetime    DEFAULT NULL COMMENT '创建时间',
   `create_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',

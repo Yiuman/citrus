@@ -5,6 +5,7 @@ import com.github.yiuman.citrus.security.verify.VerificationProcessor;
 import com.github.yiuman.citrus.security.verify.captcha.Captcha;
 import com.github.yiuman.citrus.support.utils.WebUtils;
 import com.github.yiuman.citrus.system.cache.UserOnlineCache;
+import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +65,7 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService {
             throw new BadCredentialsException("用户名或密码错误");
         }
 
-        userOnlineCache.save(user.getUuid(), user);
+        userOnlineCache.save(user.getUuid(), UserOnlineInfo.newInstance(user));
         return new UsernamePasswordAuthenticationToken(user, user.getUuid());
     }
 
@@ -74,7 +75,7 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService {
         User user =userOnlineCache.find(identity);
         if(user==null){
             user= userService.getUserByUuid(identity);
-            userOnlineCache.save(user.getUuid(),user);
+            userOnlineCache.save(user.getUuid(),UserOnlineInfo.newInstance(user));
         }
         return Optional.of(new UsernamePasswordAuthenticationToken(user, token, null));
     }

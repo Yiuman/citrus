@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.system.service;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.ResourceDto;
@@ -35,7 +36,7 @@ public class ResourceService extends BaseDtoService<Resource, Long, ResourceDto>
     }
 
     public Resource selectByUri(String requestUri, String method) {
-        return ChainWrappers.queryChain(resourceMapper).eq("path", requestUri).eq("operation", method).eq("type", 0).one();
+        return  resourceMapper.selectOne(Wrappers.<Resource>query().eq("path", requestUri).eq("operation", method));
     }
 
     /**

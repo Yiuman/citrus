@@ -69,7 +69,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
         });
 
         page.addHeader("所属机构", "organNames", (entity) -> {
-            List<Organization> organByUser = userService.getOrganByUser(entity);
+            List<Organization> organByUser = userService.getOrganByUser(entity.getUserId());
             entity.setOrganIds(organByUser.parallelStream().map(Organization::getOrganId).collect(Collectors.toList()));
             return organByUser.parallelStream().map(Organization::getOrganName).collect(Collectors.joining(","));
         });

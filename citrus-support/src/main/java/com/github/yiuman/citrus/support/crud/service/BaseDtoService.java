@@ -15,6 +15,7 @@ import org.springframework.util.ReflectionUtils;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -152,4 +153,5 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         field.setAccessible(true);
         field.set(entity, key);
     }
+
 }

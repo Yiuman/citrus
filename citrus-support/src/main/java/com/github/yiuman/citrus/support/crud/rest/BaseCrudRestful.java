@@ -215,7 +215,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
                             QueryParam annotation = field.getAnnotation(QueryParam.class);
                             Class<? extends QueryParamHandler> handlerClass = annotation.handler();
                             if (!handlerClass.isInterface()) {
-                                QueryParamHandler handler = SpringUtils.getBean(handlerClass);
+                                QueryParamHandler handler = SpringUtils.getBean(handlerClass,true);
                                 handler.handle(annotation, params, field, wrapper);
                             }
                         })

@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author yiuman
@@ -42,6 +43,6 @@ public interface RoleMapper extends BaseMapper<Role> {
      * @param userId 用户ID
      * @return 权限集合
      */
-    @Select("select * from sys_authority sa where sa.authority_id in (select ra.authority_id from sys_role_auth ra where ra.role_id in (select ur.role_id from sys_user_role ur where ur.user_ID = ${userId})")
-    List<Authority> selectAuthoritiesByUserId(@Param("userId") Long userId);
+    @Select("select * from sys_authority sa where sa.authority_id in (select distinct(ra.authority_id) from sys_role_auth ra where ra.role_id in (select ur.role_id from sys_user_role ur where ur.user_ID = ${userId})")
+    Set<Authority> selectAuthoritiesByUserId(@Param("userId") Long userId);
 }

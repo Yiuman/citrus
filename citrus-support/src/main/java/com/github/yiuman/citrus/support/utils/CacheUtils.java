@@ -26,7 +26,7 @@ public final class CacheUtils {
 
     @SuppressWarnings("unchecked")
     public static <K, V> Cache<K, V> systemCache(String namespace) {
-        return Optional.ofNullable((Cache<K, V>) SpringUtils.getBean(RedisCache.class, namespace))
+        return Optional.ofNullable((Cache<K, V>) SpringUtils.getBean(RedisCache.class))
                 .orElse(InMemoryCache.get(namespace));
     }
 

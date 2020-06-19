@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.system.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -30,11 +32,13 @@ public class UserDto {
     @NotBlank
     private String email;
 
+    @JsonSerialize(contentUsing = ToStringSerializer.class)
     private List<Long> roleIds;
 
     /**
      * 所属组织ID
      */
+    @JsonSerialize(contentUsing = ToStringSerializer.class)
     private List<Long> organIds;
 
 }

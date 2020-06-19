@@ -36,6 +36,11 @@ public class User extends AbstractAuditingEntity  {
     private String email;
 
     /**
+     * 是否管理员
+     */
+    private Boolean admin;
+
+    /**
      * 用户状态
      */
     private Integer status;
