@@ -46,6 +46,12 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
         return getCrudService();
     }
 
+    /**
+     * 创建树形显示视图
+     *
+     * @return 树形结构的显示视图
+     * @throws Exception 反射异常
+     */
     protected TreeDisplay<T> createTree() throws Exception {
         TreeDisplay<T> treeDisplay = new TreeDisplay<>();
         treeDisplay.setItemKey(getService().getKeyProperty());

@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.system.rest;
 import com.github.yiuman.citrus.security.authorize.Authorize;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
+import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.DialogView;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.Buttons;
@@ -14,11 +15,13 @@ import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.dto.UserQuery;
 import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.entity.Role;
+import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.hook.HasLoginHook;
 import com.github.yiuman.citrus.system.service.OrganService;
 import com.github.yiuman.citrus.system.service.RoleService;
 import com.github.yiuman.citrus.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -88,7 +91,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
         dialogView.addEditField("登录名", "loginId").addRule("required");
         dialogView.addEditField("用户名", "username").addRule("required");
         dialogView.addEditField("密码", "password").addRule("required");
-        dialogView.addEditField("手机号码", "mobile").addRule("required","phone");
+        dialogView.addEditField("手机号码", "mobile").addRule("required", "phone");
         dialogView.addEditField("邮箱", "email");
         dialogView.addEditField("选择角色", "roleIds", CrudUtils.getWidget(this, "getRoleSelects"));
         dialogView.addEditField("选择机构", "organIds", organService.getOrganTree("选择机构", "organIds", true));
@@ -100,5 +103,14 @@ public class UserController extends BaseCrudController<UserDto, Long> {
         return roleService.list();
     }
 
+    /**
+     * 获取当前用户
+     *
+     * @return 当前用户实例
+     */
+    @GetMapping("/current")
+    public ResponseEntity<User> getCurrentUser() {
+        return ResponseEntity.ok(userService.getCurrentUser().orElse(null));
+    }
 
 }

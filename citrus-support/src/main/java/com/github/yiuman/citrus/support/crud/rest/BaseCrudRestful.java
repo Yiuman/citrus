@@ -70,6 +70,12 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
      */
     protected abstract CrudService<T, K> getService();
 
+    /**
+     * 创建列表分页页面
+     *
+     * @return 分页页面对象
+     * @throws Exception 反射、数据库操作等异常
+     */
     protected Page<T> createPage() throws Exception {
         Page<T> page = new Page<>();
         page.setItemKey(getService().getKeyProperty());
@@ -80,12 +86,17 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
         return page;
     }
 
+    /**
+     * 创建数据编辑的对话框
+     *
+     * @return 对话框视图
+     * @throws Exception 反射等操作异常
+     */
     protected DialogView createDialogView() throws Exception {
         List<EditField> editFields = new ArrayList<>();
         ReflectionUtils.doWithFields(modelClass, field -> editFields.add(new EditField(field.getName(), field.getName())));
         return new DialogView(editFields);
     }
-
 
     @Override
     public Page<T> page(HttpServletRequest request) throws Exception {
@@ -96,7 +107,9 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
             ReflectionUtils.doWithFields(modelClass, field -> page.addHeader(field.getName(), field.getName()));
         }
 
+        //绑定页面参数
         WebUtils.requestDataBind(page, request);
+
         QueryWrapper<T> queryWrapper = Optional.ofNullable(getQueryWrapper(request)).orElse(Wrappers.query());
         handleSortWrapper(queryWrapper, request);
         return getService().page(page, queryWrapper);
@@ -215,7 +228,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
                             QueryParam annotation = field.getAnnotation(QueryParam.class);
                             Class<? extends QueryParamHandler> handlerClass = annotation.handler();
                             if (!handlerClass.isInterface()) {
-                                QueryParamHandler handler = SpringUtils.getBean(handlerClass,true);
+                                QueryParamHandler handler = SpringUtils.getBean(handlerClass, true);
                                 handler.handle(annotation, params, field, wrapper);
                             }
                         })

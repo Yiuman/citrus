@@ -10,6 +10,6 @@ import lombok.Data;
 @Data
 public class ResourceQuery {
 
-    @QueryParam
+    @QueryParam(type = "like")
     private String resourceName;
 }

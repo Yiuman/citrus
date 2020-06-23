@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.github.yiuman.citrus.support.model.BaseTree;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -18,7 +17,6 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @TableName("sys_resource")
 public class Resource extends BaseTree<Resource, Long> {
 
@@ -70,5 +68,20 @@ public class Resource extends BaseTree<Resource, Long> {
     @Override
     public void setParentId(Long parentId) {
         this.parentId = parentId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Resource)) return false;
+
+        Resource resource = (Resource) o;
+
+        return resourceId != null ? resourceId.equals(resource.resourceId) : resource.resourceId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return resourceId != null ? resourceId.hashCode() : 0;
     }
 }
