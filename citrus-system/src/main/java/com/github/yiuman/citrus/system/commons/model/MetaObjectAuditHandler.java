@@ -1,7 +1,8 @@
-package com.github.yiuman.citrus.system.entity;
+package com.github.yiuman.citrus.system.commons.model;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
+import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.service.UserService;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.security.core.context.SecurityContextHolder;

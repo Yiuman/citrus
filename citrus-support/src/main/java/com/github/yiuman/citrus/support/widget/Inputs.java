@@ -8,7 +8,7 @@ package com.github.yiuman.citrus.support.widget;
  */
 public class Inputs extends BaseWidget<String> {
 
-    private boolean clearable =true;
+    private boolean clearable = true;
 
     public Inputs() {
     }

@@ -1,12 +1,9 @@
 package com.github.yiuman.citrus.system.service;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.ResourceDto;
 import com.github.yiuman.citrus.system.entity.Resource;
-import com.github.yiuman.citrus.system.mapper.ResourceMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.method.HandlerMethod;
@@ -26,17 +23,14 @@ import java.util.Set;
 @Service
 public class ResourceService extends BaseDtoService<Resource, Long, ResourceDto> {
 
-    private final ResourceMapper resourceMapper;
-
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
-    public ResourceService(ResourceMapper resourceMapper, RequestMappingHandlerMapping requestMappingHandlerMapping) {
-        this.resourceMapper = resourceMapper;
+    public ResourceService(RequestMappingHandlerMapping requestMappingHandlerMapping) {
         this.requestMappingHandlerMapping = requestMappingHandlerMapping;
     }
 
     public Resource selectByUri(String requestUri, String method) {
-        return  resourceMapper.selectOne(Wrappers.<Resource>query().eq("path", requestUri).eq("operation", method));
+        return getBaseMapper().selectOne(Wrappers.<Resource>query().eq("path", requestUri).eq("operation", method));
     }
 
     /**
@@ -57,8 +51,4 @@ public class ResourceService extends BaseDtoService<Resource, Long, ResourceDto>
         });
     }
 
-    @Override
-    protected BaseMapper<Resource> getBaseMapper() {
-        return resourceMapper;
-    }
 }

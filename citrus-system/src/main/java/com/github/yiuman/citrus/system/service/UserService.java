@@ -59,8 +59,7 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
         }
         //先删除用户旧的角色部门数据
         userRoleMapper.delete(Wrappers.<UserRole>query()
-                .eq("user_id", entity.getUserId())
-                .in("organ_id", organIds));
+                .eq("user_id", entity.getUserId()));
 
         organIds.forEach(LambdaUtils.consumerWrapper(organId -> {
             //保存组织机构角色数据
@@ -71,7 +70,7 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
                 userRole.setOrganId(organId);
                 return userRole;
             }).collect(Collectors.toList());
-            boolean b = userRoleMapper.saveBatch(userRoles);
+            userRoleMapper.saveBatch(userRoles);
         }));
     }
 

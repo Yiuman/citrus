@@ -31,6 +31,7 @@
         <alibaba.easyexcel.version>2.1.6</alibaba.easyexcel.version>
         <jjwt.version>0.11.0</jjwt.version>
         <commons.io.version>2.6</commons.io.version>
+        <javassist.version>3.25.0-GA</javassist.version>
     </properties>
 
     <dependencies>

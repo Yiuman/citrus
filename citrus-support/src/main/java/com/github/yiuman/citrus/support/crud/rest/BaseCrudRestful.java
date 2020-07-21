@@ -78,7 +78,6 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
      */
     protected Page<T> createPage() throws Exception {
         Page<T> page = new Page<>();
-        page.setItemKey(getService().getKeyProperty());
         //构造页面小部件
         CrudUtils.getCrudWidgets(this)
                 .forEach(widget -> page.addWidget(widget, true));
@@ -112,7 +111,11 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
 
         QueryWrapper<T> queryWrapper = Optional.ofNullable(getQueryWrapper(request)).orElse(Wrappers.query());
         handleSortWrapper(queryWrapper, request);
-        return getService().page(page, queryWrapper);
+
+        //这里需要调用了page方法查询后再进行设置ItemKey,原因是Service中的mapper为动态注入，调用查询才会初始化mapper构造表信息
+        Page<T> realPage = getService().page(page, queryWrapper);
+        realPage.setItemKey(getService().getKeyProperty());
+        return realPage;
     }
 
     @Override

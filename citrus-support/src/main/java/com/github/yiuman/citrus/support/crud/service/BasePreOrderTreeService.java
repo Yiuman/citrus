@@ -9,7 +9,10 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
 import com.github.yiuman.citrus.support.model.BasePreOrderTree;
 import com.github.yiuman.citrus.support.model.Tree;
+import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
@@ -25,6 +28,8 @@ import java.util.stream.Collectors;
  * @date 2020/4/15
  */
 public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, K extends Serializable> implements TreeCrudService<E, K> {
+
+    protected static final Logger log = LoggerFactory.getLogger(BasePreOrderTreeService.class);
 
     private final static String UPDATE_ADD_FORMAT = "%s=%s+%s";
 
@@ -47,7 +52,14 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         }
     };
 
-    protected abstract TreeMapper<E> getTreeMapper();
+    protected TreeMapper<E> getTreeMapper() {
+        try {
+            return CrudUtils.getTreeMapper(getEntityType());
+        } catch (Throwable throwable) {
+            log.info("初始化mapper报错",throwable);
+            return null;
+        }
+    }
 
     @Override
     public boolean beforeSave(E entity) throws Exception {
@@ -188,11 +200,10 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         String parentSql = "t1.leftValue > t2. leftValue and t1.rightValue < t2.rightValue"
                 .replaceAll("leftValue", getLeftField())
                 .replaceAll("rightValue", getRightField());
-        list.addAll(getTreeMapper()
-                .list(table.getTableName(), Wrappers.<E>query().apply(parentSql).in("t1." + table.getKeyColumn(), ids)));
+        list.addAll(getTreeMapper().treeLink(table.getTableName(), Wrappers.<E>query().apply(parentSql).in("t1." + table.getKeyColumn(), ids)));
         final E root = getRoot();
         //传list进去前需要去重,并排除根节点
-        initTreeFromList(root, list.parallelStream().distinct().filter(item -> item.getId() != root.getId()).collect(Collectors.toList()));
+        initTreeFromList(root, list.parallelStream().distinct().filter(item -> item!=null && item.getId() != root.getId()).collect(Collectors.toList()));
         return root;
     }
 
@@ -227,11 +238,12 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
             });
             current.setChildren(children);
         } else {
-            List<E> children = children(current, current.getDeep() + 1);
-            if (!CollectionUtils.isEmpty(children)) {
-                children.parallelStream().forEach(LambdaUtils.consumerWrapper(child -> this.load(child, isLazy)));
-            }
-            current.setChildren(children);
+            initTreeFromList(current,list());
+//            List<E> children = children(current, current.getDeep() + 1);
+//            if (!CollectionUtils.isEmpty(children)) {
+//                children.forEach(LambdaUtils.consumerWrapper(child -> this.load(child, isLazy)));
+//            }
+//            current.setChildren(children);
         }
     }
 

@@ -53,9 +53,7 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
      * @throws Exception 反射异常
      */
     protected TreeDisplay<T> createTree() throws Exception {
-        TreeDisplay<T> treeDisplay = new TreeDisplay<>();
-        treeDisplay.setItemKey(getService().getKeyProperty());
-        return treeDisplay;
+        return new TreeDisplay<>();
     }
 
     /**
@@ -73,6 +71,7 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
         tree.setTree(getCrudService().load(isLazy));
         tree.setLazy(isLazy);
         tree.setDialogView(createDialogView());
+        tree.setItemKey(getService().getKeyProperty());
         return ResponseEntity.ok(tree);
     }
 

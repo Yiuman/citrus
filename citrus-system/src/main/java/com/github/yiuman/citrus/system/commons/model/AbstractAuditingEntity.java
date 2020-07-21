@@ -1,4 +1,4 @@
-package com.github.yiuman.citrus.system.entity;
+package com.github.yiuman.citrus.system.commons.model;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;

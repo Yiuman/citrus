@@ -8,7 +8,10 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -25,12 +28,27 @@ import java.util.stream.Collectors;
  */
 public abstract class BaseService<E, K extends Serializable> implements CrudService<E, K> {
 
+    protected static final Logger log = LoggerFactory.getLogger(BaseService.class);
+
+
+    public BaseService() {
+    }
+
     /**
      * 获取响应实体的Mapper
      *
      * @return 实体的Mapper
      */
-    protected abstract BaseMapper<E> getMapper();
+    protected BaseMapper<E> getMapper() {
+        try {
+            return CrudUtils.getCrudMapper(getEntityType());
+        } catch (Throwable throwable) {
+            log.info("初始化Mapper失败", throwable);
+            return null;
+        }
+
+    }
+
 
     @Transactional
     @Override

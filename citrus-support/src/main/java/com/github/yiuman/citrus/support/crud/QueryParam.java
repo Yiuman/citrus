@@ -7,7 +7,6 @@ import org.springframework.util.ObjectUtils;
 import java.lang.annotation.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collection;
 
 /**
  * 查询参数注解，用于列表查询，默认为eq

@@ -24,6 +24,6 @@ public interface TreeMapper<T extends Tree<?>> extends CrudMapper<T> {
      * @return 树链路集合
      */
     @Select("select distinct t2.* from ${table} t1,${table} t2  ${ew.customSqlSegment}")
-    List<T> list(@Param("table") String table, @Param(Constants.WRAPPER) Wrapper<T> wrapper);
+    List<T> treeLink(@Param("table") String table, @Param(Constants.WRAPPER) Wrapper<T> wrapper);
 
 }

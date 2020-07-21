@@ -15,7 +15,6 @@ import org.springframework.util.ReflectionUtils;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -27,10 +26,6 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
     private Class<D> dtoClass = currentDtoClass();
 
     private final BaseService<E, K> ekBaseService = new BaseService<E, K>() {
-        @Override
-        protected BaseMapper<E> getMapper() {
-            return getBaseMapper();
-        }
 
         @SuppressWarnings("unchecked")
         @Override
@@ -49,7 +44,10 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
      *
      * @return Mybatis Mapper
      */
-    protected abstract BaseMapper<E> getBaseMapper();
+    protected BaseMapper<E> getBaseMapper() {
+        return ekBaseService.getMapper();
+    }
+
 
     @SuppressWarnings("unchecked")
     private Class<D> currentDtoClass() {

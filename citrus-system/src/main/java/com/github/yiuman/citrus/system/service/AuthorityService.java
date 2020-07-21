@@ -1,12 +1,10 @@
 package com.github.yiuman.citrus.system.service;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.AuthorityDto;
 import com.github.yiuman.citrus.system.entity.Authority;
 import com.github.yiuman.citrus.system.entity.AuthorityResource;
-import com.github.yiuman.citrus.system.mapper.AuthorityMapper;
 import com.github.yiuman.citrus.system.mapper.AuthorityResourceMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,8 +23,6 @@ import java.util.Set;
 @Service
 @AllArgsConstructor
 public class AuthorityService extends BaseDtoService<Authority, Long, AuthorityDto> {
-
-    private final AuthorityMapper authorityMapper;
 
     private final AuthorityResourceMapper authorityResourceMapper;
 
@@ -72,13 +68,9 @@ public class AuthorityService extends BaseDtoService<Authority, Long, AuthorityD
 
     }
 
-    @Override
-    protected BaseMapper<Authority> getBaseMapper() {
-        return authorityMapper;
-    }
-
     /**
      * 根据用户I查询此用户的权限与资源配置的集合
+     *
      * @param userId 用户ID
      * @return 权限资源结合
      */

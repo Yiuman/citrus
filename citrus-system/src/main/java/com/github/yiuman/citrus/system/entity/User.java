@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.system.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.github.yiuman.citrus.system.commons.model.AbstractAuditingEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,7 +16,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("sys_user")
-public class User extends AbstractAuditingEntity  {
+public class User extends AbstractAuditingEntity {
 
     @TableId(type = IdType.AUTO)
     private Long userId;

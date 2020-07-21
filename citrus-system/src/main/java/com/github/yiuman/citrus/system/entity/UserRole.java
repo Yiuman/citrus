@@ -1,12 +1,7 @@
 package com.github.yiuman.citrus.system.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import org.apache.logging.log4j.util.Strings;
-
-import java.util.Arrays;
 
 /**
  * 用户角色映射
