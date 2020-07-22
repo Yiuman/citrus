@@ -4,7 +4,7 @@ import com.github.yiuman.citrus.security.authenticate.AuthenticateService;
 import com.github.yiuman.citrus.security.verify.VerificationProcessor;
 import com.github.yiuman.citrus.security.verify.captcha.Captcha;
 import com.github.yiuman.citrus.support.utils.WebUtils;
-import com.github.yiuman.citrus.system.cache.UserOnlineCache;
+import com.github.yiuman.citrus.system.cache.UserOnlineCacheAbstract;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.service.UserService;
@@ -38,9 +38,9 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService {
 
     private final VerificationProcessor<Captcha> verificationProcessor;
 
-    private final UserOnlineCache userOnlineCache;
+    private final UserOnlineCacheAbstract userOnlineCache;
 
-    public PasswordAuthenticateServiceImpl(UserService userService, PasswordEncoder passwordEncoder, VerificationProcessor<Captcha> verificationProcessor, UserOnlineCache userOnlineCache) {
+    public PasswordAuthenticateServiceImpl(UserService userService, PasswordEncoder passwordEncoder, VerificationProcessor<Captcha> verificationProcessor, UserOnlineCacheAbstract userOnlineCache) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.verificationProcessor = verificationProcessor;

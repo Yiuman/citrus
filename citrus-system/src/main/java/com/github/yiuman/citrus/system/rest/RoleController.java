@@ -1,6 +1,8 @@
 package com.github.yiuman.citrus.system.rest;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.model.DialogView;
 import com.github.yiuman.citrus.support.model.Page;
@@ -11,6 +13,7 @@ import com.github.yiuman.citrus.system.dto.AuthorityDto;
 import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.dto.RoleQuery;
 import com.github.yiuman.citrus.system.entity.Authority;
+import com.github.yiuman.citrus.system.entity.RoleAuthority;
 import com.github.yiuman.citrus.system.service.AuthorityService;
 import com.github.yiuman.citrus.system.service.RoleService;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -45,6 +49,24 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
         return roleService;
     }
 
+    @Override
+    protected QueryWrapper<RoleDto> getQueryWrapper(Object params) {
+        QueryWrapper<RoleDto> queryWrapper = super.getQueryWrapper(params);
+        RoleQuery roleQuery = (RoleQuery) params;
+
+        //拼接权限ID筛选条件
+        if (roleQuery != null && !org.springframework.util.CollectionUtils.isEmpty(roleQuery.getAuthIds())) {
+            queryWrapper = Optional.ofNullable(queryWrapper).orElse(Wrappers.query());
+            List<RoleAuthority> roleAuthorityByAuthAuthIds = roleService.getRoleAuthorityByAuthAuthIds(roleQuery.getAuthIds());
+            List<Long> roleIds = null;
+            if (CollectionUtils.isNotEmpty(roleAuthorityByAuthAuthIds)) {
+                roleIds = roleAuthorityByAuthAuthIds.parallelStream().map(RoleAuthority::getRoleId).collect(Collectors.toList());
+            }
+            queryWrapper.in(true, getService().getKeyColumn(), roleIds);
+        }
+
+        return queryWrapper;
+    }
 
     @Override
     protected Page<RoleDto> createPage() throws Exception {

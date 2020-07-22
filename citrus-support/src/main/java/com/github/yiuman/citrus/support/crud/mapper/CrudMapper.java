@@ -25,6 +25,7 @@ public interface CrudMapper<T> extends BaseMapper<T> {
      *
      * @param entity 实体对象
      * @return 保存成功返回true，否则false
+     * @throws Exception 数据库操作异常
      */
     default boolean saveEntity(T entity) throws Exception {
         if (null != entity) {
@@ -49,6 +50,7 @@ public interface CrudMapper<T> extends BaseMapper<T> {
      *
      * @param entityList 实体集合
      * @return 保存成功返回true，否则false
+     * @throws Exception 数据库操作异常
      */
     @Transactional(rollbackFor = Exception.class)
     default boolean saveBatch(Collection<T> entityList) throws Exception {

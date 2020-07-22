@@ -50,7 +50,7 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
     }
 
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public K save(E entity) throws Exception {
         if (!this.beforeSave(entity)) {
@@ -63,7 +63,6 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
 
             //如果找不到主键就直接插入
             String keyProperty = tableInfo.getKeyProperty();
-//            Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
             K keyValue = getKey(entity);
 
             if (StringUtils.isBlank(keyProperty) || StringUtils.checkValNull(keyValue) || Objects.isNull(get(keyValue))) {

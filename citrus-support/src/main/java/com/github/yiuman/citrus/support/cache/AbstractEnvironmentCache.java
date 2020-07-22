@@ -15,13 +15,13 @@ import java.util.Optional;
  * @author yiuman
  * @date 2020/6/16
  */
-public abstract class EnvironmentCache<K, V> implements Cache<K, V>  {
+public abstract class AbstractEnvironmentCache<K, V> implements Cache<K, V>  {
 
     private final String namespace;
 
     private Cache<K,V> cache;
 
-    public EnvironmentCache(String namespace) {
+    public AbstractEnvironmentCache(String namespace) {
         this.namespace = namespace;
     }
 

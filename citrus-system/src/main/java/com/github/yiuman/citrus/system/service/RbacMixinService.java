@@ -1,8 +1,7 @@
 package com.github.yiuman.citrus.system.service;
 
-import com.github.yiuman.citrus.system.cache.UserOnlineCache;
+import com.github.yiuman.citrus.system.cache.UserOnlineCacheAbstract;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
-import com.github.yiuman.citrus.system.entity.Authority;
 import com.github.yiuman.citrus.system.entity.AuthorityResource;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.User;
@@ -35,7 +34,7 @@ public class RbacMixinService {
 
     private final OrganService organService;
 
-    private final UserOnlineCache userOnlineCache;
+    private final UserOnlineCacheAbstract userOnlineCache;
 
     /**
      * 判断当前用户是否有权限访问当前资源

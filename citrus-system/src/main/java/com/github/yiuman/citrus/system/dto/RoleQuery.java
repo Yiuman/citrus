@@ -3,6 +3,8 @@ package com.github.yiuman.citrus.system.dto;
 import com.github.yiuman.citrus.support.crud.QueryParam;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 角色列表查询类
  *
@@ -14,4 +16,6 @@ public class RoleQuery {
 
     @QueryParam(type = "like")
     private String roleName;
+
+    private List<Long> authIds;
 }

@@ -12,7 +12,9 @@ public class AbstractStringVerification implements Verification<String> {
 
     private String code;
 
-    //Default 60s overdue
+    /**
+     * Default 60s overdue
+     */
     private long expireTime = 60;
 
     public AbstractStringVerification(String code) {

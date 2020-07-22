@@ -46,7 +46,9 @@ public final class WebUtils {
 
     private static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
 
-    //忽略实体没有的字段
+    /**
+     * 忽略实体没有的字段
+     */
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
 

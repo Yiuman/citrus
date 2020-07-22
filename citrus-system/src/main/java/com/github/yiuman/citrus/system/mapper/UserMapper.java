@@ -17,15 +17,15 @@ import java.util.List;
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
 
-    @Select("select * from sys_user user where user.uuid = '${uuid}'")
+    @Select("select * from sys_user user where user.uuid = #{uuid}")
     User getUserByUuid(@Param("uuid") String uuid);
 
-    @Select("select * from sys_user user where user.login_id = '${loginId}'")
+    @Select("select * from sys_user user where user.login_id = #{loginId}")
     User getUserByLoginId(@Param("loginId") String loginId);
 
-    @Select("select * from sys_role role where role.role_id in (select ur.role_id from sys_user_role ur where ur.user_id = ${userId})")
+    @Select("select * from sys_role role where role.role_id in (select ur.role_id from sys_user_role ur where ur.user_id = #{userId})")
     List<Role> getRolesByUserId(Long userId);
 
-    @Select("select * from sys_organ organ where organ.organ_id in (select ur.organ_id from sys_user_role ur where ur.user_id = ${userId})")
+    @Select("select * from sys_organ organ where organ.organ_id in (select ur.organ_id from sys_user_role ur where ur.user_id = #{userId})")
     List<Organization> getOrgansByUserId(Long userId);
 }

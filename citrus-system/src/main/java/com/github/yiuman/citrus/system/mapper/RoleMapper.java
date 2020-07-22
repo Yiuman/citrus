@@ -25,7 +25,7 @@ public interface RoleMapper extends BaseMapper<Role> {
      * @return true/false
      */
     @Select("select count(1) from sys_user_role ur where ur.role_id in (select ra.role_id from sys_role_auth ra where ra.authority_id in " +
-            "(select ar.authority_id from sys_authority_resource ar where ar.resource_id = ${resourceId}))")
+            "(select ar.authority_id from sys_authority_resource ar where ar.resource_id = #{resourceId}))")
     boolean hasPermission(@Param("userId") Long userId, @Param("resourceId") Long resourceId);
 
     /**
@@ -34,7 +34,7 @@ public interface RoleMapper extends BaseMapper<Role> {
      * @param roleId 角色ID
      * @return 权限列表
      */
-    @Select("select * from sys_authority sa where sa.authority_id in (select ra.authority_id from sys_role_auth ra where ra.role_id=${roleId})")
+    @Select("select * from sys_authority sa where sa.authority_id in (select ra.authority_id from sys_role_auth ra where ra.role_id=#{roleId})")
     List<Authority> selectAuthoritiesByRoleId(@Param("roleId") Long roleId);
 
     /**
@@ -43,6 +43,6 @@ public interface RoleMapper extends BaseMapper<Role> {
      * @param userId 用户ID
      * @return 权限集合
      */
-    @Select("select * from sys_authority sa where sa.authority_id in (select distinct(ra.authority_id) from sys_role_auth ra where ra.role_id in (select ur.role_id from sys_user_role ur where ur.user_ID = ${userId})")
+    @Select("select * from sys_authority sa where sa.authority_id in (select distinct(ra.authority_id) from sys_role_auth ra where ra.role_id in (select ur.role_id from sys_user_role ur where ur.user_ID = #{userId})")
     Set<Authority> selectAuthoritiesByUserId(@Param("userId") Long userId);
 }

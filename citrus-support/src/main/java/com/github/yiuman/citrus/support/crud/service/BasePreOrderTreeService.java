@@ -239,11 +239,6 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
             current.setChildren(children);
         } else {
             initTreeFromList(current,list());
-//            List<E> children = children(current, current.getDeep() + 1);
-//            if (!CollectionUtils.isEmpty(children)) {
-//                children.forEach(LambdaUtils.consumerWrapper(child -> this.load(child, isLazy)));
-//            }
-//            current.setChildren(children);
         }
     }
 
