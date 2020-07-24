@@ -1,4 +1,4 @@
-package com.github.yiuman.citrus.support.crud;
+package com.github.yiuman.citrus.support.crud.query;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -26,6 +26,12 @@ public @interface QueryParam {
      */
     String type() default "eq";
 
+    /**
+     * 用于映射查询名称
+     * 比如此字段是userId   映射到表的是user_id 此值为user_id
+     *
+     * @return 映射的查询名称
+     */
     String mapping() default "";
 
     /**

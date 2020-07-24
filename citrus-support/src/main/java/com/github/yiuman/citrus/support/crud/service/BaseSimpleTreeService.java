@@ -118,8 +118,16 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
     }
 
     @Override
-    public List<E> parents(E current, int high) {
-        return parents(current);
+    public E parent(E current, int high) {
+        E parent = current;
+        while (high >= 0) {
+            if (parent == null || current.getParentId() == null) {
+                break;
+            }
+            parent = get(current.getParentId());
+            high--;
+        }
+        return parent;
     }
 
     @Override

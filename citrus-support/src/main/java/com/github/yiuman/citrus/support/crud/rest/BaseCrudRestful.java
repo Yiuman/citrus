@@ -5,15 +5,17 @@ import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.crud.CrudReadDataListener;
-import com.github.yiuman.citrus.support.crud.QueryParam;
-import com.github.yiuman.citrus.support.crud.QueryParamHandler;
+import com.github.yiuman.citrus.support.crud.query.QueryParam;
+import com.github.yiuman.citrus.support.crud.query.QueryParamHandler;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.exception.ValidateException;
+import com.github.yiuman.citrus.support.inject.InjectAnnotationParserHolder;
 import com.github.yiuman.citrus.support.model.DialogView;
 import com.github.yiuman.citrus.support.model.EditField;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.model.SortBy;
 import com.github.yiuman.citrus.support.utils.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,10 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 基础的RESTFUL
@@ -181,14 +180,26 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
      *
      * @return QueryWrapper
      */
-    protected QueryWrapper<T> getQueryWrapper(HttpServletRequest request) throws Exception {
-        return getQueryWrapper(WebUtils.requestDataBind(paramClass, request));
+    @Override
+    public QueryWrapper<T> getQueryWrapper(HttpServletRequest request) throws Exception {
+        //将请求转化成参数
+        Object params = WebUtils.requestDataBind(paramClass, request, true);
+        //注解注入
+        if (paramClass != null) {
+            if (Objects.isNull(params)) {
+                params = BeanUtils.instantiateClass(paramClass);
+            }
+            SpringUtils.getBean(InjectAnnotationParserHolder.class, true).inject(params);
+        }
+
+        return getQueryWrapper(params);
     }
 
     protected QueryWrapper<T> getQueryWrapper(Object params) {
         if (params == null) {
             return null;
         }
+
         QueryWrapper<T> wrapper = Wrappers.query();
         //检验参数
         ValidateUtils.validateEntityAndThrows(params, result -> new ValidateException(result.getMessage()));

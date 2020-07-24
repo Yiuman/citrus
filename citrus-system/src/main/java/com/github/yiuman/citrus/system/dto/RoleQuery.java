@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.system.dto;
 
-import com.github.yiuman.citrus.support.crud.QueryParam;
+import com.github.yiuman.citrus.support.crud.query.QueryParam;
 import lombok.Data;
 
 import java.util.List;

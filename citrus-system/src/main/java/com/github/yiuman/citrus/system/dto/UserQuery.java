@@ -2,9 +2,10 @@ package com.github.yiuman.citrus.system.dto;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.github.yiuman.citrus.support.crud.QueryParam;
-import com.github.yiuman.citrus.support.crud.QueryParamHandler;
+import com.github.yiuman.citrus.support.crud.query.QueryParam;
+import com.github.yiuman.citrus.support.crud.query.QueryParamHandler;
 import com.github.yiuman.citrus.system.entity.UserRole;
+import com.github.yiuman.citrus.system.inject.AuthDeptIds;
 import com.github.yiuman.citrus.system.mapper.UserRoleMapper;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ public class UserQuery {
     @QueryParam(type = "like")
     private String username;
 
+    @AuthDeptIds
     @QueryParam(handler = UserQueryHandler.class)
     private List<Long> roleIds;
 

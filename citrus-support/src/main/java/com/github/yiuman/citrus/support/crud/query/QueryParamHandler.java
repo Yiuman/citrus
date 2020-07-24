@@ -1,4 +1,4 @@
-package com.github.yiuman.citrus.support.crud;
+package com.github.yiuman.citrus.support.crud.query;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 

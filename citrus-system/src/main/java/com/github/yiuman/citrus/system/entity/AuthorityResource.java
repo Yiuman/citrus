@@ -17,7 +17,7 @@ import java.util.List;
  * @date 2020/3/30
  */
 @Data
-@TableName("sys_auth_resource")
+    @TableName("sys_auth_resource")
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthorityResource {

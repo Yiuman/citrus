@@ -2,14 +2,13 @@ package com.github.yiuman.citrus.system.service;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.yiuman.citrus.security.authenticate.NoPermissionException;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.system.dto.UserDto;
-import com.github.yiuman.citrus.system.entity.Organization;
-import com.github.yiuman.citrus.system.entity.Role;
-import com.github.yiuman.citrus.system.entity.User;
-import com.github.yiuman.citrus.system.entity.UserRole;
+import com.github.yiuman.citrus.system.entity.*;
 import com.github.yiuman.citrus.system.mapper.UserMapper;
+import com.github.yiuman.citrus.system.mapper.UserOrganMapper;
 import com.github.yiuman.citrus.system.mapper.UserRoleMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,9 +44,12 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
     /**
      * 用户组织机构mapper
      */
-    public UserService(UserMapper userMapper, UserRoleMapper userRoleMapper) {
+    private final UserOrganMapper userOrganMapper;
+
+    public UserService(UserMapper userMapper, UserRoleMapper userRoleMapper, UserOrganMapper userOrganMapper) {
         this.userMapper = userMapper;
         this.userRoleMapper = userRoleMapper;
+        this.userOrganMapper = userOrganMapper;
     }
 
     @Override
@@ -58,10 +60,11 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
             organIds = Collections.singletonList(-1L);
         }
         //先删除用户旧的角色部门数据
-        userRoleMapper.delete(Wrappers.<UserRole>query()
-                .eq("user_id", entity.getUserId()));
+        userRoleMapper.delete(Wrappers.<UserRole>lambdaQuery().eq(UserRole::getUserId, entity.getUserId()));
+        userOrganMapper.delete(Wrappers.<UserOrgan>lambdaQuery().eq(UserOrgan::getUserId, entity.getUserId()));
 
         organIds.forEach(LambdaUtils.consumerWrapper(organId -> {
+            userOrganMapper.saveEntity(new UserOrgan(entity.getUserId(), organId));
             //保存组织机构角色数据
             List<UserRole> userRoles = entity.getRoleIds().stream().map(roleId -> {
                 UserRole userRole = new UserRole();
@@ -134,4 +137,12 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
         return userMapper.getOrgansByUserId(userId);
     }
 
+    public List<Organization> getCurrentUserOrgans() {
+        Optional<User> currentUser = getCurrentUser();
+        if (!currentUser.isPresent()) {
+            throw new NoPermissionException();
+        }
+
+        return userOrganMapper.getOrgansByUserId(currentUser.get().getUserId());
+    }
 }

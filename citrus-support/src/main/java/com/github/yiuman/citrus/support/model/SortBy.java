@@ -15,6 +15,6 @@ public class SortBy {
 
     private String sortBy;
 
-    private Boolean sortDesc =false;
+    private Boolean sortDesc = false;
 
 }

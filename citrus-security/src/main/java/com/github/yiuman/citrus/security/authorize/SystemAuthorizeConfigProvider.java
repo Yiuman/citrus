@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.security.authorize;
 
 import com.github.yiuman.citrus.security.properties.CitrusProperties;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.stereotype.Component;
@@ -15,7 +14,6 @@ import java.util.Arrays;
  * @date 2020/3/30
  */
 @Component
-@Order(Integer.MAX_VALUE)
 public class SystemAuthorizeConfigProvider implements AuthorizeConfigProvider {
 
     private final CitrusProperties citrusProperties;

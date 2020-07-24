@@ -27,13 +27,18 @@ public class ScopeDefine {
     /**
      * 关联的数据范围对象ID
      *
-     * @see AuthorityScope
+     * @see Scope
      */
     @JsonSerialize(using = ToStringSerializer.class)
     private Long scopeId;
 
     /**
-     * 组织机构的ID  >0表示对应某个组织，-1表示当前用户部门
+     * 组织机构的ID
+     * >0表示对应某个组织
+     * 0表示当前用户部门
+     * -1表示一级部门
+     * -2表示二级部门
+     * 以此类推，这里用组织机构树的deep对应
      *
      * @see Organization
      */

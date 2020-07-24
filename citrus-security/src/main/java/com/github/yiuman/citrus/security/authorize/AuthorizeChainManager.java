@@ -26,7 +26,8 @@ public class AuthorizeChainManager {
     public boolean hasPermission(final HttpServletRequest httpServletRequest, final Authentication authentication) {
         final AtomicReference<Boolean> access = new AtomicReference<>(true);
         if (!CollectionUtils.isEmpty(authorizeHooks)) {
-            authorizeHooks.forEach(authorizeHook -> access.set(access.get() && authorizeHook.hasPermission(httpServletRequest, authentication)));
+            authorizeHooks.forEach(authorizeHook -> access.set(access.get()
+                    && authorizeHook.hasPermission(httpServletRequest, authentication)));
         }
 
         return access.get();

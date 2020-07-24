@@ -4,6 +4,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,7 +22,7 @@ public class SpringUtils implements ApplicationContextAware {
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@Nullable ApplicationContext applicationContext) throws BeansException {
         if (context == null) {
             context = applicationContext;
         }
@@ -33,7 +34,6 @@ public class SpringUtils implements ApplicationContextAware {
 
     public static <T> T getBean(Class<T> tClass) {
         return getBean(tClass, false);
-
     }
 
     public static <T> T getBean(Class<T> tClass, boolean force) {

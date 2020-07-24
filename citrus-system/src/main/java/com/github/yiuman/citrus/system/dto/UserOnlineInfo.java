@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * 咋西安用户信息
+ *
  * @author yiuman
  * @date 2020/6/19
  */

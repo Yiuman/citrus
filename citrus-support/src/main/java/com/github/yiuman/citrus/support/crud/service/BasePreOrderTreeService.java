@@ -286,8 +286,8 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     }
 
     @Override
-    public List<E> parents(E current, int high) {
-        return list(Wrappers.<E>query()
+    public E parent(E current, int high) {
+        return getTreeMapper().selectOne(Wrappers.<E>query()
                 .gt(getRightField(), current.getRightValue())
                 .le(getLeftField(), current.getLeftValue())
                 .eq(getDeepField(), high));

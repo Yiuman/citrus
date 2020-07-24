@@ -5,6 +5,8 @@ import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.AuthorityDto;
 import com.github.yiuman.citrus.system.entity.Authority;
 import com.github.yiuman.citrus.system.entity.AuthorityResource;
+import com.github.yiuman.citrus.system.entity.Scope;
+import com.github.yiuman.citrus.system.entity.ScopeDefine;
 import com.github.yiuman.citrus.system.mapper.AuthorityResourceMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -61,6 +63,7 @@ public class AuthorityService extends BaseDtoService<Authority, Long, AuthorityD
 
         if (!CollectionUtils.isEmpty(resources)) {
             final List<AuthorityResource> allResource = new ArrayList<>(resources);
+            //把操作资源也加到权限资源里边去
             resources.forEach(item -> allResource.addAll(item.getOperations()));
             allResource.forEach(item -> item.setAuthorityId(entity.getAuthorityId()));
             authorityResourceMapper.saveBatch(allResource);
@@ -76,5 +79,13 @@ public class AuthorityService extends BaseDtoService<Authority, Long, AuthorityD
      */
     public Set<AuthorityResource> selectAuthorityResourceByUserIdAndResourceId(Long userId) {
         return authorityResourceMapper.selectAuthorityResourceByUserIdAndResourceId(userId);
+    }
+
+    public Scope getDataScopeByResourceId(Long resourceId) {
+        return authorityResourceMapper.getScopeByResourceId(resourceId);
+    }
+
+    public List<ScopeDefine> getScopeDefinesByResourceId(Long resourceId) {
+        return authorityResourceMapper.getScopeDefinesByResourceId(resourceId);
     }
 }

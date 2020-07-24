@@ -148,7 +148,7 @@ public interface TreeOperation<T extends Tree<K>, K extends Serializable> {
      * @param high    祖先节点的高度
      * @return 祖先节点
      */
-    List<T> parents(T current, int high);
+    T parent(T current, int high);
 
     /**
      * 查询所有兄弟节点

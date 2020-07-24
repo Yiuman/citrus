@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
  * @date 2020/6/15
  */
 @Component
-public class UserOnlineCacheAbstract extends AbstractEnvironmentCache<String, UserOnlineInfo> {
+public class UserOnlineCache extends AbstractEnvironmentCache<String, UserOnlineInfo> {
 
     private final static String USER_ONLINE_CACHE = "userOnlineCache";
 
-    public UserOnlineCacheAbstract() {
+    public UserOnlineCache() {
         super(USER_ONLINE_CACHE);
     }
 

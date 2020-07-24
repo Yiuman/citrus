@@ -2,7 +2,6 @@ package com.github.yiuman.citrus.starter;
 
 import com.github.yiuman.citrus.security.properties.CitrusProperties;
 import com.github.yiuman.citrus.security.verify.*;
-import com.github.yiuman.citrus.security.verify.captcha.Base64CaptchaProcessor;
 import com.github.yiuman.citrus.security.verify.captcha.Captcha;
 import com.github.yiuman.citrus.security.verify.captcha.CaptchaProcessor;
 import com.github.yiuman.citrus.security.verify.sms.SmsVerifyCode;

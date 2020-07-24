@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.support.crud.rest;
 
+import com.github.yiuman.citrus.support.crud.query.Condition;
 import com.github.yiuman.citrus.support.model.Page;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * @author yiuman
  * @date 2020/5/8
  */
-public interface CrudRestful<T, K> {
+public interface CrudRestful<T, K> extends Condition<T> {
 
     /**
      * 分页
@@ -75,4 +76,5 @@ public interface CrudRestful<T, K> {
      * @throws Exception IO异常等
      */
     void exp(HttpServletRequest request, HttpServletResponse response) throws Exception;
+
 }

@@ -30,9 +30,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -98,23 +100,36 @@ public final class WebUtils {
      *
      * @param objectClass 绑定的数据类型Class
      * @param request     当前请求
-     * @param <T>         当前绑定实例Class的类型
+     * @param force       是否强制生成
      * @return 已经处理好的绑定数据
      * @throws Exception 反射异常
      */
-    public static <T> T requestDataBind(Class<T> objectClass, HttpServletRequest request) throws Exception {
+    public static <T> T requestDataBind(Class<T> objectClass, HttpServletRequest request, boolean force) throws Exception {
         if (objectClass == null || request == null) {
             return null;
         }
         //若是get请求或者是form-data则先检验下有没参数
         boolean hasParameterRequest = request instanceof AbstractMultipartHttpServletRequest || request.getMethod().equals(HttpMethod.GET.name());
-        if (hasParameterRequest && CollectionUtils.isEmpty(request.getParameterMap())) {
+        if (!force && hasParameterRequest && CollectionUtils.isEmpty(request.getParameterMap())) {
             return null;
         }
         //构造实体
         T t = BeanUtils.instantiateClass(objectClass);
         requestDataBind(t, request);
         return t;
+    }
+
+    /**
+     * 类型绑定请求数据
+     *
+     * @param objectClass 绑定的数据类型Class
+     * @param request     当前请求
+     * @param <T>         当前绑定实例Class的类型
+     * @return 已经处理好的绑定数据
+     * @throws Exception 反射异常
+     */
+    public static <T> T requestDataBind(Class<T> objectClass, HttpServletRequest request) throws Exception {
+        return requestDataBind(objectClass, request, false);
     }
 
     /**
@@ -130,6 +145,7 @@ public final class WebUtils {
         if (request instanceof AbstractMultipartHttpServletRequest || request.getMethod().equals(HttpMethod.GET.name())) {
             WebRequestDataBinder dataBinder = new WebRequestDataBinder(object);
             dataBinder.bind(new ServletWebRequest(request));
+
         } else {
             try {
                 if (!(request instanceof JsonServletRequestWrapper)) {
@@ -196,7 +212,7 @@ public final class WebUtils {
 
 
     /**
-     * 根据当前请求获取MVC定义了的路径
+     * 根据当前请求获取controller定义了的路径
      * 如：@RequestMapping('/user/{key}') 则返回/user/{key}，若没定义则返回null
      *
      * @param request 当前请求
@@ -219,6 +235,58 @@ public final class WebUtils {
         }
 
         return combinePath;
+    }
+
+    /**
+     * 获取当前请求的MVC定义了的路径
+     *
+     * @return controller定义了的路径
+     * @throws Exception 反射异常
+     */
+    public static String getCurrentRequestMapping() throws Exception {
+        return getRequestMapping(getRequest());
+    }
+
+    /**
+     * 根据当前请求获取当前请求的mvc处理器方法
+     *
+     * @param request 当前请求
+     * @return mvc处理器方法
+     * @throws Exception 反射异常
+     */
+    public static HandlerMethod getRequestHandlerMethod(HttpServletRequest request) throws Exception {
+        RequestMappingHandlerMapping requestMappingHandlerMapping = SpringUtils.getBean(RequestMappingHandlerMapping.class);
+        HandlerExecutionChain handler = requestMappingHandlerMapping.getHandler(request);
+        if (handler == null) {
+            return null;
+        }
+
+        return (HandlerMethod) handler.getHandler();
+    }
+
+
+    /**
+     * 根据当前请求获取请求处理的方法
+     *
+     * @param request 当前请求
+     * @return Method，处理这个请求的真正的代码方法
+     * @throws Exception 反射异常
+     */
+    public static Method getRequestRealHandleMethod(HttpServletRequest request) throws Exception {
+        HandlerMethod requestHandlerMethod = getRequestHandlerMethod(request);
+        return Objects.isNull(requestHandlerMethod) ? null : requestHandlerMethod.getMethod();
+    }
+
+    /**
+     * 根据当前请求获取请求处理类
+     *
+     * @param request 当前请求
+     * @return class，处理这个请求的类
+     * @throws Exception 反射异常
+     */
+    public static Class<?> getRequestHandlerBeanType(HttpServletRequest request) throws Exception {
+        HandlerMethod requestHandlerMethod = getRequestHandlerMethod(request);
+        return Objects.isNull(requestHandlerMethod) ? null : requestHandlerMethod.getBeanType();
     }
 
 

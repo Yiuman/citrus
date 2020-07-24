@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.system.service;
 
-import com.github.yiuman.citrus.system.cache.UserOnlineCacheAbstract;
+import com.github.yiuman.citrus.system.cache.UserOnlineCache;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.AuthorityResource;
 import com.github.yiuman.citrus.system.entity.Resource;
@@ -34,23 +34,24 @@ public class RbacMixinService {
 
     private final OrganService organService;
 
-    private final UserOnlineCacheAbstract userOnlineCache;
+    private final UserOnlineCache userOnlineCache;
 
     /**
      * 判断当前用户是否有权限访问当前资源
-     * @param user 当前用户
+     *
+     * @param user     当前用户
      * @param resource 当前资源
      * @return true/false
      */
     public boolean hasPermission(User user, Resource resource) {
         UserOnlineInfo userOnlineInfo = userOnlineCache.find(user.getUuid());
-        if(userOnlineInfo.getAdmin()){
+        if (userOnlineInfo.getAdmin()) {
             return true;
         }
         //查出所有的权限
         Set<AuthorityResource> authorityResources = userOnlineInfo.getAuthorityResources();
         if (CollectionUtils.isEmpty(authorityResources)) {
-            authorityResources =  authorityService.selectAuthorityResourceByUserIdAndResourceId(user.getUserId());
+            authorityResources = authorityService.selectAuthorityResourceByUserIdAndResourceId(user.getUserId());
             userOnlineInfo.setAuthorityResources(authorityResources);
         }
 

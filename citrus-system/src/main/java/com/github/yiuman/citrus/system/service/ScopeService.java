@@ -43,6 +43,9 @@ public class ScopeService extends BaseDtoService<Scope, Long, ScopeDto> {
 
     @Override
     public void afterSave(ScopeDto entity) throws Exception {
+        //删除旧的
+        scopeDefineMapper.delete(Wrappers.<ScopeDefine>lambdaQuery().eq(ScopeDefine::getScopeId,entity.getScopeId()));
+
         if (!CollectionUtils.isEmpty(entity.getScopeDefines())) {
             scopeDefineMapper.saveBatch(entity.getScopeDefines());
         }
