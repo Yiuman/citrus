@@ -61,22 +61,30 @@ public class EnumArrayHandler<E extends Enum<E>> extends BaseTypeHandler<E[]> {
         if (value == 0) {
             return null;
         }
+        //将int转成二进制数组
         char[] binaryCharArray = Integer.toBinaryString(value).toCharArray();
+
+        //包含多少个1
         int containsOneChar = 0;
+
+        //这里用于翻转数组，因为枚举的顺序与二进制的顺利是相反的
         char[] flipBinaryCharArray = new char[binaryCharArray.length];
+
         for (int length = binaryCharArray.length - 1, index = 0; length >= 0; length--, index++) {
-            flipBinaryCharArray[index] = binaryCharArray[length];
-            if ('1' == binaryCharArray[length]) {
+            char binaryChar = binaryCharArray[length];
+            flipBinaryCharArray[index] = binaryChar;
+            if ('1' == binaryChar) {
                 containsOneChar++;
             }
+
         }
-        if (containsOneChar == 0) {
+        if (containsOneChar==0) {
             return null;
         }
 
         E[] enumConstants = type.getEnumConstants();
         E[] enums = (E[]) Array.newInstance(type, containsOneChar);
-        for (int e = 0, returnIndex = 0; e < enumConstants.length - 1; e++) {
+        for (int e = 0, returnIndex = 0; e < flipBinaryCharArray.length; e++) {
             if ('1' == flipBinaryCharArray[e]) {
                 enums[returnIndex++] = enumConstants[e];
             }

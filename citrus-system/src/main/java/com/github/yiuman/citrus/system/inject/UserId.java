@@ -9,7 +9,6 @@ import java.lang.annotation.RetentionPolicy;
  * @author yiuman
  * @date 2020/7/23
  */
-
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UserId {
 }

@@ -11,6 +11,8 @@ import com.github.yiuman.citrus.system.mapper.ScopeDefineMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.List;
+
 /**
  * 数据范围逻辑层
  *
@@ -44,10 +46,18 @@ public class ScopeService extends BaseDtoService<Scope, Long, ScopeDto> {
     @Override
     public void afterSave(ScopeDto entity) throws Exception {
         //删除旧的
-        scopeDefineMapper.delete(Wrappers.<ScopeDefine>lambdaQuery().eq(ScopeDefine::getScopeId,entity.getScopeId()));
+        scopeDefineMapper.delete(Wrappers.<ScopeDefine>lambdaQuery().eq(ScopeDefine::getScopeId, entity.getScopeId()));
 
         if (!CollectionUtils.isEmpty(entity.getScopeDefines())) {
             scopeDefineMapper.saveBatch(entity.getScopeDefines());
         }
+    }
+
+    public Scope getDataScopeByResourceId(Long resourceId) {
+        return scopeDefineMapper.getScopeByResourceId(resourceId);
+    }
+
+    public List<ScopeDefine> getScopeDefinesByResourceId(Long resourceId) {
+        return scopeDefineMapper.getScopeDefinesByResourceId(resourceId);
     }
 }

@@ -6,6 +6,7 @@ import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.ScopeDefine;
 import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.enums.ScopeType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
  * @date 2020/7/23
  */
 @Component
+@Slf4j
 public class DataRangeServiceImpl implements DataRangeService {
 
     private final RbacMixinService rbacMixinService;
@@ -50,8 +52,15 @@ public class DataRangeServiceImpl implements DataRangeService {
 
                 //查当前资源的数据范围定义
                 List<ScopeDefine> scopeDefines = rbacMixinService
-                        .getAuthorityService()
+                        .getScopeService()
                         .getScopeDefinesByResourceId(resource.getResourceId());
+
+                //如果当前资源没有定义一个数据范围 则用上一级资源的。只处理一级
+                if (CollectionUtils.isEmpty(scopeDefines) && resource.getParentId() != null) {
+                    scopeDefines = rbacMixinService
+                            .getScopeService()
+                            .getScopeDefinesByResourceId(resource.getParentId());
+                }
 
                 if (Objects.isNull(scopeDefines)) {
                     return null;
@@ -75,7 +84,11 @@ public class DataRangeServiceImpl implements DataRangeService {
                             currentOrganIds.addAll(getScopeOrganIds(scopeType, organization));
                         }
                     } else {
+                        //剩下都是基于现有用户的部门去处理的
                         List<Organization> currentUserOrgans = userService.getCurrentUserOrgans();
+                        if(CollectionUtils.isEmpty(currentUserOrgans)){
+                            return;
+                        }
                         //数据范围定义的部门ID=0时表示当前用户的部门，遍历当前用户部门处理
                         if (scopeOrganId == 0) {
                             currentUserOrgans.parallelStream().forEach(organization -> {
@@ -110,7 +123,8 @@ public class DataRangeServiceImpl implements DataRangeService {
 
                 return authDeptIds;
             }
-        } catch (Exception ignore) {
+        } catch (Exception e) {
+            log.info("数据范围注入发生错误", e);
         }
 
         return null;

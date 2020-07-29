@@ -4,6 +4,7 @@ import com.github.yiuman.citrus.support.inject.InjectAnnotationParser;
 import com.github.yiuman.citrus.support.inject.InjectAnnotationParserHolder;
 import com.github.yiuman.citrus.support.utils.ClassUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -13,7 +14,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.*;
 
 /**
@@ -23,6 +23,7 @@ import java.util.*;
  * @date 2020/7/23
  */
 @Component
+@Slf4j
 @SuppressWarnings("unchecked")
 public class InjectAnnotationParserHolderImpl implements InjectAnnotationParserHolder {
 
@@ -76,6 +77,7 @@ public class InjectAnnotationParserHolderImpl implements InjectAnnotationParserH
                     continue;
                 }
                 Field field = ReflectionUtils.findField(targetClass, pd.getName());
+                Class<?> type = field.getType();
                 ReflectionUtils.makeAccessible(field);
                 Method writeMethod = pd.getWriteMethod();
                 ReflectionUtils.makeAccessible(writeMethod);
@@ -86,12 +88,16 @@ public class InjectAnnotationParserHolderImpl implements InjectAnnotationParserH
                 if (!CollectionUtils.isEmpty(fieldAnnotations)) {
                     fieldAnnotations.parallelStream()
                             .filter(annotation -> INJECT_ANNOTATIONS.contains(ClassUtils.getRealClass(annotation.getClass())))
-                            .forEach(LambdaUtils.consumerWrapper(annotation -> writeMethod.invoke(target, parse(annotation))));
+                            .forEach(LambdaUtils.consumerWrapper(annotation -> {
+                                //todo 这里需要优化类型转化
+                                Object parseValue = parse(annotation);
+                                writeMethod.invoke(target, parseValue);
+                            }));
                 }
 
             }
-        } catch (Exception ignore) {
-
+        } catch (Exception e) {
+            log.info("注解注入器注入失败", e);
         }
 
     }

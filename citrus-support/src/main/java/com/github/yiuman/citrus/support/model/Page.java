@@ -2,7 +2,9 @@ package com.github.yiuman.citrus.support.model;
 
 import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.support.widget.Widget;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -12,6 +14,7 @@ import java.util.function.Function;
  * @author yiuman
  * @date 2020/5/7
  */
+@Slf4j
 public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> {
 
     /**
@@ -122,11 +125,14 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     @Override
     public List<T> getRecords() {
         final List<T> records = super.getRecords();
-        this.recordFunctions.forEach(func -> records.forEach(record -> {
-            Map<String, Object> objectObjectHashMap = Optional.ofNullable(this.recordExtend.get(getKey(record))).orElse(new HashMap<>(1));
-            objectObjectHashMap.put(func.getFiledName(), func.getFunction().apply(record));
-            this.recordExtend.put(getKey(record), objectObjectHashMap);
-        }));
+        if (!StringUtils.isEmpty(itemKey)) {
+            this.recordFunctions.forEach(func -> records.forEach(record -> {
+                Map<String, Object> objectObjectHashMap = Optional.ofNullable(this.recordExtend.get(getKey(record))).orElse(new HashMap<>(1));
+                objectObjectHashMap.put(func.getFiledName(), func.getFunction().apply(record));
+                this.recordExtend.put(getKey(record), objectObjectHashMap);
+            }));
+        }
+
         return records;
     }
 
@@ -151,7 +157,7 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
         addWidget(widget, false);
     }
 
-    public <W extends Widget<?>> void addWidget(String text,String fieldName){
+    public <W extends Widget<?>> void addWidget(String text, String fieldName) {
         Inputs inputs = new Inputs(text, fieldName);
         addWidget(inputs, false);
     }
@@ -191,6 +197,7 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
             }
             return keyFiled.get(entity).toString();
         } catch (Exception ex) {
+            log.info("获取主键异常", ex);
             return entity.toString();
         }
 

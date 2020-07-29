@@ -36,6 +36,8 @@ public class RbacMixinService {
 
     private final UserOnlineCache userOnlineCache;
 
+    private final ScopeService scopeService;
+
     /**
      * 判断当前用户是否有权限访问当前资源
      *

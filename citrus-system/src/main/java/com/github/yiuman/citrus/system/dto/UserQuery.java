@@ -15,6 +15,7 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -27,9 +28,11 @@ public class UserQuery {
     @QueryParam(type = "like")
     private String username;
 
-    @AuthDeptIds
     @QueryParam(handler = UserQueryHandler.class)
     private List<Long> roleIds;
+
+    @AuthDeptIds
+    private Set<Long> deptIds;
 
     @Component
     public static class UserQueryHandler implements QueryParamHandler {

@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.system.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -14,7 +15,7 @@ import lombok.Data;
 @TableName("sys_scope")
 public class Scope {
 
-    @TableId
+    @TableId(type = IdType.ASSIGN_ID)
     private Long scopeId;
 
     private String scopeName;
