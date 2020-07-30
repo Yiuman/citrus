@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.Objects;
 
 /**
+ * 通用的CRUD-DAO
+ *
  * @author yiuman
  * @date 2020/4/11
  */

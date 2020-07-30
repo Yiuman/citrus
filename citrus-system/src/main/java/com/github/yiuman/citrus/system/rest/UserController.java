@@ -12,10 +12,10 @@ import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.support.widget.Selects;
 import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.dto.UserDto;
+import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.dto.UserQuery;
 import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.entity.Role;
-import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.hook.HasLoginHook;
 import com.github.yiuman.citrus.system.service.OrganService;
 import com.github.yiuman.citrus.system.service.RoleService;
@@ -109,8 +109,8 @@ public class UserController extends BaseCrudController<UserDto, Long> {
      * @return 当前用户实例
      */
     @GetMapping("/current")
-    public ResponseEntity<User> getCurrentUser() {
-        return ResponseEntity.ok(userService.getCurrentUser().orElse(null));
+    public ResponseEntity<UserOnlineInfo> getCurrentUser() {
+        return ResponseEntity.ok(userService.getCurrentUserOnlineInfo());
     }
 
 }

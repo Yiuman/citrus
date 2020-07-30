@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.security.authenticate.NoPermissionException;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
+import com.github.yiuman.citrus.system.cache.UserOnlineCache;
 import com.github.yiuman.citrus.system.dto.UserDto;
+import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.*;
 import com.github.yiuman.citrus.system.mapper.UserMapper;
 import com.github.yiuman.citrus.system.mapper.UserOrganMapper;
@@ -46,10 +48,17 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
      */
     private final UserOrganMapper userOrganMapper;
 
-    public UserService(UserMapper userMapper, UserRoleMapper userRoleMapper, UserOrganMapper userOrganMapper) {
+    private final UserOnlineCache userOnlineCache;
+
+    public UserService(UserMapper userMapper, UserRoleMapper userRoleMapper, UserOrganMapper userOrganMapper, UserOnlineCache userOnlineCache) {
         this.userMapper = userMapper;
         this.userRoleMapper = userRoleMapper;
         this.userOrganMapper = userOrganMapper;
+        this.userOnlineCache = userOnlineCache;
+    }
+
+    public UserOnlineCache getUserOnlineCache() {
+        return userOnlineCache;
     }
 
     @Override
@@ -127,6 +136,14 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
         return getUser(SecurityContextHolder.getContext().getAuthentication());
     }
 
+    public UserOnlineInfo getCurrentUserOnlineInfo() {
+        User currentUser = getCurrentUser()
+                .orElseThrow(NoPermissionException::new);
+
+        return userOnlineCache.find(currentUser.getUuid());
+
+    }
+
     /**
      * 获取当前用户的组织机构
      *
@@ -143,6 +160,14 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
             throw new NoPermissionException();
         }
 
-        return userOrganMapper.getOrgansByUserId(currentUser.get().getUserId());
+        return getUserOrgansByUserId(currentUser.get().getUserId());
+    }
+
+    public List<Role> getRolesByUserId(Long userId) {
+        return userRoleMapper.getRolesByUserId(userId);
+    }
+
+    public List<Organization> getUserOrgansByUserId(Long userId) {
+        return userOrganMapper.getOrgansByUserId(userId);
     }
 }

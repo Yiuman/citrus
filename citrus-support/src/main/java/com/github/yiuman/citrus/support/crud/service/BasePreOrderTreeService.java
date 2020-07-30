@@ -56,7 +56,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         try {
             return CrudUtils.getTreeMapper(getEntityType());
         } catch (Throwable throwable) {
-            log.info("初始化mapper报错",throwable);
+            log.info("初始化mapper报错", throwable);
             return null;
         }
     }
@@ -119,6 +119,11 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         }
 
         return ekBaseService.remove(entity);
+    }
+
+    @Override
+    public boolean remove(Wrapper<E> wrappers) {
+        return ekBaseService.remove(wrappers);
     }
 
     @Override
@@ -203,7 +208,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         list.addAll(getTreeMapper().treeLink(table.getTableName(), Wrappers.<E>query().apply(parentSql).in("t1." + table.getKeyColumn(), ids)));
         final E root = getRoot();
         //传list进去前需要去重,并排除根节点
-        initTreeFromList(root, list.parallelStream().distinct().filter(item -> item!=null && item.getId() != root.getId()).collect(Collectors.toList()));
+        initTreeFromList(root, list.parallelStream().distinct().filter(item -> item != null && item.getId() != root.getId()).collect(Collectors.toList()));
         return root;
     }
 
@@ -238,7 +243,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
             });
             current.setChildren(children);
         } else {
-            initTreeFromList(current,list());
+            initTreeFromList(current, list());
         }
     }
 

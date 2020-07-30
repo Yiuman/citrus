@@ -7,6 +7,7 @@ import com.github.yiuman.citrus.support.utils.WebUtils;
 import com.github.yiuman.citrus.system.cache.UserOnlineCache;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.User;
+import com.github.yiuman.citrus.system.service.RbacMixinService;
 import com.github.yiuman.citrus.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -32,19 +33,18 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService {
 
     private static final String SUPPORT_MODE = "password";
 
-    private final UserService userService;
+    private final RbacMixinService rbacMixinService;
 
     private final PasswordEncoder passwordEncoder;
 
     private final VerificationProcessor<Captcha> verificationProcessor;
 
-    private final UserOnlineCache userOnlineCache;
-
-    public PasswordAuthenticateServiceImpl(UserService userService, PasswordEncoder passwordEncoder, VerificationProcessor<Captcha> verificationProcessor, UserOnlineCache userOnlineCache) {
-        this.userService = userService;
+    public PasswordAuthenticateServiceImpl(
+            RbacMixinService rbacMixinService, PasswordEncoder passwordEncoder,
+            VerificationProcessor<Captcha> verificationProcessor) {
+        this.rbacMixinService = rbacMixinService;
         this.passwordEncoder = passwordEncoder;
         this.verificationProcessor = verificationProcessor;
-        this.userOnlineCache = userOnlineCache;
     }
 
     @Override
@@ -59,36 +59,48 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService {
             throw new AuthenticationServiceException(e.getMessage());
         }
 
+        UserService userService = rbacMixinService.getUserService();
         User user = userService.getUserByLoginId(passwordLoginEntity.getLoginId())
                 .orElseThrow(() -> new UsernameNotFoundException("找不到用户"));
         if (!passwordEncoder.matches(passwordLoginEntity.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("用户名或密码错误");
         }
 
-        userOnlineCache.save(user.getUuid(), UserOnlineInfo.newInstance(user));
+        saveUserOnlineInfo(user);
         return new UsernamePasswordAuthenticationToken(user, user.getUuid());
     }
 
 
     @Override
     public Optional<Authentication> resolve(String token, String identity) {
-        User user =userOnlineCache.find(identity);
-        if(user==null){
-            user= userService.getUserByUuid(identity);
-            userOnlineCache.save(user.getUuid(),UserOnlineInfo.newInstance(user));
+        UserService userService = rbacMixinService.getUserService();
+        UserOnlineCache userOnlineCache = userService.getUserOnlineCache();
+        User user = userOnlineCache.find(identity);
+        if (user == null) {
+            user = userService.getUserByUuid(identity);
+            saveUserOnlineInfo(user);
         }
         return Optional.of(new UsernamePasswordAuthenticationToken(user, token, null));
     }
 
     @Override
     public void logout(Authentication authentication) {
-        userService.getUser(authentication).ifPresent(user-> userOnlineCache.remove(user.getUuid()));
+        final UserService userService = rbacMixinService.getUserService();
+        userService.getUser(authentication).ifPresent(user -> userService.getUserOnlineCache().remove(user.getUuid()));
         //Nothing to do
     }
 
     @Override
     public String supportMode() {
         return SUPPORT_MODE;
+    }
+
+    private void saveUserOnlineInfo(User user) {
+        UserOnlineInfo userOnlineInfo = UserOnlineInfo.newInstance(user);
+        rbacMixinService.setUserOwnedInfo(userOnlineInfo);
+        rbacMixinService.getUserService()
+                .getUserOnlineCache()
+                .save(user.getUuid(), userOnlineInfo);
     }
 
 }

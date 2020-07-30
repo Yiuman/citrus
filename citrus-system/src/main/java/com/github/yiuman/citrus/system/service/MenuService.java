@@ -37,6 +37,11 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
         this.resourceService = resourceService;
     }
 
+    @Override
+    public List<Resource> list() {
+        return list(null);
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public List<Resource> list(Wrapper<Resource> wrapper) {
@@ -56,7 +61,7 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
     }
 
     @Override
-    public boolean beforeSave(Resource entity) throws Exception {
+    public boolean beforeSave(Resource entity) {
         entity.setType(0);
         return true;
     }
@@ -80,6 +85,7 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
         }
 
         if (isCrudRest) {
+            resourceService.remove(Wrappers.<ResourceDto>query().eq("parent_id", entity.getId()));
             createCrudDefaultResource(entity);
 
             if (isAssignableFromTreeRest) {

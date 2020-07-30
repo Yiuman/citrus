@@ -132,7 +132,6 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
                 this.recordExtend.put(getKey(record), objectObjectHashMap);
             }));
         }
-
         return records;
     }
 

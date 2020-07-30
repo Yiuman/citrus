@@ -9,6 +9,8 @@ import com.github.yiuman.citrus.support.model.BaseTree;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 /**
  * 资源(可能是接口、菜单、操作等)
  *
@@ -28,6 +30,16 @@ public class Resource extends BaseTree<Resource, Long> {
      * 资源名
      */
     private String resourceName;
+
+    /**
+     * 导入的组件路径
+     */
+    private String component;
+
+    /**
+     * 菜单的图标
+     */
+    private String icon;
 
     /**
      * 资源类型
@@ -77,7 +89,7 @@ public class Resource extends BaseTree<Resource, Long> {
 
         Resource resource = (Resource) o;
 
-        return resourceId != null ? resourceId.equals(resource.resourceId) : resource.resourceId == null;
+        return Objects.equals(resourceId, resource.resourceId);
     }
 
     @Override

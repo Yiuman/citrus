@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.support.crud.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+
 /**
  * 可删除的Service接口
  *
@@ -24,6 +26,8 @@ public interface DeletableService<E, K> {
      * @throws Exception 一般为数据库操作异常，或实体操作过程中的异常
      */
     void batchRemove(Iterable<K> keys) throws Exception;
+
+    boolean remove(Wrapper<E> wrappers);
 
     /**
      * 删除全部记录

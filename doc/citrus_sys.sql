@@ -59,6 +59,8 @@ CREATE TABLE `sys_resource`
 (
   `resource_id`        varchar(500) NOT NULL COMMENT '主键id',
   `resource_name`       varchar(50)   DEFAULT NULL COMMENT '资源名称名字',
+  `component`           varchar (1000) DEFAULT NULL COMMENT '前端组件路径',
+  `icon`                varchar(500)   DEFAULT NULL COMMENT '资源菜单图标（mdi）',
   `parent_id`          varchar(500)  DEFAULT NULL COMMENT '父ID',
   `type`               int          NOT NULL COMMENT '资源类型',
   `path`               varchar(2000) DEFAULT NULL COMMENT '资源路径',

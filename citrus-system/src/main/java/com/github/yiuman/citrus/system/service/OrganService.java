@@ -28,4 +28,5 @@ public class OrganService extends BasePreOrderTreeService<Organization, Long> {
         organizationTreeNode.setModelTextField("organName");
         return organizationTreeNode;
     }
+
 }

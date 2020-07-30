@@ -18,7 +18,20 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class UserOnlineInfo extends User {
 
+    /**
+     * 用户角色
+     */
     private List<Role> roles;
+
+    /**
+     * 用户部门
+     */
+    private List<Organization> organizations;
+
+    /**
+     * 用户拥有的菜单
+     */
+    private List<Resource> menus;
 
     /**
      * 用户权限

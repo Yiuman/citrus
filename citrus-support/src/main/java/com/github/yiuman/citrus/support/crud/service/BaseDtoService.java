@@ -107,6 +107,12 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         return this.beforeRemove(entity) && ekBaseService.remove(dtoToEntity().apply(entity));
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean remove(Wrapper<D> wrappers) {
+        return ekBaseService.remove((Wrapper<E>) wrappers);
+    }
+
     @Override
     public void batchRemove(Iterable<K> keys) {
         ekBaseService.batchRemove(keys);

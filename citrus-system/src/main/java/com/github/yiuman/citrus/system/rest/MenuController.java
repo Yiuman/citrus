@@ -50,9 +50,10 @@ public class MenuController extends BaseTreeController<Resource, Long> {
     @Override
     protected DialogView createDialogView() throws Exception {
         DialogView view = new DialogView();
-        view.addEditField("菜单名称", "resourceName");
+        view.addEditField("菜单名称", "resourceName").addRule("required");
         view.addEditField("路径", "path");
-        view.addEditField("路径", "path");
+        view.addEditField("组件", "component");
+        view.addEditField("图标代码", "icon");
         return view;
     }
 

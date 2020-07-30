@@ -138,4 +138,15 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
         return getMapper().selectPage(page, queryWrapper);
     }
 
+    @Override
+    public boolean remove(Wrapper<E> wrapper) {
+        try {
+            getMapper().delete(wrapper);
+        } catch (Exception e) {
+            log.info("delete Exception", e);
+            return false;
+        }
+
+        return true;
+    }
 }

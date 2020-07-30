@@ -5,6 +5,7 @@ import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.AuthorityDto;
 import com.github.yiuman.citrus.system.entity.Authority;
 import com.github.yiuman.citrus.system.entity.AuthorityResource;
+import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.mapper.AuthorityResourceMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -75,7 +76,15 @@ public class AuthorityService extends BaseDtoService<Authority, Long, AuthorityD
      * @param userId 用户ID
      * @return 权限资源结合
      */
-    public Set<AuthorityResource> selectAuthorityResourceByUserIdAndResourceId(Long userId) {
-        return authorityResourceMapper.selectAuthorityResourceByUserIdAndResourceId(userId);
+    public Set<AuthorityResource> getAuthorityResourceByUserIdAndResourceId(Long userId) {
+        return authorityResourceMapper.getAuthorityResourceByUserIdAndResourceId(userId);
+    }
+
+    public Set<Resource> getUserResources(Long userId) {
+        return authorityResourceMapper.getResourcesByUserId(userId);
+    }
+
+    public Set<Authority> getAuthoritiesByUserId(Long userId) {
+        return authorityResourceMapper.getAuthoritiesByUserId(userId);
     }
 }

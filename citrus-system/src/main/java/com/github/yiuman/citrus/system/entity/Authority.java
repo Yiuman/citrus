@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.StringSerializer;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.github.yiuman.citrus.system.commons.model.AbstractAuditingEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +20,7 @@ import lombok.EqualsAndHashCode;
 @TableName("sys_authority")
 public class Authority extends AbstractAuditingEntity {
 
-    @JsonSerialize(using = StringSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableId(type = IdType.ASSIGN_ID)
     private Long authorityId;
 
