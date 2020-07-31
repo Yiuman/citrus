@@ -1,6 +1,8 @@
 package com.github.yiuman.citrus.support.utils;
 
 import com.google.common.collect.Maps;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.util.ReflectionUtils;
 
 import java.beans.BeanInfo;
@@ -15,12 +17,24 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * 转换工具类
+ *
  * @author yiuman
  * @date 2020/4/6
  */
 public final class ConvertUtils {
 
+    private final static ExpressionParser expressionParser = new SpelExpressionParser();
+
     private ConvertUtils() {
+    }
+
+    public static <T> T parseEl(String el, Class<T> clazz) {
+        return expressionParser.parseExpression(el).getValue(clazz);
+    }
+
+    public static Object parseEl(String el) {
+        return expressionParser.parseExpression(el).getValue();
     }
 
     public static <S, T> T convert(Class<T> clazz, S source) throws Exception {

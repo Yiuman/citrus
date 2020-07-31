@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
 import com.github.yiuman.citrus.support.crud.rest.CrudRestful;
+import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.widget.Selections;
 import com.github.yiuman.citrus.support.widget.Selects;
 import com.github.yiuman.citrus.support.widget.Widget;
@@ -15,6 +16,7 @@ import org.apache.ibatis.binding.BindingException;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.util.ReflectionUtils;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,6 +38,115 @@ public final class CrudUtils {
     }
 
     /**
+     * 获取CrudService实例
+     *
+     * @param entityClass       实体class
+     * @param keyClass          主键class
+     * @param superServiceClass 父类的serviceClass
+     * @param <E>               实体类型
+     * @param <K>               主键类型
+     * @param <S>               CrudService的子类类型
+     * @return CrudService实例
+     * @throws Exception 反射异常
+     */
+    public static <E, K extends Serializable, S extends CrudService<E, K>> S getCrudService(
+            Class<E> entityClass,
+            Class<K> keyClass,
+            Class<S> superServiceClass) throws Exception {
+        Class<? extends S> crudServiceClass = getCrudServiceClass(entityClass, keyClass, superServiceClass);
+        return SpringUtils.getBean(crudServiceClass, true);
+    }
+
+    /**
+     * 获取CrudService 增删改查逻辑类的Class（没有则创建）
+     *
+     * @param entityClass       实体class
+     * @param keyClass          主键class
+     * @param superServiceClass 父类的CrudService类型的Class
+     * @param <E>               实体类型
+     * @param <K>               主键类型
+     * @param <S>               CrudService的子类类型
+     * @return 增删改查逻辑类的Class （继承与CrudService子类）
+     * @throws Exception 反射异常
+     */
+    @SuppressWarnings("unchecked")
+    public static <E, K extends Serializable, S extends CrudService<E, K>> Class<S> getCrudServiceClass(
+            Class<E> entityClass,
+            Class<K> keyClass,
+            Class<S> superServiceClass) throws Exception {
+        String entityClassName = entityClass.getName();
+        String formatName = String.format("%sCrudService$$javassist", entityClassName);
+        Class<?> serviceClass;
+        try {
+            serviceClass = JavassistUtils.defaultPool().getClassLoader().loadClass(formatName);
+        } catch (ClassNotFoundException e) {
+            CtClass ctClass;
+            try {
+                ctClass = JavassistUtils.defaultPool().getCtClass(formatName);
+                serviceClass = ctClass.getClass();
+            } catch (NotFoundException notFoundCtClass) {
+                ctClass = JavassistUtils.defaultPool().makeClass(formatName, JavassistUtils.getClass(superServiceClass));
+                addTypeArgument(ctClass, superServiceClass, new Class[]{entityClass, keyClass}, null, null);
+                serviceClass = ctClass.toClass();
+            }
+        }
+        return (Class<S>) serviceClass;
+    }
+
+    /**
+     * 添加类的泛型
+     *
+     * @param ctClass                  Javassist的类型
+     * @param supperClass              父类
+     * @param superTypeArgsClasses     父类的泛型类型
+     * @param interfaceClass           接口
+     * @param interfaceTypeArgsClasses 接口的泛型类型
+     */
+    public static void addTypeArgument(CtClass ctClass, Class<?> supperClass,
+                                       Class<?>[] superTypeArgsClasses,
+                                       Class<?> interfaceClass,
+                                       Class<?>[] interfaceTypeArgsClasses) {
+
+        SignatureAttribute.ClassType supperClassType = getSignatureClassType(supperClass, superTypeArgsClasses);
+        //完整的接口泛型描述
+        SignatureAttribute.ClassType interFaceClassType = getSignatureClassType(interfaceClass, interfaceTypeArgsClasses);
+        ctClass.setGenericSignature(new SignatureAttribute
+                .ClassSignature(null, supperClassType, interFaceClassType == null ? null : new SignatureAttribute.ClassType[]{interFaceClassType})
+                .encode());
+    }
+
+    /**
+     * 获取泛型描述类型
+     *
+     * @param mainClass       主类型
+     * @param typeArgsClasses 泛型 按顺序
+     * @return 泛型描述
+     */
+    public static SignatureAttribute.ClassType getSignatureClassType(Class<?> mainClass, Class<?>... typeArgsClasses) {
+        if (mainClass == null) {
+            return null;
+        }
+        return new SignatureAttribute.ClassType(mainClass.getName(), getSignatureTypeArguments(typeArgsClasses));
+    }
+
+    /**
+     * 获取泛型描述数组
+     *
+     * @param classes 泛型的类型
+     * @return 泛型参数数组
+     */
+    public static SignatureAttribute.TypeArgument[] getSignatureTypeArguments(Class<?>... classes) {
+        if (classes == null || classes.length == 0) {
+            return null;
+        }
+        SignatureAttribute.TypeArgument[] typeArguments = new SignatureAttribute.TypeArgument[classes.length];
+        for (int i = 0; i < classes.length; i++) {
+            typeArguments[i] = new SignatureAttribute.TypeArgument(new SignatureAttribute.ClassType(classes[i].getName()));
+        }
+        return typeArguments;
+    }
+
+    /**
      * 动态构建CRUDMAPPER
      *
      * @param entityClass 实体类Class
@@ -46,7 +157,8 @@ public final class CrudUtils {
     @SuppressWarnings("unchecked")
     public static <T> Class<? extends BaseMapper<T>> getMapperInterface(Class<T> entityClass, Class<?> mapperClass) throws Exception {
         String entityClassName = entityClass.getName();
-        String formatName = String.format("%sMapper$$javassist", entityClassName);
+        String mapperClassSimpleName = mapperClass.getSimpleName();
+        String formatName = String.format("%s$$javassist", (entityClassName + mapperClassSimpleName));
         Class<?> mapperInterface;
         try {
             mapperInterface = JavassistUtils.defaultPool().getClassLoader().loadClass(formatName);
@@ -57,19 +169,7 @@ public final class CrudUtils {
                 mapperInterface = ctClass.getClass();
             } catch (NotFoundException notFoundCtClass) {
                 ctClass = JavassistUtils.defaultPool().makeInterface(formatName, JavassistUtils.getClass(mapperClass));
-                //实现类型type
-                SignatureAttribute.ClassType classType = new SignatureAttribute.ClassType(entityClassName);
-
-                //相应的泛型参数定义
-                SignatureAttribute.TypeArgument typeArgument = new SignatureAttribute.TypeArgument(classType);
-
-                //完整的接口泛型描述
-                SignatureAttribute.ClassType interfaceClassType = new SignatureAttribute
-                        .ClassType(mapperClass.getName(), new SignatureAttribute.TypeArgument[]{typeArgument});
-                //实现类的泛型描述 实现类的泛型组成 自身泛型,父类泛型,接口泛型[], 因此这里均没有,则实际传入null
-                ctClass.setGenericSignature(new SignatureAttribute
-                        .ClassSignature(null, null, new SignatureAttribute.ClassType[]{interfaceClassType})
-                        .encode());
+                addTypeArgument(ctClass, null, null, mapperClass, new Class[]{entityClass});
                 mapperInterface = ctClass.toClass();
             }
 
@@ -90,6 +190,16 @@ public final class CrudUtils {
         return (M) getMapper(entityClass, TreeMapper.class);
     }
 
+    /**
+     * 根据实体类型，Mybatis的Mapper接口类型动态获取的实体映射接口 如：UserMapper extend BaseMapper<User></>
+     * 第一次从SqlSessionTemplate取到直接返回，若取不到，会动态构建一个，通过字节码工具去生成字节码放到内存中
+     *
+     * @param entityClass 实体类型
+     * @param <M>         生成的接口类型
+     * @param <T>         实体类型
+     * @return mapper接口的动态代理
+     * @throws Exception 反射异常 Spring容器找不到的异常
+     */
     @SuppressWarnings("unchecked")
     public static <M extends BaseMapper<T>, T> M getMapper(Class<T> entityClass, Class<?> baseMapperClass) throws Exception {
         Class<? extends BaseMapper<T>> mapperClass = getMapperInterface(entityClass, baseMapperClass);
@@ -172,4 +282,6 @@ public final class CrudUtils {
 
         return (W) new Selections(text, selects.bind(), selectItems, selects.multiple());
     }
+
+
 }

@@ -1,11 +1,16 @@
 package com.github.yiuman.citrus.support.crud.rest;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.github.yiuman.citrus.support.crud.service.BasePreOrderTreeService;
+import com.github.yiuman.citrus.support.crud.service.BaseSimpleTreeService;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
+import com.github.yiuman.citrus.support.model.BasePreOrderTree;
 import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.model.TreeDisplay;
+import com.github.yiuman.citrus.support.utils.CrudUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,7 +44,24 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
      *
      * @return 实现了TreeCrudService的逻辑服务类
      */
-    protected abstract TreeCrudService<T, K> getCrudService();
+    @SuppressWarnings("unchecked")
+    protected TreeCrudService<T, K> getCrudService() {
+        Class<? super T> superclass = modelClass.getSuperclass();
+        try {
+            return superclass.isAssignableFrom(BasePreOrderTree.class)
+                    ? CrudUtils.getCrudService(
+                    modelClass,
+                    (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 1),
+                    BasePreOrderTreeService.class)
+                    : CrudUtils.getCrudService(
+                    modelClass,
+                    (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 1),
+                    BaseSimpleTreeService.class);
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
 
     @Override
     protected CrudService<T, K> getService() {

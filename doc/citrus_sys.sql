@@ -208,6 +208,21 @@ CREATE TABLE `sys_role_auth`
 -- ----------------------------
 
 
+-- ------------字典目录表----------------
+DROP TABLE IF EXISTS `sys_dict`;
+CREATE TABLE `sys_dict`
+(
+  `dict_id`  bigint(20) NOT NULL COMMENT '字典ID',
+  `dict_code` varchar (200) NOT NULL COMMENT '字典编码',
+  `dict_name` varchar (1000) NOT NULL COMMENT '字典名',
+    PRIMARY KEY (`dict_id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  ROW_FORMAT = DYNAMIC COMMENT ='字典目录表';
+
+-- ----------------------------
+
+
 
 
 

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.crud.CrudReadDataListener;
 import com.github.yiuman.citrus.support.crud.query.QueryParam;
 import com.github.yiuman.citrus.support.crud.query.QueryParamHandler;
+import com.github.yiuman.citrus.support.crud.service.BaseService;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.exception.ValidateException;
 import com.github.yiuman.citrus.support.inject.InjectAnnotationParserHolder;
@@ -15,6 +16,7 @@ import com.github.yiuman.citrus.support.model.EditField;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.model.SortBy;
 import com.github.yiuman.citrus.support.utils.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ReflectionUtils;
@@ -32,6 +34,7 @@ import java.util.*;
  * @author yiuman
  * @date 2020/5/11
  */
+@Slf4j
 public abstract class BaseCrudRestful<T, K extends Serializable> implements CrudRestful<T, K> {
 
     /**
@@ -67,7 +70,19 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
      *
      * @return 实现了 CrudService的逻辑层
      */
-    protected abstract CrudService<T, K> getService();
+    @SuppressWarnings("unchecked")
+    protected CrudService<T, K> getService() {
+        try {
+            return CrudUtils.getCrudService(
+                    modelClass,
+                    (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 1),
+                    BaseService.class);
+        } catch (Exception e) {
+            log.info("获取CrudService报错", e);
+            return null;
+        }
+
+    }
 
     /**
      * 创建列表分页页面

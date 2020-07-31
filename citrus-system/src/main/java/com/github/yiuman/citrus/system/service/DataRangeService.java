@@ -10,6 +10,11 @@ import java.util.Collection;
  */
 public interface DataRangeService {
 
+    /**
+     * 获取数据范围内部门的Id集合
+     *
+     * @return 部门的Id集合
+     */
     Collection<Long> getDeptIds();
 
 }
