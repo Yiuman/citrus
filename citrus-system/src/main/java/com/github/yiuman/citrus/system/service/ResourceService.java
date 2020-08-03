@@ -22,4 +22,7 @@ public class ResourceService extends BaseDtoService<Resource, Long, ResourceDto>
         return getBaseMapper().selectOne(Wrappers.<Resource>query().eq("path", requestUri).eq("operation", method));
     }
 
+    public Resource selectByCode(String code) {
+        return getBaseMapper().selectOne(Wrappers.<Resource>query().eq("resource_code", code));
+    }
 }

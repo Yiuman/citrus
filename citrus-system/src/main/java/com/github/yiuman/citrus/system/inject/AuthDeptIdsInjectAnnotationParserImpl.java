@@ -21,6 +21,6 @@ public class AuthDeptIdsInjectAnnotationParserImpl implements InjectAnnotationPa
 
     @Override
     public Object parse(AuthDeptIds annotation) {
-        return dataRangeService.getDeptIds();
+        return dataRangeService.getDeptIds(annotation.code());
     }
 }

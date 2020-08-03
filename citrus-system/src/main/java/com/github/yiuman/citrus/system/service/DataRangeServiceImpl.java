@@ -33,7 +33,7 @@ public class DataRangeServiceImpl implements DataRangeService {
     }
 
     @Override
-    public Collection<Long> getDeptIds() {
+    public Collection<Long> getDeptIds(String code) {
         UserService userService = rbacMixinService.getUserService();
         Optional<User> currentUser = userService.getCurrentUser();
         if (!currentUser.isPresent()) {
@@ -41,88 +41,91 @@ public class DataRangeServiceImpl implements DataRangeService {
         }
         //获取当前请求的对应的RequestMapping路径
         try {
-            HttpServletRequest request = WebUtils.getRequest();
-            String mvcDefineMapping = WebUtils.getRequestMapping(request);
-            if (!StringUtils.isEmpty(mvcDefineMapping)) {
+            Resource resource;
+            ResourceService resourceService = rbacMixinService.getResourceService();
+            if (StringUtils.isEmpty(code)) {
+                HttpServletRequest request = WebUtils.getRequest();
+                String mvcDefineMapping = WebUtils.getRequestMapping(request);
                 //没找到配置资源证明没有配置资源，需要要数据范围
-                Resource resource = rbacMixinService.getResourceService().selectByUri(mvcDefineMapping, request.getMethod());
+                resource = resourceService.selectByUri(mvcDefineMapping, request.getMethod());
                 if (Objects.isNull(resource)) {
                     return null;
                 }
-
-                //查当前资源的数据范围定义
-                List<ScopeDefine> scopeDefines = rbacMixinService
-                        .getScopeService()
-                        .getScopeDefinesByResourceId(resource.getResourceId());
-
-                //如果当前资源没有定义一个数据范围 则用上一级资源的。只处理一级
-                if (CollectionUtils.isEmpty(scopeDefines) && resource.getParentId() != null) {
-                    scopeDefines = rbacMixinService
-                            .getScopeService()
-                            .getScopeDefinesByResourceId(resource.getParentId());
-                }
-
-                if (Objects.isNull(scopeDefines)) {
-                    return null;
-                }
-
-                //下面使用并行流处理，这时使用的是线程安全的Set
-                Set<Long> authDeptIds = new CopyOnWriteArraySet<>();
-                OrganService organService = rbacMixinService.getOrganService();
-                //这里处理数据范围
-                scopeDefines.parallelStream().forEach(scopeDefine -> {
-                    Long scopeOrganId = scopeDefine.getOrganId();
-                    //获取范围定义部门
-                    Set<Long> currentOrganIds = new HashSet<>();
-                    ScopeType[] scopeTypes = scopeDefine.getScopeTypes();
-
-                    //数据范围定义的部门ID>0时为正常情况，按照正常逻辑处理
-                    if (scopeOrganId > 0) {
-                        //根据数据范围类型算出数据范围定义的部门ID集合
-                        Organization organization = organService.get(scopeDefine.getOrganId());
-                        for (ScopeType scopeType : scopeTypes) {
-                            currentOrganIds.addAll(getScopeOrganIds(scopeType, organization));
-                        }
-                    } else {
-                        //剩下都是基于现有用户的部门去处理的
-                        List<Organization> currentUserOrgans = userService.getCurrentUserOrgans();
-                        if(CollectionUtils.isEmpty(currentUserOrgans)){
-                            return;
-                        }
-                        //数据范围定义的部门ID=0时表示当前用户的部门，遍历当前用户部门处理
-                        if (scopeOrganId == 0) {
-                            currentUserOrgans.parallelStream().forEach(organization -> {
-                                for (ScopeType scopeType : scopeTypes) {
-                                    currentOrganIds.addAll(getScopeOrganIds(scopeType, organization));
-                                }
-                            });
-                        } else {
-                            //数据范围定义的部门ID<0时为，-(scopeOrganId)的级别，则部门树的深度
-                            int deep = Math.toIntExact(-scopeOrganId);
-                            currentUserOrgans.parallelStream().forEach(organization -> {
-                                for (ScopeType scopeType : scopeTypes) {
-                                    currentOrganIds.addAll(getScopeOrganIds(scopeType, organService.parent(organization, deep)));
-                                }
-                            });
-                        }
-
-                    }
-
-                    //获取到的当前的数据范围
-                    if (!CollectionUtils.isEmpty(currentOrganIds)) {
-                        //包含
-                        if (scopeDefine.getScopeRule() == null || scopeDefine.getScopeRule() == 0) {
-                            authDeptIds.addAll(currentOrganIds);
-                        }
-                        //排除
-                        else {
-                            authDeptIds.removeAll(currentOrganIds);
-                        }
-                    }
-                });
-
-                return authDeptIds;
+            } else {
+                resource = resourceService.selectByCode(code);
             }
+            //查当前资源的数据范围定义
+            List<ScopeDefine> scopeDefines = rbacMixinService
+                    .getScopeService()
+                    .getScopeDefinesByResourceId(resource.getResourceId());
+
+            //如果当前资源没有定义一个数据范围 则用上一级资源的。只处理一级
+            if (CollectionUtils.isEmpty(scopeDefines) && resource.getParentId() != null) {
+                scopeDefines = rbacMixinService
+                        .getScopeService()
+                        .getScopeDefinesByResourceId(resource.getParentId());
+            }
+
+            if (Objects.isNull(scopeDefines)) {
+                return null;
+            }
+
+            //下面使用并行流处理，这时使用的是线程安全的Set
+            Set<Long> authDeptIds = new CopyOnWriteArraySet<>();
+            OrganService organService = rbacMixinService.getOrganService();
+            //这里处理数据范围
+            scopeDefines.parallelStream().forEach(scopeDefine -> {
+                Long scopeOrganId = scopeDefine.getOrganId();
+                //获取范围定义部门
+                Set<Long> currentOrganIds = new HashSet<>();
+                ScopeType[] scopeTypes = scopeDefine.getScopeTypes();
+
+                //数据范围定义的部门ID>0时为正常情况，按照正常逻辑处理
+                if (scopeOrganId > 0) {
+                    //根据数据范围类型算出数据范围定义的部门ID集合
+                    Organization organization = organService.get(scopeDefine.getOrganId());
+                    for (ScopeType scopeType : scopeTypes) {
+                        currentOrganIds.addAll(getScopeOrganIds(scopeType, organization));
+                    }
+                } else {
+                    //剩下都是基于现有用户的部门去处理的
+                    List<Organization> currentUserOrgans = userService.getCurrentUserOrgans();
+                    if (CollectionUtils.isEmpty(currentUserOrgans)) {
+                        return;
+                    }
+                    //数据范围定义的部门ID=0时表示当前用户的部门，遍历当前用户部门处理
+                    if (scopeOrganId == 0) {
+                        currentUserOrgans.parallelStream().forEach(organization -> {
+                            for (ScopeType scopeType : scopeTypes) {
+                                currentOrganIds.addAll(getScopeOrganIds(scopeType, organization));
+                            }
+                        });
+                    } else {
+                        //数据范围定义的部门ID<0时为，-(scopeOrganId)的级别，则部门树的深度
+                        int deep = Math.toIntExact(-scopeOrganId);
+                        currentUserOrgans.parallelStream().forEach(organization -> {
+                            for (ScopeType scopeType : scopeTypes) {
+                                currentOrganIds.addAll(getScopeOrganIds(scopeType, organService.parent(organization, deep)));
+                            }
+                        });
+                    }
+
+                }
+
+                //获取到的当前的数据范围
+                if (!CollectionUtils.isEmpty(currentOrganIds)) {
+                    //包含
+                    if (scopeDefine.getScopeRule() == null || scopeDefine.getScopeRule() == 0) {
+                        authDeptIds.addAll(currentOrganIds);
+                    }
+                    //排除
+                    else {
+                        authDeptIds.removeAll(currentOrganIds);
+                    }
+                }
+            });
+
+            return authDeptIds;
         } catch (Exception e) {
             log.info("数据范围注入发生错误", e);
         }

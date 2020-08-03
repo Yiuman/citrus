@@ -13,7 +13,7 @@
 
 ### 项目特性
 
-1. 开箱即用，在SpringBootAppilcation启动类上加上`@EnableCitrusAdmin`注解即可开启项目
+1. 开箱即用，在SpringBootApplication启动类上加上`@EnableCitrusAdmin`注解即可开启项目
 2. 高效开发，只需要定义实体与库表，入口继承基类的Controller，即可完成基础的增删改查操作
 3. 常用数据结构的封装与基础的CRUD实现（左右值预遍历树、普通树等）
 4. 统一的认证入口，方便的安全认证扩展，可实现多种方式的认证，且支持表单与接口

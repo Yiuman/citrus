@@ -63,6 +63,11 @@ public class Resource extends BaseTree<Resource, Long> {
      */
     private String operation;
 
+    /**
+     * 资源代码
+     */
+    private String resourceCode;
+
     public Resource(String resourceName, Integer type, Long parentId, String path, String operation) {
         this.resourceName = resourceName;
         this.type = type;
