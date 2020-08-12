@@ -14,6 +14,6 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(CitrusAutoConfiguration.class)
+@Import({CitrusMarkerConfiguration.class})
 public @interface EnableCitrusAdmin {
 }

@@ -14,6 +14,8 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,7 @@ import java.util.Optional;
  */
 @Service
 @Slf4j
-public class PasswordAuthenticateServiceImpl implements AuthenticateService {
+public class PasswordAuthenticateServiceImpl implements AuthenticateService, UserDetailsService {
 
     private static final String SUPPORT_MODE = "password";
 
@@ -103,4 +105,9 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService {
                 .save(user.getUuid(), userOnlineInfo);
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String uuid) throws UsernameNotFoundException {
+        UserOnlineInfo userOnlineInfo = rbacMixinService.getUserService().getUserOnlineCache().find(uuid);
+        return new org.springframework.security.core.userdetails.User(userOnlineInfo.getUsername(), userOnlineInfo.getPassword(), null);
+    }
 }

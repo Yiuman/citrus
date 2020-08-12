@@ -1,14 +1,24 @@
 package com.github.yiuman.citrus.starter;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.yiuman.citrus.security.authenticate.AuthenticateProcessor;
+import com.github.yiuman.citrus.security.authenticate.AuthenticateProcessorImpl;
+import com.github.yiuman.citrus.security.authenticate.AuthenticateService;
 import com.github.yiuman.citrus.security.authorize.AuthorizeConfigManager;
+import com.github.yiuman.citrus.security.authorize.AuthorizeConfigProvider;
+import com.github.yiuman.citrus.security.jwt.JwtAccessDeniedHandler;
+import com.github.yiuman.citrus.security.jwt.JwtAuthenticationEntryPoint;
+import com.github.yiuman.citrus.security.jwt.JwtAuthenticationFilter;
 import com.github.yiuman.citrus.security.jwt.JwtSecurityConfigurerAdapter;
 import com.github.yiuman.citrus.security.properties.CitrusProperties;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,6 +27,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
+import java.util.List;
+
 /**
  * 自动配置
  *
@@ -24,9 +36,18 @@ import org.springframework.security.web.access.AccessDeniedHandler;
  * @date 2020/3/22
  */
 @Configuration
-@ConditionalOnBean(EnableCitrusAdmin.class)
 @EnableConfigurationProperties(CitrusProperties.class)
-@EnableAutoConfiguration(exclude = {UserDetailsServiceAutoConfiguration.class})
+@ConditionalOnClass(WebSecurityConfigurerAdapter.class)
+@ConditionalOnMissingBean(WebSecurityConfigurerAdapter.class)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+@ComponentScans({
+        @ComponentScan("com.github.yiuman.citrus.support"),
+        @ComponentScan("com.github.yiuman.citrus.security"),
+        @ComponentScan("com.github.yiuman.citrus.system")
+})
+@MapperScan(basePackages = "com.github.yiuman.citrus.system.mapper")
+@Import({SystemDefaultBeanConfiguration.class, VerifyConfiguration.class})
+@EnableWebSecurity
 public class CitrusAutoConfiguration {
 
     /**
@@ -34,17 +55,16 @@ public class CitrusAutoConfiguration {
      */
     @Configuration
     @ConditionalOnProperty(prefix = "citrus.security", name = "stateless", havingValue = "true", matchIfMissing = true)
-    @EnableWebSecurity
     @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-    private static class StatelessSecurityConfiguration extends WebSecurityConfigurerAdapter {
+    public static class StatelessSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         private final AuthenticationEntryPoint authenticationEntryPoint;
+
+        private final AccessDeniedHandler accessDeniedHandler;
 
         private final JwtSecurityConfigurerAdapter jwtSecurityConfigurerAdapter;
 
         private final AuthorizeConfigManager authorizeConfigManager;
-
-        private final AccessDeniedHandler accessDeniedHandler;
 
         public StatelessSecurityConfiguration(AuthenticationEntryPoint authenticationEntryPoint, JwtSecurityConfigurerAdapter jwtSecurityConfigurerAdapter, AuthorizeConfigManager authorizeConfigManager, AccessDeniedHandler accessDeniedHandler) {
             this.authenticationEntryPoint = authenticationEntryPoint;
@@ -69,9 +89,9 @@ public class CitrusAutoConfiguration {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                     .apply(jwtSecurityConfigurerAdapter);
+
             authorizeConfigManager.config(http.authorizeRequests());
         }
-
 
     }
 
@@ -79,12 +99,50 @@ public class CitrusAutoConfiguration {
     /**
      * 有状态的Security配置
      */
-    @Configuration
     @ConditionalOnProperty(prefix = "citrus.security", name = "stateless", havingValue = "false")
-    @EnableWebSecurity
     @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-    private static class StatefulSecurityConfiguration extends WebSecurityConfigurerAdapter {
+    public static class StatefulSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(ObjectMapper.class)
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return objectMapper;
+
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(AuthenticationEntryPoint.class)
+    public AuthenticationEntryPoint entryPoint() {
+        return new JwtAuthenticationEntryPoint(objectMapper());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(AccessDeniedHandler.class)
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new JwtAccessDeniedHandler(objectMapper());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(AuthenticateProcessor.class)
+    public AuthenticateProcessor authenticateProcessor(List<AuthenticateService> authenticateServices) {
+        return new AuthenticateProcessorImpl(authenticateServices);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(JwtSecurityConfigurerAdapter.class)
+    public JwtSecurityConfigurerAdapter jwtSecurityConfigurerAdapter(AuthenticateProcessor authenticateProcessor) {
+        return new JwtSecurityConfigurerAdapter(new JwtAuthenticationFilter(authenticateProcessor));
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean(AuthorizeConfigManager.class)
+    public AuthorizeConfigManager authorizeConfigManager(List<AuthorizeConfigProvider> authorizeConfigProviders) {
+        return new AuthorizeConfigManager(authorizeConfigProviders);
 
     }
 

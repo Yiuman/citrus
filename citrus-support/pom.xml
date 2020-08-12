@@ -5,11 +5,14 @@
     <parent>
         <artifactId>citrus</artifactId>
         <groupId>com.github.yiuman</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>citrus-support</name>
     <artifactId>citrus-support</artifactId>
+    <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -60,6 +63,5 @@
             <version>${jjwt.version}</version>
         </dependency>
     </dependencies>
-
 
 </project>

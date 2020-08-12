@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2020/3/4
  */
 @SpringBootApplication
-@EnableCitrusAdmin
 public class CitrusApplication {
 
     public static void main(String[] args) {

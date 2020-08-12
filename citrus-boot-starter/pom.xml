@@ -5,13 +5,20 @@
     <parent>
         <artifactId>citrus</artifactId>
         <groupId>com.github.yiuman</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>citrus-boot-starter</name>
     <artifactId>citrus-boot-starter</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.yiuman</groupId>
+            <artifactId>citrus-support</artifactId>
+            <version>${citrus.security.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.github.yiuman</groupId>
             <artifactId>citrus-security</artifactId>
@@ -27,7 +34,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
