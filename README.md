@@ -46,7 +46,7 @@
     </dependency>
     ```
 
-2. 下载https://github.com/Yiuman/citrus/tree/master/doc中的sql文件，创建你的数据并执行
+2. 下载 https://github.com/Yiuman/citrus/tree/master/doc  中的sql文件，创建你的数据并执行
 
 3. 在`application.yml`中配置数据库及应用信息
 
