@@ -46,9 +46,9 @@
     </dependency>
     ```
 
-	2. 下载https://github.com/Yiuman/citrus/tree/master/doc中的sql文件，创建你的数据并执行
+2. 下载https://github.com/Yiuman/citrus/tree/master/doc中的sql文件，创建你的数据并执行
 
-	3. 在`application.yml`中配置数据库及应用信息
+3. 在`application.yml`中配置数据库及应用信息
 
     ```yml
     spring:
@@ -66,7 +66,7 @@
         local-cache-scope: statement
     ```
 
-	4. 启动项目
+4. 启动项目
 
 #### 方式二
 
@@ -74,7 +74,7 @@
    git clone https://github.com/Yiuman/citrus.git
    ```
 
-2. 自行修改项目配置就代码
+2. 自行修改项目配置与代码
 
 3. 启动项目
 
