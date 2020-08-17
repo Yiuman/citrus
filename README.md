@@ -13,7 +13,7 @@
 
 ### 项目特性
 
-1. 开箱即用，在SpringBootApplication启动类上加上`@EnableCitrusAdmin`注解即可开启项目
+1. 开箱即用，引入starter依赖后即可启动
 2. 高效开发，只需要定义实体与库表，入口继承基类的Controller，即可完成基础的增删改查操作
 3. 常用数据结构的封装与基础的CRUD实现（左右值预遍历树、普通树等）
 4. 统一的认证入口，方便的安全认证扩展，可实现多种方式的认证，且支持表单与接口
@@ -29,6 +29,56 @@
 - `citrus-security` 项目安全相关的代码，统一认证、验证码类型、鉴权、jwt等
 - `citrus-support` 项目通用支持相关的代码，通用Service层、Controller层，工具类、缓存、异常、注入、数据结构及相关扩展
 - `citrus-system` 项目系统设计的主要实现  包含用户、角色、权限、资源、菜单、数据范围等模块的实现与处理，数据范围注入也在这里
+
+
+
+### 如何使用
+
+#### 方式一
+
+ 1. springboot项目中引入依赖
+
+    ```xml
+    <dependency>
+      <groupId>com.github.yiuman</groupId>
+      <artifactId>citrus-boot-starter</artifactId>
+      <version>0.0.2</version>
+    </dependency>
+    ```
+
+	2. 下载https://github.com/Yiuman/citrus/tree/master/doc中的sql文件，创建你的数据并执行
+
+	3. 在`application.yml`中配置数据库及应用信息
+
+    ```yml
+    spring:
+      datasource:
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/citrus?zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8
+        username: root
+        password: yiuman
+    server:
+      port: 8082
+    
+    mybatis-plus:
+      configuration:
+        #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+        local-cache-scope: statement
+    ```
+
+	4. 启动项目
+
+#### 方式二
+
+1. ```sh
+   git clone https://github.com/Yiuman/citrus.git
+   ```
+
+2. 自行修改项目配置就代码
+
+3. 启动项目
+
+
 
 
 
