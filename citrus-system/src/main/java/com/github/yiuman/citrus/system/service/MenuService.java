@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
 import com.github.yiuman.citrus.support.crud.rest.CrudRestful;
+import com.github.yiuman.citrus.support.crud.rest.Operations;
 import com.github.yiuman.citrus.support.crud.service.BaseSimpleTreeService;
 import com.github.yiuman.citrus.system.dto.ResourceDto;
 import com.github.yiuman.citrus.system.entity.Resource;
@@ -115,11 +116,11 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
         resourceService.batchSave(Arrays.asList(
                 new ResourceDto("列表", resourceType, menu.getId(), menu.getPath(), HttpMethod.GET.name()),
                 new ResourceDto("保存", resourceType, menu.getId(), menu.getPath(), HttpMethod.POST.name()),
-                new ResourceDto("查看", resourceType, menu.getId(), String.format("%s/{key}", menu.getPath()), HttpMethod.GET.name()),
-                new ResourceDto("删除", resourceType, menu.getId(), String.format("%s/{key}", menu.getPath()), HttpMethod.DELETE.name()),
-                new ResourceDto("批量删除", resourceType, menu.getId(), String.format("%s/batch_delete", menu.getPath()), HttpMethod.POST.name()),
-                new ResourceDto("导入", resourceType, menu.getId(), String.format("%s/import", menu.getPath()), HttpMethod.POST.name()),
-                new ResourceDto("导出", resourceType, menu.getId(), String.format("%s/export", menu.getPath()), HttpMethod.GET.name())
+                new ResourceDto("查看", resourceType, menu.getId(), menu.getPath() + Operations.GET, HttpMethod.GET.name()),
+                new ResourceDto("删除", resourceType, menu.getId(), menu.getPath() + Operations.DELETE, HttpMethod.DELETE.name()),
+                new ResourceDto("批量删除", resourceType, menu.getId(), menu.getPath() + Operations.BATCH_DELETE, HttpMethod.POST.name()),
+                new ResourceDto("导入", resourceType, menu.getId(), menu.getPath() + Operations.IMPORT, HttpMethod.POST.name()),
+                new ResourceDto("导出", resourceType, menu.getId(), menu.getPath() + Operations.EXPORT, HttpMethod.GET.name())
         ));
     }
 
@@ -131,10 +132,10 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
     private void createTreeDefaultResource(Resource menu) {
         final Integer resourceType = 2;
         resourceService.batchSave(Arrays.asList(
-                new ResourceDto("加载树", resourceType, menu.getId(), String.format("%s/tree", menu.getPath()), HttpMethod.GET.name()),
-                new ResourceDto("加载子节点", resourceType, menu.getId(), String.format("%s//tree/{parentKey}", menu.getPath()), HttpMethod.GET.name()),
-                new ResourceDto("移动", resourceType, menu.getId(), String.format("%s/tree/move", menu.getPath()), HttpMethod.POST.name()),
-                new ResourceDto("初始化", resourceType, menu.getId(), String.format("%s/tree/init", menu.getPath()), HttpMethod.POST.name())
+                new ResourceDto("加载树", resourceType, menu.getId(), menu.getPath() + Operations.Tree.TREE, HttpMethod.GET.name()),
+                new ResourceDto("加载子节点", resourceType, menu.getId(), menu.getPath() + Operations.Tree.GET_BY_PARENT, HttpMethod.GET.name()),
+                new ResourceDto("移动", resourceType, menu.getId(), menu.getPath() + Operations.Tree.MOVE, HttpMethod.POST.name()),
+                new ResourceDto("初始化", resourceType, menu.getId(), menu.getPath() + Operations.Tree.INIT, HttpMethod.POST.name())
         ));
     }
 }

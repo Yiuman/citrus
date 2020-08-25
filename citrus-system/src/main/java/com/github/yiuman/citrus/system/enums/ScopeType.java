@@ -10,7 +10,20 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum ScopeType {
 
-    SELF(0, "自身"), INCLUDE_SUB(1, "包含子部门"), INCLUDE_SUP(2, "包含父部门");
+    /**
+     * 若等于0表示自己部门，则为当前部门
+     */
+    SELF(0, "自身"),
+
+    /**
+     * 包含子部门
+     */
+    INCLUDE_SUB(1, "包含子部门"),
+
+    /**
+     * 包含父部门
+     */
+    INCLUDE_SUP(2, "包含父部门");
 
     private final int code;
 

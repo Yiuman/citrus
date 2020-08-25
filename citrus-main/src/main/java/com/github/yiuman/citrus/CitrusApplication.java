@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus;
 
-import com.github.yiuman.citrus.starter.EnableCitrusAdmin;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

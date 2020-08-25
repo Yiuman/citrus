@@ -81,7 +81,7 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
     /**
      * 加载树,支持查询
      */
-    @GetMapping("/tree")
+    @GetMapping(Operations.Tree.TREE)
     public ResponseEntity<TreeDisplay<T>> load(HttpServletRequest request) throws Exception {
         TreeDisplay<T> tree = this.createTree();
         QueryWrapper<T> queryWrapper = getQueryWrapper(request);
@@ -102,7 +102,7 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
      *
      * @param parentKey 父ID
      */
-    @GetMapping("/tree/{parentKey}")
+    @GetMapping(Operations.Tree.GET_BY_PARENT)
     public ResponseEntity<List<T>> loadByParentKey(@PathVariable @NotNull K parentKey) {
         return ResponseEntity.ok(getCrudService().loadByParent(parentKey));
     }
@@ -113,7 +113,7 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
      * @param currentId 当前ID
      * @param moveToId  移动到的位置的Id
      */
-    @PutMapping("/tree/move")
+    @PutMapping(Operations.Tree.MOVE)
     public ResponseEntity<Void> move(@NotNull K currentId, @NotNull K moveToId) throws Exception {
         getCrudService().move(getCrudService().get(currentId), moveToId);
         return ResponseEntity.ok();
@@ -122,7 +122,7 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
     /**
      * 从新初始化左右值深度等
      */
-    @PostMapping("/tree/init")
+    @PostMapping(Operations.Tree.INIT)
     public ResponseEntity<Void> reInit() throws Exception {
         getCrudService().reInit();
         return ResponseEntity.ok();

@@ -42,17 +42,17 @@ public abstract class BaseCrudController<T, K extends Serializable> extends Base
         return ResponseEntity.ok(save(entity));
     }
 
-    @DeleteMapping("/{key}")
+    @DeleteMapping(Operations.DELETE)
     public ResponseEntity<Boolean> deleteByKey(@PathVariable @NotNull K key) throws Exception {
         return ResponseEntity.ok(delete(key));
     }
 
-    @GetMapping("/{key}")
+    @GetMapping(Operations.GET)
     public ResponseEntity<T> getByKey(@PathVariable K key) {
         return ResponseEntity.ok(get(key));
     }
 
-    @PostMapping(value = "/batch_delete", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    @PostMapping(value = Operations.BATCH_DELETE, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     public ResponseEntity<Void> deleteByKeysForm(List<K> keys) throws Exception {
         if (CollectionUtils.isEmpty(keys)) {
             throw new ValidateException("keys con not be empty");
@@ -61,7 +61,7 @@ public abstract class BaseCrudController<T, K extends Serializable> extends Base
         return ResponseEntity.ok();
     }
 
-    @PostMapping(value = "/batch_delete", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PostMapping(value = Operations.BATCH_DELETE, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteByKeysBody(@RequestBody @NotNull List<K> keys) throws Exception {
         super.batchDelete(keys);
         return ResponseEntity.ok();
@@ -70,7 +70,7 @@ public abstract class BaseCrudController<T, K extends Serializable> extends Base
     /**
      * 导出
      */
-    @GetMapping(value = "/export")
+    @GetMapping(value = Operations.EXPORT)
     public void export(HttpServletRequest request, HttpServletResponse response) throws Exception {
         exp(request, response);
     }
@@ -78,7 +78,7 @@ public abstract class BaseCrudController<T, K extends Serializable> extends Base
     /**
      * 导入
      */
-    @PostMapping(value = "/import")
+    @PostMapping(value = Operations.IMPORT)
     public void importFile(MultipartFile file) throws Exception {
         imp(file);
     }
