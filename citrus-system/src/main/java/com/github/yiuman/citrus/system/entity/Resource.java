@@ -51,6 +51,7 @@ public class Resource extends BaseTree<Resource, Long> {
     /**
      * 父资源ID
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long parentId;
 
     /**

@@ -49,6 +49,10 @@ public class ScopeService extends BaseDtoService<Scope, Long, ScopeDto> {
         scopeDefineMapper.delete(Wrappers.<ScopeDefine>lambdaQuery().eq(ScopeDefine::getScopeId, entity.getScopeId()));
 
         if (!CollectionUtils.isEmpty(entity.getScopeDefines())) {
+            //将当前的数据范围ID，设置到数据范围定义的关联数据范围ID中
+            entity.getScopeDefines()
+                    .parallelStream()
+                    .forEach(scopeDefine -> scopeDefine.setScopeId(entity.getScopeId()));
             scopeDefineMapper.saveBatch(entity.getScopeDefines());
         }
     }

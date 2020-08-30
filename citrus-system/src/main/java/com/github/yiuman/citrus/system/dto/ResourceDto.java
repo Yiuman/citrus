@@ -34,6 +34,7 @@ public class ResourceDto {
     /**
      * 父资源ID
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long parentId;
 
     /**
