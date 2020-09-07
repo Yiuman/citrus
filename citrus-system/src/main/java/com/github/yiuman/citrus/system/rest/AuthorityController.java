@@ -39,7 +39,7 @@ public class AuthorityController extends BaseCrudController<AuthorityDto, Long> 
 
         page.addWidget("权限名称", "authorityName");
 
-        page.addButton(Buttons.defaultButtons());
+        page.addButton(Buttons.defaultButtonsWithMore());
         page.addActions(Buttons.defaultActions());
         return page;
     }

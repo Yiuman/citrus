@@ -5,6 +5,7 @@ import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.DialogView;
+import com.github.yiuman.citrus.support.model.Header;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
@@ -61,7 +62,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
     @Override
     protected Page<UserDto> createPage() throws Exception {
         Page<UserDto> page = super.createPage();
-        page.addHeader("ID", "userId");
+        page.addHeader("ID", "userId").setAlign(Header.Align.start);
         page.addHeader("用户名", "username", true);
         page.addHeader("手机号码", "mobile");
         page.addHeader("邮箱", "email");
@@ -79,7 +80,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
 
         page.addWidget(new Inputs("用户名", "username"));
         //添加默认按钮
-        page.addButton(Buttons.defaultButtons());
+        page.addButton(Buttons.defaultButtonsWithMore());
         //添加默认行内操作
         page.addActions(Buttons.defaultActions());
         return page;
@@ -90,7 +91,6 @@ public class UserController extends BaseCrudController<UserDto, Long> {
         DialogView dialogView = new DialogView();
         dialogView.addEditField("登录名", "loginId").addRule("required");
         dialogView.addEditField("用户名", "username").addRule("required");
-        dialogView.addEditField("密码", "password").addRule("required");
         dialogView.addEditField("手机号码", "mobile").addRule("required", "phone");
         dialogView.addEditField("邮箱", "email");
         dialogView.addEditField("选择角色", "roleIds", CrudUtils.getWidget(this, "getRoleSelects"));

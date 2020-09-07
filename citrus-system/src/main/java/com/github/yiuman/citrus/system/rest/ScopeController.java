@@ -55,7 +55,7 @@ public class ScopeController extends BaseCrudController<ScopeDto, Long> {
             return organization == null ? "" : organization.getOrganName();
         });
 
-        page.addButton(Buttons.defaultButtons());
+        page.addButton(Buttons.defaultButtonsWithMore());
         page.addActions(Buttons.defaultActions());
         return page;
     }
