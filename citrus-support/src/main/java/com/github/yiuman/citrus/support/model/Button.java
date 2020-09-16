@@ -1,8 +1,5 @@
 package com.github.yiuman.citrus.support.model;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * 按钮
  *
@@ -19,10 +16,6 @@ public class Button {
 
     private String icon;
 
-    private boolean group = false;
-
-    private List<Button> actions;
-
     public Button() {
     }
 
@@ -37,19 +30,11 @@ public class Button {
         this.color = color;
     }
 
-    public Button(String text, String action, String color, String icon) {
+    public Button(String text, String action, String color,String icon ) {
         this.text = text;
         this.action = action;
         this.icon = icon;
         this.color = color;
-    }
-
-    public Button(String text, String color, String icon, Button... actions) {
-        this.text = text;
-        this.group = true;
-        this.icon = icon;
-        this.color = color;
-        this.actions = Arrays.asList(actions);
     }
 
     public String getText() {
@@ -82,21 +67,5 @@ public class Button {
 
     public void setColor(String color) {
         this.color = color;
-    }
-
-    public boolean isGroup() {
-        return group;
-    }
-
-    public void setGroup(boolean group) {
-        this.group = group;
-    }
-
-    public List<Button> getActions() {
-        return actions;
-    }
-
-    public void setActions(List<Button> actions) {
-        this.actions = actions;
     }
 }
