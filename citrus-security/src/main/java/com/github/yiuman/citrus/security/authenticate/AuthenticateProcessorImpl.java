@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus.security.authenticate;
 
-import com.github.yiuman.citrus.security.jwt.JwtToken;
 import com.github.yiuman.citrus.security.jwt.JwtUtils;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +63,7 @@ public class AuthenticateProcessorImpl implements AuthenticateProcessor {
     }
 
     @Override
-    public JwtToken token(HttpServletRequest request) {
+    public String token(HttpServletRequest request) {
         HttpServletRequest actualRequest = request;
         if (!(request instanceof AbstractMultipartHttpServletRequest)) {
             try {

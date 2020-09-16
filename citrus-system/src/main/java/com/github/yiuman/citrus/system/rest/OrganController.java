@@ -38,7 +38,7 @@ public class OrganController extends BaseTreeController<Organization, Long> {
         TreeDisplay<Organization> tree = super.createTree();
         tree.setItemText("organName");
         tree.addWidget("组织名称", "organName");
-        tree.addButton(Buttons.defaultButtonsWithMore());
+        tree.addButton(Buttons.defaultButtons());
         return tree;
     }
 
