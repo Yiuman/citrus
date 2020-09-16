@@ -14,7 +14,6 @@ import com.github.yiuman.citrus.system.mapper.UserOrganMapper;
 import com.github.yiuman.citrus.system.mapper.UserRoleMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -37,8 +36,6 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
      */
     private final static String ANONYMOUS = "anonymousUser";
 
-    private final PasswordEncoder passwordEncoder;
-
     private final UserMapper userMapper;
 
     /**
@@ -53,8 +50,7 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
 
     private final UserOnlineCache userOnlineCache;
 
-    public UserService(PasswordEncoder passwordEncoder, UserMapper userMapper, UserRoleMapper userRoleMapper, UserOrganMapper userOrganMapper, UserOnlineCache userOnlineCache) {
-        this.passwordEncoder = passwordEncoder;
+    public UserService(UserMapper userMapper, UserRoleMapper userRoleMapper, UserOrganMapper userOrganMapper, UserOnlineCache userOnlineCache) {
         this.userMapper = userMapper;
         this.userRoleMapper = userRoleMapper;
         this.userOrganMapper = userOrganMapper;
@@ -63,12 +59,6 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
 
     public UserOnlineCache getUserOnlineCache() {
         return userOnlineCache;
-    }
-
-    @Override
-    public boolean beforeSave(UserDto entity) throws Exception {
-        entity.setPassword(passwordEncoder.encode("123456"));
-        return true;
     }
 
     @Override
