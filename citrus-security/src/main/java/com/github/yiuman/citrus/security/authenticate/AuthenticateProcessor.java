@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus.security.authenticate;
 
-import com.github.yiuman.citrus.security.jwt.JwtToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
@@ -41,7 +40,7 @@ public interface AuthenticateProcessor {
      * @return token令牌
      * @see JwtToken
      */
-    JwtToken token(HttpServletRequest request);
+    String token(HttpServletRequest request);
 
     /**
      * 根据当前请求解析为Security认证对象

@@ -11,19 +11,17 @@ import java.util.List;
  */
 public final class Buttons {
 
-    private static Button ADD = new Button("新增", "add", "primary", "plus");
+    private static Button ADD = new Button("新增", "add", "primary","plus");
 
-    private static Button EDIT = new Button("编辑", "edit", "#81b90c", "pencil");
+    private static Button EDIT = new Button("","edit","#81b90c","pencil");
 
-    private static Button DELETE = new Button("删除", "delete", "error", "delete-circle");
+    private static Button DELETE = new Button("", "delete", "error","delete-circle");
 
-    private static Button DELETE_BATCH = new Button("批量删除", "batchDelete", "error", "trash-can");
+    private static Button DELETE_BATCH = new Button("删除", "batchDelete", "error","trash-can");
 
-    private static Button IMPORT = new Button("导入", "import", "", "file-upload");
+    private static Button IMPORT = new Button("导入", "import","","file-upload");
 
-    private static Button EXPORT = new Button("导出", "export", "", "download");
-
-    private static Button MORE = new Button("更多操作", "primary", "chevron-down", IMPORT, EXPORT, DELETE_BATCH);
+    private static Button EXPORT = new Button("导出", "export","","download");
 
     private Buttons() {
     }
@@ -32,7 +30,7 @@ public final class Buttons {
         return ADD;
     }
 
-    public static Button edit() {
+    public static  Button edit(){
         return EDIT;
     }
 
@@ -56,11 +54,7 @@ public final class Buttons {
         return Arrays.asList(ADD, DELETE_BATCH, IMPORT, EXPORT);
     }
 
-    public static List<Button> defaultButtonsWithMore() {
-        return Arrays.asList(ADD, MORE);
-    }
-
-    public static List<Button> defaultActions() {
+    public static List<Button> defaultActions(){
         return Arrays.asList(EDIT, DELETE);
     }
 
