@@ -43,7 +43,7 @@ public class MenuController extends BaseTreeController<Resource, Long> {
         TreeDisplay<Resource> tree = super.createTree();
         tree.setItemText("resourceName");
         tree.addWidget("菜单名称", "resourceName");
-        tree.addButton(Buttons.defaultButtons());
+        tree.addButton(Buttons.defaultButtonsWithMore());
         return tree;
     }
 
