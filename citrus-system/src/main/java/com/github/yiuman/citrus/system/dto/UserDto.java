@@ -26,6 +26,7 @@ public class UserDto {
     @NotBlank
     private String mobile;
 
+    @NotBlank
     private String password;
 
     @NotBlank

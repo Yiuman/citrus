@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus.security.jwt;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
