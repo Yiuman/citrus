@@ -38,6 +38,7 @@ public interface AuthenticateProcessor {
      *
      * @param request 当前请求
      * @return token令牌
+     * @see JwtToken
      */
     String token(HttpServletRequest request);
 
