@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.security.jwt;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Map;
  * @date 2020/9/6
  */
 @Data
+@Builder
 public class JwtToken {
 
     /**
@@ -33,9 +35,4 @@ public class JwtToken {
         this.expireTimestamp = expireTimestamp;
     }
 
-    public JwtToken(String token, Long expireTimestamp, Map<String, Object> extend) {
-        this.token = token;
-        this.expireTimestamp = expireTimestamp;
-        this.extend = extend;
-    }
 }
