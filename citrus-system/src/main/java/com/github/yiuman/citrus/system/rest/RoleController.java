@@ -13,7 +13,6 @@ import com.github.yiuman.citrus.system.dto.AuthorityDto;
 import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.dto.RoleQuery;
 import com.github.yiuman.citrus.system.entity.Authority;
-import com.github.yiuman.citrus.system.entity.RoleAuthority;
 import com.github.yiuman.citrus.system.service.AuthorityService;
 import com.github.yiuman.citrus.system.service.RoleService;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,16 +52,16 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
     protected QueryWrapper<RoleDto> getQueryWrapper(Object params) {
         QueryWrapper<RoleDto> queryWrapper = super.getQueryWrapper(params);
         RoleQuery roleQuery = (RoleQuery) params;
-
+        List<Long> authIds = roleQuery.getAuthIds();
         //拼接权限ID筛选条件
-        if (roleQuery != null && !org.springframework.util.CollectionUtils.isEmpty(roleQuery.getAuthIds())) {
+        if (roleQuery != null && !org.springframework.util.CollectionUtils.isEmpty(authIds)) {
             queryWrapper = Optional.ofNullable(queryWrapper).orElse(Wrappers.query());
-            List<RoleAuthority> roleAuthorityByAuthAuthIds = roleService.getRoleAuthorityByAuthAuthIds(roleQuery.getAuthIds());
-            List<Long> roleIds = null;
-            if (CollectionUtils.isNotEmpty(roleAuthorityByAuthAuthIds)) {
-                roleIds = roleAuthorityByAuthAuthIds.parallelStream().map(RoleAuthority::getRoleId).collect(Collectors.toList());
-            }
-            queryWrapper.in(true, getService().getKeyColumn(), roleIds);
+
+            String inSql = String.format(
+                    "select role_id from sys_role_auth where authority_id in (%s)"
+                    , authIds.parallelStream().map(String::valueOf).collect(Collectors.joining(","))
+            );
+            queryWrapper.inSql(getService().getKeyColumn(), inSql);
         }
 
         return queryWrapper;
@@ -84,7 +83,7 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
 
         page.addWidget("角色名", "roleName");
         //添加默认按钮
-        page.addButton(Buttons.defaultButtons());
+        page.addButton(Buttons.defaultButtonsWithMore());
         //添加默认行内操作
         page.addActions(Buttons.defaultActions());
         return page;

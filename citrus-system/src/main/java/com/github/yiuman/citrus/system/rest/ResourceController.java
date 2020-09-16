@@ -46,7 +46,7 @@ public class ResourceController extends BaseCrudController<ResourceDto, Long> {
         page.addHeader("资源路径","path");
 
         page.addWidget("资源名","resourceName");
-        page.addButton(Buttons.defaultButtons());
+        page.addButton(Buttons.defaultButtonsWithMore());
         return page;
     }
 

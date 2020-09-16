@@ -40,20 +40,22 @@ public final class JwtUtils {
                     LambdaUtils.consumerWrapper(cache -> ConvertUtils.objectToMap(new JwtProperties()).forEach(cache::save)),
                     true);
 
-    public static String generateToken(String identity, Map<String, Object> claims) {
+    public static JwtToken generateToken(String identity, Map<String, Object> claims) {
         return generateToken(identity, null, claims);
     }
 
-    public static String generateToken(String identity, Long expireInSeconds, Map<String, Object> claims) {
+    public static JwtToken generateToken(String identity, Long expireInSeconds, Map<String, Object> claims) {
         claims = Optional.ofNullable(claims).orElse(Maps.newHashMap());
         claims.put(getIdentityKey(), identity);
         expireInSeconds = Optional.ofNullable(expireInSeconds).orElse((Long) jwt.find("tokenValidateInSeconds"));
-        return Jwts.builder()
+        long expireTimestamp = System.currentTimeMillis() + expireInSeconds * 1000;
+        String token = Jwts.builder()
                 .setSubject(identity)
                 .setClaims(claims)
                 .signWith(signKey(), SignatureAlgorithm.HS512)
-                .setExpiration(new Date(System.currentTimeMillis() + expireInSeconds * 1000))
+                .setExpiration(new Date(expireTimestamp))
                 .compact();
+        return new JwtToken(token,expireTimestamp);
     }
 
     public static boolean validateToken(String token) {
