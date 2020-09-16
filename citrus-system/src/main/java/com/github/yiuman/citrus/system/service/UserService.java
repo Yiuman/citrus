@@ -20,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -67,7 +68,10 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
 
     @Override
     public boolean beforeSave(UserDto entity) throws Exception {
-        entity.setPassword(passwordEncoder.encode("123456"));
+        if (Objects.isNull(entity.getUserId())) {
+            entity.setPassword(passwordEncoder.encode("123456"));
+        }
+
         return true;
     }
 
