@@ -135,8 +135,10 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
         return records;
     }
 
-    public void addHeader(String text, String field) {
-        headers.add(new Header(text, field));
+    public Header addHeader(String text, String field) {
+        Header header = new Header(text, field);
+        headers.add(header);
+        return header;
     }
 
     public void addHeader(String text, String field, boolean sortable) {

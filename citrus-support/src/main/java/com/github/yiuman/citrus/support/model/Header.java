@@ -21,7 +21,7 @@ public class Header {
      */
     private String value;
 
-    private Align align = Align.center;
+    private Align align = Align.start;
 
     private Boolean sortable = false;
 
@@ -92,7 +92,7 @@ public class Header {
     /**
      * 排列格式
      */
-    enum Align {
+    public enum Align {
 
         /**
          * 排头

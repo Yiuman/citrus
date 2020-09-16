@@ -13,8 +13,6 @@ import java.util.Map;
  * @date 2020/9/6
  */
 @Data
-@Builder
-@AllArgsConstructor
 public class JwtToken {
 
     /**
