@@ -80,7 +80,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
 
         page.addWidget(new Inputs("用户名", "username"));
         //添加默认按钮
-        page.addButton(Buttons.defaultButtons());
+        page.addButton(Buttons.defaultButtonsWithMore());
         //添加默认行内操作
         page.addActions(Buttons.defaultActions());
         return page;

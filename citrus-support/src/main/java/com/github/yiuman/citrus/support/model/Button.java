@@ -1,5 +1,8 @@
 package com.github.yiuman.citrus.support.model;
 
+import lombok.Builder;
+import org.springframework.util.CollectionUtils;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,17 +14,36 @@ import java.util.List;
  */
 public class Button {
 
+    /**
+     * 按钮文本
+     */
     private String text;
 
+    /**
+     * 执行的时间名或者脚本
+     */
     private String action;
 
+    /**
+     * 按钮颜色
+     */
     private String color;
 
+    /**
+     * 按钮图标
+     */
     private String icon;
 
-    private boolean group = false;
 
+    /**
+     * 按钮集合，如不为空，则为按钮组
+     */
     private List<Button> actions;
+
+    /**
+     * 是否脚本，若为脚本，action将动态构建执行
+     */
+    private boolean script = false;
 
     public Button() {
     }
@@ -46,7 +68,6 @@ public class Button {
 
     public Button(String text, String color, String icon, Button... actions) {
         this.text = text;
-        this.group = true;
         this.icon = icon;
         this.color = color;
         this.actions = Arrays.asList(actions);
@@ -85,11 +106,7 @@ public class Button {
     }
 
     public boolean isGroup() {
-        return group;
-    }
-
-    public void setGroup(boolean group) {
-        this.group = group;
+        return !CollectionUtils.isEmpty(actions);
     }
 
     public List<Button> getActions() {
@@ -98,5 +115,13 @@ public class Button {
 
     public void setActions(List<Button> actions) {
         this.actions = actions;
+    }
+
+    public boolean isScript() {
+        return script;
+    }
+
+    public void setScript(boolean script) {
+        this.script = script;
     }
 }

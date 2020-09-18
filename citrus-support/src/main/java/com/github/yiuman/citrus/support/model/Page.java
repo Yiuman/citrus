@@ -11,6 +11,8 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
+ * 分页页面对象
+ *
  * @author yiuman
  * @date 2020/5/7
  */
@@ -28,7 +30,7 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     private Field keyFiled;
 
     /**
-     * 顶部的控件集合
+     * 控件集合
      */
     private List<Object> widgets = new ArrayList<>();
 
@@ -43,7 +45,7 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     private List<Button> buttons = new ArrayList<>();
 
     /**
-     * 列的按钮，列的事件
+     * 列的按钮，列的事件，行内操作
      */
     private List<Button> actions = new ArrayList<>();
 
@@ -55,7 +57,13 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     /**
      * 记录执行器，每次获取记录前，则会执行此执行器进行处理
      */
-    private List<FieldFunction<T>> recordFunctions = new ArrayList<>();
+    private List<FieldFunction<T, Object>> recordFunctions = new ArrayList<>();
+
+    /**
+     * 事件执行处理器
+     * 某些事件可能与记录相关
+     */
+    private List<Function<T, Button>> actionFunctions = new ArrayList<>();
 
     /**
      * 对话框（新增、编辑页面的定义）
@@ -114,25 +122,11 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     }
 
     public Map<String, Map<String, Object>> getRecordExtend() {
-
         return recordExtend;
     }
 
     public void setRecordExtend(Map<String, Map<String, Object>> recordExtend) {
         this.recordExtend = recordExtend;
-    }
-
-    @Override
-    public List<T> getRecords() {
-        final List<T> records = super.getRecords();
-        if (!StringUtils.isEmpty(itemKey)) {
-            this.recordFunctions.forEach(func -> records.forEach(record -> {
-                Map<String, Object> objectObjectHashMap = Optional.ofNullable(this.recordExtend.get(getKey(record))).orElse(new HashMap<>(1));
-                objectObjectHashMap.put(func.getFiledName(), func.getFunction().apply(record));
-                this.recordExtend.put(getKey(record), objectObjectHashMap);
-            }));
-        }
-        return records;
     }
 
     public Header addHeader(String text, String field) {
@@ -186,8 +180,25 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
         actions.add(button);
     }
 
+    public void addAction(Function<T, Button> actionFunc) {
+        actionFunctions.add(actionFunc);
+    }
+
     public void addActions(List<Button> actions) {
         actions.forEach(this::addAction);
+    }
+
+    public void beforeShow() {
+        List<T> records = getRecords();
+        if (!StringUtils.isEmpty(itemKey)) {
+            this.recordFunctions.forEach(func -> records.forEach(record -> {
+                Map<String, Object> objectObjectHashMap = Optional.ofNullable(this.recordExtend.get(getKey(record))).orElse(new HashMap<>(1));
+                objectObjectHashMap.put(func.getFiledName(), func.getFunction().apply(record));
+                this.recordExtend.put(getKey(record), objectObjectHashMap);
+            }));
+        }
+
+        actionFunctions.forEach(func -> records.forEach(record -> actions.add(func.apply(record))));
     }
 
     private String getKey(T entity) {
@@ -203,4 +214,5 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
         }
 
     }
+
 }

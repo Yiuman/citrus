@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.github.yiuman.citrus.support.model.BasePreOrderTree;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 组织（部门）
@@ -16,6 +17,7 @@ import lombok.Data;
  */
 @Data
 @TableName("sys_organ")
+@EqualsAndHashCode(of = {"organId"}, callSuper = false)
 public class Organization extends BasePreOrderTree<Organization, Long> {
 
     @TableId(type = IdType.AUTO)
@@ -49,20 +51,5 @@ public class Organization extends BasePreOrderTree<Organization, Long> {
     }
 
     public Organization() {
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Organization)) return false;
-
-        Organization that = (Organization) o;
-
-        return organId != null ? organId.equals(that.organId) : that.organId == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return organId != null ? organId.hashCode() : 0;
     }
 }

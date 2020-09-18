@@ -8,16 +8,16 @@ import java.util.function.Function;
  * @author yiuman
  * @date 2020/5/11
  */
-public class FieldFunction<T> {
+public class FieldFunction<T,R> {
 
     private String filedName;
 
-    private Function<T, Object> function;
+    private Function<T, R> function;
 
     public FieldFunction() {
     }
 
-    public FieldFunction(String filedName, Function<T, Object> function) {
+    public FieldFunction(String filedName, Function<T, R> function) {
         this.filedName = filedName;
         this.function = function;
     }
@@ -30,11 +30,11 @@ public class FieldFunction<T> {
         this.filedName = filedName;
     }
 
-    public Function<T, Object> getFunction() {
+    public Function<T, R> getFunction() {
         return function;
     }
 
-    public void setFunction(Function<T, Object> function) {
+    public void setFunction(Function<T, R> function) {
         this.function = function;
     }
 }

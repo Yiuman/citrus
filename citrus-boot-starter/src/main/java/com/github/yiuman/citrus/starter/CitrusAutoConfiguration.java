@@ -54,7 +54,6 @@ public class CitrusAutoConfiguration {
      * 无状态下的Security配置
      */
     @Configuration
-    @ConditionalOnProperty(prefix = "citrus.security", name = "stateless", havingValue = "true", matchIfMissing = true)
     @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
     public static class StatelessSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -92,16 +91,6 @@ public class CitrusAutoConfiguration {
 
             authorizeConfigManager.config(http.authorizeRequests());
         }
-
-    }
-
-
-    /**
-     * 有状态的Security配置
-     */
-    @ConditionalOnProperty(prefix = "citrus.security", name = "stateless", havingValue = "false")
-    @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-    public static class StatefulSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     }
 

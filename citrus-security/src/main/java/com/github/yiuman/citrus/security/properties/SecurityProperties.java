@@ -6,11 +6,6 @@ package com.github.yiuman.citrus.security.properties;
  */
 public class SecurityProperties {
 
-    /**
-     * 是否无状态应用
-     */
-    private boolean stateless = true;
-
     private String authenticateEndpoint = SecurityConstants.AUTHENTICATE_ENDPOINT;
 
     private String verifyEndpointPrefix = SecurityConstants.VERIFY_ENDPOINT_PREFIX;
@@ -18,14 +13,6 @@ public class SecurityProperties {
     private String[] excludedUris = new String[]{};
 
     public SecurityProperties() {
-    }
-
-    public boolean isStateless() {
-        return stateless;
-    }
-
-    public void setStateless(boolean stateless) {
-        this.stateless = stateless;
     }
 
     public String getAuthenticateEndpoint() {

@@ -129,6 +129,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
         //这里需要调用了page方法查询后再进行设置ItemKey,原因是Service中的mapper为动态注入，调用查询才会初始化mapper构造表信息
         Page<T> realPage = getService().page(page, queryWrapper);
         realPage.setItemKey(getService().getKeyProperty());
+        realPage.beforeShow();
         return realPage;
     }
 

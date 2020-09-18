@@ -6,7 +6,6 @@ import com.github.yiuman.citrus.security.verify.captcha.Captcha;
 import com.github.yiuman.citrus.security.verify.captcha.CaptchaProcessor;
 import com.github.yiuman.citrus.security.verify.sms.SmsVerifyCode;
 import com.github.yiuman.citrus.security.verify.sms.SmsVerifyCodeProcessor;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;

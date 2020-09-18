@@ -37,11 +37,15 @@ public class TreeDisplay<T> {
 
     private T tree;
 
-
     /**
      * 顶部按钮
      */
     private List<Button> buttons = new ArrayList<>();
+
+    /**
+     * 列的按钮，列的事件，行内操作
+     */
+    private List<Button> actions = new ArrayList<>();
 
     /**
      * 记录的扩展属性，key为记录主键值，value则是需要扩展的属性，
@@ -51,7 +55,7 @@ public class TreeDisplay<T> {
     /**
      * 记录执行器，每次获取记录前，则会执行此执行器进行处理
      */
-    private List<FieldFunction<T>> recordFunctions = new ArrayList<>();
+    private List<FieldFunction<T, Object>> recordFunctions = new ArrayList<>();
 
     /**
      * 对话框（新增、编辑页面的定义）
@@ -117,20 +121,20 @@ public class TreeDisplay<T> {
         this.buttons = buttons;
     }
 
+    public List<Button> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<Button> actions) {
+        this.actions = actions;
+    }
+
     public Map<String, Map<String, Object>> getRecordExtend() {
         return recordExtend;
     }
 
     public void setRecordExtend(Map<String, Map<String, Object>> recordExtend) {
         this.recordExtend = recordExtend;
-    }
-
-    public List<FieldFunction<T>> getRecordFunctions() {
-        return recordFunctions;
-    }
-
-    public void setRecordFunctions(List<FieldFunction<T>> recordFunctions) {
-        this.recordFunctions = recordFunctions;
     }
 
     public DialogView getDialogView() {
