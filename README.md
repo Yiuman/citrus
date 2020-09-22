@@ -7,7 +7,7 @@
 
 基于SpringBoot 2.3.2 + Mybatis-Plus + SpringSecurity + JWT 的前后分离后台管理系统
 
-**前端地址**：https://github.com/Yiuman/citrus-vue
+**前端地址**：https://github.com/Yiuman/citrus-vuetify
 
 
 
