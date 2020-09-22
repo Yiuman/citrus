@@ -35,26 +35,26 @@ public class ResourceController extends BaseCrudController<ResourceDto, Long> {
     @Override
     protected Page<ResourceDto> createPage() throws Exception {
         Page<ResourceDto> page = super.createPage();
-        page.addHeader("资源名","resourceName");
-        page.addHeader("资源类型","typeText",(entity)->{
+        page.addHeader("资源名", "resourceName");
+        page.addHeader("资源类型", "typeText", (entity) -> {
             String typeString = "";
-            if(entity.getType()!=null && entity.getType()==0){
+            if (entity.getType() != null && entity.getType() == 0) {
                 typeString = "菜单";
             }
             return typeString;
         });
-        page.addHeader("资源路径","path");
-
-        page.addWidget("资源名","resourceName");
+        page.addHeader("资源路径", "path");
+        page.addWidget("资源名", "resourceName");
         page.addButton(Buttons.defaultButtonsWithMore());
+        page.addActions(Buttons.defaultActions());
         return page;
     }
 
     @Override
     protected DialogView createDialogView() throws Exception {
         DialogView dialogView = new DialogView();
-        dialogView.addEditField("资源名","resourceName");
-        dialogView.addEditField("资源路径","path");
+        dialogView.addEditField("资源名", "resourceName");
+        dialogView.addEditField("资源路径", "path");
         return dialogView;
     }
 

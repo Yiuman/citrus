@@ -10,8 +10,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.Objects;
-
 /**
  * 资源(可能是接口、菜单、操作等)
  *
@@ -32,6 +30,11 @@ public class Resource extends BaseTree<Resource, Long> {
      * 资源名
      */
     private String resourceName;
+
+    /**
+     * 是否隐藏
+     */
+    private Boolean hidden ;
 
     /**
      * 导入的组件路径

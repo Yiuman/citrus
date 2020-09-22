@@ -43,6 +43,7 @@ public class MenuController extends BaseTreeController<Resource, Long> {
         TreeDisplay<Resource> tree = super.createTree();
         tree.setItemText("resourceName");
         tree.addWidget("菜单名称", "resourceName");
+        tree.addAction("操作资源", "this.$router.push(`/rest/resources?parentId=${this.currentItem.id}`)");
         tree.addButton(Buttons.defaultButtonsWithMore());
         return tree;
     }

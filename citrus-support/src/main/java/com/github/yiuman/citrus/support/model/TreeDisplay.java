@@ -4,9 +4,7 @@ import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.support.widget.Widget;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * CRUD操作时显示的页面树形结构以及页面组件
@@ -14,7 +12,7 @@ import java.util.Map;
  * @author yiuman
  * @date 2020/5/13
  */
-public class TreeDisplay<T> {
+public class TreeDisplay<T extends Tree<?>> {
 
     private boolean displayRoot = true;
 
@@ -44,18 +42,9 @@ public class TreeDisplay<T> {
 
     /**
      * 列的按钮，列的事件，行内操作
+     * 此处可用El表达式
      */
     private List<Button> actions = new ArrayList<>();
-
-    /**
-     * 记录的扩展属性，key为记录主键值，value则是需要扩展的属性，
-     */
-    private Map<String, Map<String, Object>> recordExtend = new HashMap<>();
-
-    /**
-     * 记录执行器，每次获取记录前，则会执行此执行器进行处理
-     */
-    private List<FieldFunction<T, Object>> recordFunctions = new ArrayList<>();
 
     /**
      * 对话框（新增、编辑页面的定义）
@@ -129,14 +118,6 @@ public class TreeDisplay<T> {
         this.actions = actions;
     }
 
-    public Map<String, Map<String, Object>> getRecordExtend() {
-        return recordExtend;
-    }
-
-    public void setRecordExtend(Map<String, Map<String, Object>> recordExtend) {
-        this.recordExtend = recordExtend;
-    }
-
     public DialogView getDialogView() {
         return dialogView;
     }
@@ -171,5 +152,15 @@ public class TreeDisplay<T> {
 
     public void addButton(List<Button> buttons) {
         buttons.forEach(this::addButton);
+    }
+
+    public void addAction(Button button) {
+        actions.add(button);
+    }
+
+    public void addAction(String text, String action) {
+        Button button = new Button(text, action);
+        button.setScript(true);
+        actions.add(button);
     }
 }

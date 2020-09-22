@@ -39,7 +39,6 @@ public class ExceptionAdvice {
     /**
      * 数据校验异常处理
      */
-
     @ExceptionHandler(value = BindException.class)
     @ResponseBody
     public ResponseEntity<Void> exceptionHandler(BindException e) throws JsonProcessingException {

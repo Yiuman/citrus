@@ -12,4 +12,7 @@ public class ResourceQuery {
 
     @QueryParam(type = "like")
     private String resourceName;
+
+    @QueryParam
+    private Long parentId;
 }

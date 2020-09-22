@@ -152,7 +152,7 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
         addWidget(widget, false);
     }
 
-    public <W extends Widget<?>> void addWidget(String text, String fieldName) {
+    public void addWidget(String text, String fieldName) {
         Inputs inputs = new Inputs(text, fieldName);
         addWidget(inputs, false);
     }
