@@ -1,6 +1,8 @@
 package com.github.yiuman.citrus.support.utils;
 
+import com.baomidou.mybatisplus.core.MybatisMapperRegistry;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
 import com.github.yiuman.citrus.support.crud.rest.CrudRestful;
@@ -211,6 +213,7 @@ public final class CrudUtils {
         } catch (BindingException e) {
             sqlSessionTemplate.getConfiguration().addMapper(mapperClass);
             mapper = (M) sqlSessionTemplate.getMapper(mapperClass);
+//            TableInfoHelper.initTableInfo(sqlSessionTemplate.getConfiguration().,entityClass);
         }
         return mapper;
 

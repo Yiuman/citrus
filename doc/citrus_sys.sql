@@ -16,6 +16,7 @@ CREATE TABLE `sys_user`
   `mobile`             varchar(45) DEFAULT NULL COMMENT '手机',
   `uuid`               varchar(45) DEFAULT NULL COMMENT 'UUID',
   `admin`              int(1)      DEFAULT 0 COMMENT '是否管理员',
+  `avatar`              varchar(1000)  DEFAULT NULL COMMENT '头像',
   `status`             bigint      DEFAULT NULL COMMENT '状态',
   `create_time`        datetime    DEFAULT NULL COMMENT '创建时间',
   `create_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
@@ -31,6 +32,9 @@ create index IX_SYS_USER_LOGINID on sys_user (login_id);
 create index IX_SYS_USER_USERNAME on sys_user (username);
 create index IX_SYS_USER_UUID on sys_user (uuid);
 create index IX_SYS_USER_MOBILE on sys_user (mobile);
+
+INSERT INTO sys_user (user_id, login_id, password, username, email, mobile, uuid, status, created_time, created_by, last_modified_time, last_modified_by, version, admin, avatar) VALUES (1, 'admin', '$2a$10$gK0BhYud6iSM7um4RLCYvuYEvtWSLYjsKb3VlTEcxgbtPQC3pAK9C', '平台管理员', '415481084@qq.com', '13119593102', 'YvuYEvtWSLYjsKb3VlTEcxgbtPQC3pAK9C', 1, '2020-09-23 03:27:51', null, '2020-09-23 03:27:51', 1, 1, 1, null);
+
 -- ----------------------------
 
 -- ------------角色表----------------
@@ -230,6 +234,29 @@ CREATE TABLE `sys_dict`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   ROW_FORMAT = DYNAMIC COMMENT ='字典目录表';
+
+-- ----------------------------
+
+
+-- ------------访问日志表----------------
+DROP TABLE IF EXISTS `sys_access_log`;
+CREATE TABLE `sys_access_log`
+(
+  `id`     bigint(20) NOT NULL COMMENT 'ID',
+  `user_id`   bigint(20)  DEFAULT NULL COMMENT '访问的用户ID',
+  `username`   varchar (1000) NOT NULL COMMENT '访问的用户名',
+  `ip_address`   varchar (1000) NOT NULL COMMENT '访问的IP地址',
+  `url`   varchar (1000) NOT NULL COMMENT '访问的url',
+  `request_method`   varchar (50) NOT NULL COMMENT '请求方式',
+  `params`   varchar (1000) DEFAULT NULL COMMENT '请求参数，JSON串',
+  `resource_id`   varchar (1000) DEFAULT NULL COMMENT '资源ID',
+  `resource_name`   varchar (1000) DEFAULT NULL COMMENT '资源名',
+  `resource_type`   int DEFAULT NULL COMMENT '资源类型',
+  `create_time`   datetime NOT NULL COMMENT '访问时间',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  ROW_FORMAT = DYNAMIC COMMENT ='访问日志表';
 
 -- ----------------------------
 

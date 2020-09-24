@@ -7,6 +7,7 @@ import com.github.yiuman.citrus.support.utils.WebUtils;
 import com.github.yiuman.citrus.system.cache.UserOnlineCache;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.User;
+import com.github.yiuman.citrus.system.service.AccessLogService;
 import com.github.yiuman.citrus.system.service.RbacMixinService;
 import com.github.yiuman.citrus.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,14 +38,20 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService, Use
 
     private final RbacMixinService rbacMixinService;
 
+    private final AccessLogService accessLogService;
+
     private final PasswordEncoder passwordEncoder;
 
     private final VerificationProcessor<Captcha> verificationProcessor;
 
     public PasswordAuthenticateServiceImpl(
-            RbacMixinService rbacMixinService, PasswordEncoder passwordEncoder,
-            VerificationProcessor<Captcha> verificationProcessor) {
+            RbacMixinService rbacMixinService,
+            AccessLogService accessLogService,
+            PasswordEncoder passwordEncoder,
+            VerificationProcessor<Captcha> verificationProcessor
+    ) {
         this.rbacMixinService = rbacMixinService;
+        this.accessLogService = accessLogService;
         this.passwordEncoder = passwordEncoder;
         this.verificationProcessor = verificationProcessor;
     }
@@ -69,6 +76,11 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService, Use
         }
 
         saveUserOnlineInfo(user);
+        try {
+            accessLogService.pointAccessWithResourceName(request, user, "登录");
+        } catch (Exception ignore) {
+        }
+
         return new UsernamePasswordAuthenticationToken(user, user.getUuid());
     }
 

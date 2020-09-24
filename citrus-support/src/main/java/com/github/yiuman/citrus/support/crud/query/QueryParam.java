@@ -2,11 +2,13 @@ package com.github.yiuman.citrus.support.crud.query;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 /**
  * 查询参数注解，用于列表查询，默认为eq
@@ -57,12 +59,26 @@ public @interface QueryParam {
             if (ObjectUtils.isEmpty(value)) {
                 return;
             }
+
             Method conditionMethod = queryWrapper
                     .getClass()
-                    .getMethod(queryParam.type(), boolean.class, Object.class, Object.class);
+                    .getMethod(queryParam.type(), boolean.class, Object.class, getParameterClass(field));
             conditionMethod.setAccessible(true);
             String fieldName = org.springframework.util.StringUtils.hasText(queryParam.mapping()) ? queryParam.mapping() : field.getName();
             conditionMethod.invoke(queryWrapper, queryParam.condition(), StringUtils.camelToUnderline(fieldName), field.get(object));
+        }
+
+        private Class<?> getParameterClass(Field field){
+            Class<?> fieldType = field.getType();
+            if(fieldType.isArray()){
+                return Object[].class;
+            }
+
+            if(Collection.class.isAssignableFrom(fieldType)){
+                return Collection.class;
+            }
+
+            return Object.class;
         }
     }
 }

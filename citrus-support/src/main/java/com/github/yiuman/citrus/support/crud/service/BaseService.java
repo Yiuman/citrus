@@ -56,6 +56,9 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
         if (!this.beforeSave(entity)) {
             return null;
         }
+        BaseMapper<E> mapper = getMapper();
+        Assert.notNull(mapper, "error: can not execute. because can not find mapper for entity!");
+
         if (null != entity) {
             Class<?> cls = getEntityType();
             TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
@@ -66,10 +69,10 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
             K keyValue = getKey(entity);
 
             if (StringUtils.isBlank(keyProperty) || StringUtils.checkValNull(keyValue) || Objects.isNull(get(keyValue))) {
-                getMapper().insert(entity);
+                mapper.insert(entity);
                 keyValue = getKey(entity);
             } else {
-                getMapper().updateById(entity);
+                mapper.updateById(entity);
             }
             this.afterSave(entity);
             return keyValue;
