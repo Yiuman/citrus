@@ -3,7 +3,9 @@ package com.github.yiuman.citrus.system.rest;
 import com.github.yiuman.citrus.security.authorize.Authorize;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
+import com.github.yiuman.citrus.support.exception.RestException;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
+import com.github.yiuman.citrus.support.http.ResponseStatusCode;
 import com.github.yiuman.citrus.support.model.DialogView;
 import com.github.yiuman.citrus.support.model.Header;
 import com.github.yiuman.citrus.support.model.Page;
@@ -16,15 +18,15 @@ import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.dto.UserQuery;
 import com.github.yiuman.citrus.system.entity.Organization;
+import com.github.yiuman.citrus.system.entity.PasswordUpdateDto;
 import com.github.yiuman.citrus.system.entity.Role;
 import com.github.yiuman.citrus.system.hook.HasLoginHook;
 import com.github.yiuman.citrus.system.service.OrganService;
 import com.github.yiuman.citrus.system.service.RoleService;
 import com.github.yiuman.citrus.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -111,6 +113,40 @@ public class UserController extends BaseCrudController<UserDto, Long> {
     @GetMapping("/current")
     public ResponseEntity<UserOnlineInfo> getCurrentUser() {
         return ResponseEntity.ok(userService.getCurrentUserOnlineInfo());
+    }
+
+
+    /**
+     * 修改个人信息
+     *
+     * @param entity 用户实体
+     * @return Void
+     */
+    @PostMapping("/profile")
+    @Authorize(HasLoginHook.class)
+    public ResponseEntity<Void> saveProfile(@Validated @RequestBody UserDto entity) {
+        UserOnlineInfo currentUserOnlineInfo = userService.getCurrentUserOnlineInfo();
+        if (!entity.getUserId().equals(currentUserOnlineInfo.getUserId())) {
+            throw new RestException("You cannot modify non-personal data", ResponseStatusCode.BAD_REQUEST);
+        }
+
+        userService.saveProfile(entity);
+
+        return ResponseEntity.ok();
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param passwordUpdate 密码更新传输类
+     * @return Void
+     * @throws Exception 数据库操作异常
+     */
+    @PostMapping("/password")
+    @Authorize(HasLoginHook.class)
+    public ResponseEntity<Void> updatePassword(@Validated @RequestBody PasswordUpdateDto passwordUpdate) throws Exception {
+        userService.updatePassword(passwordUpdate.getOldPassword(), passwordUpdate.getNewPassword());
+        return ResponseEntity.ok();
     }
 
 }

@@ -1,12 +1,14 @@
 package com.github.yiuman.citrus.system.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.yiuman.citrus.system.commons.model.AbstractAuditingEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.ibatis.type.ClobTypeHandler;
 
 /**
  * 系统用户表
@@ -43,6 +45,7 @@ public class User extends AbstractAuditingEntity {
      */
     private Boolean admin;
 
+    @TableField(typeHandler = ClobTypeHandler.class)
     private String avatar;
 
     /**

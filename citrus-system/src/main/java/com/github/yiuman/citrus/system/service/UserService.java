@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.security.authenticate.NoPermissionException;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
+import com.github.yiuman.citrus.support.exception.RestException;
+import com.github.yiuman.citrus.support.http.ResponseStatusCode;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.system.cache.UserOnlineCache;
 import com.github.yiuman.citrus.system.dto.UserDto;
@@ -12,6 +14,7 @@ import com.github.yiuman.citrus.system.entity.*;
 import com.github.yiuman.citrus.system.mapper.UserMapper;
 import com.github.yiuman.citrus.system.mapper.UserOrganMapper;
 import com.github.yiuman.citrus.system.mapper.UserRoleMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -183,5 +186,27 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
 
     public List<Organization> getUserOrgansByUserId(Long userId) {
         return userOrganMapper.getOrgansByUserId(userId);
+    }
+
+    public void updatePassword(String oldPassword, String newPassword) throws Exception {
+        UserOnlineInfo currentUserOnlineInfo = getCurrentUserOnlineInfo();
+        if (!passwordEncoder.encode(oldPassword).equals(currentUserOnlineInfo.getPassword())) {
+            throw new RestException("The original passwords do not match", ResponseStatusCode.BAD_REQUEST);
+        }
+        UserDto userDto = get(currentUserOnlineInfo.getUserId());
+        userDto.setPassword(passwordEncoder.encode(newPassword));
+        save(userDto);
+        resetUserOnlineInfo();
+    }
+
+    public void saveProfile(UserDto entity) {
+        userMapper.updateById(dtoToEntity().apply(entity));
+        resetUserOnlineInfo();
+    }
+
+    public void resetUserOnlineInfo() {
+        UserOnlineInfo currentUserOnlineInfo = getCurrentUserOnlineInfo();
+        BeanUtils.copyProperties(get(currentUserOnlineInfo.getUserId()), currentUserOnlineInfo);
+        userOnlineCache.save(currentUserOnlineInfo.getUuid(), currentUserOnlineInfo);
     }
 }
