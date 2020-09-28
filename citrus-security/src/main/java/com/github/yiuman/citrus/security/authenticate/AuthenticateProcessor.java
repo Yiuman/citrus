@@ -51,4 +51,12 @@ public interface AuthenticateProcessor {
      */
     Optional<Authentication> resolve(HttpServletRequest request);
 
+
+    /**
+     * 注销
+     *
+     * @param request 当前请求
+     */
+    void logout(HttpServletRequest request);
+
 }

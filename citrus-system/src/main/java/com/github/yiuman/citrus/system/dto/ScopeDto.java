@@ -30,4 +30,6 @@ public class ScopeDto {
 
     private List<ScopeDefine> scopeDefines;
 
+    private String describe;
+
 }

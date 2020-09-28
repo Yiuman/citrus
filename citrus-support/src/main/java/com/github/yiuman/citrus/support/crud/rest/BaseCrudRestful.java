@@ -166,7 +166,14 @@ public abstract class BaseCrudRestful<T, K extends Serializable> implements Crud
         if (StringUtils.isBlank(fileName)) {
             fileName = String.valueOf(System.currentTimeMillis());
         }
-        WebUtils.exportExcel(response, modelClass, getService().list(getQueryWrapper(request)), fileName);
+
+        QueryWrapper<T> queryWrapper = Optional.ofNullable(getQueryWrapper(request)).orElse(Wrappers.query());
+        handleSortWrapper(queryWrapper, request);
+        Page<T> createPage = createPage();
+        createPage.setSize(-1);
+        Page<T> resultPage = getService().page(createPage, queryWrapper);
+        resultPage.setItemKey(getService().getKeyProperty());
+        WebUtils.exportExcel(response, resultPage, fileName);
     }
 
     /**

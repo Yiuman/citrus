@@ -17,7 +17,7 @@ public final class Buttons {
 
     private static Button DELETE = new Button("删除", "delete", "error", "delete-circle");
 
-    private static Button DELETE_BATCH = new Button("批量删除", "batchDelete", "error", "trash-can");
+    private static Button DELETE_BATCH = new Button("删除", "batchDelete", "error", "trash-can");
 
     private static Button IMPORT = new Button("导入", "import", "", "file-upload");
 

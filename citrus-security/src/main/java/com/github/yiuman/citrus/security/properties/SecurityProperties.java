@@ -8,6 +8,8 @@ public class SecurityProperties {
 
     private String authenticateEndpoint = SecurityConstants.AUTHENTICATE_ENDPOINT;
 
+    private String logoutEndpoint = SecurityConstants.LOGOUT_ENDPOINT;
+
     private String verifyEndpointPrefix = SecurityConstants.VERIFY_ENDPOINT_PREFIX;
 
     private String[] excludedUris = new String[]{};
@@ -21,6 +23,14 @@ public class SecurityProperties {
 
     public void setAuthenticateEndpoint(String authenticateEndpoint) {
         this.authenticateEndpoint = authenticateEndpoint;
+    }
+
+    public String getLogoutEndpoint() {
+        return logoutEndpoint;
+    }
+
+    public void setLogoutEndpoint(String logoutEndpoint) {
+        this.logoutEndpoint = logoutEndpoint;
     }
 
     public String getVerifyEndpointPrefix() {

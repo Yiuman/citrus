@@ -2,11 +2,14 @@ package com.github.yiuman.citrus.support.utils;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.read.listener.ReadListener;
+import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.github.yiuman.citrus.support.http.JsonServletRequestWrapper;
+import com.github.yiuman.citrus.support.model.Header;
+import com.github.yiuman.citrus.support.model.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -30,12 +33,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Web相关操作工具
@@ -229,7 +230,88 @@ public final class WebUtils {
         response.setCharacterEncoding("utf-8");
         // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
         response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(name, "utf-8") + ".xls");
-        EasyExcel.write(response.getOutputStream(), clazz).sheet("表").doWrite(data);
+        EasyExcel.write(response.getOutputStream(), clazz)
+                .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                .sheet("sheet1").doWrite(data);
+    }
+
+    /**
+     * 动态列导出Excel
+     *
+     * @param response 响应
+     * @param headers  表头
+     * @param data     数据
+     * @param name     文件 名
+     * @throws IOException IO异常
+     */
+    public static void exportExcel(HttpServletResponse response, List<List<String>> headers, List<List<Object>> data, String name) throws IOException {
+        response.setContentType(APPLICATION_VND_MS_EXCEL);
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+        response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(name, "utf-8") + ".xls");
+        EasyExcel.write(response.getOutputStream())
+                .head(headers)
+                .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                .sheet("sheet1")
+                .doWrite(data);
+    }
+
+    /**
+     * 动态列导出Excel
+     *
+     * @param response 响应
+     * @param page     分页对象
+     * @param name     文件 名
+     * @throws IOException IO异常
+     */
+    public static void exportExcel(HttpServletResponse response, Page<?> page, String name) throws IOException, NoSuchFieldException {
+        response.setContentType(APPLICATION_VND_MS_EXCEL);
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+        response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(name, "utf-8") + ".xls");
+
+        List<Header> pageHeaders = page.getHeaders();
+        List<?> records = page.getRecords();
+        List<List<String>> headers = new ArrayList<>(pageHeaders.size());
+        List<List<Object>> data = new ArrayList<>(records.size());
+        Map<String, Map<String, Object>> recordExtend = page.getRecordExtend();
+
+        pageHeaders.forEach(header -> headers.add(Collections.singletonList(header.getText())));
+        //这里记录字段与表头的对应关系，方便后边操作，遍历一次后之后不需要重新取
+        final Class<?> recordClass = records.get(0).getClass();
+        Field recordKeyField = recordClass.getDeclaredField(page.getItemKey());
+        recordKeyField.setAccessible(true);
+        final Map<String, Field> fieldMap = new HashMap<>();
+        records.forEach(record -> {
+            List<Object> objects = new ArrayList<>(pageHeaders.size());
+            pageHeaders.forEach(header -> {
+                Object fieldValue;
+                String fieldName = header.getValue();
+                try {
+                    Field field = Optional.ofNullable(fieldMap.get(fieldName)).orElse(recordClass.getDeclaredField(header.getValue()));
+                    field.setAccessible(true);
+                    fieldValue = field.get(record);
+                    fieldMap.put(fieldName, field);
+
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    if (CollectionUtils.isEmpty(recordExtend)) {
+                        page.initFunctionalRecords();
+                    }
+                    try {
+                        Map<String, Object> singleRecordExtendData = recordExtend.get(recordKeyField.get(record).toString());
+                        fieldValue = singleRecordExtendData.get(fieldName);
+                    } catch (IllegalAccessException ex) {
+                        fieldValue = "not founded";
+                    }
+
+                }
+                objects.add(fieldValue);
+            });
+
+            data.add(objects);
+        });
+
+        exportExcel(response, headers, data, name);
     }
 
     /**
@@ -242,7 +324,7 @@ public final class WebUtils {
      * @throws IOException IO异常
      */
     public static <T> void importExcel(MultipartFile file, Class<T> clazz, ReadListener<T> readListener) throws IOException {
-        EasyExcel.read(file.getInputStream(), clazz, readListener);
+        EasyExcel.read(file.getInputStream(), clazz, readListener).doReadAll();
     }
 
 

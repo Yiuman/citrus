@@ -189,16 +189,27 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     }
 
     public void beforeShow() {
-        List<T> records = getRecords();
-        if (!StringUtils.isEmpty(itemKey)) {
-            this.recordFunctions.forEach(func -> records.forEach(record -> {
-                Map<String, Object> objectObjectHashMap = Optional.ofNullable(this.recordExtend.get(getKey(record))).orElse(new HashMap<>(1));
-                objectObjectHashMap.put(func.getFiledName(), func.getFunction().apply(record));
-                this.recordExtend.put(getKey(record), objectObjectHashMap);
-            }));
-        }
+        initFunctionalRecords();
+        actionFunctions.forEach(func -> getRecords().forEach(record -> actions.add(func.apply(record))));
+    }
 
-        actionFunctions.forEach(func -> records.forEach(record -> actions.add(func.apply(record))));
+    public void initFunctionalRecords() {
+        if (!StringUtils.isEmpty(itemKey)) {
+//            this.recordFunctions.forEach(func -> getRecords().forEach(record -> {
+//                Map<String, Object> objectObjectHashMap = Optional.ofNullable(this.recordExtend.get(getKey(record))).orElse(new HashMap<>(1));
+//                objectObjectHashMap.put(func.getFiledName(), func.getFunction().apply(record));
+//                this.recordExtend.put(getKey(record), objectObjectHashMap);
+//            }));
+            getRecords().forEach(this::initSingleFunctionalRecord);
+        }
+    }
+
+    public void initSingleFunctionalRecord(T record) {
+        this.recordFunctions.forEach(func -> {
+            Map<String, Object> objectObjectHashMap = Optional.ofNullable(this.recordExtend.get(getKey(record))).orElse(new HashMap<>(1));
+            objectObjectHashMap.put(func.getFiledName(), func.getFunction().apply(record));
+            this.recordExtend.put(getKey(record), objectObjectHashMap);
+        });
     }
 
     private String getKey(T entity) {

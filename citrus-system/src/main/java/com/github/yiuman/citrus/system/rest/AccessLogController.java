@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccessLogController extends BaseCrudController<AccessLog, Long> {
 
     public AccessLogController() {
+        addSortBy("createTime",true);
         setParamClass(AccessLogQuery.class);
     }
 

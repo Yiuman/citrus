@@ -99,5 +99,24 @@ public class AuthenticateProcessorImpl implements AuthenticateProcessor {
         return Optional.empty();
     }
 
+    @Override
+    public void logout(HttpServletRequest request) {
+        String token = JwtUtils.resolveToken(request);
+        if (StringUtils.hasText(token) && JwtUtils.validateToken(token)) {
+            Claims claims = JwtUtils.getClaims(token);
+            String mode = (String) claims.get(AUTHENTICATION_MODE_PARAMETER_KEY);
+            String identity = (String) claims.get(JwtUtils.getIdentityKey());
+            try {
+                AuthenticateService service = findByMode(mode);
+                Optional<Authentication> authentication = service.resolve(token, identity);
+                authentication.ifPresent(service::logout);
+            } catch (Exception e) {
+                log.error("logout exception", e);
+            }
+
+        }
+
+    }
+
 
 }

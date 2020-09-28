@@ -10,5 +10,7 @@ public interface SecurityConstants {
 
     String AUTHENTICATE_ENDPOINT = "/rest/authenticate";
 
+    String LOGOUT_ENDPOINT = "/rest/logout";
+
     String VERIFY_ENDPOINT_PREFIX = "/rest/verify";
 }

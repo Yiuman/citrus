@@ -31,6 +31,13 @@ public class AuthenticateController {
         return ResponseEntity.ok(authenticateProcessor.token(request));
     }
 
+    @PostMapping("#{citrusProperties.security.logoutEndpoint}")
+    public ResponseEntity<Void> cancellation(HttpServletRequest request) {
+        //若是JSON请求，需要重新构造一个request
+        authenticateProcessor.logout(request);
+        return ResponseEntity.ok();
+    }
+
     @ControllerAdvice
     @Slf4j
     static class ExceptionAdvice {
@@ -42,7 +49,7 @@ public class AuthenticateController {
         @ExceptionHandler(value = AuthenticationException.class)
         @ResponseBody
         public ResponseEntity<Void> exceptionHandler(AuthenticationException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
             return ResponseEntity.error(ResponseStatusCode.UN_AUTHENTICATION, e.getMessage());
         }
 
