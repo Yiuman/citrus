@@ -195,11 +195,6 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
 
     public void initFunctionalRecords() {
         if (!StringUtils.isEmpty(itemKey)) {
-//            this.recordFunctions.forEach(func -> getRecords().forEach(record -> {
-//                Map<String, Object> objectObjectHashMap = Optional.ofNullable(this.recordExtend.get(getKey(record))).orElse(new HashMap<>(1));
-//                objectObjectHashMap.put(func.getFiledName(), func.getFunction().apply(record));
-//                this.recordExtend.put(getKey(record), objectObjectHashMap);
-//            }));
             getRecords().forEach(this::initSingleFunctionalRecord);
         }
     }

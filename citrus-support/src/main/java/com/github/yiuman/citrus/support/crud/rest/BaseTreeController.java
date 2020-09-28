@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.support.crud.rest;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yiuman.citrus.support.crud.service.BasePreOrderTreeService;
 import com.github.yiuman.citrus.support.crud.service.BaseSimpleTreeService;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
@@ -11,12 +12,14 @@ import com.github.yiuman.citrus.support.model.BasePreOrderTree;
 import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.model.TreeDisplay;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
+import com.github.yiuman.citrus.support.utils.WebUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
@@ -128,4 +131,13 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
         return ResponseEntity.ok();
     }
 
+    @Override
+    public void exp(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ResponseEntity<TreeDisplay<T>> load = this.load(request);
+        String fileName = WebUtils.getRequestParam("fileName");
+        if (StringUtils.isBlank(fileName)) {
+            fileName = String.valueOf(System.currentTimeMillis());
+        }
+        WebUtils.exportJson(response, load.getData().getTree(), fileName);
+    }
 }
