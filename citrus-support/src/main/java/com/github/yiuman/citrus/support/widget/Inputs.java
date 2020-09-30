@@ -10,6 +10,12 @@ public class Inputs extends BaseWidget<String> {
 
     private boolean clearable = true;
 
+    private String type;
+
+    private Integer counter;
+
+    private String placeholder;
+
     public Inputs() {
     }
 
@@ -23,6 +29,45 @@ public class Inputs extends BaseWidget<String> {
 
     public void setClearable(boolean clearable) {
         this.clearable = clearable;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Inputs type(String type) {
+        setType(type);
+        return this;
+    }
+
+    public Integer getCounter() {
+        return counter;
+    }
+
+    public void setCounter(Integer counter) {
+        this.counter = counter;
+    }
+
+    public Inputs counter(Integer counter) {
+        setCounter(counter);
+        return this;
+    }
+
+    public String getPlaceholder() {
+        return placeholder;
+    }
+
+    public void setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
+    }
+
+    public Inputs placeholder(String placeholder) {
+        setPlaceholder(placeholder);
+        return this;
     }
 
     @Override

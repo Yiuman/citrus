@@ -1,11 +1,7 @@
 package com.github.yiuman.citrus.support.crud.rest;
 
-import com.github.yiuman.citrus.support.crud.query.Condition;
-import com.github.yiuman.citrus.support.model.Page;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -14,16 +10,7 @@ import java.util.List;
  * @author yiuman
  * @date 2020/5/8
  */
-public interface CrudRestful<T, K> extends Condition<T> {
-
-    /**
-     * 分页
-     *
-     * @param request 当前请求
-     * @return 分页实体
-     * @throws Exception 如转化参数的异常、反射异常等
-     */
-    Page<T> page(HttpServletRequest request) throws Exception;
+public interface CrudRestful<T, K> extends QueryRestful<T, K> {
 
     /**
      * 保存实体
@@ -44,15 +31,6 @@ public interface CrudRestful<T, K> extends Condition<T> {
     Boolean delete(K key) throws Exception;
 
     /**
-     * 根据主键获取实体
-     *
-     * @param key 主键
-     * @return 实体
-     * @throws Exception 数据库操作异常等
-     */
-    T get(K key) throws Exception;
-
-    /**
      * 批量删除
      *
      * @param keys 主键集合
@@ -67,14 +45,5 @@ public interface CrudRestful<T, K> extends Condition<T> {
      * @throws Exception IO异常等
      */
     void imp(MultipartFile file) throws Exception;
-
-    /**
-     * 导出
-     *
-     * @param request  当前请求
-     * @param response 当前响应
-     * @throws Exception IO异常等
-     */
-    void exp(HttpServletRequest request, HttpServletResponse response) throws Exception;
 
 }

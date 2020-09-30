@@ -16,7 +16,7 @@ CREATE TABLE `sys_user`
   `mobile`             varchar(45) DEFAULT NULL COMMENT '手机',
   `uuid`               varchar(45) DEFAULT NULL COMMENT 'UUID',
   `admin`              int(1)      DEFAULT 0 COMMENT '是否管理员',
-  `avatar`              varchar(1000)  DEFAULT NULL COMMENT '头像',
+  `avatar`             mediumtext  DEFAULT NULL COMMENT '头像',
   `status`             bigint      DEFAULT NULL COMMENT '状态',
   `create_time`        datetime    DEFAULT NULL COMMENT '创建时间',
   `create_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
@@ -33,7 +33,11 @@ create index IX_SYS_USER_USERNAME on sys_user (username);
 create index IX_SYS_USER_UUID on sys_user (uuid);
 create index IX_SYS_USER_MOBILE on sys_user (mobile);
 
-INSERT INTO sys_user (user_id, login_id, password, username, email, mobile, uuid, status, created_time, created_by, last_modified_time, last_modified_by, version, admin, avatar) VALUES (1, 'admin', '$2a$10$gK0BhYud6iSM7um4RLCYvuYEvtWSLYjsKb3VlTEcxgbtPQC3pAK9C', '平台管理员', '415481084@qq.com', '13119593102', 'YvuYEvtWSLYjsKb3VlTEcxgbtPQC3pAK9C', 1, '2020-09-23 03:27:51', null, '2020-09-23 03:27:51', 1, 1, 1, null);
+INSERT INTO sys_user (user_id, login_id, password, username, email, mobile, uuid, status, created_time, created_by,
+                      last_modified_time, last_modified_by, version, admin, avatar)
+VALUES (1, 'admin', '$2a$10$gK0BhYud6iSM7um4RLCYvuYEvtWSLYjsKb3VlTEcxgbtPQC3pAK9C', '平台管理员', '415481084@qq.com',
+        '13119593102', 'YvuYEvtWSLYjsKb3VlTEcxgbtPQC3pAK9C', 1, '2020-09-23 03:27:51', null, '2020-09-23 03:27:51', 1,
+        1, 1, null);
 
 -- ----------------------------
 
@@ -44,7 +48,7 @@ CREATE TABLE `sys_role`
   `role_id`            bigint(20) NOT NULL COMMENT '主键id',
   `parent_id`          bigint(20)  DEFAULT NULL COMMENT '主键id',
   `type`               int        NOT NULL COMMENT '主键id',
-  `role_name`           varchar(45) DEFAULT NULL COMMENT '名字',
+  `role_name`          varchar(45) DEFAULT NULL COMMENT '名字',
   `create_time`        datetime    DEFAULT NULL COMMENT '创建时间',
   `create_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
   `last_modified_time` datetime    DEFAULT NULL COMMENT '最后的更新时间',
@@ -63,9 +67,9 @@ CREATE TABLE `sys_resource`
 (
   `resource_id`        varchar(500) NOT NULL COMMENT '主键id',
   `resource_name`      varchar(50)   DEFAULT NULL COMMENT '资源名称名字',
-  `hidden`             int             DEFAULT 0 COMMENT '是否隐藏',
-  `component`          varchar (1000) DEFAULT NULL COMMENT '前端组件路径',
-  `icon`               varchar(500)   DEFAULT NULL COMMENT '资源菜单图标（mdi）',
+  `hidden`             int           DEFAULT 0 COMMENT '是否隐藏',
+  `component`          varchar(1000) DEFAULT NULL COMMENT '前端组件路径',
+  `icon`               varchar(500)  DEFAULT NULL COMMENT '资源菜单图标（mdi）',
   `parent_id`          varchar(500)  DEFAULT NULL COMMENT '父ID',
   `type`               int          NOT NULL COMMENT '资源类型',
   `path`               varchar(2000) DEFAULT NULL COMMENT '资源路径',
@@ -111,52 +115,60 @@ create index IX_SYS_ORGAN_RIGHTVALUE on sys_organ (right_value);
 DROP TABLE IF EXISTS `sys_scope`;
 CREATE TABLE `sys_scope`
 (
-  `scope_id`    bigint(20) NOT NULL COMMENT '数据范围ID',
-  `scope_name`  varchar (500) NOT NULL COMMENT '范围名称',
-  `organ_id`    bigint(20) NOT NULL COMMENT '组织ID',
+  `scope_id`   bigint(20)   NOT NULL COMMENT '数据范围ID',
+  `scope_name` varchar(500) NOT NULL COMMENT '范围名称',
+  `organ_id`   bigint(20)   NOT NULL COMMENT '组织ID',
   PRIMARY KEY (`scope_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   ROW_FORMAT = DYNAMIC COMMENT ='数据范围表';
 
 
-INSERT INTO sys_scope (scope_id, scope_name, organ_id) VALUES (1, '当前部门', -1);
-INSERT INTO sys_scope (scope_id, scope_name, organ_id) VALUES (2, '当前部门及下属部门', -1);
-INSERT INTO sys_scope (scope_id, scope_name, organ_id) VALUES (3, '当前部门的下属部门', -1);
-INSERT INTO sys_scope (scope_id, scope_name, organ_id) VALUES (4, '当前部门及上级部门', -1);
+INSERT INTO sys_scope (scope_id, scope_name, organ_id)
+VALUES (1, '当前部门', -1);
+INSERT INTO sys_scope (scope_id, scope_name, organ_id)
+VALUES (2, '当前部门及下属部门', -1);
+INSERT INTO sys_scope (scope_id, scope_name, organ_id)
+VALUES (3, '当前部门的下属部门', -1);
+INSERT INTO sys_scope (scope_id, scope_name, organ_id)
+VALUES (4, '当前部门及上级部门', -1);
 -- ----------------------------
 
 -- ------------数据范围定义表----------------
 DROP TABLE IF EXISTS `sys_scope_define`;
 CREATE TABLE `sys_scope_define`
 (
-  `id` bigint(20) NOT NULL COMMENT '数据范围定义对象ID',
-  `scope_id`  bigint(20) NOT NULL COMMENT '关联的数据范围ID',
-  `organ_id` bigint(20) NOT NULL COMMENT '组织ID',
-  `scope_rule` int not null COMMENT '数据范围的规则（0：包含，1：排除）',
-  `scope_types` varchar(20)  COMMENT '范围类型（自身、包含子部门、包含父部门）',
+  `id`          bigint(20) NOT NULL COMMENT '数据范围定义对象ID',
+  `scope_id`    bigint(20) NOT NULL COMMENT '关联的数据范围ID',
+  `organ_id`    bigint(20) NOT NULL COMMENT '组织ID',
+  `scope_rule`  int        not null COMMENT '数据范围的规则（0：包含，1：排除）',
+  `scope_types` varchar(20) COMMENT '范围类型（自身、包含子部门、包含父部门）',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   ROW_FORMAT = DYNAMIC COMMENT ='数据范围定义表';
 
-INSERT INTO sys_scope_define (id, scope_id, organ_id, scope_rule, scope_types) VALUES (1, 1, 0, 0, 1);
-INSERT INTO sys_scope_define (id, scope_id, organ_id, scope_rule, scope_types) VALUES (2, 2, 0, 0, 3);
-INSERT INTO sys_scope_define (id, scope_id, organ_id, scope_rule, scope_types) VALUES (3, 3, 0, 0, 2);
-INSERT INTO sys_scope_define (id, scope_id, organ_id, scope_rule, scope_types) VALUES (4, 4, 0, 0, 5);
+INSERT INTO sys_scope_define (id, scope_id, organ_id, scope_rule, scope_types)
+VALUES (1, 1, 0, 0, 1);
+INSERT INTO sys_scope_define (id, scope_id, organ_id, scope_rule, scope_types)
+VALUES (2, 2, 0, 0, 3);
+INSERT INTO sys_scope_define (id, scope_id, organ_id, scope_rule, scope_types)
+VALUES (3, 3, 0, 0, 2);
+INSERT INTO sys_scope_define (id, scope_id, organ_id, scope_rule, scope_types)
+VALUES (4, 4, 0, 0, 5);
 -- ----------------------------
 
 -- ------------权限表----------------
 DROP TABLE IF EXISTS `sys_authority`;
 CREATE TABLE `sys_authority`
 (
-  `authority_id`           bigint(20) NOT NULL COMMENT '主键id',
-  `authority_name`         varchar(50) DEFAULT NULL COMMENT '权限名字',
-  `remark`                 varchar(2000) DEFAULT NULL COMMENT '权限名字',
-  `create_time`            datetime    DEFAULT NULL COMMENT '创建时间',
-  `create_by`              bigint(20)  DEFAULT NULL COMMENT '创建人',
-  `last_modified_time`     datetime    DEFAULT NULL COMMENT '最后的更新时间',
-  `last_modified_by`       bigint(20)  DEFAULT NULL COMMENT '最后的更新人',
+  `authority_id`       bigint(20) NOT NULL COMMENT '主键id',
+  `authority_name`     varchar(50)   DEFAULT NULL COMMENT '权限名字',
+  `remark`             varchar(2000) DEFAULT NULL COMMENT '权限名字',
+  `create_time`        datetime      DEFAULT NULL COMMENT '创建时间',
+  `create_by`          bigint(20)    DEFAULT NULL COMMENT '创建人',
+  `last_modified_time` datetime      DEFAULT NULL COMMENT '最后的更新时间',
+  `last_modified_by`   bigint(20)    DEFAULT NULL COMMENT '最后的更新人',
   PRIMARY KEY (`authority_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
@@ -170,11 +182,11 @@ create index IX_SYS_AUTHORITY_AUTHORITYNAME on sys_authority (authority_name);
 DROP TABLE IF EXISTS `sys_auth_resource`;
 CREATE TABLE `sys_auth_resource`
 (
-  `authority_id`    bigint(20) NOT NULL COMMENT '权限ID',
-   `resource_id`    bigint(20) NOT NULL COMMENT '资源ID',
-  `scope_id`        bigint(20)  COMMENT '数据范围ID',
-  `object_id`       bigint(20)  COMMENT '关联的对象，如果资源类型为"操作"，即关联的对象为该"操作对应的资源ID 例如 菜单与新增、删除等操作，此实体中的resourceId为操作类型的ID，即此objectId为此操作对应的菜单',
-  `type`            int(2)  COMMENT '资源类型，菜单为0；操作为2',
+  `authority_id` bigint(20) NOT NULL COMMENT '权限ID',
+  `resource_id`  bigint(20) NOT NULL COMMENT '资源ID',
+  `scope_id`     bigint(20) COMMENT '数据范围ID',
+  `object_id`    bigint(20) COMMENT '关联的对象，如果资源类型为"操作"，即关联的对象为该"操作对应的资源ID 例如 菜单与新增、删除等操作，此实体中的resourceId为操作类型的ID，即此objectId为此操作对应的菜单',
+  `type`         int(2) COMMENT '资源类型，菜单为0；操作为2',
   PRIMARY KEY (`authority_id`, `resource_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
@@ -213,8 +225,8 @@ CREATE TABLE `sys_user_role`
 DROP TABLE IF EXISTS `sys_role_auth`;
 CREATE TABLE `sys_role_auth`
 (
-  `role_id`         bigint(20) NOT NULL COMMENT '角色ID',
-  `authority_id`    bigint(20) NOT NULL COMMENT '权限ID',
+  `role_id`      bigint(20) NOT NULL COMMENT '角色ID',
+  `authority_id` bigint(20) NOT NULL COMMENT '权限ID',
   PRIMARY KEY (`role_id`, `authority_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
@@ -227,10 +239,10 @@ CREATE TABLE `sys_role_auth`
 DROP TABLE IF EXISTS `sys_dict`;
 CREATE TABLE `sys_dict`
 (
-  `dict_id`     bigint(20) NOT NULL COMMENT '字典ID',
-  `dict_code`   varchar (200) NOT NULL COMMENT '字典编码',
-  `dict_name`   varchar (1000) NOT NULL COMMENT '字典名',
-    PRIMARY KEY (`dict_id`) USING BTREE
+  `dict_id`   bigint(20)    NOT NULL COMMENT '字典ID',
+  `dict_code` varchar(200)  NOT NULL COMMENT '字典编码',
+  `dict_name` varchar(1000) NOT NULL COMMENT '字典名',
+  PRIMARY KEY (`dict_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   ROW_FORMAT = DYNAMIC COMMENT ='字典目录表';
@@ -242,18 +254,18 @@ CREATE TABLE `sys_dict`
 DROP TABLE IF EXISTS `sys_access_log`;
 CREATE TABLE `sys_access_log`
 (
-  `id`     bigint(20) NOT NULL COMMENT 'ID',
-  `user_id`   bigint(20)  DEFAULT NULL COMMENT '访问的用户ID',
-  `username`   varchar (1000) NOT NULL COMMENT '访问的用户名',
-  `ip_address`   varchar (1000) NOT NULL COMMENT '访问的IP地址',
-  `url`   varchar (1000) NOT NULL COMMENT '访问的url',
-  `request_method`   varchar (50) NOT NULL COMMENT '请求方式',
-  `params`   varchar (1000) DEFAULT NULL COMMENT '请求参数，JSON串',
-  `resource_id`   varchar (1000) DEFAULT NULL COMMENT '资源ID',
-  `resource_name`   varchar (1000) DEFAULT NULL COMMENT '资源名',
-  `resource_type`   int DEFAULT NULL COMMENT '资源类型',
-  `create_time`   datetime NOT NULL COMMENT '访问时间',
-    PRIMARY KEY (`id`) USING BTREE
+  `id`             bigint(20)    NOT NULL COMMENT 'ID',
+  `user_id`        bigint(20)    DEFAULT NULL COMMENT '访问的用户ID',
+  `username`       varchar(1000) NOT NULL COMMENT '访问的用户名',
+  `ip_address`     varchar(1000) NOT NULL COMMENT '访问的IP地址',
+  `url`            varchar(1000) NOT NULL COMMENT '访问的url',
+  `request_method` varchar(50)   NOT NULL COMMENT '请求方式',
+  `params`         varchar(1000) DEFAULT NULL COMMENT '请求参数，JSON串',
+  `resource_id`    varchar(1000) DEFAULT NULL COMMENT '资源ID',
+  `resource_name`  varchar(1000) DEFAULT NULL COMMENT '资源名',
+  `resource_type`  int           DEFAULT NULL COMMENT '资源类型',
+  `create_time`    datetime      NOT NULL COMMENT '访问时间',
+  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   ROW_FORMAT = DYNAMIC COMMENT ='访问日志表';

@@ -1,9 +1,11 @@
 package com.github.yiuman.citrus.security.authenticate;
 
 import com.github.yiuman.citrus.security.jwt.JwtToken;
+import com.github.yiuman.citrus.security.verify.VerificationException;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.http.ResponseStatusCode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +40,8 @@ public class AuthenticateController {
         return ResponseEntity.ok();
     }
 
-    @ControllerAdvice
+    @RestControllerAdvice
+    @Order(Integer.MIN_VALUE)
     @Slf4j
     static class ExceptionAdvice {
 
@@ -46,7 +49,7 @@ public class AuthenticateController {
          * 异常处理
          */
 
-        @ExceptionHandler(value = AuthenticationException.class)
+        @ExceptionHandler(value = {AuthenticationException.class,VerificationException.class})
         @ResponseBody
         public ResponseEntity<Void> exceptionHandler(AuthenticationException e) {
             log.error(e.getMessage(), e);

@@ -32,7 +32,6 @@ public class ExceptionAdvice {
      */
 
     @ExceptionHandler(value = {RestException.class, ValidateException.class})
-    @ResponseBody
     public ResponseEntity<Void> exceptionHandler(RestException e) {
         log.error(e.getMessage());
         return ResponseEntity.error(e.getCode(), e.getMessage());
@@ -42,7 +41,6 @@ public class ExceptionAdvice {
      * 数据校验异常处理
      */
     @ExceptionHandler(value = {BindException.class})
-    @ResponseBody
     public ResponseEntity<Void> exceptionHandler(BindException e) throws JsonProcessingException {
         log.error(e.getMessage());
         return ResponseEntity.error(ResponseStatusCode.BAD_REQUEST, OBJECT_MAPPER.writeValueAsString(getErrorResults(e.getFieldErrors())));
@@ -52,7 +50,6 @@ public class ExceptionAdvice {
      * 数据校验异常处理
      */
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
-    @ResponseBody
     public ResponseEntity<Void> exceptionHandler(MethodArgumentNotValidException e) throws JsonProcessingException {
         log.error(e.getMessage());
         return ResponseEntity.error(ResponseStatusCode.BAD_REQUEST, OBJECT_MAPPER.writeValueAsString(getErrorResults(e.getBindingResult().getFieldErrors())));
@@ -103,10 +100,10 @@ public class ExceptionAdvice {
     /**
      * 异常处理
      */
-    @ExceptionHandler(value = Throwable.class)
+    @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public ResponseEntity<Void> exceptionHandler(Throwable throwable) {
-        log.error("未知异常", throwable);
+    public ResponseEntity<Void> exceptionHandler(Exception exception) {
+        log.error("未知异常", exception);
         return ResponseEntity.error(ResponseStatusCode.SERVER_ERROR, "未知异常");
     }
 

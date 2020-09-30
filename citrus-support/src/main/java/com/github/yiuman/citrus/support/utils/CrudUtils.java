@@ -1,11 +1,10 @@
 package com.github.yiuman.citrus.support.utils;
 
-import com.baomidou.mybatisplus.core.MybatisMapperRegistry;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
 import com.github.yiuman.citrus.support.crud.rest.CrudRestful;
+import com.github.yiuman.citrus.support.crud.rest.QueryRestful;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.widget.Selections;
 import com.github.yiuman.citrus.support.widget.Selects;
@@ -22,10 +21,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * CRUD工具类
@@ -225,7 +221,7 @@ public final class CrudUtils {
      * @param restful Crud
      * @return 小部件集合
      */
-    public static <W extends Widget<?>> List<W> getCrudWidgets(CrudRestful<?, ?> restful) {
+    public static <W extends Widget<?>> List<W> getCrudWidgets(QueryRestful<?, ?> restful) {
         final List<W> widgets = new LinkedList<>();
         ReflectionUtils.doWithMethods(restful.getClass(), method -> {
             try {
@@ -272,7 +268,7 @@ public final class CrudUtils {
                 Object value = valueField.get(item);
                 String label;
                 if (labelFieldName.equals(selects.key())) {
-                    label = value == null ? "" : value.toString();
+                    label = item.toString();
                 } else {
                     Field labelField = ReflectionUtils.findField(item.getClass(), labelFieldName);
                     ReflectionUtils.makeAccessible(labelField);

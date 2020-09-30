@@ -1,7 +1,5 @@
 package com.github.yiuman.citrus.support.widget;
 
-import com.github.yiuman.citrus.support.crud.rest.CrudRestful;
-
 import java.util.List;
 
 /**
@@ -22,7 +20,7 @@ public class Selections extends BaseWidget<List<Selections.SelectItem>> {
     public Selections() {
     }
 
-    public Selections(Object object,String methodName) {
+    public Selections(Object object, String methodName) {
     }
 
     public Selections(String text, String key, List<SelectItem> model) {

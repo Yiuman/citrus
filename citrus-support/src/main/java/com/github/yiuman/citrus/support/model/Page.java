@@ -213,10 +213,10 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
             String filedName = func.getFiledName();
             Object value = func.getFunction().apply(record);
             if (filedName.contains("|")) {
-                objectObjectHashMap.put(func.getFiledName(), value);
-            } else {
                 Map<String, Object> valueMap = (Map<String, Object>) value;
                 valueMap.forEach(objectObjectHashMap::put);
+            } else {
+                objectObjectHashMap.put(func.getFiledName(), value);
             }
 
             this.recordExtend.put(getKey(record), objectObjectHashMap);

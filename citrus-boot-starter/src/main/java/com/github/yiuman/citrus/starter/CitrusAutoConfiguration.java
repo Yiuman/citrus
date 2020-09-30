@@ -2,6 +2,8 @@ package com.github.yiuman.citrus.starter;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.yiuman.citrus.security.authenticate.AuthenticateProcessor;
 import com.github.yiuman.citrus.security.authenticate.AuthenticateProcessorImpl;
 import com.github.yiuman.citrus.security.authenticate.AuthenticateService;
@@ -15,7 +17,6 @@ import com.github.yiuman.citrus.security.properties.CitrusProperties;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
@@ -98,6 +99,9 @@ public class CitrusAutoConfiguration {
     @ConditionalOnMissingBean(ObjectMapper.class)
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
+        //用于解决java.time 模块的时间序列化为json时变成数组的问题
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
 
