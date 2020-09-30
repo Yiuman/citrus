@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 分页页面对象
@@ -57,7 +58,7 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     /**
      * 记录执行器，每次获取记录前，则会执行此执行器进行处理
      */
-    private List<FieldFunction<T, Object>> recordFunctions = new ArrayList<>();
+    private List<FieldFunction<T, ?>> recordFunctions = new ArrayList<>();
 
     /**
      * 事件执行处理器
@@ -144,6 +145,12 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
         recordFunctions.add(new FieldFunction<>(field, func));
     }
 
+    public void addCompositionHeader(List<Header> headerGroup, Function<T, Map<String, Object>> mapFunc) {
+        headers.addAll(headerGroup);
+        String fieldFunctionKey = headerGroup.stream().map(Header::getValue).collect(Collectors.joining("|"));
+        recordFunctions.add(new FieldFunction<>(fieldFunctionKey, mapFunc));
+    }
+
     public void addHeader(Header header) {
         headers.add(header);
     }
@@ -199,10 +206,19 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void initSingleFunctionalRecord(T record) {
         this.recordFunctions.forEach(func -> {
             Map<String, Object> objectObjectHashMap = Optional.ofNullable(this.recordExtend.get(getKey(record))).orElse(new HashMap<>(1));
-            objectObjectHashMap.put(func.getFiledName(), func.getFunction().apply(record));
+            String filedName = func.getFiledName();
+            Object value = func.getFunction().apply(record);
+            if (filedName.contains("|")) {
+                objectObjectHashMap.put(func.getFiledName(), value);
+            } else {
+                Map<String, Object> valueMap = (Map<String, Object>) value;
+                valueMap.forEach(objectObjectHashMap::put);
+            }
+
             this.recordExtend.put(getKey(record), objectObjectHashMap);
         });
     }

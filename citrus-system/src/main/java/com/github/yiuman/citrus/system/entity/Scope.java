@@ -21,7 +21,7 @@ public class Scope {
     private String scopeName;
 
     /**
-     * 所属组织,通用的为-1
+     * 数据范围所属组织,通用的为-1
      *
      * @see Organization
      */

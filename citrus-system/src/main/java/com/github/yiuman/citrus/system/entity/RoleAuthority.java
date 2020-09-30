@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -14,6 +15,7 @@ import lombok.Data;
 @TableName("sys_role_auth")
 public class RoleAuthority {
 
+    @TableId
     private Long roleId;
 
     @TableField(exist = false)
