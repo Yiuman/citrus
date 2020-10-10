@@ -1,9 +1,6 @@
 package com.github.yiuman.citrus.system.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.yiuman.citrus.system.commons.model.AbstractAuditingEntity;
 import lombok.Data;
@@ -56,6 +53,7 @@ public class User extends AbstractAuditingEntity {
     /**
      * 乐观锁
      */
+    @Version
     private Integer version;
 
 }

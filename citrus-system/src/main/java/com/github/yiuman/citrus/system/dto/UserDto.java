@@ -47,4 +47,6 @@ public class UserDto {
     @JsonSerialize(contentUsing = ToStringSerializer.class)
     private List<Long> organIds;
 
+    private Integer version;
+
 }

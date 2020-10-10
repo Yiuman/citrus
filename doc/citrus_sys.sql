@@ -22,7 +22,7 @@ CREATE TABLE `sys_user`
   `create_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
   `last_modified_time` datetime    DEFAULT NULL COMMENT '最后的更新时间',
   `last_modified_by`   bigint(20)  DEFAULT NULL COMMENT '最后的更新人',
-  `version`            int(11)     DEFAULT NULL COMMENT '乐观锁',
+  `version`            int(11)     DEFAULT 0 COMMENT '乐观锁',
   PRIMARY KEY (`user_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
