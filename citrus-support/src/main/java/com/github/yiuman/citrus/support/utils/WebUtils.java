@@ -13,11 +13,11 @@ import com.github.yiuman.citrus.support.model.Header;
 import com.github.yiuman.citrus.support.model.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cglib.core.ReflectUtils;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.util.*;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.support.WebRequestDataBinder;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -289,7 +289,7 @@ public final class WebUtils {
         pageHeaders.forEach(header -> headers.add(Collections.singletonList(header.getText())));
         //这里记录字段与表头的对应关系，方便后边操作，遍历一次后之后不需要重新取
         final Class<?> recordClass = records.get(0).getClass();
-        Field recordKeyField = recordClass.getDeclaredField(page.getItemKey());
+        Field recordKeyField =ReflectionUtils.findField(recordClass, page.getItemKey());
         recordKeyField.setAccessible(true);
         final Map<String, Field> fieldMap = new HashMap<>();
         records.forEach(record -> {
