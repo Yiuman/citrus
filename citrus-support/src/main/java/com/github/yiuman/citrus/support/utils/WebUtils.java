@@ -1,10 +1,14 @@
 package com.github.yiuman.citrus.support.utils;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.converters.Converter;
+import com.alibaba.excel.enums.CellDataTypeEnum;
+import com.alibaba.excel.metadata.CellData;
+import com.alibaba.excel.metadata.GlobalConfiguration;
+import com.alibaba.excel.metadata.property.ExcelContentProperty;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
@@ -13,11 +17,12 @@ import com.github.yiuman.citrus.support.model.Header;
 import com.github.yiuman.citrus.support.model.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.cglib.core.ReflectUtils;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.*;
-import org.springframework.util.ClassUtils;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.support.WebRequestDataBinder;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -32,12 +37,14 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.beans.PropertyEditorSupport;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -147,6 +154,7 @@ public final class WebUtils {
     public static <T> void requestDataBind(T object, HttpServletRequest request) throws Exception {
         if (request instanceof AbstractMultipartHttpServletRequest || request.getMethod().equals(HttpMethod.GET.name())) {
             WebRequestDataBinder dataBinder = new WebRequestDataBinder(object);
+            dataBinder.registerCustomEditor(LocalDate.class, new LocalDateEditor());
             dataBinder.bind(new ServletWebRequest(request));
 
         } else {
@@ -260,6 +268,7 @@ public final class WebUtils {
         // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
         response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(name, "utf-8") + ".xls");
         EasyExcel.write(response.getOutputStream())
+                .registerConverter(new LocalDateExportConvertor())
                 .head(headers)
                 .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
                 .sheet("sheet1")
@@ -289,7 +298,7 @@ public final class WebUtils {
         pageHeaders.forEach(header -> headers.add(Collections.singletonList(header.getText())));
         //这里记录字段与表头的对应关系，方便后边操作，遍历一次后之后不需要重新取
         final Class<?> recordClass = records.get(0).getClass();
-        Field recordKeyField =ReflectionUtils.findField(recordClass, page.getItemKey());
+        Field recordKeyField = ReflectionUtils.findField(recordClass, page.getItemKey());
         recordKeyField.setAccessible(true);
         final Map<String, Field> fieldMap = new HashMap<>();
         records.forEach(record -> {
@@ -298,19 +307,20 @@ public final class WebUtils {
                 Object fieldValue;
                 String fieldName = header.getValue();
                 try {
-                    Field field = Optional.ofNullable(fieldMap.get(fieldName)).orElse(recordClass.getDeclaredField(header.getValue()));
+                    Field field = Optional.ofNullable(fieldMap.get(fieldName)).orElse(ReflectionUtils.findField(recordClass,header.getValue()));
                     field.setAccessible(true);
                     fieldValue = field.get(record);
                     fieldMap.put(fieldName, field);
 
-                } catch (NoSuchFieldException | IllegalAccessException e) {
+                } catch (IllegalAccessException e) {
                     if (CollectionUtils.isEmpty(recordExtend)) {
                         page.initFunctionalRecords();
                     }
                     try {
                         Map<String, Object> singleRecordExtendData = recordExtend.get(recordKeyField.get(record).toString());
-                        fieldValue = singleRecordExtendData.get(fieldName);
-                    } catch (IllegalAccessException ex) {
+                        fieldValue = Objects.nonNull(singleRecordExtendData) ? singleRecordExtendData.get(fieldName) : null;
+
+                    } catch (Exception ex) {
                         fieldValue = "not founded";
                     }
 
@@ -434,5 +444,53 @@ public final class WebUtils {
             return null;
         }
         return paths[0];
+    }
+
+
+    /**
+     * LocalDate表单字段编辑器
+     */
+    static class LocalDateEditor extends PropertyEditorSupport {
+
+        @Override
+        public void setAsText(String text) throws IllegalArgumentException {
+            setValue(LocalDate.parse(text));
+        }
+    }
+
+
+    /**
+     * LocalDate类型导出转换器
+     */
+    static class LocalDateExportConvertor implements Converter<LocalDate> {
+
+        @Override
+        public Class<?> supportJavaTypeKey() {
+            return LocalDate.class;
+        }
+
+        @Override
+        public CellDataTypeEnum supportExcelTypeKey() {
+            return CellDataTypeEnum.STRING;
+        }
+
+        @Override
+        public LocalDate convertToJavaData(CellData cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
+            if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
+                return LocalDate.parse(cellData.getStringValue());
+            } else {
+                return LocalDate.parse(cellData.getStringValue(), DateTimeFormatter.ofPattern(contentProperty.getDateTimeFormatProperty().getFormat()));
+            }
+        }
+
+        @Override
+        public CellData<?> convertToExcelData(LocalDate value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
+            if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
+
+                return new CellData<>(DateTimeFormatter.ISO_DATE.format(value));
+            } else {
+                return new CellData<>(DateTimeFormatter.ofPattern(contentProperty.getDateTimeFormatProperty().getFormat()).format(value));
+            }
+        }
     }
 }

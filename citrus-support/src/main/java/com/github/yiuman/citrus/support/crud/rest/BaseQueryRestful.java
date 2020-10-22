@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * @author yiuman
@@ -173,12 +175,19 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
      * @throws Exception 绑定数据时发生的异常
      */
     protected void handleSortWrapper(QueryWrapper<T> wrapper, HttpServletRequest request) throws Exception {
-        //构造默认的排序
-        sortByList.forEach(sortByItem -> wrapper.orderBy(true, !sortByItem.getSortDesc(), StringUtils.camelToUnderline(sortByItem.getSortBy())));
+        final Consumer< SortBy> sortItemHandler = (sortBy) -> wrapper
+                .orderBy(true, !sortBy.getSortDesc(), StringUtils.camelToUnderline(sortBy.getSortBy()));
+
         //拼接排序条件
         SortBy sortBy = WebUtils.requestDataBind(SortBy.class, request);
         if (sortBy != null && org.springframework.util.StringUtils.hasText(sortBy.getSortBy())) {
-            wrapper.orderBy(true, !sortBy.getSortDesc(), StringUtils.camelToUnderline(sortBy.getSortBy()));
+            sortItemHandler.accept(sortBy);
+            sortByList.stream().filter(sortByItem -> !sortByItem.getSortBy().equals(sortBy.getSortBy()))
+                    .forEach(sortItemHandler);
+
+        } else {
+            //构造默认的排序
+            sortByList.forEach(sortItemHandler);
         }
 
     }
