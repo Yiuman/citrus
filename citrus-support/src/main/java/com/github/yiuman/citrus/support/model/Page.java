@@ -58,13 +58,13 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     /**
      * 记录执行器，每次获取记录前，则会执行此执行器进行处理
      */
-    private List<FieldFunction<T, ?>> recordFunctions = new ArrayList<>();
+    private final List<FieldFunction<T, ?>> recordFunctions = new ArrayList<>();
 
     /**
      * 事件执行处理器
      * 某些事件可能与记录相关
      */
-    private List<Function<T, Button>> actionFunctions = new ArrayList<>();
+    private final List<Function<T, Button>> actionFunctions = new ArrayList<>();
 
     /**
      * 对话框（新增、编辑页面的定义）
@@ -136,13 +136,17 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
         return header;
     }
 
-    public void addHeader(String text, String field, boolean sortable) {
-        headers.add(new Header(text, field, sortable));
+    public Header addHeader(String text, String field, boolean sortable) {
+        Header header = new Header(text, field, sortable);
+        headers.add(header);
+        return header;
     }
 
-    public void addHeader(String text, String field, Function<T, Object> func) {
-        headers.add(new Header(text, field));
+    public Header addHeader(String text, String field, Function<T, Object> func) {
+        Header header = new Header(text, field);
+        headers.add(header);
         recordFunctions.add(new FieldFunction<>(field, func));
+        return header;
     }
 
     public void addCompositionHeader(List<Header> headerGroup, Function<T, Map<String, Object>> mapFunc) {

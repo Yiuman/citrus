@@ -23,7 +23,7 @@ import java.util.function.Function;
  */
 public abstract class BaseDtoService<E, K extends Serializable, D> implements CrudService<D, K> {
 
-    private Class<D> dtoClass = currentDtoClass();
+    private final Class<D> dtoClass = currentDtoClass();
 
     private final BaseService<E, K> ekBaseService = new BaseService<E, K>() {
 
@@ -126,6 +126,12 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
     @Override
     public D get(K key) {
         return entityToDto().apply(ekBaseService.get(key));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public D get(Wrapper<D> wrapper) {
+        return entityToDto().apply(getBaseMapper().selectOne((Wrapper<E>) wrapper));
     }
 
     @Override

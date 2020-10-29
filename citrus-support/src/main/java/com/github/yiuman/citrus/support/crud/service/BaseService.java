@@ -127,6 +127,11 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
     }
 
     @Override
+    public E get(Wrapper<E> wrapper) {
+        return getMapper().selectOne(wrapper);
+    }
+
+    @Override
     public List<E> list() {
         return getMapper().selectList(Wrappers.emptyWrapper());
     }

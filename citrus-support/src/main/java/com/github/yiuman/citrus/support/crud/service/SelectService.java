@@ -24,6 +24,14 @@ public interface SelectService<E, K> {
     E get(K key);
 
     /**
+     * 根据条件查询单个
+     *
+     * @param wrapper 查询条件
+     * @return 单个实体
+     */
+    E get(Wrapper<E> wrapper);
+
+    /**
      * 获取全部数据列表
      *
      * @return List

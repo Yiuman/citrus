@@ -145,6 +145,11 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     }
 
     @Override
+    public E get(Wrapper<E> wrapper) {
+        return ekBaseService.get(wrapper);
+    }
+
+    @Override
     public List<E> list() {
         return ekBaseService.list();
     }

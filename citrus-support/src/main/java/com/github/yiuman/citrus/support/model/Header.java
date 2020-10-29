@@ -73,6 +73,11 @@ public class Header {
         this.align = align;
     }
 
+    public Header align(Align align) {
+        setAlign(align);
+        return this;
+    }
+
     public Boolean getSortable() {
         return sortable;
     }
@@ -81,12 +86,22 @@ public class Header {
         this.sortable = sortable;
     }
 
+    public Header sortable(Boolean sortable) {
+        setSortable(sortable);
+        return this;
+    }
+
     public Integer getWidth() {
         return width;
     }
 
     public void setWidth(Integer width) {
         this.width = width;
+    }
+
+    public Header width(Integer width) {
+        setWidth(width);
+        return this;
     }
 
     /**
