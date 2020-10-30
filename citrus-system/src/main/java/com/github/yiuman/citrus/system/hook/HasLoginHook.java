@@ -28,6 +28,6 @@ public class HasLoginHook implements AuthorizeHook {
             return false;
         }
 
-        return userService.getUser(authentication).isPresent();
+        return userService.getCurrentUser().isPresent();
     }
 }

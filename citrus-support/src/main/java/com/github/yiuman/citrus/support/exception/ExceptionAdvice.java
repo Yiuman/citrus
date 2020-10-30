@@ -30,7 +30,6 @@ public class ExceptionAdvice {
     /**
      * Rest异常处理
      */
-
     @ExceptionHandler(value = {RestException.class, ValidateException.class})
     public ResponseEntity<Void> exceptionHandler(RestException e) {
         log.error(e.getMessage());
