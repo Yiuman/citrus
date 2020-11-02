@@ -283,7 +283,7 @@ public final class WebUtils {
      * @param name     文件 名
      * @throws IOException IO异常
      */
-    public static void exportExcel(HttpServletResponse response, Page<?> page, String name) throws IOException, NoSuchFieldException {
+    public static void exportExcel(HttpServletResponse response, Page<?> page, String name) throws Exception {
         response.setContentType(APPLICATION_VND_MS_EXCEL);
         response.setCharacterEncoding("utf-8");
         // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系

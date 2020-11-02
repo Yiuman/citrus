@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -81,10 +80,24 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
         handleSortWrapper(queryWrapper, request);
 
         //这里需要调用了page方法查询后再进行设置ItemKey,原因是Service中的mapper为动态注入，调用查询才会初始化mapper构造表信息
-        Page<T> realPage = getService().page(page, queryWrapper);
-        realPage.setItemKey(getService().getKeyProperty());
+        Page<T> realPage = selectPage(page, queryWrapper);
+        if (StringUtils.isBlank(realPage.getItemKey())) {
+            realPage.setItemKey(getService().getKeyProperty());
+        }
+
         realPage.beforeShow();
         return realPage;
+    }
+
+    /**
+     * 根据分页条件，查询条件进行分页查询
+     *
+     * @param page         分页对象
+     * @param queryWrapper 查询条件
+     * @return 查询后的分页数据
+     */
+    protected Page<T> selectPage(Page<T> page, QueryWrapper<T> queryWrapper) {
+        return getService().page(page, queryWrapper);
     }
 
     @Override
@@ -104,7 +117,10 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
         handleSortWrapper(queryWrapper, request);
         Page<T> createPage = createPage();
         createPage.setSize(-1);
-        Page<T> resultPage = getService().page(createPage, queryWrapper);
+        Page<T> resultPage = selectPage(createPage, queryWrapper);
+        if (StringUtils.isBlank(resultPage.getItemKey())) {
+            resultPage.setItemKey(getService().getKeyProperty());
+        }
         resultPage.setItemKey(getService().getKeyProperty());
         WebUtils.exportExcel(response, resultPage, fileName);
     }
@@ -175,7 +191,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
      * @throws Exception 绑定数据时发生的异常
      */
     protected void handleSortWrapper(QueryWrapper<T> wrapper, HttpServletRequest request) throws Exception {
-        final Consumer< SortBy> sortItemHandler = (sortBy) -> wrapper
+        final Consumer<SortBy> sortItemHandler = (sortBy) -> wrapper
                 .orderBy(true, !sortBy.getSortDesc(), StringUtils.camelToUnderline(sortBy.getSortBy()));
 
         //拼接排序条件

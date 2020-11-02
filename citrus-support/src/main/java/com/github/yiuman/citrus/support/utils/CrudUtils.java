@@ -178,14 +178,12 @@ public final class CrudUtils {
     }
 
 
-    @SuppressWarnings("unchecked")
     public static <M extends BaseMapper<T>, T> M getCrudMapper(Class<T> entityClass) throws Exception {
-        return (M) getMapper(entityClass, CrudMapper.class);
+        return  getMapper(entityClass, CrudMapper.class);
     }
 
-    @SuppressWarnings("unchecked")
     public static <M extends BaseMapper<T>, T> M getTreeMapper(Class<T> entityClass) throws Exception {
-        return (M) getMapper(entityClass, TreeMapper.class);
+        return  getMapper(entityClass, TreeMapper.class);
     }
 
     /**
@@ -209,7 +207,6 @@ public final class CrudUtils {
         } catch (BindingException e) {
             sqlSessionTemplate.getConfiguration().addMapper(mapperClass);
             mapper = (M) sqlSessionTemplate.getMapper(mapperClass);
-//            TableInfoHelper.initTableInfo(sqlSessionTemplate.getConfiguration().,entityClass);
         }
         return mapper;
 

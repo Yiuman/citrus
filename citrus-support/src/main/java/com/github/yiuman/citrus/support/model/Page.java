@@ -21,6 +21,11 @@ import java.util.stream.Collectors;
 public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> {
 
     /**
+     * 是否可选
+     */
+    private Boolean hasSelect = true;
+
+    /**
      * 主键属性名称
      */
     private String itemKey;
@@ -72,6 +77,14 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     private DialogView dialogView;
 
     public Page() {
+    }
+
+    public Boolean getHasSelect() {
+        return hasSelect;
+    }
+
+    public void setHasSelect(Boolean hasSelect) {
+        this.hasSelect = hasSelect;
     }
 
     public String getItemKey() {
@@ -201,13 +214,17 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
 
     public void beforeShow() {
         initFunctionalRecords();
-        actionFunctions.forEach(func -> getRecords().forEach(record -> actions.add(func.apply(record))));
+        initFunctionalActions();
     }
 
     public void initFunctionalRecords() {
         if (!StringUtils.isEmpty(itemKey)) {
             getRecords().forEach(this::initSingleFunctionalRecord);
         }
+    }
+
+    public void initFunctionalActions() {
+        actionFunctions.forEach(func -> getRecords().forEach(record -> actions.add(func.apply(record))));
     }
 
     @SuppressWarnings("unchecked")
