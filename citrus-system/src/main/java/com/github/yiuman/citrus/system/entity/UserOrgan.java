@@ -16,6 +16,8 @@ import lombok.Data;
 public class UserOrgan {
 
     @TableId
+    private String id;
+
     private Long userId;
 
     @TableField(exist = false)
@@ -30,5 +32,9 @@ public class UserOrgan {
     public UserOrgan(Long userId, Long organId) {
         this.userId = userId;
         this.organId = organId;
+    }
+
+    public String getId() {
+        return String.format("%s-%s",userId,organId);
     }
 }

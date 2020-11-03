@@ -32,7 +32,6 @@ public class UserDto {
     @ExcelIgnore
     private String password;
 
-    @NotBlank
     private String email;
 
     @ExcelIgnore
@@ -46,6 +45,8 @@ public class UserDto {
      */
     @JsonSerialize(contentUsing = ToStringSerializer.class)
     private List<Long> organIds;
+
+    private String uuid;
 
     private Integer version;
 

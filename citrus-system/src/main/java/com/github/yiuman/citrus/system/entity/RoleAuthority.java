@@ -16,6 +16,8 @@ import lombok.Data;
 public class RoleAuthority {
 
     @TableId
+    private String id;
+
     private Long roleId;
 
     @TableField(exist = false)
@@ -29,5 +31,9 @@ public class RoleAuthority {
     public RoleAuthority(Long roleId, Long authorityId) {
         this.roleId = roleId;
         this.authorityId = authorityId;
+    }
+
+    public String getId() {
+        return String.format("%s-%s",role,authorityId);
     }
 }

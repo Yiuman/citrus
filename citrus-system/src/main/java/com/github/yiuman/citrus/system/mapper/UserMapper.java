@@ -7,6 +7,7 @@ import com.github.yiuman.citrus.system.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
  * @date 2020/3/23
  */
 @Mapper
+@Repository
 public interface UserMapper extends BaseMapper<User> {
 
     @Select("select * from sys_user user where user.uuid = #{uuid}")

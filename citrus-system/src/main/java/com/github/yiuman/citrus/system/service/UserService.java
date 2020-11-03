@@ -21,10 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -75,6 +72,7 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
             //若是新增则添加默认密码及默认版本号
             entity.setPassword(passwordEncoder.encode("123456"));
             entity.setVersion(1);
+            entity.setUuid(UUID.randomUUID().toString().replace("-",""));
         }
 
         return true;

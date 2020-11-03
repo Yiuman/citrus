@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.system.authticate;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yiuman.citrus.security.authenticate.AuthenticateService;
 import com.github.yiuman.citrus.security.verify.VerificationProcessor;
 import com.github.yiuman.citrus.security.verify.captcha.Captcha;
@@ -73,6 +74,10 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService, Use
                 .orElseThrow(() -> new UsernameNotFoundException("找不到用户"));
         if (!passwordEncoder.matches(passwordLoginEntity.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("用户名或密码错误");
+        }
+
+        if(StringUtils.isBlank(user.getUuid())){
+            throw new BadCredentialsException("此用户目前不存在密匙");
         }
 
         saveUserOnlineInfo(user);

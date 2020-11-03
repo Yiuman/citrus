@@ -5,6 +5,7 @@ import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.entity.UserOrgan;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
  * @date 2020/7/24
  */
 @Mapper
+@Repository
 public interface UserOrganMapper extends CrudMapper<UserOrgan> {
 
     @Select("select * from sys_organ so, sys_user_organ suo where so.organ_id = suo.organ_id and suo.user_id = #{userId}")

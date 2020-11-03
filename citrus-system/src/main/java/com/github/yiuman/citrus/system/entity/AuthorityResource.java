@@ -23,10 +23,12 @@ import java.util.List;
 @NoArgsConstructor
 public class AuthorityResource {
 
+    @TableId
+    private String id;
+
     /**
      * 关联的权限实体ID
      */
-    @TableId
     @JsonSerialize(using = ToStringSerializer.class)
     private Long authorityId;
 
@@ -62,4 +64,7 @@ public class AuthorityResource {
     @TableField(exist = false)
     private List<AuthorityResource> operations;
 
+    public String getId() {
+        return String.format("%s-%s", authorityId, resourceId);
+    }
 }

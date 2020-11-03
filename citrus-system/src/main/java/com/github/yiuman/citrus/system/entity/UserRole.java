@@ -17,6 +17,8 @@ import lombok.Data;
 public class UserRole {
 
     @TableId
+    private String id;
+
     private Long userId;
 
     private Long roleId;
@@ -29,5 +31,10 @@ public class UserRole {
     public UserRole(Long userId, Long roleId) {
         this.userId = userId;
         this.roleId = roleId;
+    }
+
+
+    public String getId() {
+        return String.format("%s-%s-%s",userId,roleId,organId);
     }
 }

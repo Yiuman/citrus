@@ -6,6 +6,7 @@ import com.github.yiuman.citrus.system.entity.Role;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Set;
@@ -15,6 +16,7 @@ import java.util.Set;
  * @date 2020/3/31
  */
 @Mapper
+@Repository
 public interface RoleMapper extends BaseMapper<Role> {
 
     /**

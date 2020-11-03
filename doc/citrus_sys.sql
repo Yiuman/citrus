@@ -182,11 +182,13 @@ create index IX_SYS_AUTHORITY_AUTHORITYNAME on sys_authority (authority_name);
 DROP TABLE IF EXISTS `sys_auth_resource`;
 CREATE TABLE `sys_auth_resource`
 (
+
   `authority_id` bigint(20) NOT NULL COMMENT '权限ID',
   `resource_id`  bigint(20) NOT NULL COMMENT '资源ID',
   `scope_id`     bigint(20) COMMENT '数据范围ID',
   `object_id`    bigint(20) COMMENT '关联的对象，如果资源类型为"操作"，即关联的对象为该"操作对应的资源ID 例如 菜单与新增、删除等操作，此实体中的resourceId为操作类型的ID，即此objectId为此操作对应的菜单',
   `type`         int(2) COMMENT '资源类型，菜单为0；操作为2',
+  `id`           varchar(1000) COMMENT '逻辑ID'
   PRIMARY KEY (`authority_id`, `resource_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
@@ -200,6 +202,7 @@ CREATE TABLE `sys_user_role`
 (
   `user_id`  bigint(20) NOT NULL COMMENT '用户ID',
   `organ_id` bigint(20) NOT NULL COMMENT '组织ID',
+  `id`       varchar(1000) COMMENT '逻辑ID'
   PRIMARY KEY (`user_id`, `organ_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
@@ -214,6 +217,7 @@ CREATE TABLE `sys_user_role`
   `user_id`  bigint(20) NOT NULL COMMENT '用户ID',
   `role_id`  bigint(20) NOT NULL COMMENT '角色ID',
   `organ_id` bigint(20) NOT NULL COMMENT '组织ID',
+  `id`       varchar(1000) COMMENT '逻辑ID'
   PRIMARY KEY (`user_id`, `role_id`, `organ_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
@@ -227,6 +231,7 @@ CREATE TABLE `sys_role_auth`
 (
   `role_id`      bigint(20) NOT NULL COMMENT '角色ID',
   `authority_id` bigint(20) NOT NULL COMMENT '权限ID',
+   `id`           varchar(1000) COMMENT '逻辑ID'
   PRIMARY KEY (`role_id`, `authority_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8

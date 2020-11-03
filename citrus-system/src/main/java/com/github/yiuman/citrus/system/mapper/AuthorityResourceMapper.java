@@ -6,6 +6,7 @@ import com.github.yiuman.citrus.system.entity.AuthorityResource;
 import com.github.yiuman.citrus.system.entity.Resource;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Repository;
 
 import java.util.Set;
 
@@ -16,6 +17,7 @@ import java.util.Set;
  * @date 2020/4/11
  */
 @Mapper
+@Repository
 public interface AuthorityResourceMapper extends CrudMapper<AuthorityResource> {
 
     /**
