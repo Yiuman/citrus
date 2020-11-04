@@ -18,6 +18,7 @@ import java.util.List;
 @Data
 public class UserDto {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
 
     private String loginId;

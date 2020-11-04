@@ -23,6 +23,8 @@ import java.util.Optional;
 @Slf4j
 public class RbacHook implements AuthorizeServiceHook {
 
+    public static final String CURRENT_RESOURCE_ATTR = "CURRENT_RESOURCE_ID";
+
     private final RbacMixinService mixinService;
 
     private final AccessLogService accessLogService;
@@ -58,6 +60,8 @@ public class RbacHook implements AuthorizeServiceHook {
             if (resource == null) {
                 return true;
             }
+
+            httpServletRequest.setAttribute(CURRENT_RESOURCE_ATTR, resource);
 
             return user.filter(value -> mixinService.hasPermission(value, resource)).isPresent();
 

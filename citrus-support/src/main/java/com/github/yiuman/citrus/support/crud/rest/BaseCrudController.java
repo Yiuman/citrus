@@ -5,6 +5,8 @@ import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.ValidateUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.aop.framework.AopContext;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 基础的RestfulCrud控制器
@@ -26,9 +30,11 @@ import java.util.List;
 @Slf4j
 public abstract class BaseCrudController<T, K extends Serializable> extends BaseCrudRestful<T, K> {
 
+    @SuppressWarnings("unchecked")
     @GetMapping
     public ResponseEntity<Page<T>> getPageList(HttpServletRequest request) throws Exception {
-        return ResponseEntity.ok(page(request));
+        BaseCrudController<T,K> currentProxy = Optional.ofNullable((BaseCrudController<T, K>) AopContext.currentProxy()).orElse(this);
+        return ResponseEntity.ok(currentProxy.page(request));
     }
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})

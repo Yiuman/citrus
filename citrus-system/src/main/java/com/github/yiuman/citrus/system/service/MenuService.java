@@ -3,9 +3,10 @@ package com.github.yiuman.citrus.system.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
-import com.github.yiuman.citrus.support.crud.rest.CrudRestful;
 import com.github.yiuman.citrus.support.crud.rest.Operations;
+import com.github.yiuman.citrus.support.crud.rest.QueryRestful;
 import com.github.yiuman.citrus.support.crud.service.BaseSimpleTreeService;
 import com.github.yiuman.citrus.system.dto.ResourceDto;
 import com.github.yiuman.citrus.system.entity.Resource;
@@ -73,27 +74,25 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
         boolean isCrudRest = false;
         boolean isAssignableFromTreeRest = false;
         //若是CrudRestful则保存操作资源，则增删改查资源
-        Map<String, CrudRestful> crudRestfuls = applicationContext.getBeansOfType(CrudRestful.class);
-        Set<Map.Entry<String, CrudRestful>> entries = crudRestfuls.entrySet();
-        for (Map.Entry<String, CrudRestful> entry : entries) {
-            Class<? extends CrudRestful> restBeanClass = (Class<? extends CrudRestful>) AopUtils.getTargetClass(entry.getValue());
+        Map<String, QueryRestful> crudRestfulMap = applicationContext.getBeansOfType(QueryRestful.class);
+        Set<Map.Entry<String, QueryRestful>> entries = crudRestfulMap.entrySet();
+        for (Map.Entry<String, QueryRestful> entry : entries) {
+            Class<? extends QueryRestful> restBeanClass = (Class<? extends QueryRestful>) AopUtils.getTargetClass(entry.getValue());
             RequestMapping annotation = restBeanClass.getAnnotation(RequestMapping.class);
             if (annotation != null && Arrays.asList(annotation.value()).contains(entity.getPath())) {
-                isCrudRest = true;
-                isAssignableFromTreeRest = restBeanClass.isAssignableFrom(BaseTreeController.class);
+                createQueryDefaultResource(entity);
+                isCrudRest = BaseCrudController.class.isAssignableFrom(restBeanClass);
+                isAssignableFromTreeRest = BaseTreeController.class.isAssignableFrom(restBeanClass);
                 break;
             }
         }
 
         if (isCrudRest) {
-            resourceService.remove(Wrappers.<ResourceDto>query().eq("parent_id", entity.getId()));
             createCrudDefaultResource(entity);
-
-            if (isAssignableFromTreeRest) {
-                createTreeDefaultResource(entity);
-            }
         }
-
+        if (isAssignableFromTreeRest) {
+            createTreeDefaultResource(entity);
+        }
     }
 
     /**
@@ -114,13 +113,20 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
     private void createCrudDefaultResource(Resource menu) {
         final Integer resourceType = 2;
         resourceService.batchSave(Arrays.asList(
-                new ResourceDto("列表", resourceType, menu.getId(), menu.getPath(), HttpMethod.GET.name()),
-                new ResourceDto("保存", resourceType, menu.getId(), menu.getPath(), HttpMethod.POST.name()),
-                new ResourceDto("查看", resourceType, menu.getId(), menu.getPath() + Operations.GET, HttpMethod.GET.name()),
-                new ResourceDto("删除", resourceType, menu.getId(), menu.getPath() + Operations.DELETE, HttpMethod.DELETE.name()),
-                new ResourceDto("批量删除", resourceType, menu.getId(), menu.getPath() + Operations.BATCH_DELETE, HttpMethod.POST.name()),
-                new ResourceDto("导入", resourceType, menu.getId(), menu.getPath() + Operations.IMPORT, HttpMethod.POST.name()),
-                new ResourceDto("导出", resourceType, menu.getId(), menu.getPath() + Operations.EXPORT, HttpMethod.GET.name())
+                new ResourceDto("编辑", resourceType, menu.getId(), menu.getPath(), HttpMethod.POST.name(), Operations.Code.EDIT),
+                new ResourceDto("删除", resourceType, menu.getId(), menu.getPath() + Operations.DELETE, HttpMethod.DELETE.name(), Operations.Code.DELETE),
+                new ResourceDto("批量删除", resourceType, menu.getId(), menu.getPath() + Operations.BATCH_DELETE, HttpMethod.POST.name(), Operations.Code.BATCH_DELETE),
+                new ResourceDto("导入", resourceType, menu.getId(), menu.getPath() + Operations.IMPORT, HttpMethod.POST.name(), Operations.Code.IMPORT)
+        ));
+    }
+
+    private void createQueryDefaultResource(Resource menu) {
+        resourceService.remove(Wrappers.<ResourceDto>query().eq("parent_id", menu.getId()));
+        final Integer resourceType = 2;
+        resourceService.batchSave(Arrays.asList(
+                new ResourceDto("列表", resourceType, menu.getId(), menu.getPath(), HttpMethod.GET.name(), Operations.Code.LIST),
+                new ResourceDto("查看", resourceType, menu.getId(), menu.getPath() + Operations.GET, HttpMethod.GET.name(), Operations.Code.GET),
+                new ResourceDto("导出", resourceType, menu.getId(), menu.getPath() + Operations.EXPORT, HttpMethod.GET.name(), Operations.Code.EXPORT)
         ));
     }
 
@@ -134,7 +140,7 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
         resourceService.batchSave(Arrays.asList(
                 new ResourceDto("加载树", resourceType, menu.getId(), menu.getPath() + Operations.Tree.TREE, HttpMethod.GET.name()),
                 new ResourceDto("加载子节点", resourceType, menu.getId(), menu.getPath() + Operations.Tree.GET_BY_PARENT, HttpMethod.GET.name()),
-                new ResourceDto("移动", resourceType, menu.getId(), menu.getPath() + Operations.Tree.MOVE, HttpMethod.POST.name()),
+                new ResourceDto("移动", resourceType, menu.getId(), menu.getPath() + Operations.Tree.MOVE, HttpMethod.POST.name(), Operations.Code.MOVE),
                 new ResourceDto("初始化", resourceType, menu.getId(), menu.getPath() + Operations.Tree.INIT, HttpMethod.POST.name())
         ));
     }

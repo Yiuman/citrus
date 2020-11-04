@@ -47,11 +47,22 @@ public class ResourceDto {
      */
     private String operation;
 
+    private String resourceCode;
+
     public ResourceDto(@NotBlank String resourceName, Integer type, Long parentId, String path, String operation) {
         this.resourceName = resourceName;
         this.type = type;
         this.parentId = parentId;
         this.path = path;
         this.operation = operation;
+    }
+
+    public ResourceDto(@NotBlank String resourceName, Integer type, Long parentId, String path, String operation, String resourceCode) {
+        this.resourceName = resourceName;
+        this.type = type;
+        this.parentId = parentId;
+        this.path = path;
+        this.operation = operation;
+        this.resourceCode = resourceCode;
     }
 }

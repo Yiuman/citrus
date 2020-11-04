@@ -59,4 +59,23 @@ public interface Operations {
 
     }
 
+    interface Code{
+
+        String LIST = "list";
+
+        String EDIT = "edit";
+
+        String GET = "get";
+
+        String DELETE = "delete";
+
+        String BATCH_DELETE = "batchDelete";
+
+        String IMPORT = "import";
+
+        String EXPORT = "export";
+
+        String MOVE = "move";
+    }
+
 }
