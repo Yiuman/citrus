@@ -63,6 +63,8 @@ public interface Operations {
 
         String LIST = "list";
 
+        String ADD = "add";
+
         String EDIT = "edit";
 
         String GET = "get";

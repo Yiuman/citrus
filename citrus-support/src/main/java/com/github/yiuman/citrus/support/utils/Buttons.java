@@ -11,19 +11,19 @@ import java.util.List;
  */
 public final class Buttons {
 
-    private static Button ADD = new Button("新增", "add", "primary", "plus");
+    private static final Button ADD = new Button("新增", "add", "primary", "plus");
 
-    private static Button EDIT = new Button("编辑", "edit", "#81b90c", "pencil");
+    private static final Button EDIT = new Button("编辑", "edit", "#81b90c", "pencil");
 
-    private static Button DELETE = new Button("删除", "delete", "error", "delete-circle");
+    private static final Button DELETE = new Button("删除", "delete", "error", "delete-circle");
 
-    private static Button DELETE_BATCH = new Button("删除", "batchDelete", "error", "trash-can");
+    private static final Button DELETE_BATCH = new Button("删除", "batchDelete", "error", "trash-can");
 
-    private static Button IMPORT = new Button("导入", "import", "", "file-upload");
+    private static final Button IMPORT = new Button("导入", "import", "", "file-upload");
 
-    private static Button EXPORT = new Button("导出", "export", "", "download");
+    private static final Button EXPORT = new Button("导出", "export", "", "download");
 
-    private static Button MORE = new Button("更多操作", "primary", "chevron-down", IMPORT, EXPORT, DELETE_BATCH);
+    private static final Button MORE = new Button("更多操作", "primary", "chevron-down", IMPORT, EXPORT, DELETE_BATCH);
 
     private Buttons() {
     }

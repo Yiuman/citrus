@@ -24,17 +24,17 @@ import java.util.stream.Collectors;
  */
 public final class ConvertUtils {
 
-    private final static ExpressionParser expressionParser = new SpelExpressionParser();
+    private final static ExpressionParser EXPRESSION_PARSER = new SpelExpressionParser();
 
     private ConvertUtils() {
     }
 
     public static <T> T parseEl(String el, Class<T> clazz) {
-        return expressionParser.parseExpression(el).getValue(clazz);
+        return EXPRESSION_PARSER.parseExpression(el).getValue(clazz);
     }
 
     public static Object parseEl(String el) {
-        return expressionParser.parseExpression(el).getValue();
+        return EXPRESSION_PARSER.parseExpression(el).getValue();
     }
 
     public static <S, T> T convert(Class<T> clazz, S source) throws Exception {

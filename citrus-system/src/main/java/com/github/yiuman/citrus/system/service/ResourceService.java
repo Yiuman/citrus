@@ -5,6 +5,9 @@ import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.ResourceDto;
 import com.github.yiuman.citrus.system.entity.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 /**
  * 资源逻辑服务类
@@ -19,7 +22,8 @@ public class ResourceService extends BaseDtoService<Resource, Long, ResourceDto>
     }
 
     public Resource selectByUri(String requestUri, String method) {
-        return getBaseMapper().selectOne(Wrappers.<Resource>query().eq("path", requestUri).eq("operation", method));
+        List<Resource> resources = getBaseMapper().selectList(Wrappers.<Resource>query().eq("path", requestUri).eq("operation", method));
+        return CollectionUtils.isEmpty(resources)?null:resources.get(0);
     }
 
     public Resource selectByCode(String code) {

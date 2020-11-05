@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 菜单树逻辑层
@@ -71,28 +72,31 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void afterSave(Resource entity) {
-        boolean isCrudRest = false;
-        boolean isAssignableFromTreeRest = false;
         //若是CrudRestful则保存操作资源，则增删改查资源
         Map<String, QueryRestful> crudRestfulMap = applicationContext.getBeansOfType(QueryRestful.class);
-        Set<Map.Entry<String, QueryRestful>> entries = crudRestfulMap.entrySet();
-        for (Map.Entry<String, QueryRestful> entry : entries) {
-            Class<? extends QueryRestful> restBeanClass = (Class<? extends QueryRestful>) AopUtils.getTargetClass(entry.getValue());
-            RequestMapping annotation = restBeanClass.getAnnotation(RequestMapping.class);
-            if (annotation != null && Arrays.asList(annotation.value()).contains(entity.getPath())) {
-                createQueryDefaultResource(entity);
-                isCrudRest = BaseCrudController.class.isAssignableFrom(restBeanClass);
-                isAssignableFromTreeRest = BaseTreeController.class.isAssignableFrom(restBeanClass);
-                break;
+        final AtomicReference<Class<? extends QueryRestful>> targetClass = new AtomicReference<>();
+        crudRestfulMap.values().parallelStream().forEach(item -> {
+            Class<? extends QueryRestful> restClass = (Class<? extends QueryRestful>) AopUtils.getTargetClass(item);
+            RequestMapping annotation = restClass.getAnnotation(RequestMapping.class);
+            boolean isMapping = annotation != null && Arrays.asList(annotation.value()).contains(entity.getPath());
+            if (isMapping) {
+                targetClass.set(restClass);
+            }
+        });
+        Class<? extends QueryRestful> restBeanClass = targetClass.get();
+        if (Objects.nonNull(restBeanClass)) {
+            resourceService.remove(Wrappers.<ResourceDto>query().eq("parent_id", entity.getResourceId()));
+            createQueryDefaultResource(entity);
+
+            if (BaseCrudController.class.isAssignableFrom(restBeanClass)) {
+                createCrudDefaultResource(entity);
+            }
+
+            if (BaseTreeController.class.isAssignableFrom(restBeanClass)) {
+                createTreeDefaultResource(entity);
             }
         }
 
-        if (isCrudRest) {
-            createCrudDefaultResource(entity);
-        }
-        if (isAssignableFromTreeRest) {
-            createTreeDefaultResource(entity);
-        }
     }
 
     /**
@@ -113,6 +117,7 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
     private void createCrudDefaultResource(Resource menu) {
         final Integer resourceType = 2;
         resourceService.batchSave(Arrays.asList(
+                new ResourceDto("新增", resourceType, menu.getId(), menu.getPath(), HttpMethod.POST.name(), Operations.Code.ADD),
                 new ResourceDto("编辑", resourceType, menu.getId(), menu.getPath(), HttpMethod.POST.name(), Operations.Code.EDIT),
                 new ResourceDto("删除", resourceType, menu.getId(), menu.getPath() + Operations.DELETE, HttpMethod.DELETE.name(), Operations.Code.DELETE),
                 new ResourceDto("批量删除", resourceType, menu.getId(), menu.getPath() + Operations.BATCH_DELETE, HttpMethod.POST.name(), Operations.Code.BATCH_DELETE),
@@ -121,7 +126,7 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
     }
 
     private void createQueryDefaultResource(Resource menu) {
-        resourceService.remove(Wrappers.<ResourceDto>query().eq("parent_id", menu.getId()));
+
         final Integer resourceType = 2;
         resourceService.batchSave(Arrays.asList(
                 new ResourceDto("列表", resourceType, menu.getId(), menu.getPath(), HttpMethod.GET.name(), Operations.Code.LIST),
