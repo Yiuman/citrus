@@ -7,6 +7,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 /**
  * 基于主键的Service
@@ -35,7 +36,7 @@ public interface KeyBasedService<E, K extends Serializable> extends EntityTypeSe
     @SuppressWarnings("unchecked")
     default K getKey(E entity) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityType());
-        return (K) ReflectionKit.getMethodValue(getEntityType(), entity, tableInfo.getKeyProperty());
+        return Objects.nonNull(tableInfo) ? (K) ReflectionKit.getMethodValue(getEntityType(), entity, tableInfo.getKeyProperty()) : null;
     }
 
     /**
@@ -57,7 +58,8 @@ public interface KeyBasedService<E, K extends Serializable> extends EntityTypeSe
      * @return 主键的属性名称 即TableId对应的Field
      */
     default String getKeyProperty() {
-        return TableInfoHelper.getTableInfo(getEntityType()).getKeyProperty();
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityType());
+        return Objects.nonNull(tableInfo) ? tableInfo.getKeyProperty() : null;
     }
 
     /**
@@ -66,7 +68,8 @@ public interface KeyBasedService<E, K extends Serializable> extends EntityTypeSe
      * @return 主键列名 即TableId
      */
     default String getKeyColumn() {
-        return TableInfoHelper.getTableInfo(getEntityType()).getKeyColumn();
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityType());
+        return Objects.nonNull(tableInfo) ? tableInfo.getKeyColumn() : null;
     }
 
 }
