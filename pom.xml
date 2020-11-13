@@ -6,7 +6,7 @@
 
     <groupId>com.github.yiuman</groupId>
     <artifactId>citrus</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7</version>
     <name>citrus</name>
     <description>springboot-开发脚手架</description>
     <url>https://github.com/Yiuman/citrus</url>
@@ -45,13 +45,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.jdk>${java.version}</project.build.jdk>
         <spring-boot.version>2.3.2.RELEASE</spring-boot.version>
         <guava.version>28.2-jre</guava.version>
         <mybatis.plus.version>3.3.1</mybatis.plus.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <java.version>1.8</java.version>
-        <citrus.security.version>0.0.6</citrus.security.version>
+        <citrus.security.version>0.0.7</citrus.security.version>
         <alibaba.easyexcel.version>2.1.6</alibaba.easyexcel.version>
         <jjwt.version>0.11.0</jjwt.version>
         <commons.io.version>2.6</commons.io.version>
@@ -116,6 +117,17 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- compile-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>${project.build.jdk}</source>
+                    <target>${project.build.jdk}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
             </plugin>
 
             <!-- Javadoc -->

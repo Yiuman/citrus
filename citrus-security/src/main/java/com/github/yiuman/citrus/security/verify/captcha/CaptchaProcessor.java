@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.security.verify.captcha;
 import com.github.yiuman.citrus.security.verify.AbstractStringVerificationProcessor;
 import com.github.yiuman.citrus.security.verify.VerificationRepository;
 import com.github.yiuman.citrus.security.verify.VerifyProperties;
+import org.springframework.http.MediaType;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +30,8 @@ public class CaptchaProcessor extends AbstractStringVerificationProcessor<Captch
     @Override
     public void send(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
         Captcha captcha = generate(httpServletRequest);
-        verificationRepository.save(httpServletRequest,httpServletResponse, captcha);
+        verificationRepository.save(httpServletRequest, httpServletResponse, captcha);
+        httpServletResponse.setContentType(MediaType.IMAGE_JPEG_VALUE);
         ImageIO.write(captcha.getImage(), "JPEG", httpServletResponse.getOutputStream());
     }
 }

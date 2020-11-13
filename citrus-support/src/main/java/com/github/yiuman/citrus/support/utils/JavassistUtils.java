@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.support.utils;
 
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.LoaderClassPath;
 
 import java.util.StringTokenizer;
 
@@ -37,6 +38,8 @@ public class JavassistUtils {
     }
 
     static {
+        //添加当前线程的ClassPath
+        POOL.appendClassPath(new LoaderClassPath(Thread.currentThread().getContextClassLoader()));
         StringTokenizer token = new StringTokenizer(System.getProperty("java.class.path"), System.getProperty("path.separator"));
 
         while (token.hasMoreElements()) {
@@ -46,6 +49,7 @@ public class JavassistUtils {
             } catch (Throwable ignore) {
             }
         }
+
 
     }
 }
