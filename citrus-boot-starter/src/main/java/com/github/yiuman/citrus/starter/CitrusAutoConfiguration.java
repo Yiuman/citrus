@@ -62,8 +62,14 @@ public class CitrusAutoConfiguration {
 
         private final AccessDeniedHandler accessDeniedHandler;
 
+        /**
+         * JWT安全配置适配器，主要是将过滤器放入Security过滤链
+         */
         private final JwtSecurityConfigurerAdapter jwtSecurityConfigurerAdapter;
 
+        /**
+         * 授权配置管理器，用与解耦业务与Security的安全配置
+         */
         private final AuthorizeConfigManager authorizeConfigManager;
 
         public StatelessSecurityConfiguration(AuthenticationEntryPoint authenticationEntryPoint, JwtSecurityConfigurerAdapter jwtSecurityConfigurerAdapter, AuthorizeConfigManager authorizeConfigManager, AccessDeniedHandler accessDeniedHandler) {

@@ -20,7 +20,7 @@ public final class VerifyUtils {
      */
     public static final String VERIFY_CODES = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     /**
      * 使用系统默认字符源生成验证码

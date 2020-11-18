@@ -28,12 +28,22 @@ public class DialogView {
     private boolean fullscreen;
 
     /**
+     * 编辑时是否重新获取数据项
+     * 默认用列表数据项
+     */
+    private boolean reGet;
+
+    /**
      * 编辑的字段
      * Key：为字段名，Value为对应的组件
      */
     private List<EditField> editFields = new ArrayList<>();
 
     public DialogView() {
+    }
+
+    public DialogView(boolean reGet) {
+        setReGet(reGet);
     }
 
     public DialogView(String title) {
@@ -74,6 +84,14 @@ public class DialogView {
 
     public void setFullscreen(boolean fullscreen) {
         this.fullscreen = fullscreen;
+    }
+
+    public boolean isReGet() {
+        return reGet;
+    }
+
+    public void setReGet(boolean reGet) {
+        this.reGet = reGet;
     }
 
     public List<EditField> getEditFields() {

@@ -26,6 +26,22 @@ public class AbstractStringVerification implements Verification<String> {
         this.expireTime = expireTime;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public long getExpireTime() {
+        return expireTime;
+    }
+
+    public void setExpireTime(long expireTime) {
+        this.expireTime = expireTime;
+    }
+
     @Override
     public String getValue() {
         return code;
