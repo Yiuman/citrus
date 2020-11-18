@@ -7,7 +7,9 @@
 
 基于SpringBoot 2.3.2 + Mybatis-Plus + SpringSecurity + JWT 的前后分离后台管理系统
 
-**前端地址**：https://github.com/Yiuman/citrus-vuetify
+**前端仓库地址**：https://github.com/Yiuman/citrus-vuetify
+
+[LiveDemo](http://42.192.95.146/#/login)
 
 
 
@@ -46,7 +48,7 @@
     </dependency>
     ```
 
-2. 下载 https://github.com/Yiuman/citrus/tree/master/doc  中的sql文件，创建你的数据并执行
+2. 下载 https://github.com/Yiuman/citrus/tree/master/sql  中的sql文件，创建你的数据并执行
 
 3. 在`application.yml`中配置数据库及应用信息
 
@@ -77,6 +79,10 @@
 2. 自行修改项目配置与代码
 
 3. 启动项目
+
+
+
+
 
 
 

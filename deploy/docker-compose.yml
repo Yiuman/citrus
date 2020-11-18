@@ -1,0 +1,42 @@
+#构建单体前后端
+version: "3.3"
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql-local
+    restart: always
+    volumes:
+      # 挂载数据卷
+      - /home/docker_space/mysql_volume:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: yourpassword
+      MYSQL_USER: test
+      MYSQL_PASS: yourpassword
+    ports:
+      - "3306:3306"
+
+  backend:
+    #    没镜像的情况下使用
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: citrus-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "mysql"
+
+  front:
+    image: nginx
+    container_name: citrus-front
+    restart: always
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf #挂载nginx配置
+      - ./dist:/usr/share/nginx/html/ #挂载项目
+    ports:
+      - "80:80"
+    depends_on:
+      - "backend"
+#运行
+#    docker-compose -f ./docker-compose.yml up
