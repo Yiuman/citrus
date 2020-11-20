@@ -19,6 +19,12 @@ import java.util.List;
 @Repository
 public interface UserRoleMapper extends CrudMapper<UserRole> {
 
+    /**
+     * 根据ID获取用户的角色
+     *
+     * @param userId 用户ID
+     * @return 角色集合
+     */
     @Select("select * from sys_role sr , sys_user_role sur where sr.role_id = sur.role_id and sur.user_id = #{userId}")
     List<Role> getRolesByUserId(Long userId);
 }

@@ -6,7 +6,6 @@ import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.ValidateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.AopContext;
-import org.springframework.aop.support.AopUtils;
 import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
@@ -18,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -33,7 +31,7 @@ public abstract class BaseCrudController<T, K extends Serializable> extends Base
     @SuppressWarnings("unchecked")
     @GetMapping
     public ResponseEntity<Page<T>> getPageList(HttpServletRequest request) throws Exception {
-        BaseCrudController<T,K> currentProxy = Optional.ofNullable((BaseCrudController<T, K>) AopContext.currentProxy()).orElse(this);
+        BaseCrudController<T, K> currentProxy = Optional.ofNullable((BaseCrudController<T, K>) AopContext.currentProxy()).orElse(this);
         return ResponseEntity.ok(currentProxy.page(request));
     }
 

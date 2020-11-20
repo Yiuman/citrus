@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.support.cache;
 
+import com.github.yiuman.citrus.support.utils.ThreadUtils;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -54,7 +56,7 @@ public class InMemoryCache<K, V> extends MapCache<K, V> {
             if (sync) {
                 init.accept(inMemoryCache.get());
             } else {
-                new Thread(() -> init.accept(inMemoryCache.get())).start();
+                ThreadUtils.executor(() -> init.accept(inMemoryCache.get()));
             }
         }
         return inMemoryCache.get();

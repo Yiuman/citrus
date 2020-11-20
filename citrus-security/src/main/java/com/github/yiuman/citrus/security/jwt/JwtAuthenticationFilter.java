@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.security.jwt;
 
 import com.github.yiuman.citrus.security.authenticate.AuthenticateProcessor;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -27,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         authenticateProcessor
                 .resolve(request)
                 .ifPresent(authentication -> SecurityContextHolder.getContext().setAuthentication(authentication));

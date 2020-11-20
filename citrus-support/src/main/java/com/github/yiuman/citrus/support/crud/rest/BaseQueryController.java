@@ -19,7 +19,7 @@ import java.util.Optional;
  */
 public abstract class BaseQueryController<T, K extends Serializable> extends BaseQueryRestful<T, K> {
 
-    @SuppressWarnings("unchekced")
+    @SuppressWarnings("unchecked")
     @GetMapping
     public ResponseEntity<Page<T>> getPageList(HttpServletRequest request) throws Exception {
         BaseQueryController<T,K> currentProxy = Optional.ofNullable((BaseQueryController<T, K>) AopContext.currentProxy()).orElse(this);

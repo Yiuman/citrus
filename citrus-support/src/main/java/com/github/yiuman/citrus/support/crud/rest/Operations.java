@@ -51,15 +51,15 @@ public interface Operations {
 
         String TREE = DEFAULT_PREFIX;
 
-        String MOVE = DEFAULT_PREFIX+"/move";
+        String MOVE = DEFAULT_PREFIX + "/move";
 
         String GET_BY_PARENT = DEFAULT_PREFIX + "/{parentKey}";
 
-        String INIT = DEFAULT_PREFIX+"/init";
+        String INIT = DEFAULT_PREFIX + "/init";
 
     }
 
-    interface Code{
+    interface Code {
 
         String LIST = "list";
 

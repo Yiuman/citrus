@@ -9,7 +9,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -28,7 +27,7 @@ public final class ValidateUtils {
     /**
      * 验证器
      */
-    private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
 
     /**
@@ -36,7 +35,7 @@ public final class ValidateUtils {
      */
     public static <T> ValidationResult validateEntity(T obj) {
         //解析校验结果
-        Set<ConstraintViolation<T>> validateSet = validator.validate(obj, Default.class);
+        Set<ConstraintViolation<T>> validateSet = VALIDATOR.validate(obj, Default.class);
         return buildValidationResult(validateSet);
     }
 
@@ -46,14 +45,14 @@ public final class ValidateUtils {
      */
     public static <T> void defaultValidateEntity(T obj) {
         //解析校验结果
-        validateEntityAndThrows(obj,result->new RuntimeException(result.getMessage()));
+        validateEntityAndThrows(obj, result -> new RuntimeException(result.getMessage()));
     }
 
     /**
      * 校验指定实体的指定属性是否存在异常
      */
     public static <T> ValidationResult validateProperty(T obj, String propertyName) {
-        Set<ConstraintViolation<T>> validateSet = validator.validateProperty(obj, propertyName, Default.class);
+        Set<ConstraintViolation<T>> validateSet = VALIDATOR.validateProperty(obj, propertyName, Default.class);
         return buildValidationResult(validateSet);
     }
 
@@ -99,9 +98,7 @@ public final class ValidateUtils {
                 return StringUtils.EMPTY;
             }
             StringBuilder message = new StringBuilder();
-            errorMsg.forEach((key, value) -> {
-                message.append(MessageFormat.format("{0}:{1} \r\n", key, value));
-            });
+            errorMsg.forEach((key, value) -> message.append(MessageFormat.format("{0}:{1} \r\n", key, value)));
             return message.toString();
         }
 

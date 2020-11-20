@@ -35,7 +35,7 @@ public final class JwtUtils {
     /**
      * 从缓存里边获取JWT命名空间配置，若没有则使用默认值
      */
-    private static InMemoryCache<String, Object> jwt = InMemoryCache
+    private static final InMemoryCache<String, Object> JWT = InMemoryCache
             .get(JWT_CACHE_NAMESPACE,
                     LambdaUtils.consumerWrapper(cache -> ConvertUtils.objectToMap(new JwtProperties()).forEach(cache::save)),
                     true);
@@ -47,7 +47,7 @@ public final class JwtUtils {
     public static JwtToken generateToken(String identity, Long expireInSeconds, Map<String, Object> claims) {
         claims = Optional.ofNullable(claims).orElse(Maps.newHashMap());
         claims.put(getIdentityKey(), identity);
-        expireInSeconds = Optional.ofNullable(expireInSeconds).orElse((Long) jwt.find("tokenValidateInSeconds"));
+        expireInSeconds = Optional.ofNullable(expireInSeconds).orElse((Long) JWT.find(JwtProperties.JwtConstants.Attribute.VALIDATE_IN_SECONDS));
         long expireTimestamp = System.currentTimeMillis() + expireInSeconds * 1000;
         String token = Jwts.builder()
                 .setSubject(identity)
@@ -55,7 +55,7 @@ public final class JwtUtils {
                 .signWith(signKey(), SignatureAlgorithm.HS512)
                 .setExpiration(new Date(expireTimestamp))
                 .compact();
-        return new JwtToken(token,expireTimestamp);
+        return new JwtToken(token, expireTimestamp);
     }
 
     public static boolean validateToken(String token) {
@@ -78,8 +78,8 @@ public final class JwtUtils {
     }
 
     public static String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader((String) jwt.find("tokenHeader"));
-        String tokenPrefix = (String) jwt.find("tokenPrefix");
+        String bearerToken = request.getHeader((String) JWT.find(JwtProperties.JwtConstants.Attribute.HEADER));
+        String tokenPrefix = (String) JWT.find(JwtProperties.JwtConstants.Attribute.PREFIX);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(tokenPrefix)) {
             return bearerToken.substring(tokenPrefix.length());
         }
@@ -87,7 +87,7 @@ public final class JwtUtils {
     }
 
     public static String getIdentityKey() {
-        return (String) jwt.find("identityKey");
+        return (String) JWT.find(JwtProperties.JwtConstants.Attribute.IDENTITY);
     }
 
     public static Claims getClaims(String token) {
@@ -100,8 +100,7 @@ public final class JwtUtils {
 
     protected static Key signKey() {
         //对Secret进行Base64编码
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode((String) jwt.find("secret")));
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode((String) JWT.find(JwtProperties.JwtConstants.Attribute.SECRET)));
     }
-
 
 }

@@ -58,8 +58,9 @@ public class RedisCache<K, V> implements Cache<K, V> {
 
     @Override
     public Map<K, V> map() {
-        final Map<K, V> map = new HashMap<>();
-        keys().forEach(key -> map.put(key, this.find(key)));
+        Collection<K> keys = keys();
+        final Map<K, V> map = new HashMap<>(keys.size());
+        keys.forEach(key -> map.put(key, this.find(key)));
         return map;
     }
 }

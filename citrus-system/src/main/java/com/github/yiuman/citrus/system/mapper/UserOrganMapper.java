@@ -19,6 +19,12 @@ import java.util.List;
 @Repository
 public interface UserOrganMapper extends CrudMapper<UserOrgan> {
 
+    /**
+     * 根据用户ID获取组织机构信息
+     *
+     * @param userId 用户ID
+     * @return 组织机构集合
+     */
     @Select("select * from sys_organ so, sys_user_organ suo where so.organ_id = suo.organ_id and suo.user_id = #{userId}")
     List<Organization> getOrgansByUserId(Long userId);
 }

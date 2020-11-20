@@ -106,6 +106,20 @@ public class JwtProperties {
         Long VALIDATE_IN_SECONDS = 2592000L;
 
         Long REMEMBER_ME_VALIDATE_IN_SECONDS = 2592000L;
+
+
+        interface Attribute {
+
+            String SECRET = "secret";
+
+            String HEADER = "tokenHeader";
+
+            String PREFIX = "tokenPrefix";
+
+            String IDENTITY = "identityKey";
+
+            String VALIDATE_IN_SECONDS = "tokenValidateInSeconds";
+        }
     }
 
 }

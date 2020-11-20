@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MapCache<K, V> implements Cache<K, V> {
 
-    private ConcurrentHashMap<K, V> cache = new ConcurrentHashMap<>(256);
+    private final ConcurrentHashMap<K, V> cache = new ConcurrentHashMap<>(256);
 
     public MapCache() {
     }

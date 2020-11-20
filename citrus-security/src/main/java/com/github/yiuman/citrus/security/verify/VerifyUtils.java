@@ -20,7 +20,7 @@ public final class VerifyUtils {
      */
     public static final String VERIFY_CODES = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 
-    private static final Random random = new Random();
+    private static final Random RANDOM = new Random();
 
     /**
      * 使用系统默认字符源生成验证码
@@ -118,9 +118,9 @@ public final class VerifyUtils {
     private static Color getRandColor(int fc, int bc) {
         fc = Math.min(fc, 255);
         bc = Math.min(bc, 255);
-        int r = fc + random.nextInt(bc - fc);
-        int g = fc + random.nextInt(bc - fc);
-        int b = fc + random.nextInt(bc - fc);
+        int r = fc + RANDOM.nextInt(bc - fc);
+        int g = fc + RANDOM.nextInt(bc - fc);
+        int b = fc + RANDOM.nextInt(bc - fc);
         return new Color(r, g, b);
     }
 
@@ -137,7 +137,7 @@ public final class VerifyUtils {
     private static int[] getRandomRgb() {
         int[] rgb = new int[3];
         for (int i = 0; i < 3; i++) {
-            rgb[i] = random.nextInt(255);
+            rgb[i] = RANDOM.nextInt(255);
         }
         return rgb;
     }
@@ -149,11 +149,11 @@ public final class VerifyUtils {
 
     private static void shearX(Graphics g, int w1, int h1, Color color) {
 
-        int period = random.nextInt(2);
+        int period = RANDOM.nextInt(2);
 
         boolean borderGap = true;
         int frames = 1;
-        int phase = random.nextInt(2);
+        int phase = RANDOM.nextInt(2);
 
         for (int i = 0; i < h1; i++) {
             double d = (double) (period >> 1)
@@ -172,7 +172,7 @@ public final class VerifyUtils {
 
     private static void shearY(Graphics g, int w1, int h1, Color color) {
 
-        int period = random.nextInt(40) + 10;
+        int period = RANDOM.nextInt(40) + 10;
 
         boolean borderGap = true;
         int frames = 20;

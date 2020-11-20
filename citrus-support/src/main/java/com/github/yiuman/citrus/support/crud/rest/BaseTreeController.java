@@ -38,7 +38,7 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
     public BaseTreeController() {
     }
 
-    public void setLazy(boolean lazy) {
+    protected void setLazy(boolean lazy) {
         isLazy = lazy;
     }
 

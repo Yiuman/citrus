@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.support.cache;
 
 import com.github.yiuman.citrus.support.utils.CacheUtils;
-import org.springframework.beans.factory.InitializingBean;
 
 import java.util.Collection;
 import java.util.Map;
@@ -15,11 +14,11 @@ import java.util.Optional;
  * @author yiuman
  * @date 2020/6/16
  */
-public abstract class AbstractEnvironmentCache<K, V> implements Cache<K, V>  {
+public abstract class AbstractEnvironmentCache<K, V> implements Cache<K, V> {
 
     private final String namespace;
 
-    private Cache<K,V> cache;
+    private Cache<K, V> cache;
 
     public AbstractEnvironmentCache(String namespace) {
         this.namespace = namespace;
