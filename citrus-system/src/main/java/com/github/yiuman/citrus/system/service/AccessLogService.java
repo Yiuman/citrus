@@ -7,6 +7,7 @@ import com.github.yiuman.citrus.system.dto.ResourceDto;
 import com.github.yiuman.citrus.system.entity.AccessLog;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.User;
+import com.github.yiuman.citrus.system.enums.ResourceType;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +30,6 @@ public class AccessLogService extends BaseService<AccessLog, Long> {
         this.resourceService = resourceService;
     }
 
-
     public void pointAccess(HttpServletRequest request, User user, Resource resource) throws Exception {
         AccessLog accessLog = new AccessLog();
         if (Objects.nonNull(user)) {
@@ -46,14 +46,14 @@ public class AccessLogService extends BaseService<AccessLog, Long> {
         if (Objects.nonNull(resource)) {
             accessLog.setResourceId(resource.getId());
             String resourceName = resource.getResourceName();
-            if (2 == resource.getType() && Objects.nonNull(resource.getParentId())) {
+            if (ResourceType.OPERATION == resource.getType() && Objects.nonNull(resource.getParentId())) {
                 ResourceDto resourceDto = resourceService.get(resource.getParentId());
                 resourceName = resourceDto.getResourceName() + resourceName;
             }
             accessLog.setResourceType(resource.getType());
             accessLog.setResourceName(resourceName);
         } else {
-            accessLog.setResourceType(-1);
+            accessLog.setResourceType(ResourceType.UNKNOWN);
         }
 
         accessLog.setCreateTime(LocalDateTime.now());
@@ -66,4 +66,5 @@ public class AccessLogService extends BaseService<AccessLog, Long> {
         resource.setResourceName(resourceName);
         pointAccess(request, user, resource);
     }
+
 }

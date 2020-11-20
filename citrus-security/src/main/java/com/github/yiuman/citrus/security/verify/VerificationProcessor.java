@@ -24,6 +24,7 @@ public interface VerificationProcessor<T extends Verification<?>> {
      *
      * @param httpServletRequest 当前请求
      * @param response           当前响应
+     * @throws Exception 一般为IO异常
      */
     void send(HttpServletRequest httpServletRequest, HttpServletResponse response) throws Exception;
 

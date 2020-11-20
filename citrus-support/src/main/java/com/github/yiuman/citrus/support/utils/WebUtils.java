@@ -18,6 +18,7 @@ import com.github.yiuman.citrus.support.model.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -39,13 +40,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Web相关操作工具
@@ -205,30 +209,28 @@ public final class WebUtils {
      * @return IPADDRESS ip地址
      */
     public static String getIpAddress(HttpServletRequest request) {
-        String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
+        String ip = request.getHeader(IpHeaders.X_FORWARDED_FOR);
+        final Predicate<String> ipPredicate = ip1 -> ip1 == null || ip1.length() == 0 || IpHeaders.UNKNOWN.equalsIgnoreCase(ip1);
+        if (ipPredicate.test(ip)) {
+            ip = request.getHeader(IpHeaders.PROXY_CLIENT_IP);
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
+        if (ipPredicate.test(ip)) {
+            ip = request.getHeader(IpHeaders.WL_PROXY_CLIENT_IP);
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_CLIENT_IP");
+        if (ipPredicate.test(ip)) {
+            ip = request.getHeader(IpHeaders.HTTP_CLIENT_IP);
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        if (ipPredicate.test(ip)) {
+            ip = request.getHeader(IpHeaders.HTTP_X_FORWARDED_FOR);
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ipPredicate.test(ip)) {
             ip = request.getRemoteAddr();
         }
         return ip;
     }
 
     public static void exportJson(HttpServletResponse response, Object data, String name) throws IOException {
-        response.setContentType(APPLICATION_VND_MS_EXCEL);
-        response.setCharacterEncoding("utf-8");
-        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-        response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(name, "utf-8") + ".json");
+        addExportFileNameHeaders(response, name, "json");
         response.getWriter().write(OBJECT_MAPPER.writeValueAsString(data));
     }
 
@@ -244,10 +246,7 @@ public final class WebUtils {
      * @throws IOException IO异常
      */
     public static <T> void exportExcel(HttpServletResponse response, Class<T> clazz, List<T> data, String name) throws IOException {
-        response.setContentType(APPLICATION_VND_MS_EXCEL);
-        response.setCharacterEncoding("utf-8");
-        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-        response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(name, "utf-8") + ".xls");
+        addExportFileNameHeaders(response, name);
         EasyExcel.write(response.getOutputStream(), clazz)
                 .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
                 .sheet("sheet1").doWrite(data);
@@ -263,10 +262,7 @@ public final class WebUtils {
      * @throws IOException IO异常
      */
     public static void exportExcel(HttpServletResponse response, List<List<String>> headers, List<List<Object>> data, String name) throws IOException {
-        response.setContentType(APPLICATION_VND_MS_EXCEL);
-        response.setCharacterEncoding("utf-8");
-        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-        response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(name, "utf-8") + ".xls");
+        addExportFileNameHeaders(response, name);
         EasyExcel.write(response.getOutputStream())
                 .registerConverter(new LocalDateExportConvertor())
                 .head(headers)
@@ -284,11 +280,7 @@ public final class WebUtils {
      * @throws IOException IO异常
      */
     public static void exportExcel(HttpServletResponse response, Page<?> page, String name) throws Exception {
-        response.setContentType(APPLICATION_VND_MS_EXCEL);
-        response.setCharacterEncoding("utf-8");
-        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-        response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(name, "utf-8") + ".xls");
-
+        addExportFileNameHeaders(response, name);
         List<Header> pageHeaders = page.getHeaders();
         List<?> records = page.getRecords();
         List<List<String>> headers = new ArrayList<>(pageHeaders.size());
@@ -300,14 +292,14 @@ public final class WebUtils {
         final Class<?> recordClass = records.get(0).getClass();
         Field recordKeyField = ReflectionUtils.findField(recordClass, page.getItemKey());
         recordKeyField.setAccessible(true);
-        final Map<String, Field> fieldMap = new HashMap<>();
+        final Map<String, Field> fieldMap = new HashMap<>(256);
         records.forEach(record -> {
             List<Object> objects = new ArrayList<>(pageHeaders.size());
             pageHeaders.forEach(header -> {
                 Object fieldValue;
                 String fieldName = header.getValue();
                 try {
-                    Field field = Optional.ofNullable(fieldMap.get(fieldName)).orElse(ReflectionUtils.findField(recordClass,header.getValue()));
+                    Field field = Optional.ofNullable(fieldMap.get(fieldName)).orElse(ReflectionUtils.findField(recordClass, header.getValue()));
                     field.setAccessible(true);
                     fieldValue = field.get(record);
                     fieldMap.put(fieldName, field);
@@ -335,6 +327,31 @@ public final class WebUtils {
     }
 
     /**
+     * 添加导出文件名的请求头
+     *
+     * @param response 当前请求的响应
+     * @param fileName 文件名
+     * @throws UnsupportedEncodingException 编码异常
+     */
+    public static void addExportFileNameHeaders(HttpServletResponse response, String fileName) throws UnsupportedEncodingException {
+        addExportFileNameHeaders(response, fileName, "xls");
+    }
+
+    /**
+     * 添加导出文件名的请求头
+     *
+     * @param response 当前请求的响应
+     * @param fileName 文件名
+     * @throws UnsupportedEncodingException 编码异常
+     */
+    public static void addExportFileNameHeaders(HttpServletResponse response, String fileName, String fileType) throws UnsupportedEncodingException {
+        response.setContentType(APPLICATION_VND_MS_EXCEL);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
+        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s.%s", URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString()), fileType));
+    }
+
+    /**
      * 导入文件
      *
      * @param file         文件
@@ -357,6 +374,7 @@ public final class WebUtils {
      * @throws Exception 反射异常
      */
     public static String getRequestMapping(HttpServletRequest request) throws Exception {
+        final String slash = "/";
         RequestMappingHandlerMapping requestMappingHandlerMapping = SpringUtils.getBean(RequestMappingHandlerMapping.class);
         HandlerExecutionChain handler = requestMappingHandlerMapping.getHandler(request);
         if (handler == null) {
@@ -367,8 +385,8 @@ public final class WebUtils {
         String combinePath = requestMappingHandlerMapping
                 .getPathMatcher()
                 .combine(getAnnotatedElementMapping(handlerHandler.getBeanType()), getAnnotatedElementMapping(handlerHandler.getMethod()));
-        if (StringUtils.hasLength(combinePath) && !combinePath.startsWith("/")) {
-            combinePath = "/" + combinePath;
+        if (StringUtils.hasLength(combinePath) && !combinePath.startsWith(slash)) {
+            combinePath = slash + combinePath;
         }
 
         return combinePath;
@@ -492,5 +510,15 @@ public final class WebUtils {
                 return new CellData<>(DateTimeFormatter.ofPattern(contentProperty.getDateTimeFormatProperty().getFormat()).format(value));
             }
         }
+    }
+
+
+    interface IpHeaders {
+        String UNKNOWN = "unknown";
+        String X_FORWARDED_FOR = "x-forwarded-for";
+        String PROXY_CLIENT_IP = "Proxy-Client-IP";
+        String WL_PROXY_CLIENT_IP = "WL-Proxy-Client-IP";
+        String HTTP_CLIENT_IP = "HTTP_CLIENT_IP";
+        String HTTP_X_FORWARDED_FOR = "HTTP_X_FORWARDED_FOR";
     }
 }

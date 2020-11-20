@@ -27,6 +27,11 @@ public interface DeletableService<E, K> {
      */
     void batchRemove(Iterable<K> keys) throws Exception;
 
+    /**
+     * 删除
+     * @param wrappers 删除的条件
+     * @return 是否删除成功true/false
+     */
     boolean remove(Wrapper<E> wrappers);
 
     /**

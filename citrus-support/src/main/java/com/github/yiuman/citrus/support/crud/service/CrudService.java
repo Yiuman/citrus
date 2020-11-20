@@ -25,6 +25,7 @@ public interface CrudService<E, K extends Serializable> extends EditableService<
      * 保存后的操作
      *
      * @param entity 实体
+     * @throws Exception 数据库操作异常
      */
     default void afterSave(E entity) throws Exception {
 

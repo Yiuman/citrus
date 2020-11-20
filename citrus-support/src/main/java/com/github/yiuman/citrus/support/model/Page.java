@@ -217,23 +217,46 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
         initFunctionalActions();
     }
 
+    /**
+     * 初始化记录的扩展字段
+     * 如:records:[{key:'1',aField:xxx,bField:xxx}]
+     * 若需要扩展上面的记录字段，如想加一个cField;
+     * 则扩展后为
+     * {
+     *     records:[{key:'1',aField:xxx,bField:xxx}],
+     *     extends:{
+     *         '1':{
+     *             cField:xxxx
+     *         }
+     *     }
+     * }
+     */
     public void initFunctionalRecords() {
         if (!StringUtils.isEmpty(itemKey)) {
             getRecords().forEach(this::initSingleFunctionalRecord);
         }
     }
 
+    /**
+     * 函数初始化操作指令
+     */
     public void initFunctionalActions() {
         actionFunctions.forEach(func -> getRecords().forEach(record -> actions.add(func.apply(record))));
     }
 
+    /**
+     * 初始化单记录的扩展数据
+     *
+     * @param record 当前需扩展的记录
+     */
     @SuppressWarnings("unchecked")
     public void initSingleFunctionalRecord(T record) {
+        String vertical = "|";
         this.recordFunctions.forEach(func -> {
             Map<String, Object> objectObjectHashMap = Optional.ofNullable(this.recordExtend.get(getKey(record))).orElse(new HashMap<>(1));
             String filedName = func.getFiledName();
             Object value = func.getFunction().apply(record);
-            if (filedName.contains("|")) {
+            if (filedName.contains(vertical)) {
                 Map<String, Object> valueMap = (Map<String, Object>) value;
                 valueMap.forEach(objectObjectHashMap::put);
             } else {
