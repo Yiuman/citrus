@@ -36,8 +36,6 @@
    
    
    ```
-   
-   
 
 > 至此，通用的CRUD功能已经实现，已经包含基础REST风格的CRUD功能（分页、保存、获取、更新、删除）
 
@@ -111,225 +109,227 @@
 
 ##### 复杂业务逻辑的CRUD
 
-1. **情况一**：接参与库表基本一致时，可不使用DTO进行传输，简单的重写相关方法进行逻辑处理，如Student的学号属性需要初始化。下面提供两种方式进行处理
+**情况一**：接参与库表基本一致时，可不使用DTO进行传输，简单的重写相关方法进行逻辑处理，如Student的学号属性需要初始化。下面提供两种方式进行处理
 
-   - 方式一，重写BaseCrudController中的save方法
+- 方式一，重写BaseCrudController中的save方法
 
-     ```java
-     @RestController
-     @RequestMapping("/rest/students")
-     public class StudentController extends BaseCrudController<Student, Long> {
-     
-         public StudentController() {
-           //根据学生编码进行倒序排序
-           addSortBy("studentNo",true)
-         }
-       
-       	@Override
-         public Long save(Student entity) throws Exception {
-             if(Objects.isNull(entity.getStudentId())){
-               entity.setStudentNo(UUID.randomUUID().toString());
-             }
-             return super.save(entity);
-         }
-     }
-     ```
+  ```java
+  @RestController
+  @RequestMapping("/rest/students")
+  public class StudentController extends BaseCrudController<Student, Long> {
+  
+      public StudentController() {
+        //根据学生编码进行倒序排序
+        addSortBy("studentNo",true)
+      }
+    
+    	@Override
+      public Long save(Student entity) throws Exception {
+          if(Objects.isNull(entity.getStudentId())){
+            entity.setStudentNo(UUID.randomUUID().toString());
+          }
+          return super.save(entity);
+      }
+  }
+  ```
 
-   - 方式二：重写protected CrudService<T, K> getService() 方法，引用自己的逻辑层进行实现
+- 方式二：重写protected CrudService<T, K> getService() 方法，引用自己的逻辑层进行实现
 
-     ```java
-     @RestController
-     @RequestMapping("/rest/students")
-     public class StudentController extends BaseCrudController<Student, Long> {
-     
-       	//注入逻辑层
-     		private final StudentService studentService
-     
-         public StudentController(StudentService studentService) {
-           //根据学生编码进行倒序排序
-           addSortBy("studentNo",true)
-           this.studentService = studentService;
-         }
-       
-      		@Override
-         protected CrudService<Student, Long> getService() {
-             return studentService;
-         }
-       
-     }
-     ```
+  ```java
+  @RestController
+  @RequestMapping("/rest/students")
+  public class StudentController extends BaseCrudController<Student, Long> {
+  
+    	//注入逻辑层
+  		private final StudentService studentService
+  
+      public StudentController(StudentService studentService) {
+        //根据学生编码进行倒序排序
+        addSortBy("studentNo",true)
+        this.studentService = studentService;
+      }
+    
+   		@Override
+      protected CrudService<Student, Long> getService() {
+          return studentService;
+      }
+    
+  }
+  ```
 
-     继承BaseService,实现自己的逻辑
+  继承BaseService,实现自己的逻辑
 
-     ```java
-     @Service
-     public class StudentService extends BaseService<Student, Long> {
-     
-       	//保存前设置学生编码
-       	@Override
-         public boolean beforeSave(Student entity) {
-             entity.setStudentNo(UUID.randomUUID().toString())
-             return true;
-         }
-     }
-     
-     ```
-
-   
-
-   2. **情况二**，表单与库表差距巨大，业务逻辑复杂，需要定义传输类DTO进行表单接收及逻辑处理。
-
-      - 定义逻辑表单传输类DTO
-
-        ```java
-        @Data
-        public class UserDto {
-        
-            @JsonSerialize(using = ToStringSerializer.class)
-            private Long userId;
-        
-            private String loginId;
-        
-            @NotBlank
-            private String username;
-        
-            @NotBlank
-            private String mobile;
-        
-            @JsonIgnore
-            @ExcelIgnore
-            private String password;
-        
-            private String email;
-        
-            @ExcelIgnore
-            private String avatar;
-        
-            @JsonSerialize(contentUsing = ToStringSerializer.class)
-            private List<Long> roleIds;
-        
-            /**
-             * 所属组织ID
-             */
-            @JsonSerialize(contentUsing = ToStringSerializer.class)
-            private List<Long> organIds;
-        
-            private String uuid;
-        
-            private Integer version;
-        }
-        ```
-
-        
-
-      - 继承BaseDtoService<E, K extends Serializable, D>实现业务逻辑
-
-        ```java
-        @Service
-        public class UserService extends BaseDtoService<User, Long, UserDto> {
-        
-            /**
-             * 匿名登录的认证对象principal
-             */
-            private final static String ANONYMOUS = "anonymousUser";
-        
-            private final PasswordEncoder passwordEncoder;
-        
-            private final UserMapper userMapper;
-        
-            /**
-             * 用户角色mapper
-             */
-            private final UserRoleMapper userRoleMapper;
-        
-            /**
-             * 用户组织机构mapper
-             */
-            private final UserOrganMapper userOrganMapper;
-        
-            public UserService(PasswordEncoder passwordEncoder, UserMapper userMapper, UserRoleMapper userRoleMapper, UserOrganMapper userOrganMapper, UserOnlineCache userOnlineCache) {
-                this.passwordEncoder = passwordEncoder;
-                this.userMapper = userMapper;
-                this.userRoleMapper = userRoleMapper;
-                this.userOrganMapper = userOrganMapper;
-                this.userOnlineCache = userOnlineCache;
-            }
-        
-          //保存前的操作
-            @Override
-            public boolean beforeSave(UserDto entity) throws Exception {
-                if (Objects.isNull(entity.getUserId())) {
-                    //若是新增则添加默认密码及默认版本号
-                    entity.setPassword(passwordEncoder.encode("123456"));
-                    entity.setVersion(1);
-                    entity.setUuid(UUID.randomUUID().toString().replace("-",""));
-                }
-        
-                return true;
-            }
-        
-          	//实体保存后的操作
-            @Override
-            public void afterSave(UserDto entity) {
-                //保存组织机构信息
-                List<Long> organIds = entity.getOrganIds();
-                if (CollectionUtils.isEmpty(organIds)) {
-                    organIds = Collections.singletonList(-1L);
-                }
-                //先删除用户旧的角色部门数据
-                userRoleMapper.delete(Wrappers.<UserRole>lambdaQuery().eq(UserRole::getUserId, entity.getUserId()));
-                userOrganMapper.delete(Wrappers.<UserOrgan>lambdaQuery().eq(UserOrgan::getUserId, entity.getUserId()));
-        
-                organIds.forEach(LambdaUtils.consumerWrapper(organId -> {
-                    userOrganMapper.saveEntity(new UserOrgan(entity.getUserId(), organId));
-                    //保存组织机构角色数据
-                    List<UserRole> userRoles = entity.getRoleIds().stream().map(roleId -> {
-                        UserRole userRole = new UserRole();
-                        userRole.setUserId(entity.getUserId());
-                        userRole.setRoleId(roleId);
-                        userRole.setOrganId(organId);
-                        return userRole;
-                    }).collect(Collectors.toList());
-                    userRoleMapper.saveBatch(userRoles);
-                }));
-            }
-        
-        }
-        ```
-
-        
-
-      - 重写contorller中的protected CrudService<T, K> getService()方法
-
-        ```java
-        @RestController
-        @RequestMapping("/rest/users")
-        @Authorize(HasLoginHook.class)
-        @Slf4j
-        public class UserController extends BaseCrudController<UserDto, Long> {
-        
-            private final UserService userService;
-        
-            public UserController(UserService userService) {
-                this.userService = userService;
-                setParamClass(UserQuery.class);
-            }
-        
-            @Override
-            protected CrudService<UserDto, Long> getService() {
-                return userService;
-            }
-        }
-        
-        
-        ```
-        
-        
+  ```java
+  @Service
+  public class StudentService extends BaseService<Student, Long> {
+  
+    	//保存前设置学生编码
+    	@Override
+      public boolean beforeSave(Student entity) {
+          entity.setStudentNo(UUID.randomUUID().toString())
+          return true;
+      }
+  }
+  
+  ```
 
 
-   > 至此，非常复杂的业务逻辑，使用DTO进行前后端交互的CRUD例子已完成
 
-   
+
+
+**情况二**，表单与库表差距巨大，业务逻辑复杂，需要定义传输类DTO进行表单接收及逻辑处理。
+
+- 定义逻辑表单传输类DTO
+
+  ```java
+  @Data
+  public class UserDto {
+  
+      @JsonSerialize(using = ToStringSerializer.class)
+      private Long userId;
+  
+      private String loginId;
+  
+      @NotBlank
+      private String username;
+  
+      @NotBlank
+      private String mobile;
+  
+      @JsonIgnore
+      @ExcelIgnore
+      private String password;
+  
+      private String email;
+  
+      @ExcelIgnore
+      private String avatar;
+  
+      @JsonSerialize(contentUsing = ToStringSerializer.class)
+      private List<Long> roleIds;
+  
+      /**
+       * 所属组织ID
+       */
+      @JsonSerialize(contentUsing = ToStringSerializer.class)
+      private List<Long> organIds;
+  
+      private String uuid;
+  
+      private Integer version;
+  }
+  ```
+
+  
+
+- 继承BaseDtoService<E, K extends Serializable, D>实现业务逻辑
+
+  ```java
+  @Service
+  public class UserService extends BaseDtoService<User, Long, UserDto> {
+  
+      /**
+       * 匿名登录的认证对象principal
+       */
+      private final static String ANONYMOUS = "anonymousUser";
+  
+      private final PasswordEncoder passwordEncoder;
+  
+      private final UserMapper userMapper;
+  
+      /**
+       * 用户角色mapper
+       */
+      private final UserRoleMapper userRoleMapper;
+  
+      /**
+       * 用户组织机构mapper
+       */
+      private final UserOrganMapper userOrganMapper;
+  
+      public UserService(PasswordEncoder passwordEncoder, UserMapper userMapper, UserRoleMapper userRoleMapper, UserOrganMapper userOrganMapper, UserOnlineCache userOnlineCache) {
+          this.passwordEncoder = passwordEncoder;
+          this.userMapper = userMapper;
+          this.userRoleMapper = userRoleMapper;
+          this.userOrganMapper = userOrganMapper;
+          this.userOnlineCache = userOnlineCache;
+      }
+  
+    //保存前的操作
+      @Override
+      public boolean beforeSave(UserDto entity) throws Exception {
+          if (Objects.isNull(entity.getUserId())) {
+              //若是新增则添加默认密码及默认版本号
+              entity.setPassword(passwordEncoder.encode("123456"));
+              entity.setVersion(1);
+              entity.setUuid(UUID.randomUUID().toString().replace("-",""));
+          }
+  
+          return true;
+      }
+  
+    	//实体保存后的操作
+      @Override
+      public void afterSave(UserDto entity) {
+          //保存组织机构信息
+          List<Long> organIds = entity.getOrganIds();
+          if (CollectionUtils.isEmpty(organIds)) {
+              organIds = Collections.singletonList(-1L);
+          }
+          //先删除用户旧的角色部门数据
+          userRoleMapper.delete(Wrappers.<UserRole>lambdaQuery().eq(UserRole::getUserId, entity.getUserId()));
+          userOrganMapper.delete(Wrappers.<UserOrgan>lambdaQuery().eq(UserOrgan::getUserId, entity.getUserId()));
+  
+          organIds.forEach(LambdaUtils.consumerWrapper(organId -> {
+              userOrganMapper.saveEntity(new UserOrgan(entity.getUserId(), organId));
+              //保存组织机构角色数据
+              List<UserRole> userRoles = entity.getRoleIds().stream().map(roleId -> {
+                  UserRole userRole = new UserRole();
+                  userRole.setUserId(entity.getUserId());
+                  userRole.setRoleId(roleId);
+                  userRole.setOrganId(organId);
+                  return userRole;
+              }).collect(Collectors.toList());
+              userRoleMapper.saveBatch(userRoles);
+          }));
+      }
+  
+  }
+  ```
+
+  
+
+- 重写contorller中的protected CrudService<T, K> getService()方法
+
+  ```java
+  @RestController
+  @RequestMapping("/rest/users")
+  @Authorize(HasLoginHook.class)
+  @Slf4j
+  public class UserController extends BaseCrudController<UserDto, Long> {
+  
+      private final UserService userService;
+  
+      public UserController(UserService userService) {
+          this.userService = userService;
+          setParamClass(UserQuery.class);
+      }
+  
+      @Override
+      protected CrudService<UserDto, Long> getService() {
+          return userService;
+      }
+  }
+  
+  
+  ```
+  
+  
+
+
+> 至此，非常复杂的业务逻辑，使用DTO进行前后端交互的CRUD例子已完成
+
+
 
 ##### 查询、排序
 
