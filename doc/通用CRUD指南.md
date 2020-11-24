@@ -28,14 +28,15 @@
    @RequestMapping("/rest/students")
    public class StudentController extends BaseCrudController<Student, Long> {
    
-       public StudentController() {
-         //根据学生编码进行倒序排序
-         addSortBy("studentNo",true)
-       }
-}
-   
-   
+     public StudentController() {
+       //根据学生编码进行倒序排序
+       addSortBy("studentNo",true)
+     }
+   }
    ```
+
+   
+
 
 > 至此，通用的CRUD功能已经实现，已经包含基础REST风格的CRUD功能（分页、保存、获取、更新、删除）
 
@@ -84,8 +85,10 @@
        }
    
    }
-   
    ```
+   
+   
+
 
 2. 继承基础的树形控制器BaseTreeController
 
@@ -99,8 +102,10 @@
        	setLazy(true)
        }
    }
-   
    ```
+   
+   
+
 
 
 > 至此，通用的树形CRUD功能已经实现，已经包含除基础REST风格的CRUD功能（分页、保存、获取、更新、删除）外的树形相关操作接口，如加载树形接口/tree ，根据父节加载/tree/{parentKey}，导出树形JSON文件等。
@@ -133,6 +138,8 @@
   }
   ```
 
+  
+
 - 方式二：重写protected CrudService<T, K> getService() 方法，引用自己的逻辑层进行实现
 
   ```java
@@ -156,24 +163,24 @@
     
   }
   ```
-
+  
   继承BaseService,实现自己的逻辑
-
+  
   ```java
-  @Service
-  public class StudentService extends BaseService<Student, Long> {
-  
-    	//保存前设置学生编码
-    	@Override
-      public boolean beforeSave(Student entity) {
-          entity.setStudentNo(UUID.randomUUID().toString())
-          return true;
-      }
-  }
-  
+   @Service
+    public class StudentService extends BaseService<Student, Long> {
+    
+      	//保存前设置学生编码
+      	@Override
+        public boolean beforeSave(Student entity) {
+            entity.setStudentNo(UUID.randomUUID().toString())
+            return true;
+        }
+    }
+    
   ```
-
-
+  
+  
 
 
 
@@ -325,6 +332,8 @@
   ```
   
   
+  
+  
 
 
 > 至此，非常复杂的业务逻辑，使用DTO进行前后端交互的CRUD例子已完成
@@ -351,6 +360,8 @@
        private List<Long> classIds;
    }
    ```
+
+   
 
    上面的`@QueryParam`用于标记此字段是查询参数字段，若类中没有进行标记的则不作查询参数处理，请看下面是QueryParam的详细解释
 
@@ -499,30 +510,20 @@
 
 #### 相关基类说明
 
-
    基础的相关的CRUD操作已抽出基础的三层，即Controller-Service-Dao，控制层-逻辑层-持久层。
 
-   	**控制层**：
+- **控制层**
+  - 列表的控制器（BaseCrudController<T, K extends Serializable>）；
+  - 树形结构的控制器（BaseTreeController<T extends Tree<K>, K extends Serializable>）。
+- **逻辑层**
+  - 最基础的实现（BaseService<E, K extends Serializable>用于基础的增删改查逻辑）；
+  - 使用传输类转化处理的（BaseDtoService<E, K extends Serializable, D>）；
+  - 简单的树形数据结构（BaseSimpleTreeService<E extends BaseTree<E, K>）；
+  - 预遍历树逻辑层（BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, K extends Serializable>）
+- **持久层**
+  - 基础接口CrudMapper<T>  基于Mybaits-plus的BaseMapper<T>
 
-- 列表的控制器（BaseCrudController<T, K extends Serializable>）；
-
-- 树形结构的控制器（BaseTreeController<T extends Tree<K>, K extends Serializable>）。
-
-   **逻辑层**：
-
-- 最基础的实现（BaseService<E, K extends Serializable>用于基础的增删改查逻辑）；
-
-- 使用传输类转化处理的（BaseDtoService<E, K extends Serializable, D>）；
-
-- 简单的树形数据结构（BaseSimpleTreeService<E extends BaseTree<E, K>）；
-
-- 预遍历树逻辑层（BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, K extends Serializable>）
-
-   **持久层**：
-
-- 基础接口CrudMapper<T>  基于Mybaits-plus的BaseMapper<T>
-
-- 树形Mapper接口TreeMapper<T extends Tree<?>>  主要用于预遍历树的查询
+  - 树形Mapper接口TreeMapper<T extends Tree<?>>  主要用于预遍历树的查询
 
 
 
