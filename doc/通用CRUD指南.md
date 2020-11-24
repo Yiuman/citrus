@@ -508,6 +508,52 @@
 
 
 
+##### 查询参数自定义注解注入
+
+> 通过自定义注解实现查询参数的动态注入，下面以动态注入当前用户ID为例
+
+1. 定义注解
+
+   ```java
+   @Retention(RetentionPolicy.RUNTIME)
+   public @interface UserId {
+   }
+   ```
+
+2. 实现InjectAnnotationParser接口，实现具体提注入方法
+
+   ```java
+   @Component
+   public class UserIdInjectAnnotationParserImpl implements InjectAnnotationParser<UserId> {
+   
+       private final UserService userService;
+   
+       public UserIdInjectAnnotationParserImpl(UserService userService) {
+           this.userService = userService;
+       }
+   
+       @Override
+       public Object parse(UserId annotation) {
+           Optional<User> currentUser = userService.getCurrentUser();
+           return currentUser.<Object>map(User::getUserId).orElse(null);
+       }
+   }
+   ```
+
+3. 使用在查询类上
+
+   ```java
+   @Data
+   public class UserQuery {
+   
+   	@QueryParam
+   	@UserId
+   	private Long userId;
+   }
+   ```
+
+   
+
 #### 相关基类说明
 
    基础的相关的CRUD操作已抽出基础的三层，即Controller-Service-Dao，控制层-逻辑层-持久层。
