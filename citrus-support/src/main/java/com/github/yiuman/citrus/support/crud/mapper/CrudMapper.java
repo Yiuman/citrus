@@ -28,6 +28,7 @@ public interface CrudMapper<T> extends BaseMapper<T> {
      * @param entity 实体对象
      * @return 保存成功返回true，否则false
      */
+    @Transactional(rollbackFor = Exception.class)
     default boolean saveEntity(T entity) {
         if (null != entity) {
             Class<?> cls = entity.getClass();

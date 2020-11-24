@@ -6,8 +6,3 @@ spring:
     password: yiuman
 server:
   port: 8082
-
-mybatis-plus:
-  configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-    local-cache-scope: statement

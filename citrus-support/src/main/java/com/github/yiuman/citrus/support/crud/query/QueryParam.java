@@ -2,7 +2,6 @@ package com.github.yiuman.citrus.support.crud.query;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.lang.annotation.*;
@@ -68,13 +67,13 @@ public @interface QueryParam {
             conditionMethod.invoke(queryWrapper, queryParam.condition(), StringUtils.camelToUnderline(fieldName), field.get(object));
         }
 
-        private Class<?> getParameterClass(Field field){
+        private Class<?> getParameterClass(Field field) {
             Class<?> fieldType = field.getType();
-            if(fieldType.isArray()){
+            if (fieldType.isArray()) {
                 return Object[].class;
             }
 
-            if(Collection.class.isAssignableFrom(fieldType)){
+            if (Collection.class.isAssignableFrom(fieldType)) {
                 return Collection.class;
             }
 
