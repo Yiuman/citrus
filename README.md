@@ -21,6 +21,7 @@
 4. 统一的认证入口，方便的安全认证扩展，可实现多种方式的认证，且支持表单与接口
 5. 灵活的权限钩子，既可全局进行权限验证、亦可定义于类与方法，验证方式易与扩展
 6. 细粒度的RBAC权限控制，可自定义验证方式，支持数据范围注入
+7. 动态数据源+多数据源事务管理
 
 
 
@@ -29,7 +30,7 @@
 - `citrus-boot-starter` 项目自动配置相关
 - `citrus-main` 项目的运行入口（体验开箱即用的快感）
 - `citrus-security` 项目安全相关的代码，统一认证、验证码类型、鉴权、jwt等  [安全模块传送门](https://github.com/Yiuman/citrus/tree/master/doc/安全模块设计.md)
-- `citrus-support` 项目通用支持相关的代码，通用Service层、Controller层，工具类、缓存、异常、注入、数据结构及相关扩展 [通用CRUD指南](https://github.com/Yiuman/citrus/tree/master/doc/通用CRUD指南.md)
+- `citrus-support` 项目通用支持相关的代码，通用Service层、Controller层，工具类、缓存、异常、注入、数据结构、动态数据源及相关扩展 [通用CRUD指南](https://github.com/Yiuman/citrus/tree/master/doc/通用CRUD指南.md)
 - `citrus-system` 项目系统设计的主要实现  包含用户、角色、权限、资源、菜单、数据范围等模块的实现与处理，数据范围注入也在这里 [权限数据范围设计](https://github.com/Yiuman/citrus/tree/master/doc/权限设计.md)
 
 
@@ -44,7 +45,7 @@
     <dependency>
       <groupId>com.github.yiuman</groupId>
       <artifactId>citrus-boot-starter</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
     </dependency>
     ```
 

@@ -50,4 +50,14 @@ public class SpringUtils implements ApplicationContextAware {
         return context.getBean(name, tClass);
     }
 
+    public static <T> T getBean(Class<T> tClass, String name, boolean force) {
+        T bean;
+        try {
+            bean = context.getBean(name, tClass);
+        } catch (NoSuchBeanDefinitionException ex) {
+            bean = force ? context.getAutowireCapableBeanFactory().createBean(tClass) : null;
+        }
+        return bean;
+    }
+
 }

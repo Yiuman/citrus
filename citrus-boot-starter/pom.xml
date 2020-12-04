@@ -5,7 +5,7 @@
     <parent>
         <artifactId>citrus</artifactId>
         <groupId>com.github.yiuman</groupId>
-        <version>0.0.7</version>
+        <version>0.0.8</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,21 +16,21 @@
         <dependency>
             <groupId>com.github.yiuman</groupId>
             <artifactId>citrus-support</artifactId>
-            <version>${citrus.security.version}</version>
+            <version>${citrus.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.github.yiuman</groupId>
             <artifactId>citrus-security</artifactId>
-            <version>${citrus.security.version}</version>
+            <version>${citrus.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.github.yiuman</groupId>
             <artifactId>citrus-system</artifactId>
-            <version>${citrus.security.version}</version>
+            <version>${citrus.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -41,6 +41,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jta-atomikos</artifactId>
         </dependency>
         <!--security依赖-->
         <dependency>

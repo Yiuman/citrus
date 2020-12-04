@@ -23,7 +23,6 @@ public class UserOrgan {
     @TableField(exist = false)
     private User user;
 
-    @TableId
     private Long organId;
 
     @TableField(exist = false)

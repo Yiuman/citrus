@@ -6,7 +6,7 @@
 
     <groupId>com.github.yiuman</groupId>
     <artifactId>citrus</artifactId>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
     <name>citrus</name>
     <description>springboot-开发脚手架</description>
     <url>https://github.com/Yiuman/citrus</url>
@@ -48,15 +48,16 @@
         <project.build.jdk>${java.version}</project.build.jdk>
         <spring-boot.version>2.3.2.RELEASE</spring-boot.version>
         <guava.version>28.2-jre</guava.version>
-        <mybatis.plus.version>3.3.1</mybatis.plus.version>
+        <mybatis.plus.version>3.4.1</mybatis.plus.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <java.version>1.8</java.version>
-        <citrus.security.version>0.0.7</citrus.security.version>
+        <citrus.version>0.0.8</citrus.version>
         <alibaba.easyexcel.version>2.1.6</alibaba.easyexcel.version>
         <jjwt.version>0.11.0</jjwt.version>
         <commons.io.version>2.6</commons.io.version>
         <javassist.version>3.25.0-GA</javassist.version>
+        <druid.version>1.2.3</druid.version>
     </properties>
 
     <dependencies>

@@ -15,6 +15,7 @@ import com.github.yiuman.citrus.security.jwt.JwtAuthenticationFilter;
 import com.github.yiuman.citrus.security.jwt.JwtSecurityConfigurerAdapter;
 import com.github.yiuman.citrus.security.properties.CitrusProperties;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -47,7 +48,7 @@ import java.util.List;
         @ComponentScan("com.github.yiuman.citrus.system")
 })
 @MapperScan(basePackages = "com.github.yiuman.citrus.system.mapper")
-@Import({SystemDefaultBeanConfiguration.class, VerifyConfiguration.class})
+@Import({SystemDefaultBeanConfiguration.class, VerifyConfiguration.class,DynamicDataSourceAutoConfiguration.class})
 @EnableWebSecurity
 public class CitrusAutoConfiguration {
 

@@ -39,7 +39,7 @@ public interface CrudMapper<T> extends BaseMapper<T> {
             if (StringUtils.isBlank(keyProperty)) {
                 return SqlHelper.retBool(insert(entity));
             }
-            Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
+            Object idVal = ReflectionKit.getFieldValue(entity, tableInfo.getKeyProperty());
             return StringUtils.checkValNull(idVal) || Objects.isNull(selectById((Serializable) idVal))
                     ? SqlHelper.retBool(insert(entity))
                     : SqlHelper.retBool(updateById(entity));
