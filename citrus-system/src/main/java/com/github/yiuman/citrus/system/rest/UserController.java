@@ -1,6 +1,10 @@
 package com.github.yiuman.citrus.system.rest;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.security.authorize.Authorize;
+import com.github.yiuman.citrus.support.crud.query.QueryParam;
+import com.github.yiuman.citrus.support.crud.query.QueryParamHandler;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.exception.RestException;
@@ -16,19 +20,28 @@ import com.github.yiuman.citrus.support.widget.Selects;
 import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
-import com.github.yiuman.citrus.system.dto.UserQuery;
 import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.entity.PasswordUpdateDto;
 import com.github.yiuman.citrus.system.entity.Role;
+import com.github.yiuman.citrus.system.entity.UserRole;
 import com.github.yiuman.citrus.system.hook.HasLoginHook;
+import com.github.yiuman.citrus.system.inject.AuthDeptIds;
+import com.github.yiuman.citrus.system.mapper.UserRoleMapper;
 import com.github.yiuman.citrus.system.service.OrganService;
 import com.github.yiuman.citrus.system.service.RoleService;
 import com.github.yiuman.citrus.system.service.UserService;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -147,6 +160,51 @@ public class UserController extends BaseCrudController<UserDto, Long> {
     public ResponseEntity<Void> updatePassword(@Validated @RequestBody PasswordUpdateDto passwordUpdate) throws Exception {
         userService.updatePassword(passwordUpdate.getOldPassword(), passwordUpdate.getNewPassword());
         return ResponseEntity.ok();
+    }
+
+    @Data
+    static class UserQuery {
+
+        @QueryParam(type = "like")
+        private String username;
+
+        @QueryParam(handler = UserQueryHandler.class)
+        private List<Long> roleIds;
+
+        @AuthDeptIds
+        private Set<Long> deptIds;
+
+        @Component
+        public static class UserQueryHandler implements QueryParamHandler {
+
+            private final UserRoleMapper userRoleMapper;
+
+            public UserQueryHandler(UserRoleMapper userRoleMapper) {
+                this.userRoleMapper = userRoleMapper;
+            }
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public void handle(QueryParam queryParam, Object object, Field field, QueryWrapper<?> queryWrapper) {
+                ReflectionUtils.makeAccessible(field);
+                List<Long> roleIds = (List<Long>) ReflectionUtils.getField(field, object);
+                if (roleIds == null) {
+                    return;
+                }
+                List<Long> userRoles = userRoleMapper.selectList(Wrappers.<UserRole>query().in("role_id", roleIds))
+                        .stream()
+                        .map(UserRole::getUserId)
+                        .collect(Collectors.toList());
+
+                if (CollectionUtils.isEmpty(userRoles)) {
+                    userRoles = Collections.singletonList(0L);
+
+                }
+
+                queryWrapper.in(true, "user_id", userRoles);
+            }
+        }
+
     }
 
 }

@@ -1,12 +1,13 @@
 package com.github.yiuman.citrus.system.rest;
 
+import com.github.yiuman.citrus.support.crud.query.QueryParam;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.model.DialogView;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.system.dto.ResourceDto;
-import com.github.yiuman.citrus.system.dto.ResourceQuery;
 import com.github.yiuman.citrus.system.service.ResourceService;
+import lombok.Data;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +27,17 @@ public class ResourceController extends BaseCrudController<ResourceDto, Long> {
         this.resourceService = resourceService;
         setParamClass(ResourceQuery.class);
     }
+
+    @Data
+    static class ResourceQuery {
+
+        @QueryParam(type = "like")
+        private String resourceName;
+
+        @QueryParam
+        private Long parentId;
+    }
+
 
     @Override
     protected ResourceService getService() {
@@ -51,7 +63,7 @@ public class ResourceController extends BaseCrudController<ResourceDto, Long> {
     }
 
     @Override
-    protected DialogView createDialogView() throws Exception {
+    protected DialogView createDialogView() {
         DialogView dialogView = new DialogView();
         dialogView.addEditField("资源名", "resourceName");
         dialogView.addEditField("资源路径", "path");

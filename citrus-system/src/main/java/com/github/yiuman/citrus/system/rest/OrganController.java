@@ -1,13 +1,14 @@
 package com.github.yiuman.citrus.system.rest;
 
+import com.github.yiuman.citrus.support.crud.query.QueryParam;
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
 import com.github.yiuman.citrus.support.model.DialogView;
 import com.github.yiuman.citrus.support.model.TreeDisplay;
 import com.github.yiuman.citrus.support.utils.Buttons;
-import com.github.yiuman.citrus.system.dto.OrganQuery;
 import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.service.OrganService;
+import lombok.Data;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +29,14 @@ public class OrganController extends BaseTreeController<Organization, Long> {
         this.organService = organService;
     }
 
+    @Data
+    static class OrganQuery {
+
+        @QueryParam(type = "like")
+        private String organName;
+
+    }
+
     @Override
     protected TreeCrudService<Organization, Long> getCrudService() {
         return organService;
@@ -45,9 +54,9 @@ public class OrganController extends BaseTreeController<Organization, Long> {
     @Override
     protected DialogView createDialogView() throws Exception {
         DialogView dialogView = new DialogView();
-        dialogView.addEditField("组织机构名称","organName");
-        dialogView.addEditField("组织机构代码","organCode");
-        dialogView.addEditField("备注","remark");
+        dialogView.addEditField("组织机构名称", "organName");
+        dialogView.addEditField("组织机构代码", "organCode");
+        dialogView.addEditField("备注", "remark");
         return dialogView;
     }
 }

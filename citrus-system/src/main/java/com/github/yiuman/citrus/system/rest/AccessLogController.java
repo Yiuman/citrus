@@ -1,10 +1,13 @@
 package com.github.yiuman.citrus.system.rest;
 
+import com.github.yiuman.citrus.support.crud.query.QueryParam;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
-import com.github.yiuman.citrus.system.dto.AccessLogQuery;
 import com.github.yiuman.citrus.system.entity.AccessLog;
+import lombok.Data;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 访问日志
@@ -17,8 +20,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccessLogController extends BaseCrudController<AccessLog, Long> {
 
     public AccessLogController() {
-        addSortBy("createTime",true);
+        addSortBy("createTime", true);
         setParamClass(AccessLogQuery.class);
+    }
+
+    @Data
+    static class AccessLogQuery {
+
+        @QueryParam
+        private Long userId;
+
+        @QueryParam(type = "in")
+        private List<Long> resourceType;
     }
 
 }

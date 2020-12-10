@@ -6,7 +6,6 @@ import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.DialogView;
 import com.github.yiuman.citrus.support.model.TreeDisplay;
 import com.github.yiuman.citrus.support.utils.Buttons;
-import com.github.yiuman.citrus.system.dto.ResourceQuery;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.service.MenuService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +28,7 @@ public class MenuController extends BaseTreeController<Resource, Long> {
     private final MenuService menuService;
 
     public MenuController(MenuService menuService) {
-        setParamClass(ResourceQuery.class);
+        setParamClass(ResourceController.ResourceQuery.class);
         this.menuService = menuService;
     }
 

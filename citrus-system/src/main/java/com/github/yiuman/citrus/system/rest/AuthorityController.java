@@ -1,11 +1,12 @@
 package com.github.yiuman.citrus.system.rest;
 
+import com.github.yiuman.citrus.support.crud.query.QueryParam;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.system.dto.AuthorityDto;
-import com.github.yiuman.citrus.system.dto.AuthorityQuery;
 import com.github.yiuman.citrus.system.service.AuthorityService;
+import lombok.Data;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +26,14 @@ public class AuthorityController extends BaseCrudController<AuthorityDto, Long> 
         setParamClass(AuthorityQuery.class);
         this.authorityService = authorityService;
     }
+
+    @Data
+    static class AuthorityQuery {
+
+        @QueryParam
+        private String authorityName;
+    }
+
 
     @Override
     protected AuthorityService getService() {

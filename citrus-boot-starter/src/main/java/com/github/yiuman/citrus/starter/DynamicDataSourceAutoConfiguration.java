@@ -50,7 +50,7 @@ import java.util.function.Consumer;
  */
 @SuppressWarnings("rawtypes")
 @Configuration
-@EnableConfigurationProperties({ DynamicDataSourceProperties.class,DataSourceProperties.class, MybatisPlusProperties.class})
+@EnableConfigurationProperties({DynamicDataSourceProperties.class, DataSourceProperties.class, MybatisPlusProperties.class})
 @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
 public class DynamicDataSourceAutoConfiguration implements InitializingBean {
 
@@ -209,7 +209,7 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
     }
 
     private SqlSessionFactory createSqlSessionFactory(DataSource dataSource) throws Exception {
-        // TODO 使用 MybatisSqlSessionFactoryBean 而不是 SqlSessionFactoryBean
+        // 使用 MybatisSqlSessionFactoryBean 而不是 SqlSessionFactoryBean
         MybatisSqlSessionFactoryBean factory = new MybatisSqlSessionFactoryBean();
         factory.setDataSource(dataSource);
         factory.setVfs(SpringBootVFS.class);
@@ -240,7 +240,6 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
             factory.setMapperLocations(this.mybatisPlusProperties.resolveMapperLocations());
         }
 
-        // TODO 对源码做了一定的修改(因为源码适配了老旧的mybatis版本,但我们不需要适配)
         Class<? extends LanguageDriver> defaultLanguageDriver = this.mybatisPlusProperties.getDefaultScriptingLanguageDriver();
         if (!ObjectUtils.isEmpty(this.languageDrivers)) {
             factory.setScriptingLanguageDrivers(this.languageDrivers);
@@ -249,30 +248,34 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
         if (!ObjectUtils.isEmpty(this.interceptors)) {
             factory.setPlugins(this.interceptors);
         }
-        // TODO 自定义枚举包
+        //自定义枚举包
         if (StringUtils.hasLength(this.mybatisPlusProperties.getTypeEnumsPackage())) {
             factory.setTypeEnumsPackage(this.mybatisPlusProperties.getTypeEnumsPackage());
         }
-        // TODO 此处必为非 NULL
+        // 这里每个MybatisSqlSessionFactoryBean对应的都是独立的一个GlobalConfig，不然会出现问题
         GlobalConfig globalConfig = GlobalConfigUtils.defaults();
         //去除打印
         globalConfig.setBanner(false);
-        // TODO 注入填充器
+        //  注入填充器
         this.getBeanThen(MetaObjectHandler.class, globalConfig::setMetaObjectHandler);
-        // TODO 注入主键生成器
+        // 注入主键生成器
         this.getBeanThen(IKeyGenerator.class, i -> globalConfig.getDbConfig().setKeyGenerator(i));
-        // TODO 注入sql注入器
+        // 注入sql注入器
         this.getBeanThen(ISqlInjector.class, globalConfig::setSqlInjector);
-        // TODO 注入ID生成器
+        // 注入ID生成器
         this.getBeanThen(IdentifierGenerator.class, globalConfig::setIdentifierGenerator);
-//        // TODO 设置 GlobalConfig 到 MybatisSqlSessionFactoryBean
+        //设置 GlobalConfig 到 MybatisSqlSessionFactoryBean
         factory.setGlobalConfig(globalConfig);
         return factory.getObject();
     }
 
-    // TODO 入参使用 MybatisSqlSessionFactoryBean
+    /**
+     * 入参使用 MybatisSqlSessionFactoryBean
+     *
+     * @param factory MybatisSqlSessionFactoryBean
+     */
     private void applyConfiguration(MybatisSqlSessionFactoryBean factory) {
-        // TODO 使用 MybatisConfiguration
+        // 使用 MybatisConfiguration
         MybatisConfiguration configuration = this.mybatisPlusProperties.getConfiguration();
         if (configuration == null && !StringUtils.hasText(this.mybatisPlusProperties.getConfigLocation())) {
             configuration = new MybatisConfiguration();

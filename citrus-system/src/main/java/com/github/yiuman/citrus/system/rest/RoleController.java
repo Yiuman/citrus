@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.system.rest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.yiuman.citrus.support.crud.query.QueryParam;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.model.DialogView;
 import com.github.yiuman.citrus.support.model.Page;
@@ -11,10 +12,10 @@ import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.widget.Selects;
 import com.github.yiuman.citrus.system.dto.AuthorityDto;
 import com.github.yiuman.citrus.system.dto.RoleDto;
-import com.github.yiuman.citrus.system.dto.RoleQuery;
 import com.github.yiuman.citrus.system.entity.Authority;
 import com.github.yiuman.citrus.system.service.AuthorityService;
 import com.github.yiuman.citrus.system.service.RoleService;
+import lombok.Data;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,6 +43,16 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
         this.authorityService = authorityService;
         setParamClass(RoleQuery.class);
     }
+
+    @Data
+    static class RoleQuery {
+
+        @QueryParam(type = "like")
+        private String roleName;
+
+        private List<Long> authIds;
+    }
+
 
     @Override
     protected RoleService getService() {
