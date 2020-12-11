@@ -20,4 +20,14 @@ public interface Condition<T> {
      * @throws Exception 可能为反射异常
      */
     QueryWrapper<T> getQueryWrapper(HttpServletRequest request) throws Exception;
+
+    /**
+     * 根据当前请求获取请求参数实例
+     *
+     * @param request 当前请求
+     * @return 请求查询实例
+     * @throws Exception 一般为反射异常
+     */
+    Object getQueryParams(HttpServletRequest request) throws Exception;
+
 }

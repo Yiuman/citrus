@@ -41,6 +41,7 @@
         <module>citrus-main</module>
         <module>citrus-boot-starter</module>
         <module>citrus-system</module>
+        <module>citrus-workflow</module>
     </modules>
 
     <properties>
@@ -58,6 +59,7 @@
         <commons.io.version>2.6</commons.io.version>
         <javassist.version>3.25.0-GA</javassist.version>
         <druid.version>1.2.3</druid.version>
+        <activiti.version>7.1.0.M6</activiti.version>
     </properties>
 
     <dependencies>

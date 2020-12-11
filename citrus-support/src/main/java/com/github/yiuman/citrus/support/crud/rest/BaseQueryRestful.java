@@ -154,6 +154,11 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
      */
     @Override
     public QueryWrapper<T> getQueryWrapper(HttpServletRequest request) throws Exception {
+        return getQueryWrapper(getQueryParams(request));
+    }
+
+    @Override
+    public Object getQueryParams(HttpServletRequest request) throws Exception {
         //将请求转化成参数
         Object params = WebUtils.requestDataBind(paramClass, request, true);
         //注解注入
@@ -164,7 +169,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
             SpringUtils.getBean(InjectAnnotationParserHolder.class, true).inject(params);
         }
 
-        return getQueryWrapper(params);
+        return params;
     }
 
     protected QueryWrapper<T> getQueryWrapper(Object params) {
