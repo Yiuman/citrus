@@ -1,8 +1,8 @@
 package com.github.yiuman.citrus.workflow.service;
 
+import com.github.yiuman.citrus.workflow.model.StartProcessModel;
+import com.github.yiuman.citrus.workflow.model.TaskCompleteModel;
 import org.activiti.engine.runtime.ProcessInstance;
-
-import java.util.Map;
 
 /**
  * 流程服务类
@@ -10,34 +10,32 @@ import java.util.Map;
  * @author yiuman
  * @date 2020/12/11
  */
-public interface ProcessService<F> {
-
-    String getProcessDefinitionKey();
-
+public interface ProcessService {
 
     /**
      * 开始一个流程
      *
-     * @param form 表单数据
+     * @param model 开始流程模型
      * @return 流程实例
+     * @see StartProcessModel
      */
-    ProcessInstance starProcess(F form);
+    ProcessInstance starProcess(StartProcessModel model);
 
     /**
-     * 获取流程需要关联的表单实例的主键
+     * 完成任务
      *
-     * @param form 表单实例
-     * @return 主键
+     * @param model 任务完成模型
+     * @see TaskCompleteModel
      */
-    String getBusinessFormKey(F form);
+    void complete(TaskCompleteModel model);
 
     /**
-     * 根据业务表单实例获取流程需要的变量
+     * 签收任务
      *
-     * @param form 表单数据
-     * @return 需要的流程实例变量
+     * @param taskId 任务ID
+     * @param userId 用户ID
      */
-    Map<?, ?> getProcessInstanceVars(F form);
+    void claim(String taskId, String userId);
 
     /**
      * 挂起流程

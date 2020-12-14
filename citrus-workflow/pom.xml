@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>com.github.yiuman</groupId>
-            <artifactId>citrus-support</artifactId>
+            <artifactId>citrus-system</artifactId>
             <version>${citrus.version}</version>
         </dependency>
         <dependency>
