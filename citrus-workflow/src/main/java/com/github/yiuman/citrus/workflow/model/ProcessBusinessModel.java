@@ -9,8 +9,8 @@ package com.github.yiuman.citrus.workflow.model;
  */
 public interface ProcessBusinessModel {
 
-    String getInstanceId();
+    String getProcessInstanceId();
 
-    void setInstanceId(String instanceId);
+    void setProcessInstanceId(String instanceId);
 
 }
