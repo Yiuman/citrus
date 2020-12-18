@@ -13,7 +13,7 @@ import java.util.List;
  * @author yiuman
  * @date 2020/12/14
  */
-public interface ProcessQueryService {
+public interface WorkflowQueryService extends WorkflowEngineGetter {
 
 
     /**

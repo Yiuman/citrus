@@ -4,8 +4,8 @@ import com.github.yiuman.citrus.workflow.model.StartProcessModel;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 启动流程模型实现类
@@ -25,10 +25,7 @@ public class StartProcessModelImpl implements StartProcessModel {
 
     private String userId;
 
-    private Set<String> candidateOrAssigned;
-
-    public StartProcessModelImpl() {
-    }
+    private List<String> candidateOrAssigned;
 
     @Override
     public String getProcessDefineId() {
@@ -51,7 +48,7 @@ public class StartProcessModelImpl implements StartProcessModel {
     }
 
     @Override
-    public Set<String> getCandidateOrAssigned() {
+    public List<String> getCandidateOrAssigned() {
         return candidateOrAssigned;
     }
 }

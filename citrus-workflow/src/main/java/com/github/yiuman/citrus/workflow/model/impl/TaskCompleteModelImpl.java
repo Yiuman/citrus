@@ -4,8 +4,8 @@ import com.github.yiuman.citrus.workflow.model.TaskCompleteModel;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 任务完成模型实现类
@@ -25,10 +25,7 @@ public class TaskCompleteModelImpl implements TaskCompleteModel {
 
     private String userId;
 
-    private Set<String> candidateOrAssigned;
-
-    public TaskCompleteModelImpl() {
-    }
+    private List<String> candidateOrAssigned;
 
     @Override
     public String getTaskId() {
@@ -51,7 +48,7 @@ public class TaskCompleteModelImpl implements TaskCompleteModel {
     }
 
     @Override
-    public Set<String> getCandidateOrAssigned() {
+    public List<String> getCandidateOrAssigned() {
         return candidateOrAssigned;
     }
 }

@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.workflow.model;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -22,5 +23,5 @@ public interface ProcessPersonalModel {
      *
      * @return 候选人ID列表
      */
-    Set<String> getCandidateOrAssigned();
+    List<String> getCandidateOrAssigned();
 }

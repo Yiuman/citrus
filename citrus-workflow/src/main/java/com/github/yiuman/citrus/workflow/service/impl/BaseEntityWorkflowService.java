@@ -1,22 +1,22 @@
-package com.github.yiuman.citrus.workflow.service;
+package com.github.yiuman.citrus.workflow.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yiuman.citrus.support.crud.service.BaseService;
-import com.github.yiuman.citrus.support.utils.SpringUtils;
+import com.github.yiuman.citrus.workflow.exception.WorkflowException;
 import com.github.yiuman.citrus.workflow.model.ProcessBusinessModel;
 import com.github.yiuman.citrus.workflow.model.StartProcessModel;
 import com.github.yiuman.citrus.workflow.model.TaskCompleteModel;
 import com.github.yiuman.citrus.workflow.model.impl.StartProcessModelImpl;
 import com.github.yiuman.citrus.workflow.model.impl.TaskCompleteModelImpl;
-import com.github.yiuman.citrus.workflow.service.EntityCrudProcessService;
-import com.github.yiuman.citrus.workflow.service.ProcessService;
-import com.github.yiuman.citrus.workflow.service.impl.ProcessServiceImpl;
+import com.github.yiuman.citrus.workflow.service.EntityCrudWorkflowService;
+import com.github.yiuman.citrus.workflow.service.WorkflowService;
 import lombok.extern.slf4j.Slf4j;
 import org.activiti.engine.runtime.ProcessInstance;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 实体业务模型的基础流程逻辑服务类
@@ -25,8 +25,8 @@ import java.util.Map;
  * @date 2020/12/14
  */
 @Slf4j
-public abstract class BaseEntityProcessService<E extends ProcessBusinessModel, K extends Serializable>
-        extends BaseService<E, K> implements EntityCrudProcessService<E, K> {
+public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, K extends Serializable>
+        extends BaseService<E, K> implements EntityCrudWorkflowService<E, K> {
 
     /**
      * 流程参数，申请用户
@@ -39,12 +39,18 @@ public abstract class BaseEntityProcessService<E extends ProcessBusinessModel, K
     private final static String BUSINESS_KEY = "businessKey";
 
     /**
+     * 流程服务类
+     */
+    private WorkflowService processService;
+
+    /**
      * 获取流程服务类
      *
      * @return 默认使用系统默认的流程服务类实现
      */
-    protected ProcessService getProcessService() {
-        return SpringUtils.getBean(ProcessServiceImpl.class, true);
+    protected WorkflowService getProcessService() {
+        return processService = Optional.ofNullable(processService)
+                .orElse(new WorkflowServiceImpl());
     }
 
     /**
@@ -60,7 +66,7 @@ public abstract class BaseEntityProcessService<E extends ProcessBusinessModel, K
         String instanceId = entity.getProcessInstanceId();
         //已经有流程实例ID
         if (StringUtils.isNotBlank(instanceId)) {
-            throw new RuntimeException("This Business Process has been start!");
+            throw new WorkflowException("This Business Process has been start!");
         }
         Map<String, Object> variables = getVariables(entity);
         ProcessInstance processInstance = starProcess(StartProcessModelImpl.builder()

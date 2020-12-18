@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.workflow.service.impl;
 
-import com.github.yiuman.citrus.workflow.service.BaseFlowableService;
-import com.github.yiuman.citrus.workflow.service.ProcessQueryService;
+import com.github.yiuman.citrus.workflow.service.WorkflowQueryService;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
@@ -13,14 +12,14 @@ import java.util.List;
  * @author yiuman
  * @date 2020/12/14
  */
-public class ProcessQueryServiceImpl extends BaseFlowableService implements ProcessQueryService {
+public class WorkflowQueryServiceImpl extends DefaultWorkflowEngineGetterImpl implements WorkflowQueryService {
 
-    public ProcessQueryServiceImpl() {
+    public WorkflowQueryServiceImpl() {
     }
 
     @Override
     public List<ProcessInstance> getProcessInstances(ProcessInstanceQuery processInstanceQuery) {
-        throw new UnsupportedOperationException("Method not implemented.");
+        return processInstanceQuery.list();
     }
 
     @Override

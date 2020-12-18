@@ -6,8 +6,8 @@ import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.workflow.model.ProcessBusinessModel;
-import com.github.yiuman.citrus.workflow.service.BaseEntityProcessService;
-import com.github.yiuman.citrus.workflow.service.EntityCrudProcessService;
+import com.github.yiuman.citrus.workflow.service.impl.BaseEntityWorkflowService;
+import com.github.yiuman.citrus.workflow.service.EntityCrudWorkflowService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,12 +30,12 @@ public abstract class EntityBusinessProcessController<E extends ProcessBusinessM
     }
 
     @SuppressWarnings("unchecked")
-    protected EntityCrudProcessService<E, K> getProcessService() {
+    protected EntityCrudWorkflowService<E, K> getProcessService() {
         try {
             return CrudUtils.getCrudService(
                     modelClass,
                     (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 1),
-                    BaseEntityProcessService.class);
+                    BaseEntityWorkflowService.class);
         } catch (Exception e) {
             log.info("获取EntityCrudProcessService报错", e);
             return null;

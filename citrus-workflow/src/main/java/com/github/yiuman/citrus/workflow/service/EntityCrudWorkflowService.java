@@ -11,6 +11,6 @@ import java.io.Serializable;
  * @author yiuman
  * @date 2020/12/16
  */
-public interface EntityCrudProcessService<E extends ProcessBusinessModel, K extends Serializable>
-        extends CrudService<E, K>, EntityProcessService<E> {
+public interface EntityCrudWorkflowService<E extends ProcessBusinessModel, K extends Serializable>
+        extends CrudService<E, K>, EntityWorkflowService<E> {
 }

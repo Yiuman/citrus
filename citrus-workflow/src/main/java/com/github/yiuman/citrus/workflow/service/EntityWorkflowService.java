@@ -11,7 +11,7 @@ import java.util.Map;
  * @author yiuman
  * @date 2020/12/16
  */
-public interface EntityProcessService<E extends ProcessBusinessModel> extends ProcessService {
+public interface EntityWorkflowService<E extends ProcessBusinessModel> extends WorkflowService {
 
     /**
      * 获取流程定义的Key

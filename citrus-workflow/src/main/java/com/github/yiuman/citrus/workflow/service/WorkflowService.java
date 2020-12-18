@@ -10,7 +10,7 @@ import org.activiti.engine.runtime.ProcessInstance;
  * @author yiuman
  * @date 2020/12/11
  */
-public interface ProcessService {
+public interface WorkflowService extends WorkflowEngineGetter {
 
     /**
      * 开始一个流程
