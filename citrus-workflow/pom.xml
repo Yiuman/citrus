@@ -28,6 +28,10 @@
                     <groupId>org.mybatis</groupId>
                     <artifactId>mybatis</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-actuator-autoconfigure</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
     </dependencies>

@@ -11,6 +11,7 @@ import com.github.yiuman.citrus.workflow.model.impl.TaskCompleteModelImpl;
 import com.github.yiuman.citrus.workflow.service.EntityCrudWorkflowService;
 import com.github.yiuman.citrus.workflow.service.WorkflowService;
 import lombok.extern.slf4j.Slf4j;
+import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.runtime.ProcessInstance;
 
 import java.io.Serializable;
@@ -31,7 +32,7 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
     /**
      * 流程参数，申请用户
      */
-    private final static String APPLY_USER_ID = "applyUserId";
+    private final static String CURRENT_USER_ID = "currentUserId";
 
     /**
      * 流程参数，业务主键
@@ -53,6 +54,11 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
                 .orElse(new WorkflowServiceImpl());
     }
 
+    @Override
+    public ProcessEngine getProcessEngine() {
+        return getProcessService().getProcessEngine();
+    }
+
     /**
      * 开启流程
      *
@@ -71,9 +77,9 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
         Map<String, Object> variables = getVariables(entity);
         ProcessInstance processInstance = starProcess(StartProcessModelImpl.builder()
                 .businessKey(key.toString())
-                .processDefineId(getProcessDefineKey())
+                .processDefineKey(getProcessDefineKey())
                 .variables(variables)
-                .userId(variables.get(APPLY_USER_ID).toString()).build()
+                .userId(variables.get(CURRENT_USER_ID).toString()).build()
         );
         entity.setProcessInstanceId(processInstance.getProcessInstanceId());
         update(entity);
@@ -99,7 +105,7 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
     protected Map<String, Object> getVariables(E entity) {
         K key = getKey(entity);
         Map<String, Object> variables = new HashMap<>();
-        variables.put(APPLY_USER_ID, getCurrentUserId());
+        variables.put(CURRENT_USER_ID, getCurrentUserId());
         variables.put(BUSINESS_KEY, key.toString());
         return variables;
     }

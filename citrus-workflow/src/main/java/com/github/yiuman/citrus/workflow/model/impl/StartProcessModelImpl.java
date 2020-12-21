@@ -17,7 +17,7 @@ import java.util.Map;
 @Builder
 public class StartProcessModelImpl implements StartProcessModel {
 
-    private String processDefineId;
+    private String processDefineKey;
 
     private String businessKey;
 
@@ -28,8 +28,8 @@ public class StartProcessModelImpl implements StartProcessModel {
     private List<String> candidateOrAssigned;
 
     @Override
-    public String getProcessDefineId() {
-        return processDefineId;
+    public String getProcessDefineKey() {
+        return processDefineKey;
     }
 
     @Override

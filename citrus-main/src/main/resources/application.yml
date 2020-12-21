@@ -4,11 +4,12 @@ spring:
     url: jdbc:mysql://localhost:3306/citrus?zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8
     username: root
     password: yiuman
-    multiples:
-      txServer:
-        driver-class-name: com.mysql.jdbc.Driver
-        url: jdbc:mysql://42.192.95.146:3306/citrus?zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8
-        username: root
-        password: yiuman
+#    multiples:
+#      txServer:
+#        driver-class-name: com.mysql.jdbc.Driver
+#        url: jdbc:mysql://42.192.95.146:3306/citrus?zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8
+#        username: root
+#        password: yiuman
+
 server:
   port: 8082

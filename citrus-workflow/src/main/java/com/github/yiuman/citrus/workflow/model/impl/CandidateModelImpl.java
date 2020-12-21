@@ -4,7 +4,7 @@ import com.github.yiuman.citrus.workflow.model.CandidateModel;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * 候选人模型的实现
@@ -18,6 +18,6 @@ public class CandidateModelImpl implements CandidateModel {
 
     private String dimension;
 
-    private String dimensionValue;
+    private List<String> values;
 
 }

@@ -48,12 +48,14 @@ public abstract class BaseWorkflowService implements WorkflowService {
 
     @Override
     public ProcessInstance starProcess(StartProcessModel model) {
-        String processDefineId = model.getProcessDefineId();
+        String processDefineId = model.getProcessDefineKey();
         //找到流程定义
         ProcessDefinition definition = Optional.ofNullable(
                 getProcessEngine().getRepositoryService()
                         .createProcessDefinitionQuery()
-                        .processDefinitionId(processDefineId).singleResult()
+                        .processDefinitionKey(processDefineId)
+                        .latestVersion()
+                        .singleResult()
         ).orElseThrow(() -> new IllegalArgumentException(String.format("can not find ProcessDefinition for key:[%s]", processDefineId)));
 
         //开起流程

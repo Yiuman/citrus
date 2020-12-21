@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.workflow.resolver;
 
+import com.github.yiuman.citrus.workflow.model.CandidateModel;
+
 import java.util.List;
 
 /**
@@ -10,5 +12,5 @@ public interface CandidateParser {
 
     boolean support(String dimension);
 
-    List<String> parse(String values);
+    <T extends CandidateModel> List<String> parse(T candidateModel);
 }

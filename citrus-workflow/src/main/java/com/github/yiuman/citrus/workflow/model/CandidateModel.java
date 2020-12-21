@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.workflow.model;
 
+import java.util.List;
+
 /**
  * 候选人模型
  *
@@ -9,17 +11,19 @@ package com.github.yiuman.citrus.workflow.model;
 public interface CandidateModel {
 
     /**
-     * 获取实体类型字符串
+     * 维度，用于区分候选人的维度<br/>
+     * 如，维度为用户、部门、角色
      *
      * @return 实体类型的类名
      */
     String getDimension();
 
     /**
-     * 获取用户ID集合
+     * 维度的值<br/>
+     * 如用户则为用户ID，如角色则为角色ID
      *
      * @return 用户ID集合
      */
-    String getDimensionValue();
+    List<String> getValues();
 
 }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 任务候选人解析器实现<br/>
@@ -48,12 +49,14 @@ public class TaskCandidateResolverImpl implements TaskCandidateResolver {
                                 .filter(parser -> parser.support(candidateModel.getDimension()))
                                 .findFirst();
 
-                        //找到就进行解释
-                        if(candidateParser.isPresent()){
-                            candidateParser.get().parse(candidateModel.getDimensionValue());
-                        }else{
-                            realUserIds.add(candidateModel.getDimensionValue());
-                        }
+                        //找到就进行解释,没找到直接加入
+                        realUserIds.addAll(candidateParser.isPresent()
+                                ? candidateParser.get().parse(candidateModel)
+                                : candidateModel
+                                .getValues()
+                                .stream()
+                                .map(dimensionValue -> String.format("%s#%s", candidateModel.getDimension(), dimensionValue))
+                                .collect(Collectors.toList()));
 
                     } catch (JsonProcessingException ignore) {
                         realUserIds.add(taskCandidate);

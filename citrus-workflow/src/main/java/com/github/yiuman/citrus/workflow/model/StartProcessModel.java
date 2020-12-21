@@ -11,11 +11,11 @@ import java.util.Map;
 public interface StartProcessModel extends ProcessPersonalModel {
 
     /**
-     * 获取流程定义ID，用于启动流程或处理流程相关操作
+     * 获取流程定义Key，用于启动流程或处理流程相关操作
      *
      * @return 流程定义ID
      */
-    String getProcessDefineId();
+    String getProcessDefineKey();
 
 
     /**
