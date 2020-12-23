@@ -21,7 +21,7 @@ public interface QueryRestful<T, K> extends Condition<T> {
      * @return 分页实体
      * @throws Exception 如转化参数的异常、反射异常等
      */
-    Page<T> page(HttpServletRequest request) throws Exception;
+    <P extends Page<T>> P page(HttpServletRequest request) throws Exception;
 
 
     /**
