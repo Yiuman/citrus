@@ -25,7 +25,7 @@ public class DynamicController {
     @Transactional(rollbackFor = Throwable.class)
     public void testTransactional() {
         Dictionary dictionary2 = new Dictionary();
-        dictionary2.setDictCode("345345");
+        dictionary2.setDictCode("789789");
         dictionary2.setDictName("测试2");
 //
         dictionaryMapperTwo.saveEntity(dictionary2);

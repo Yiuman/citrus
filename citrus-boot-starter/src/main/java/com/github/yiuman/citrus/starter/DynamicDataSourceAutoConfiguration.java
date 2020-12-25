@@ -129,12 +129,14 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
         int dataSourceSize = Objects.nonNull(dataSourcePropertiesMap) ? dataSourcePropertiesMap.size() : 0;
         Map<Object, Object> dataSourceMap = new HashMap<>(dataSourceSize + 1);
         DataSource defaultDataSource;
-        String primary = Optional.of(dynamicDataSourceProperties.getPrimary()).orElse("");
+        String primary = Optional.of(dynamicDataSourceProperties.getPrimary()).orElse("default");
+        //是否开启多数据源事务
+        boolean enableMultipleTx = dynamicDataSourceProperties.isEnableMultipleTx();
         if (dataSourceSize > 0) {
-            defaultDataSource = buildDruidXADataSource(primary, dataSourceProperties);
-            dataSourcePropertiesMap.forEach((key, properties) -> dataSourceMap.put(key, buildDruidXADataSource(key, properties)));
+            defaultDataSource = buildDataSource(primary, dataSourceProperties, enableMultipleTx);
+            dataSourcePropertiesMap.forEach((key, properties) -> dataSourceMap.put(key, buildDataSource(key, properties, enableMultipleTx)));
         } else {
-            defaultDataSource = buildDruidDataSource(dataSourceProperties);
+            defaultDataSource = buildDataSource(null, dataSourceProperties, false);
         }
         dataSourceMap.put(primary, defaultDataSource);
         dynamicDataSource.setTargetDataSources(dataSourceMap);
@@ -147,15 +149,18 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
         Map<String, DataSourceProperties> dataSourcePropertiesMap = dynamicDataSourceProperties.getDatasource();
         int dataSourceSize = Objects.nonNull(dataSourcePropertiesMap) ? dataSourcePropertiesMap.size() : 0;
         Map<Object, SqlSessionFactory> sqlSessionFactoryMap = new HashMap<>(dataSourceSize + 1);
+
+        //是否开启多数据源事务
+        boolean enableMultipleTx = dynamicDataSourceProperties.isEnableMultipleTx();
         DataSource defaultDataSource;
         String primary = Optional.of(dynamicDataSourceProperties.getPrimary()).orElse("");
         if (dataSourceSize > 0) {
-            defaultDataSource = buildDruidXADataSource(primary, dataSourceProperties);
+            defaultDataSource = buildDataSource(primary, dataSourceProperties, enableMultipleTx);
             for (Map.Entry<String, DataSourceProperties> entry : dataSourcePropertiesMap.entrySet()) {
-                sqlSessionFactoryMap.put(entry.getKey(), createSqlSessionFactory(buildDruidXADataSource(entry.getKey(), entry.getValue())));
+                sqlSessionFactoryMap.put(entry.getKey(), createSqlSessionFactory(buildDataSource(entry.getKey(), entry.getValue(), enableMultipleTx)));
             }
         } else {
-            defaultDataSource = buildDruidDataSource(dataSourceProperties);
+            defaultDataSource = buildDataSource(null, dataSourceProperties, false);
         }
         SqlSessionFactory defaultSqlSessionFactory = createSqlSessionFactory(defaultDataSource);
         sqlSessionFactoryMap.put(primary, defaultSqlSessionFactory);
@@ -169,6 +174,10 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
     @Bean
     public DynamicDataSourceAnnotationAdvisor dynamicDataSourceAnnotationAdvisor() {
         return new DynamicDataSourceAnnotationAdvisor(new DynamicDataSourceAnnotationInterceptor());
+    }
+
+    private DataSource buildDataSource(String resourceName, DataSourceProperties properties, boolean enableMultipleTx) {
+        return enableMultipleTx ? buildDruidXADataSource(resourceName, properties) : buildDruidDataSource(properties);
     }
 
 
@@ -204,7 +213,7 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
 
         AtomikosDataSourceBean atomikosDataSourceBean = new AtomikosDataSourceBean();
         atomikosDataSourceBean.setXaDataSource(druidDataSource);
-        atomikosDataSourceBean.setUniqueResourceName(resourceName);
+        atomikosDataSourceBean.setUniqueResourceName(String.format("%s$$%s", resourceName, UUID.randomUUID().toString().substring(0, 15)));
         return atomikosDataSourceBean;
     }
 

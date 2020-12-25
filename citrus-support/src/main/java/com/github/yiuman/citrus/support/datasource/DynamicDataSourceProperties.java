@@ -30,6 +30,8 @@ public class DynamicDataSourceProperties {
      */
     private Map<String, DataSourceProperties> multiples;
 
+    private boolean enableMultipleTx = true;
+
     public DynamicDataSourceProperties() {
     }
 
@@ -61,4 +63,11 @@ public class DynamicDataSourceProperties {
         return multiples;
     }
 
+    public boolean isEnableMultipleTx() {
+        return enableMultipleTx;
+    }
+
+    public void setEnableMultipleTx(boolean enableMultipleTx) {
+        this.enableMultipleTx = enableMultipleTx;
+    }
 }
