@@ -1,5 +1,5 @@
 # citrus
-[![AUR](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)](https://github.com/Yiuman/citrus/blob/master/LICENSE)  [![AUR](https://img.shields.io/badge/spring--boot-2.3.2-release.svg)](http://spring.io/projects/spring-boot)  [![AUR](https://img.shields.io/badge/mybatis--plus-3.3.1-blue.svg)](http://mp.baomidou.com)
+[![AUR](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)](https://github.com/Yiuman/citrus/blob/master/LICENSE)  [![AUR](https://img.shields.io/badge/spring--boot-2.3.2-release.svg)](http://spring.io/projects/spring-boot)  [![AUR](https://img.shields.io/badge/mybatis--plus-3.4.1-blue.svg)](http://mp.baomidou.com)
 
 
 
