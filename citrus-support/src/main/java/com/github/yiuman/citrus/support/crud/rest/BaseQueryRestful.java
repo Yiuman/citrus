@@ -56,19 +56,18 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
      * @return 分页页面对象
      * @throws Exception 反射、数据库操作等异常
      */
-    @SuppressWarnings("unchecked")
-    protected <P extends Page<T>> P createPage() throws Exception {
+    protected Page<T> createPage() throws Exception {
         Page<T> page = new Page<>();
         //构造页面小部件
         CrudUtils.getCrudWidgets(this)
                 .forEach(widget -> page.addWidget(widget, true));
-        return (P) page;
+        return page;
     }
 
     @Override
-    public <P extends Page<T>> P page(HttpServletRequest request) throws Exception {
+    public Page<T> page(HttpServletRequest request) throws Exception {
         //获取pageNo
-        P page = createPage();
+        Page<T> page = createPage();
         //添加默表头
         if (CollectionUtils.isEmpty(page.getHeaders())) {
             ReflectionUtils.doWithFields(modelClass, field -> page.addHeader(field.getName(), field.getName()));
@@ -81,7 +80,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
         handleSortWrapper(queryWrapper, request);
 
         //这里需要调用了page方法查询后再进行设置ItemKey,原因是Service中的mapper为动态注入，调用查询才会初始化mapper构造表信息
-        P realPage = selectPage(page, queryWrapper);
+        Page<T> realPage = selectPage(page, queryWrapper);
         if (StringUtils.isBlank(realPage.getItemKey())) {
             realPage.setItemKey(getService().getKeyProperty());
         }
@@ -97,7 +96,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
      * @param queryWrapper 查询条件
      * @return 查询后的分页数据
      */
-    protected <P extends Page<T>> P selectPage(P page, QueryWrapper<T> queryWrapper) {
+    protected Page<T> selectPage(Page<T> page, QueryWrapper<T> queryWrapper) {
         return getService().page(page, queryWrapper);
     }
 

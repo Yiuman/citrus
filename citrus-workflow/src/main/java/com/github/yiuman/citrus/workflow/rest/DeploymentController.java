@@ -59,7 +59,7 @@ public class DeploymentController extends BaseQueryController<Deployment, String
 
     @Override
     public Page<Deployment> page(HttpServletRequest request) throws Exception {
-        Page<Deployment> page = new Page<>();
+        Page<Deployment> page = createPage();
         WebUtils.requestDataBind(page, request);
         DeploymentQuery deploymentQuery = repositoryService.createDeploymentQuery();
         page.setTotal(deploymentQuery.count());
