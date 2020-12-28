@@ -209,4 +209,12 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
         BeanUtils.copyProperties(get(currentUserOnlineInfo.getUserId()), currentUserOnlineInfo);
         userOnlineCache.save(currentUserOnlineInfo.getUuid(), currentUserOnlineInfo);
     }
+
+    public List<User> getUsersByRoleIds(Collection<Long> roleIds) {
+        return userRoleMapper.getUsersByRoleIds(roleIds);
+    }
+
+    public List<User> getUsersByDeptIds(List<Long> deptIds) {
+        return userOrganMapper.getUsersByDeptIds(deptIds);
+    }
 }

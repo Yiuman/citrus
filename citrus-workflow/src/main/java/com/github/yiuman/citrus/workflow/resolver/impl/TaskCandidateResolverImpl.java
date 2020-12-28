@@ -5,12 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.yiuman.citrus.workflow.model.impl.CandidateModelImpl;
 import com.github.yiuman.citrus.workflow.resolver.CandidateParser;
 import com.github.yiuman.citrus.workflow.resolver.TaskCandidateResolver;
+import io.jsonwebtoken.lang.Assert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -27,9 +30,10 @@ public class TaskCandidateResolverImpl implements TaskCandidateResolver {
 
     private final ObjectMapper objectMapper;
 
-    private final Set<CandidateParser> candidateParsers;
+    private final List<CandidateParser> candidateParsers;
 
-    public TaskCandidateResolverImpl(ObjectMapper objectMapper, Set<CandidateParser> candidateParsers) {
+    @Autowired(required = false)
+    public TaskCandidateResolverImpl(@NonNull ObjectMapper objectMapper, @Nullable List<CandidateParser> candidateParsers) {
         this.objectMapper = objectMapper;
         this.candidateParsers = candidateParsers;
     }
