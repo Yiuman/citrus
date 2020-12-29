@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.system.workflow;
 import com.github.yiuman.citrus.system.entity.RoleAuthority;
 import com.github.yiuman.citrus.system.service.RbacMixinService;
 import com.github.yiuman.citrus.workflow.model.CandidateModel;
+import com.github.yiuman.citrus.workflow.model.WorkflowContext;
 import com.github.yiuman.citrus.workflow.model.impl.CandidateModelImpl;
 import com.github.yiuman.citrus.workflow.resolver.CandidateParser;
 import com.github.yiuman.citrus.workflow.resolver.WorkflowDimension;
@@ -35,7 +36,7 @@ public class AuthCandidateParserImpl implements CandidateParser {
     }
 
     @Override
-    public <T extends CandidateModel> List<String> parse(T candidateModel) {
+    public <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext,T candidateModel) {
         List<Long> authIds = candidateModel.getValues().stream()
                 .map(Long::valueOf)
                 .collect(Collectors.toList());
@@ -47,6 +48,6 @@ public class AuthCandidateParserImpl implements CandidateParser {
                 .map(RoleAuthority::getRoleId)
                 .map(String::valueOf)
                 .collect(Collectors.toList());
-        return roleCandidateParser.parse(CandidateModelImpl.builder().dimension(WorkflowDimension.ROLE).values(roleIds).build());
+        return roleCandidateParser.parse(workflowContext,CandidateModelImpl.builder().dimension(WorkflowDimension.ROLE).values(roleIds).build());
     }
 }

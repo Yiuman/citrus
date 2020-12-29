@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.system.workflow;
 import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.service.UserService;
 import com.github.yiuman.citrus.workflow.model.CandidateModel;
+import com.github.yiuman.citrus.workflow.model.WorkflowContext;
 import com.github.yiuman.citrus.workflow.resolver.CandidateParser;
 import com.github.yiuman.citrus.workflow.resolver.WorkflowDimension;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,7 @@ public class RoleCandidateParserImpl implements CandidateParser {
     }
 
     @Override
-    public <T extends CandidateModel> List<String> parse(T candidateModel) {
+    public <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext,T candidateModel) {
         List<String> roleIds = candidateModel.getValues();
         List<User> usersByRoleIds = userService.getUsersByRoleIds(
                         roleIds.parallelStream().map(Long::valueOf).collect(Collectors.toList())

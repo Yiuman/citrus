@@ -3,16 +3,19 @@ package com.github.yiuman.citrus.workflow.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
 import com.github.yiuman.citrus.workflow.exception.WorkflowException;
+import com.github.yiuman.citrus.workflow.model.ProcessPersonalModel;
 import com.github.yiuman.citrus.workflow.model.StartProcessModel;
 import com.github.yiuman.citrus.workflow.model.TaskCompleteModel;
+import com.github.yiuman.citrus.workflow.model.impl.WorkflowContextImpl;
+import com.github.yiuman.citrus.workflow.resolver.TaskCandidateResolver;
 import com.github.yiuman.citrus.workflow.service.WorkflowEngineGetter;
 import com.github.yiuman.citrus.workflow.service.WorkflowService;
-import com.github.yiuman.citrus.workflow.resolver.TaskCandidateResolver;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowElement;
 import org.activiti.bpmn.model.UserTask;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
@@ -82,7 +85,7 @@ public abstract class BaseWorkflowService implements WorkflowService {
                     taskService.createTaskQuery()
                             .processInstanceId(processInstance.getId())
                             .active().singleResult()
-            ).ifPresent(nextTask -> setCandidateOrAssigned(nextTask, model.getCandidateOrAssigned()));
+            ).ifPresent(nextTask -> setCandidateOrAssigned(nextTask, model));
         }
 
         return processInstance;
@@ -114,13 +117,15 @@ public abstract class BaseWorkflowService implements WorkflowService {
                 .singleResult();
 
         if (Objects.nonNull(nextTask)) {
-            setCandidateOrAssigned(nextTask, model.getCandidateOrAssigned());
+            setCandidateOrAssigned(nextTask, model);
         }
 
     }
 
-    protected void setCandidateOrAssigned(Task task, List<String> candidateOrAssigned) {
+    protected void setCandidateOrAssigned(Task task, ProcessPersonalModel model) {
+        task.getProcessInstanceId();
         TaskService taskService = getProcessEngine().getTaskService();
+
         //查询当前任务是否已经有候选人或办理人
         RepositoryService repositoryService = getProcessEngine().getRepositoryService();
         BpmnModel bpmnModel = repositoryService.getBpmnModel(task.getProcessDefinitionId());
@@ -132,14 +137,27 @@ public abstract class BaseWorkflowService implements WorkflowService {
             //没有负责人，则用解析器解析流程任务定义的候选人或参数传入来的候选人
             if (StringUtils.isBlank(task.getAssignee())) {
                 List<String> allCandidateOrAssigned = new ArrayList<>();
-                allCandidateOrAssigned.addAll(candidateOrAssigned);
+                allCandidateOrAssigned.addAll(model.getCandidateOrAssigned());
                 allCandidateOrAssigned.addAll(taskCandidateUsersDefine);
 
                 //删除任务候选人
                 allCandidateOrAssigned.forEach(candidateDefine -> taskService.deleteCandidateUser(task.getId(), candidateDefine));
 
+                RuntimeService runtimeService = getProcessEngine().getRuntimeService();
+
+                WorkflowContextImpl workflowContext = WorkflowContextImpl.builder()
+                        .processInstance(
+                                runtimeService
+                                        .createProcessInstanceQuery()
+                                        .processInstanceId(task.getProcessInstanceId())
+                                        .singleResult()
+                        )
+                        .task(task)
+                        .flowElement(flowElement)
+                        .currentUserId(model.getUserId())
+                        .build();
                 //解析器解析完成后，把真正的候选人添加到任务中去
-                Optional.ofNullable(getTaskCandidateResolver().resolve(allCandidateOrAssigned))
+                Optional.ofNullable(getTaskCandidateResolver().resolve(workflowContext, allCandidateOrAssigned))
                         .ifPresent(resolvedCandidates -> {
                             if (resolvedCandidates.size() == 1) {
                                 taskService.setAssignee(task.getId(), resolvedCandidates.get(1));

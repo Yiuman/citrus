@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.workflow.resolver.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.yiuman.citrus.workflow.model.WorkflowContext;
 import com.github.yiuman.citrus.workflow.model.impl.CandidateModelImpl;
 import com.github.yiuman.citrus.workflow.resolver.CandidateParser;
 import com.github.yiuman.citrus.workflow.resolver.TaskCandidateResolver;
@@ -39,7 +40,7 @@ public class TaskCandidateResolverImpl implements TaskCandidateResolver {
     }
 
     @Override
-    public List<String> resolve(List<String> taskCandidateDefine) {
+    public List<String> resolve(WorkflowContext workflowContext, List<String> taskCandidateDefine) {
         List<String> realUserIds = new ArrayList<>();
         taskCandidateDefine.parallelStream()
                 .forEach(taskCandidate -> {
@@ -55,7 +56,7 @@ public class TaskCandidateResolverImpl implements TaskCandidateResolver {
 
                         //找到就进行解释,没找到直接加入
                         realUserIds.addAll(candidateParser.isPresent()
-                                ? candidateParser.get().parse(candidateModel)
+                                ? candidateParser.get().parse(workflowContext,candidateModel)
                                 : candidateModel
                                 .getValues()
                                 .stream()

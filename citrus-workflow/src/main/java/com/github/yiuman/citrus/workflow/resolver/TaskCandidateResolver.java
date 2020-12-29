@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.workflow.resolver;
 
+import com.github.yiuman.citrus.workflow.model.WorkflowContext;
+
 import java.util.List;
 
 /**
@@ -12,5 +14,5 @@ import java.util.List;
 @FunctionalInterface
 public interface TaskCandidateResolver {
 
-    List<String> resolve(List<String> taskCandidateDefine);
+    List<String> resolve(WorkflowContext workflowContext, List<String> taskCandidateDefine);
 }
