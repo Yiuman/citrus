@@ -1,7 +1,9 @@
 package com.github.yiuman.citrus.workflow.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yiuman.citrus.support.crud.service.BaseService;
+import com.github.yiuman.citrus.support.utils.ConvertUtils;
 import com.github.yiuman.citrus.workflow.exception.WorkflowException;
 import com.github.yiuman.citrus.workflow.model.ProcessBusinessModel;
 import com.github.yiuman.citrus.workflow.model.StartProcessModel;
@@ -12,12 +14,15 @@ import com.github.yiuman.citrus.workflow.service.EntityCrudWorkflowService;
 import com.github.yiuman.citrus.workflow.service.WorkflowService;
 import lombok.extern.slf4j.Slf4j;
 import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 实体业务模型的基础流程逻辑服务类
@@ -30,7 +35,7 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
         extends BaseService<E, K> implements EntityCrudWorkflowService<E, K> {
 
     /**
-     * 流程参数，申请用户
+     * 流程参数，当前用户
      */
     private final static String CURRENT_USER_ID = "currentUserId";
 
@@ -52,6 +57,11 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
     protected WorkflowService getProcessService() {
         return processService = Optional.ofNullable(processService)
                 .orElse(new WorkflowServiceImpl());
+    }
+
+    @Override
+    public List<E> list(Wrapper<E> wrapper) {
+        return super.list(wrapper);
     }
 
     @Override
@@ -110,8 +120,30 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
         return variables;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void complete(String taskId, Map<String, Object> variables) {
+    public void complete(String taskId, Map<String, Object> variables) throws Exception {
+
+        //这里保存下实体信息
+        if (!CollectionUtils.isEmpty(variables)) {
+            TaskService taskService = getProcessEngine().getTaskService();
+            Task task = Optional.ofNullable(
+                    taskService.createTaskQuery()
+                            .taskId(taskId)
+                            .active()
+                            .singleResult()
+            ).orElseThrow(() -> new WorkflowException(String.format("can not find Task for taskId:[%s]", taskId)));
+
+            RuntimeService runtimeService = getProcessEngine().getRuntimeService();
+            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(task.getProcessInstanceId()).singleResult();
+
+            Map<String, Object> businessObject = (Map<String, Object>) variables.get(processInstance.getBusinessKey());
+            if (Objects.nonNull(businessObject)) {
+                save(ConvertUtils.mapAssignment(get((K) processInstance.getBusinessKey()), businessObject));
+            }
+
+        }
+
         complete(TaskCompleteModelImpl.builder()
                 .taskId(taskId)
                 .taskVariables(variables)
@@ -119,7 +151,9 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
                 .build());
     }
 
-    protected abstract String getCurrentUserId();
+    protected String getCurrentUserId() {
+        return (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
 
     @Override
     public ProcessInstance starProcess(StartProcessModel model) {

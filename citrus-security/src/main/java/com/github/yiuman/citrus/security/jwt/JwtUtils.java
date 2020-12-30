@@ -5,7 +5,6 @@ import com.github.yiuman.citrus.support.cache.InMemoryCache;
 import com.github.yiuman.citrus.support.utils.ConvertUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
-import com.google.common.collect.Maps;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -16,6 +15,7 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -50,7 +50,7 @@ public final class JwtUtils {
     }
 
     public static JwtToken generateToken(String identity, Long expireInSeconds, Map<String, Object> claims) {
-        claims = Optional.ofNullable(claims).orElse(Maps.newHashMap());
+        claims = Optional.ofNullable(claims).orElse(new HashMap<>());
         claims.put(getIdentityKey(), identity);
         expireInSeconds = Optional.ofNullable(expireInSeconds).orElse((Long) getJwt().find(JwtProperties.JwtConstants.Attribute.VALIDATE_IN_SECONDS));
         long expireTimestamp = System.currentTimeMillis() + expireInSeconds * 1000;

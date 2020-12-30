@@ -26,4 +26,5 @@ public final class ClassUtils {
             return org.springframework.util.ClassUtils.getUserClass(clazz);
         }
     }
+
 }

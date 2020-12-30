@@ -107,7 +107,6 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
 
     @Override
     public void exp(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
         String fileName = WebUtils.getRequestParam("fileName");
         if (StringUtils.isBlank(fileName)) {
             fileName = String.valueOf(System.currentTimeMillis());

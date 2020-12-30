@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.support.utils;
 
-import com.google.common.collect.Maps;
+import cn.hutool.core.convert.Convert;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.util.ReflectionUtils;
@@ -10,10 +10,8 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -54,7 +52,7 @@ public final class ConvertUtils {
      * @param <S> 类型
      */
     public static <S> Map<String, Object> objectToMap(S s) throws IntrospectionException, InvocationTargetException, IllegalAccessException {
-        Map<String, Object> map = Maps.newHashMap();
+        Map<String, Object> map = new HashMap<>();
         BeanInfo beanInfo = Introspector.getBeanInfo(s.getClass());
         PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
         for (PropertyDescriptor pd : pds) {
@@ -76,7 +74,7 @@ public final class ConvertUtils {
      */
     public static <T extends Enum<?>> List<Map<String, ?>> enumToListMap(Class<T> enumClass) {
         return Arrays.stream(enumClass.getEnumConstants()).map(enumObject -> {
-            Map<String, Object> map = Maps.newHashMap();
+            Map<String, Object> map = new HashMap<>();
             ReflectionUtils.doWithFields(enumClass, (field -> {
                 field.setAccessible(true);
                 map.put(field.getName(), field.get(enumObject));
@@ -85,5 +83,32 @@ public final class ConvertUtils {
             return map;
         }).collect(Collectors.toList());
     }
+
+    /**
+     * 将Map数据赋值到目前对象中
+     *
+     * @param target 目标对象
+     * @param map    map数据集
+     * @param <E>    目前 对象类型
+     * @return 赋值完成的目标对象
+     * @throws IntrospectionException 内省异常
+     */
+    public static <E> E mapAssignment(E target, Map<String, Object> map) throws IntrospectionException {
+        Class<?> targetClass = ClassUtils.getRealClass(target.getClass());
+        BeanInfo beanInfo = Introspector.getBeanInfo(targetClass);
+        PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
+        Arrays.stream(pds).forEach(LambdaUtils.consumerWrapper(pd -> {
+            Object writeValue = map.get(pd.getDisplayName());
+
+            if (Objects.nonNull(writeValue)) {
+                Method writeMethod = pd.getWriteMethod();
+                writeMethod.setAccessible(true);
+                writeMethod.invoke(target, Convert.convert(pd.getPropertyType(), writeValue));
+            }
+        }));
+        return target;
+
+    }
+
 
 }

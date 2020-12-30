@@ -67,7 +67,7 @@ public abstract class EntityWorkflowController<E extends ProcessBusinessModel, K
      * @return 空Void
      */
     @PostMapping("/complete/{taskId}")
-    public ResponseEntity<Void> complete(@PathVariable String taskId, @RequestBody Map<String, Object> data) {
+    public ResponseEntity<Void> complete(@PathVariable String taskId, @RequestBody Map<String, Object> data) throws Exception {
         getProcessService().complete(taskId, data);
         return ResponseEntity.ok();
     }

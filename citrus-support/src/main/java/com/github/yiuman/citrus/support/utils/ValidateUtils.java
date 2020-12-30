@@ -2,13 +2,13 @@ package com.github.yiuman.citrus.support.utils;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.google.common.collect.Maps;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -70,7 +70,7 @@ public final class ValidateUtils {
         ValidationResult validationResult = new ValidationResult();
         if (CollectionUtils.isNotEmpty(validateSet)) {
             validationResult.setHasErrors(true);
-            Map<String, String> errorMsgMap = Maps.newHashMap();
+            Map<String, String> errorMsgMap = new HashMap<>();
             for (ConstraintViolation<T> constraintViolation : validateSet) {
                 errorMsgMap.put(constraintViolation.getPropertyPath().toString(), constraintViolation.getMessage());
             }

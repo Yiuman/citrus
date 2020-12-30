@@ -109,7 +109,8 @@ public abstract class BaseWorkflowService implements WorkflowService {
         if (!assignee.equals(model.getUserId())) {
             throw new WorkflowException(String.format("Task for taskId:[%s] can not complete by user:[%s]", task.getId(), model.getUserId()));
         }
-        taskService.complete(task.getId(), model.getVariables(), model.getTaskVariables());
+        taskService.setVariables(task.getId(), model.getVariables());
+        taskService.complete(task.getId(), null,model.getTaskVariables());
         //完成此环节后，检查有没下个环节，有的话且是未设置办理人或候选人的情况下，使用模型进行设置
         Task nextTask = taskService.createTaskQuery()
                 .processInstanceId(task.getProcessInstanceId())

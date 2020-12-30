@@ -34,7 +34,8 @@ public interface EntityWorkflowService<E extends ProcessBusinessModel> extends W
      *
      * @param taskId    任务ID
      * @param variables 任务变量
+     * @throws Exception 可以为数据库异常或流程相关异常
      */
-    void complete(String taskId, Map<String, Object> variables);
+    void complete(String taskId, Map<String, Object> variables) throws Exception;
 
 }
