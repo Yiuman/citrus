@@ -2,6 +2,8 @@ package com.github.yiuman.citrus.workflow;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.github.yiuman.citrus.workflow.model.ProcessBusinessModel;
 import lombok.Data;
 
@@ -27,6 +29,7 @@ import lombok.Data;
 @TableName("sys_leave")
 public class Leave implements ProcessBusinessModel {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableId
     private Long leaveId;
 

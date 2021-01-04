@@ -96,8 +96,8 @@ public abstract class BaseWorkflowService implements WorkflowService {
         Assert.notNull(model.getTaskId(), "The taskId of the process can not be empty!");
         TaskService taskService = getProcessEngine().getTaskService();
         //扎到相关任务
-        Task task = Optional.ofNullable(taskService.createTaskQuery().
-                taskId(model.getTaskId())
+        Task task = Optional.ofNullable(taskService.createTaskQuery()
+                .taskId(model.getTaskId())
                 .active()
                 .singleResult())
                 .orElseThrow(() -> new WorkflowException(String.format("can not find Task for taskId:[%s]", model.getTaskId())));
@@ -110,7 +110,8 @@ public abstract class BaseWorkflowService implements WorkflowService {
             throw new WorkflowException(String.format("Task for taskId:[%s] can not complete by user:[%s]", task.getId(), model.getUserId()));
         }
         taskService.setVariables(task.getId(), model.getVariables());
-        taskService.complete(task.getId(), null,model.getTaskVariables());
+        taskService.setVariablesLocal(task.getId(), model.getTaskVariables());
+        taskService.complete(task.getId());
         //完成此环节后，检查有没下个环节，有的话且是未设置办理人或候选人的情况下，使用模型进行设置
         Task nextTask = taskService.createTaskQuery()
                 .processInstanceId(task.getProcessInstanceId())

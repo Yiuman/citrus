@@ -6,9 +6,10 @@ import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.workflow.model.ProcessBusinessModel;
-import com.github.yiuman.citrus.workflow.service.impl.BaseEntityWorkflowService;
 import com.github.yiuman.citrus.workflow.service.EntityCrudWorkflowService;
+import com.github.yiuman.citrus.workflow.service.impl.BaseEntityWorkflowService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,7 +56,7 @@ public abstract class EntityWorkflowController<E extends ProcessBusinessModel, K
      * @throws Exception 数据库异常或流程异常
      */
     @PostMapping("/process")
-    public ResponseEntity<String> startProcess(@RequestBody E entity) throws Exception {
+    public ResponseEntity<String> startProcess(@RequestBody @Validated E entity) throws Exception {
         return ResponseEntity.ok(getProcessService().starProcess(entity).getId());
     }
 

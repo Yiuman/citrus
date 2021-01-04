@@ -10,10 +10,19 @@ public class Inputs extends BaseWidget<String> {
 
     private boolean clearable = true;
 
+    /**
+     * 类型，如number等
+     */
     private String type;
 
+    /**
+     *
+     */
     private Integer counter;
 
+    /**
+     * '<input>'的placeholder
+     */
     private String placeholder;
 
     public Inputs() {
