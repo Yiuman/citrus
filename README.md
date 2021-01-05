@@ -1,10 +1,22 @@
 
+<p align="center">
+  <a href="https://github.com/Yiuman/citrus">
+   <img alt="citrus-logo" src="./logo.png" />
+  </a>
+  <h1 style="text-align: center;font-size:100px">Citrus</h1>
+</p>
 
-# citrus
-
-[![AUR](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)](https://github.com/Yiuman/citrus/blob/master/LICENSE)  [![AUR](https://img.shields.io/badge/spring--boot-2.3.2-release.svg)](http://spring.io/projects/spring-boot)  [![AUR](https://img.shields.io/badge/mybatis--plus-3.4.1-blue.svg)](http://mp.baomidou.com)
-
-![logo](./logo.png)
+<p  align="center">
+ <a href="https://github.com/Yiuman/citrus/blob/master/LICENSE">
+    <img alt="code style" src="https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg">
+  </a>
+  <a href="http://spring.io/projects/spring-boot">
+    <img alt="springboot-2.3.2" src="https://img.shields.io/badge/spring--boot-2.3.2-release.svg">
+  </a>
+  <a href="http://mp.baomidou.com">
+    <img alt="mybatis-plus-3.4.1" src="https://img.shields.io/badge/mybatis--plus-3.4.1-blue.svg">
+  </a>
+</p>
 
 ### 项目简介
 
@@ -35,6 +47,7 @@
 - `citrus-security` 项目安全相关的代码，统一认证、验证码类型、鉴权、jwt等  [安全模块传送门](https://github.com/Yiuman/citrus/tree/master/doc/安全模块设计.md)
 - `citrus-support` 项目通用支持相关的代码，通用Service层、Controller层，工具类、缓存、异常、注入、数据结构、动态数据源及相关扩展 [通用CRUD指南](https://github.com/Yiuman/citrus/tree/master/doc/通用CRUD指南.md)
 - `citrus-system` 项目系统设计的主要实现  包含用户、角色、权限、资源、菜单、数据范围等模块的实现与处理，数据范围注入也在这里 [权限数据范围设计](https://github.com/Yiuman/citrus/tree/master/doc/权限设计.md)
+- `citrus-workflow` 整合activiti7的工作流模块
 
 
 
