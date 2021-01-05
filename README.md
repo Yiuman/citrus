@@ -3,8 +3,9 @@
   <a href="https://github.com/Yiuman/citrus">
    <img alt="citrus-logo" src="./logo.png" />
   </a>
-  <div style="text-align: center;font-size:100px">Citrus</div>
 </p>
+
+<h1 align="center">Citrus: 低代码开发脚手架</h1>
 
 <p  align="center">
  <a href="https://github.com/Yiuman/citrus/blob/master/LICENSE">
