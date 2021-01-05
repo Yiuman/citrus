@@ -3,7 +3,7 @@
   <a href="https://github.com/Yiuman/citrus">
    <img alt="citrus-logo" src="./logo.png" />
   </a>
-  <h1 style="text-align: center;font-size:100px">Citrus</h1>
+  <div style="text-align: center;font-size:100px">Citrus</div>
 </p>
 
 <p  align="center">
