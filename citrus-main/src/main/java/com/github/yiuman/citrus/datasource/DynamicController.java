@@ -30,7 +30,7 @@ public class DynamicController {
 //
         dictionaryMapperTwo.saveEntity(dictionary2);
 
-//        int error = 1/0;
+        int error = 1/0;
 
         Dictionary dictionary = new Dictionary();
         dictionary.setDictCode("123123");

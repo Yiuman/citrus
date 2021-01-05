@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "citrus")
 public class CitrusProperties {
 
+    private boolean banner = true;
+
     private SecurityProperties security = new SecurityProperties();
 
     private VerifyProperties verify = new VerifyProperties();
@@ -24,6 +26,14 @@ public class CitrusProperties {
     private JwtProperties jwt = new JwtProperties();
 
     public CitrusProperties() {
+    }
+
+    public boolean isBanner() {
+        return banner;
+    }
+
+    public void setBanner(boolean banner) {
+        this.banner = banner;
     }
 
     public SecurityProperties getSecurity() {

@@ -6,6 +6,7 @@ import com.github.yiuman.citrus.security.verify.captcha.Captcha;
 import com.github.yiuman.citrus.security.verify.captcha.CaptchaProcessor;
 import com.github.yiuman.citrus.security.verify.sms.SmsVerifyCode;
 import com.github.yiuman.citrus.security.verify.sms.SmsVerifyCodeProcessor;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,7 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @date 2020/3/22
  */
 @Configuration
-public class VerifyConfiguration {
+public class VerifyConfiguration implements InitializingBean {
 
     private final CitrusProperties citrusProperties;
 
@@ -25,6 +26,14 @@ public class VerifyConfiguration {
         this.citrusProperties = citrusProperties;
         this.redisTemplate = redisTemplate;
     }
+
+    @Override
+    public void afterPropertiesSet() {
+        if (citrusProperties.isBanner()) {
+            CitrusVersion.printBanner();
+        }
+    }
+
 
     @Bean
     @SuppressWarnings("unchecked")
@@ -45,11 +54,5 @@ public class VerifyConfiguration {
     public VerificationProcessor<Captcha> captchaProcessor() {
         return new CaptchaProcessor(redisRepository(), citrusProperties.getVerify());
     }
-
-//    @Bean("base64Captcha")
-//    public VerificationProcessor<Captcha> base64CaptchaProcessor() {
-//        return new Base64CaptchaProcessor(redisRepository(), citrusProperties.getVerify());
-//    }
-
 
 }

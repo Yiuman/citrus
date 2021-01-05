@@ -21,6 +21,7 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.TypeHandler;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -145,6 +146,7 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
     }
 
     @Bean
+    @ConditionalOnMissingBean(SqlSessionTemplate.class)
     public DynamicSqlSessionTemplate sqlSessionTemplate() throws Exception {
         Map<String, DataSourceProperties> dataSourcePropertiesMap = dynamicDataSourceProperties.getDatasource();
         int dataSourceSize = Objects.nonNull(dataSourcePropertiesMap) ? dataSourcePropertiesMap.size() : 0;
@@ -217,6 +219,27 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
         return atomikosDataSourceBean;
     }
 
+    /**
+     * 替换掉mybatis-plus中的自动配置
+     *
+     * @param dynamicSqlSessionTemplate 动态数据源模板
+     * @return SqlSessionFactory
+     * @throws Exception in case of creation errors
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public SqlSessionFactory sqlSessionFactory(DynamicSqlSessionTemplate dynamicSqlSessionTemplate) throws Exception {
+        return dynamicSqlSessionTemplate.getSqlSessionFactory();
+    }
+
+    /**
+     * 用于动态数据源
+     * 根据数据源创建SqlSessionFactory
+     *
+     * @param dataSource 数据源
+     * @return SqlSessionFactory
+     * @throws Exception in case of creation errors
+     */
     private SqlSessionFactory createSqlSessionFactory(DataSource dataSource) throws Exception {
         // 使用 MybatisSqlSessionFactoryBean 而不是 SqlSessionFactoryBean
         MybatisSqlSessionFactoryBean factory = new MybatisSqlSessionFactoryBean();

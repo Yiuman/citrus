@@ -6,7 +6,7 @@
 
     <groupId>com.github.yiuman</groupId>
     <artifactId>citrus</artifactId>
-    <version>0.0.8</version>
+    <version>0.0.9</version>
     <name>citrus</name>
     <description>springboot-开发脚手架</description>
     <url>https://github.com/Yiuman/citrus</url>
@@ -53,7 +53,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <java.version>1.8</java.version>
-        <citrus.version>0.0.8</citrus.version>
+        <citrus.version>0.0.9</citrus.version>
         <alibaba.easyexcel.version>2.1.6</alibaba.easyexcel.version>
         <jjwt.version>0.11.0</jjwt.version>
         <commons.io.version>2.6</commons.io.version>
@@ -104,6 +104,17 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
             <!-- Source -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

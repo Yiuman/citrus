@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.starter;
 
+import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
+import com.baomidou.mybatisplus.autoconfigure.MybatisPlusLanguageDriverAutoConfiguration;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -14,11 +16,17 @@ import com.github.yiuman.citrus.security.jwt.JwtAuthenticationEntryPoint;
 import com.github.yiuman.citrus.security.jwt.JwtAuthenticationFilter;
 import com.github.yiuman.citrus.security.jwt.JwtSecurityConfigurerAdapter;
 import com.github.yiuman.citrus.security.properties.CitrusProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
+import org.mybatis.spring.mapper.MapperFactoryBean;
+import org.mybatis.spring.mapper.MapperScannerConfigurer;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -41,6 +49,8 @@ import java.util.List;
 @EnableConfigurationProperties(CitrusProperties.class)
 @ConditionalOnClass(WebSecurityConfigurerAdapter.class)
 @ConditionalOnMissingBean(WebSecurityConfigurerAdapter.class)
+@AutoConfigureBefore(MybatisPlusAutoConfiguration.class)
+@AutoConfigureAfter({DataSourceAutoConfiguration.class, MybatisPlusLanguageDriverAutoConfiguration.class})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ComponentScans({
         @ComponentScan("com.github.yiuman.citrus.support"),
@@ -48,8 +58,9 @@ import java.util.List;
         @ComponentScan("com.github.yiuman.citrus.system")
 })
 @MapperScan(basePackages = "com.github.yiuman.citrus.system.mapper")
-@Import({SystemDefaultBeanConfiguration.class, VerifyConfiguration.class,DynamicDataSourceAutoConfiguration.class})
+@Import({SystemDefaultBeanConfiguration.class, VerifyConfiguration.class, DynamicDataSourceAutoConfiguration.class})
 @EnableWebSecurity
+@Slf4j
 public class CitrusAutoConfiguration {
 
     /**
@@ -144,6 +155,18 @@ public class CitrusAutoConfiguration {
     public AuthorizeConfigManager authorizeConfigManager(List<AuthorizeConfigProvider> authorizeConfigProviders) {
         return new AuthorizeConfigManager(authorizeConfigProviders);
 
+    }
+
+    @Configuration
+    @Import(MybatisPlusAutoConfiguration.AutoConfiguredMapperScannerRegistrar.class)
+    @ConditionalOnMissingBean({MapperFactoryBean.class, MapperScannerConfigurer.class})
+    public static class MapperScannerRegistrarNotFoundConfiguration implements InitializingBean {
+
+        @Override
+        public void afterPropertiesSet() {
+            log.debug(
+                    "Not found configuration for registering mapper bean using @MapperScan, MapperFactoryBean and MapperScannerConfigurer.");
+        }
     }
 
 

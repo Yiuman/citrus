@@ -25,16 +25,20 @@
             <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jta-atomikos</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.github.yiuman</groupId>
             <artifactId>citrus-boot-starter</artifactId>
-            <version>0.0.8</version>
+            <version>0.0.9</version>
         </dependency>
         <dependency>
             <groupId>com.github.yiuman</groupId>
             <artifactId>citrus-workflow</artifactId>
-            <version>0.0.8</version>
+            <version>0.0.9</version>
         </dependency>
     </dependencies>
 
