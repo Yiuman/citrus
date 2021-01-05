@@ -53,6 +53,8 @@ CREATE TABLE `sys_role`
   `create_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
   `last_modified_time` datetime    DEFAULT NULL COMMENT '最后的更新时间',
   `last_modified_by`   bigint(20)  DEFAULT NULL COMMENT '最后的更新人',
+  `order_id`           int         DEFAULT NULL COMMENT '排序标识',
+  `admin`              int         DEFAULT 0 COMMENT '是否超管',
   PRIMARY KEY (`role_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
@@ -67,7 +69,6 @@ CREATE TABLE `sys_resource`
 (
   `resource_id`        varchar(500) NOT NULL COMMENT '主键id',
   `resource_name`      varchar(50)   DEFAULT NULL COMMENT '资源名称名字',
-  `hidden`             int           DEFAULT 0 COMMENT '是否隐藏',
   `component`          varchar(1000) DEFAULT NULL COMMENT '前端组件路径',
   `icon`               varchar(500)  DEFAULT NULL COMMENT '资源菜单图标（mdi）',
   `parent_id`          varchar(500)  DEFAULT NULL COMMENT '父ID',
@@ -79,6 +80,7 @@ CREATE TABLE `sys_resource`
   `create_by`          bigint(20)    DEFAULT NULL COMMENT '创建人',
   `last_modified_time` datetime      DEFAULT NULL COMMENT '最后的更新时间',
   `last_modified_by`   bigint(20)    DEFAULT NULL COMMENT '最后的更新人',
+  `hidden`             int           DEFAULT 0 COMMENT '是否隐藏',
   PRIMARY KEY (`resource_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
@@ -93,7 +95,9 @@ DROP TABLE IF EXISTS `sys_organ`;
 CREATE TABLE `sys_organ`
 (
   `organ_id`           bigint(20) NOT NULL COMMENT '主键id',
-  `organ_name`         varchar(50) DEFAULT NULL COMMENT '资源名字',
+  `organ_name`         varchar(250) NOT NULL COMMENT '资源名字',
+  `organ_code`         varchar(50)  NOT NULL COMMENT '组织机构代码',
+  `deep`               int  NOT NULL COMMENT '树的深度',
   `parent_id`          bigint(20) NOT NULL NULL COMMENT '父ID',
   `left_value`         int(7)     NOT NULL COMMENT '左值',
   `right_value`        int(7)     NOT NULL COMMENT '右值',
@@ -101,6 +105,7 @@ CREATE TABLE `sys_organ`
   `create_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
   `last_modified_time` datetime    DEFAULT NULL COMMENT '最后的更新时间',
   `last_modified_by`   bigint(20)  DEFAULT NULL COMMENT '最后的更新人',
+  `remark`             varchar(1000)  DEFAULT NULL COMMENT '最后的更新人',
   PRIMARY KEY (`organ_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
