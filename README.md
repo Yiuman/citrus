@@ -62,7 +62,7 @@
     <dependency>
       <groupId>com.github.yiuman</groupId>
       <artifactId>citrus-boot-starter</artifactId>
-      <version>0.10.0</version>
+      <version>0.1.0.RELEASE</version>
     </dependency>
     ```
 
