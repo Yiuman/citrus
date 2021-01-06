@@ -22,6 +22,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.TypeHandler;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -308,17 +309,19 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
      */
     private void applyConfiguration(MybatisSqlSessionFactoryBean factory) {
         // 使用 MybatisConfiguration
-        MybatisConfiguration configuration = this.mybatisPlusProperties.getConfiguration();
-        if (configuration == null && !StringUtils.hasText(this.mybatisPlusProperties.getConfigLocation())) {
-            configuration = new MybatisConfiguration();
-        }
-        if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
+        factory.setConfiguration(getCopyMybatisConfiguration(this.mybatisPlusProperties));
+    }
+
+    private MybatisConfiguration getCopyMybatisConfiguration(MybatisPlusProperties mybatisPlusProperties) {
+        MybatisConfiguration mybatisConfiguration = new MybatisConfiguration();
+        BeanUtils.copyProperties(mybatisPlusProperties.getConfiguration(), mybatisConfiguration);
+        if (!CollectionUtils.isEmpty(this.configurationCustomizers)) {
             for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
-                customizer.customize(configuration);
+                customizer.customize(mybatisConfiguration);
             }
         }
 
-        factory.setConfiguration(configuration);
+        return mybatisConfiguration;
     }
 
     /**

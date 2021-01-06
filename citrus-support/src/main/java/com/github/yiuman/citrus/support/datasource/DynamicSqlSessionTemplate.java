@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.support.datasource;
 
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.executor.BatchResult;
@@ -51,8 +53,10 @@ public class DynamicSqlSessionTemplate extends SqlSessionTemplate {
     }
 
     public DynamicSqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType) {
-        this(sqlSessionFactory, executorType, new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration()
-                .getEnvironment().getDataSource(), true));
+        this(sqlSessionFactory, executorType, new MyBatisExceptionTranslator(
+                sqlSessionFactory.getConfiguration().getEnvironment().getDataSource()
+                , true
+        ));
     }
 
     public DynamicSqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType,
@@ -270,6 +274,9 @@ public class DynamicSqlSessionTemplate extends SqlSessionTemplate {
         // 这里如果调用了其他的数据源，是没有初始化MappedStatement的，需要从默认的进行初始化后再调用
         //不然会出现 Invalid bound statement (not found) 异常
         if (sqlSessionFactory != defaultTargetSqlSessionFactory && CollectionUtils.isEmpty(configuration.getMappedStatements())) {
+            //可能会有缓存先清掉
+            GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
+            globalConfig.getMapperRegistryCache().clear();
             defaultTargetSqlSessionFactory.getConfiguration().getMapperRegistry()
                     .getMappers().forEach(configuration::addMapper);
         }
