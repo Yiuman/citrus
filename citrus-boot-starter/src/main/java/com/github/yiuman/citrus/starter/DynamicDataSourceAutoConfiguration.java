@@ -229,7 +229,7 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
      */
     @Bean
     @ConditionalOnMissingBean
-    public SqlSessionFactory sqlSessionFactory(DynamicSqlSessionTemplate dynamicSqlSessionTemplate) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DynamicSqlSessionTemplate dynamicSqlSessionTemplate) {
         return dynamicSqlSessionTemplate.getSqlSessionFactory();
     }
 
@@ -314,7 +314,12 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
 
     private MybatisConfiguration getCopyMybatisConfiguration(MybatisPlusProperties mybatisPlusProperties) {
         MybatisConfiguration mybatisConfiguration = new MybatisConfiguration();
-        BeanUtils.copyProperties(mybatisPlusProperties.getConfiguration(), mybatisConfiguration);
+
+        //如果配置中有，则拷贝一份
+        Optional.ofNullable(mybatisPlusProperties.getConfiguration())
+                .ifPresent(propertiesConfiguration ->
+                        BeanUtils.copyProperties(propertiesConfiguration, mybatisConfiguration));
+
         if (!CollectionUtils.isEmpty(this.configurationCustomizers)) {
             for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
                 customizer.customize(mybatisConfiguration);

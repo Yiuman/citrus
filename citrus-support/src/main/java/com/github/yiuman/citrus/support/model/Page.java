@@ -223,12 +223,12 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
      * 若需要扩展上面的记录字段，如想加一个cField;
      * 则扩展后为
      * {
-     *     records:[{key:'1',aField:xxx,bField:xxx}],
-     *     extends:{
-     *         '1':{
-     *             cField:xxxx
-     *         }
-     *     }
+     * records:[{key:'1',aField:xxx,bField:xxx}],
+     * extends:{
+     * '1':{
+     * cField:xxxx
+     * }
+     * }
      * }
      */
     public void initFunctionalRecords() {

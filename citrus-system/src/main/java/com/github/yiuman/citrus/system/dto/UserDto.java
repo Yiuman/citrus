@@ -36,6 +36,7 @@ public class UserDto {
     private String email;
 
     @ExcelIgnore
+    @JsonIgnore
     private String avatar;
 
     @JsonSerialize(contentUsing = ToStringSerializer.class)
