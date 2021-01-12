@@ -18,7 +18,7 @@ import java.util.Base64;
  */
 public class Base64CaptchaProcessor extends CaptchaProcessor {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public Base64CaptchaProcessor(VerificationRepository verificationRepository, VerifyProperties verifyProperties) {
         super(verificationRepository, verifyProperties);

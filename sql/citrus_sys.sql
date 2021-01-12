@@ -18,8 +18,8 @@ CREATE TABLE `sys_user`
   `admin`              int(1)      DEFAULT 0 COMMENT '是否管理员',
   `avatar`             mediumtext  DEFAULT NULL COMMENT '头像',
   `status`             bigint      DEFAULT NULL COMMENT '状态',
-  `create_time`        datetime    DEFAULT NULL COMMENT '创建时间',
-  `create_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
+  `created_time`        datetime    DEFAULT NULL COMMENT '创建时间',
+  `created_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
   `last_modified_time` datetime    DEFAULT NULL COMMENT '最后的更新时间',
   `last_modified_by`   bigint(20)  DEFAULT NULL COMMENT '最后的更新人',
   `version`            int(11)     DEFAULT 0 COMMENT '乐观锁',
@@ -49,7 +49,7 @@ CREATE TABLE `sys_role`
   `parent_id`          bigint(20)  DEFAULT NULL COMMENT '主键id',
   `type`               int        NOT NULL COMMENT '主键id',
   `role_name`          varchar(45) DEFAULT NULL COMMENT '名字',
-  `create_time`        datetime    DEFAULT NULL COMMENT '创建时间',
+  `created_time`        datetime    DEFAULT NULL COMMENT '创建时间',
   `create_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
   `last_modified_time` datetime    DEFAULT NULL COMMENT '最后的更新时间',
   `last_modified_by`   bigint(20)  DEFAULT NULL COMMENT '最后的更新人',
@@ -76,8 +76,8 @@ CREATE TABLE `sys_resource`
   `path`               varchar(2000) DEFAULT NULL COMMENT '资源路径',
   `operation`          varchar(100)  DEFAULT NULL COMMENT '操作类型',
   `resource_code`      varchar(100)  DEFAULT NULL COMMENT '资源代码',
-  `create_time`        datetime      DEFAULT NULL COMMENT '创建时间',
-  `create_by`          bigint(20)    DEFAULT NULL COMMENT '创建人',
+  `created_time`        datetime      DEFAULT NULL COMMENT '创建时间',
+  `created_by`          bigint(20)    DEFAULT NULL COMMENT '创建人',
   `last_modified_time` datetime      DEFAULT NULL COMMENT '最后的更新时间',
   `last_modified_by`   bigint(20)    DEFAULT NULL COMMENT '最后的更新人',
   `hidden`             int           DEFAULT 0 COMMENT '是否隐藏',
@@ -101,8 +101,8 @@ CREATE TABLE `sys_organ`
   `parent_id`          bigint(20) NOT NULL NULL COMMENT '父ID',
   `left_value`         int(7)     NOT NULL COMMENT '左值',
   `right_value`        int(7)     NOT NULL COMMENT '右值',
-  `create_time`        datetime    DEFAULT NULL COMMENT '创建时间',
-  `create_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
+  `created_time`        datetime    DEFAULT NULL COMMENT '创建时间',
+  `created_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
   `last_modified_time` datetime    DEFAULT NULL COMMENT '最后的更新时间',
   `last_modified_by`   bigint(20)  DEFAULT NULL COMMENT '最后的更新人',
   `remark`             varchar(1000)  DEFAULT NULL COMMENT '最后的更新人',
@@ -170,8 +170,8 @@ CREATE TABLE `sys_authority`
   `authority_id`       bigint(20) NOT NULL COMMENT '主键id',
   `authority_name`     varchar(50)   DEFAULT NULL COMMENT '权限名字',
   `remark`             varchar(2000) DEFAULT NULL COMMENT '权限名字',
-  `create_time`        datetime      DEFAULT NULL COMMENT '创建时间',
-  `create_by`          bigint(20)    DEFAULT NULL COMMENT '创建人',
+  `created_time`        datetime      DEFAULT NULL COMMENT '创建时间',
+  `created_by`          bigint(20)    DEFAULT NULL COMMENT '创建人',
   `last_modified_time` datetime      DEFAULT NULL COMMENT '最后的更新时间',
   `last_modified_by`   bigint(20)    DEFAULT NULL COMMENT '最后的更新人',
   PRIMARY KEY (`authority_id`) USING BTREE
@@ -193,7 +193,7 @@ CREATE TABLE `sys_auth_resource`
   `scope_id`     bigint(20) COMMENT '数据范围ID',
   `object_id`    bigint(20) COMMENT '关联的对象，如果资源类型为"操作"，即关联的对象为该"操作对应的资源ID 例如 菜单与新增、删除等操作，此实体中的resourceId为操作类型的ID，即此objectId为此操作对应的菜单',
   `type`         int(2) COMMENT '资源类型，菜单为0；操作为2',
-  `id`           varchar(1000) COMMENT '逻辑ID'
+  `id`           varchar(1000) COMMENT '逻辑ID',
   PRIMARY KEY (`authority_id`, `resource_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
@@ -207,7 +207,7 @@ CREATE TABLE `sys_user_role`
 (
   `user_id`  bigint(20) NOT NULL COMMENT '用户ID',
   `organ_id` bigint(20) NOT NULL COMMENT '组织ID',
-  `id`       varchar(1000) COMMENT '逻辑ID'
+  `id`       varchar(1000) COMMENT '逻辑ID',
   PRIMARY KEY (`user_id`, `organ_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
@@ -222,7 +222,7 @@ CREATE TABLE `sys_user_role`
   `user_id`  bigint(20) NOT NULL COMMENT '用户ID',
   `role_id`  bigint(20) NOT NULL COMMENT '角色ID',
   `organ_id` bigint(20) NOT NULL COMMENT '组织ID',
-  `id`       varchar(1000) COMMENT '逻辑ID'
+  `id`       varchar(1000) COMMENT '逻辑ID',
   PRIMARY KEY (`user_id`, `role_id`, `organ_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
@@ -236,7 +236,7 @@ CREATE TABLE `sys_role_auth`
 (
   `role_id`      bigint(20) NOT NULL COMMENT '角色ID',
   `authority_id` bigint(20) NOT NULL COMMENT '权限ID',
-   `id`           varchar(1000) COMMENT '逻辑ID'
+   `id`           varchar(1000) COMMENT '逻辑ID',
   PRIMARY KEY (`role_id`, `authority_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
@@ -274,16 +274,10 @@ CREATE TABLE `sys_access_log`
   `resource_id`    varchar(1000) DEFAULT NULL COMMENT '资源ID',
   `resource_name`  varchar(1000) DEFAULT NULL COMMENT '资源名',
   `resource_type`  int           DEFAULT NULL COMMENT '资源类型',
-  `create_time`    datetime      NOT NULL COMMENT '访问时间',
+  `created_time`    datetime      NOT NULL COMMENT '访问时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
   ROW_FORMAT = DYNAMIC COMMENT ='访问日志表';
 
 -- ----------------------------
-
-
-
-
-
-
