@@ -46,8 +46,8 @@ DROP TABLE IF EXISTS `sys_role`;
 CREATE TABLE `sys_role`
 (
   `role_id`            bigint(20) NOT NULL COMMENT '主键id',
-  `parent_id`          bigint(20)  DEFAULT NULL COMMENT '主键id',
-  `type`               int        NOT NULL COMMENT '主键id',
+  `parent_id`          bigint(20)  DEFAULT NULL COMMENT '父角色ID',
+  `type`               int        NOT NULL COMMENT '类型 0：角色 1：角色组',
   `role_name`          varchar(45) DEFAULT NULL COMMENT '名字',
   `created_time`        datetime    DEFAULT NULL COMMENT '创建时间',
   `create_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
