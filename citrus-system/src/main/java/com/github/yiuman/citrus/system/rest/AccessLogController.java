@@ -45,7 +45,7 @@ public class AccessLogController extends BaseQueryController<AccessLog, Long> {
         view.addHeader("请求", "method_url", entity -> String.format("%s  %s", entity.getRequestMethod(), entity.getUrl()));
         view.addHeader("参数", "params");
         view.addHeader("资源名称", "resourceName");
-        view.addHeader("时间", "createTime_", entity -> DateUtil.format(entity.getCreateTime(), "yyyy-MM-dd hh:mm:ss"));
+        view.addHeader("时间", "createTime_", entity -> DateUtil.format(entity.getCreatedTime(), "yyyy-MM-dd hh:mm:ss"));
         return view;
     }
 

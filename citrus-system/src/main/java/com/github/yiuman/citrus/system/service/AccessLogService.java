@@ -56,7 +56,7 @@ public class AccessLogService extends BaseService<AccessLog, Long> {
             accessLog.setResourceType(ResourceType.UNKNOWN);
         }
 
-        accessLog.setCreateTime(LocalDateTime.now());
+        accessLog.setCreatedTime(LocalDateTime.now());
 
         save(accessLog);
     }
