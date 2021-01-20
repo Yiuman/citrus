@@ -2,8 +2,8 @@ package com.github.yiuman.citrus.system.rest;
 
 import com.github.yiuman.citrus.support.crud.query.QueryParam;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
-import com.github.yiuman.citrus.support.model.DialogView;
-import com.github.yiuman.citrus.support.model.Page;
+import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
+import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.system.dto.ResourceDto;
 import com.github.yiuman.citrus.system.service.ResourceService;
@@ -45,25 +45,26 @@ public class ResourceController extends BaseCrudController<ResourceDto, Long> {
     }
 
     @Override
-    protected Page<ResourceDto> createPage() throws Exception {
-        Page<ResourceDto> page = super.createPage();
-        page.addHeader("资源名", "resourceName");
-        page.addHeader("资源类型", "typeText", (entity) -> {
+    protected Object createView() {
+        PageTableView<ResourceDto> view = new PageTableView<>();
+        view.addHeader("资源名", "resourceName");
+        view.addHeader("资源类型", "typeText", (entity) -> {
             String typeString = "";
             if (entity.getType() != null && entity.getType() == 0) {
                 typeString = "菜单";
             }
             return typeString;
         });
-        page.addHeader("资源路径", "path");
-        page.addWidget("资源名", "resourceName");
-        page.addButton(Buttons.defaultButtonsWithMore());
-        page.addActions(Buttons.defaultActions());
-        return page;
+        view.addHeader("资源路径", "path");
+        view.addWidget("资源名", "resourceName");
+        view.addButton(Buttons.defaultButtonsWithMore());
+        view.addAction(Buttons.defaultActions());
+        return view;
     }
 
+
     @Override
-    protected DialogView createDialogView() {
+    protected Object createEditableView() {
         DialogView dialogView = new DialogView();
         dialogView.addEditField("资源名", "resourceName");
         dialogView.addEditField("资源路径", "path");

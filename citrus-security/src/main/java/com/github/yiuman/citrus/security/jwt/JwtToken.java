@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus.security.jwt;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.Map;

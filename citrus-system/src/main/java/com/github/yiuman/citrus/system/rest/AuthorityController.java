@@ -2,7 +2,7 @@ package com.github.yiuman.citrus.system.rest;
 
 import com.github.yiuman.citrus.support.crud.query.QueryParam;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
-import com.github.yiuman.citrus.support.model.Page;
+import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.system.dto.AuthorityDto;
 import com.github.yiuman.citrus.system.service.AuthorityService;
@@ -41,16 +41,14 @@ public class AuthorityController extends BaseCrudController<AuthorityDto, Long> 
     }
 
     @Override
-    protected Page<AuthorityDto> createPage() throws Exception {
-        Page<AuthorityDto> page = super.createPage();
-        page.addHeader("权限名称", "authorityName");
-        page.addHeader("描述", "remark");
-
-        page.addWidget("权限名称", "authorityName");
-
-        page.addButton(Buttons.defaultButtonsWithMore());
-        page.addActions(Buttons.defaultActions());
-        return page;
+    protected Object createView() {
+        PageTableView<AuthorityDto> view = new PageTableView<>();
+        view.addHeader("权限名称", "authorityName");
+        view.addHeader("描述", "remark");
+        view.addWidget("权限名称", "authorityName");
+        view.addButton(Buttons.defaultButtonsWithMore());
+        view.addAction(Buttons.defaultActions());
+        return view;
     }
 
 

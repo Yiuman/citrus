@@ -1,8 +1,8 @@
 package com.github.yiuman.citrus.security.verify.captcha;
 
+import com.github.yiuman.citrus.security.verify.VerificationGenerator;
 import com.github.yiuman.citrus.security.verify.VerifyProperties;
 import com.github.yiuman.citrus.security.verify.VerifyUtils;
-import com.github.yiuman.citrus.security.verify.VerificationGenerator;
 
 import javax.servlet.http.HttpServletRequest;
 

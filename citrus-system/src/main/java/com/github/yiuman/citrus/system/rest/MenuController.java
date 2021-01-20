@@ -2,9 +2,10 @@ package com.github.yiuman.citrus.system.rest;
 
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
+import com.github.yiuman.citrus.support.crud.view.TreeView;
+import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
+import com.github.yiuman.citrus.support.crud.view.impl.PageTreeView;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
-import com.github.yiuman.citrus.support.model.DialogView;
-import com.github.yiuman.citrus.support.model.TreeDisplay;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.service.MenuService;
@@ -38,17 +39,17 @@ public class MenuController extends BaseTreeController<Resource, Long> {
     }
 
     @Override
-    protected TreeDisplay<Resource> createTree() throws Exception {
-        TreeDisplay<Resource> tree = super.createTree();
-        tree.setItemText("resourceName");
-        tree.addWidget("菜单名称", "resourceName");
-        tree.addAction("操作资源", "this.$router.push(`/rest/resources?parentId=${this.currentItem.id}`)");
-        tree.addButton(Buttons.defaultButtonsWithMore());
-        return tree;
+    protected TreeView<Resource> createTreeView() throws Exception {
+        PageTreeView<Resource> view = new PageTreeView<>();
+        view.setItemText("resourceName");
+        view.addWidget("菜单名称", "resourceName");
+        view.addAction("操作资源", "this.$router.push(`/rest/resources?parentId=${this.currentItem.id}`)");
+        view.addButton(Buttons.defaultButtonsWithMore());
+        return view;
     }
 
     @Override
-    protected DialogView createDialogView() throws Exception {
+    protected Object createEditableView() throws Exception {
         DialogView view = new DialogView();
         view.addEditField("菜单名称", "resourceName").addRule("required");
         view.addEditField("路径", "path");

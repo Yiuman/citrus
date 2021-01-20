@@ -34,7 +34,7 @@ public class Resource extends BaseTree<Resource, Long> {
     /**
      * 是否隐藏
      */
-    private Boolean hidden ;
+    private Boolean hidden;
 
     /**
      * 导入的组件路径

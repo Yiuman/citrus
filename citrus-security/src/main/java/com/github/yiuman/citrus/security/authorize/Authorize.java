@@ -1,13 +1,17 @@
 package com.github.yiuman.citrus.security.authorize;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * 鉴权注解，AOP自定义校验
+ *
  * @author yiuman
  * @date 2020/4/4
  */
-@Target({ElementType.METHOD,ElementType.TYPE})
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Authorize {
 

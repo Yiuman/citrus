@@ -3,13 +3,32 @@ package com.github.yiuman.citrus.starter;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.github.yiuman.citrus.security.authenticate.AuthenticateProcessor;
+import com.github.yiuman.citrus.security.authenticate.AuthenticateProcessorImpl;
+import com.github.yiuman.citrus.security.authenticate.AuthenticateService;
+import com.github.yiuman.citrus.security.authorize.AuthorizeConfigManager;
+import com.github.yiuman.citrus.security.authorize.AuthorizeConfigProvider;
+import com.github.yiuman.citrus.security.jwt.JwtAccessDeniedHandler;
+import com.github.yiuman.citrus.security.jwt.JwtAuthenticationEntryPoint;
+import com.github.yiuman.citrus.security.jwt.JwtAuthenticationFilter;
+import com.github.yiuman.citrus.security.jwt.JwtSecurityConfigurerAdapter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
+
+import java.util.List;
 
 /**
  * 系统默认实例配置
@@ -19,6 +38,58 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 @Configuration
 public class SystemDefaultBeanConfiguration {
+
+    @Bean
+    @Primary
+    @ConditionalOnMissingBean(ObjectMapper.class)
+    public ObjectMapper jacksonObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        //用于解决java.time 模块的时间序列化为json时变成数组的问题
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
+        return objectMapper;
+
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(AuthenticationEntryPoint.class)
+    public AuthenticationEntryPoint entryPoint() {
+        return new JwtAuthenticationEntryPoint(jacksonObjectMapper());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(AccessDeniedHandler.class)
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new JwtAccessDeniedHandler(jacksonObjectMapper());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(AuthenticateProcessor.class)
+    public AuthenticateProcessor authenticateProcessor(List<AuthenticateService> authenticateServices) {
+        return new AuthenticateProcessorImpl(authenticateServices);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(JwtSecurityConfigurerAdapter.class)
+    public JwtSecurityConfigurerAdapter jwtSecurityConfigurerAdapter(AuthenticateProcessor authenticateProcessor) {
+        return new JwtSecurityConfigurerAdapter(new JwtAuthenticationFilter(authenticateProcessor));
+    }
+
+
+    /**
+     * 创建授权配置管理器
+     *
+     * @param authorizeConfigProviders Spring Security授权配置提供者集合
+     * @return 授权配置管理器
+     */
+    @Bean
+    @ConditionalOnMissingBean(AuthorizeConfigManager.class)
+    public AuthorizeConfigManager authorizeConfigManager(List<AuthorizeConfigProvider> authorizeConfigProviders) {
+        return new AuthorizeConfigManager(authorizeConfigProviders);
+
+    }
 
     /**
      * 默认加密

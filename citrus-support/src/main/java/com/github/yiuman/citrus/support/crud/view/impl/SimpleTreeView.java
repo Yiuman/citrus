@@ -1,5 +1,8 @@
-package com.github.yiuman.citrus.support.model;
+package com.github.yiuman.citrus.support.crud.view.impl;
 
+import com.github.yiuman.citrus.support.crud.view.TreeView;
+import com.github.yiuman.citrus.support.model.Button;
+import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.support.widget.Widget;
 
@@ -12,7 +15,7 @@ import java.util.List;
  * @author yiuman
  * @date 2020/5/13
  */
-public class TreeDisplay<T extends Tree<?>> {
+public class SimpleTreeView<T extends Tree<?>> extends BaseActionableView implements TreeView<T> {
 
     private boolean displayRoot = true;
 
@@ -46,14 +49,14 @@ public class TreeDisplay<T extends Tree<?>> {
      */
     private List<Button> actions = new ArrayList<>();
 
-    /**
-     * 对话框（新增、编辑页面的定义）
-     */
-    private DialogView dialogView;
-
-    public TreeDisplay() {
+    public SimpleTreeView() {
     }
 
+    public SimpleTreeView(boolean displayRoot) {
+        this.displayRoot = displayRoot;
+    }
+
+    @Override
     public boolean isDisplayRoot() {
         return displayRoot;
     }
@@ -62,6 +65,7 @@ public class TreeDisplay<T extends Tree<?>> {
         this.displayRoot = displayRoot;
     }
 
+    @Override
     public boolean isLazy() {
         return lazy;
     }
@@ -70,6 +74,7 @@ public class TreeDisplay<T extends Tree<?>> {
         this.lazy = lazy;
     }
 
+    @Override
     public String getItemKey() {
         return itemKey;
     }
@@ -78,6 +83,7 @@ public class TreeDisplay<T extends Tree<?>> {
         this.itemKey = itemKey;
     }
 
+    @Override
     public String getItemText() {
         return itemText;
     }
@@ -94,36 +100,34 @@ public class TreeDisplay<T extends Tree<?>> {
         this.widgets = widgets;
     }
 
+    @Override
     public T getTree() {
         return tree;
     }
 
+    @Override
     public void setTree(T tree) {
         this.tree = tree;
     }
 
+    @Override
     public List<Button> getButtons() {
         return buttons;
     }
 
+    @Override
     public void setButtons(List<Button> buttons) {
         this.buttons = buttons;
     }
 
+    @Override
     public List<Button> getActions() {
         return actions;
     }
 
+    @Override
     public void setActions(List<Button> actions) {
         this.actions = actions;
-    }
-
-    public DialogView getDialogView() {
-        return dialogView;
-    }
-
-    public void setDialogView(DialogView dialogView) {
-        this.dialogView = dialogView;
     }
 
     public <W extends Widget<?>> void addWidget(W widget) {
@@ -163,4 +167,5 @@ public class TreeDisplay<T extends Tree<?>> {
         button.setScript(true);
         actions.add(button);
     }
+
 }

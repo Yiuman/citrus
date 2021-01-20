@@ -34,7 +34,7 @@ public class UserCandidateParserImpl implements CandidateParser {
     }
 
     @Override
-    public <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext,T candidateModel) {
+    public <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext, T candidateModel) {
         List<Long> userIds = candidateModel.getValues().stream().map(Long::valueOf).collect(Collectors.toList());
         List<UserDto> userDtos = userService.list(Wrappers.<UserDto>query().in("user_id", userIds));
         if (CollectionUtils.isEmpty(userDtos)) {

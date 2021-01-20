@@ -92,9 +92,9 @@ public class JsonServletRequestWrapper extends HttpServletRequestWrapper {
     @Override
     public String[] getParameterValues(String name) {
         String[] results = parameterMap.get(name);
-        if (results == null || results.length <= 0){
+        if (results == null || results.length <= 0) {
             return null;
-        }else{
+        } else {
             return results;
         }
     }

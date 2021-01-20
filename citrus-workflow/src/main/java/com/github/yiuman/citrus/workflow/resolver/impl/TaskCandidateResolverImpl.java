@@ -6,7 +6,6 @@ import com.github.yiuman.citrus.workflow.model.WorkflowContext;
 import com.github.yiuman.citrus.workflow.model.impl.CandidateModelImpl;
 import com.github.yiuman.citrus.workflow.resolver.CandidateParser;
 import com.github.yiuman.citrus.workflow.resolver.TaskCandidateResolver;
-import io.jsonwebtoken.lang.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -56,7 +55,7 @@ public class TaskCandidateResolverImpl implements TaskCandidateResolver {
 
                         //找到就进行解释,没找到直接加入
                         realUserIds.addAll(candidateParser.isPresent()
-                                ? candidateParser.get().parse(workflowContext,candidateModel)
+                                ? candidateParser.get().parse(workflowContext, candidateModel)
                                 : candidateModel
                                 .getValues()
                                 .stream()

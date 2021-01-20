@@ -1,14 +1,18 @@
 package com.github.yiuman.citrus.support.crud.rest;
 
 import com.github.yiuman.citrus.support.crud.CrudReadDataListener;
-import com.github.yiuman.citrus.support.model.DialogView;
+import com.github.yiuman.citrus.support.crud.view.EditableView;
+import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
+import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.model.EditField;
 import com.github.yiuman.citrus.support.model.Page;
+import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.utils.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +33,22 @@ public abstract class BaseCrudRestful<T, K extends Serializable> extends BaseQue
      * @throws Exception 反射、数据库操作等异常
      */
     @Override
-    protected Page<T> createPage() throws Exception {
-        Page<T> page = super.createPage();
-        page.setDialogView(createDialogView());
+    protected Object createView() throws Exception {
+        PageTableView<T> view = new PageTableView<>();
+        //构造页面小部件
+        CrudUtils.getCrudWidgets(this).forEach(widget -> view.addWidget(widget, true));
+        //构造默认表头
+        ReflectionUtils.doWithFields(modelClass, field -> view.addHeader(field.getName(), field.getName()));
+        return view;
+    }
+
+    @Override
+    public Page<T> page(HttpServletRequest request) throws Exception {
+        Page<T> page = super.page(request);
+        Object view = page.getView();
+        if (view instanceof EditableView) {
+            ((EditableView) view).setEditableView(createEditableView());
+        }
         return page;
     }
 
@@ -41,7 +58,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> extends BaseQue
      * @return 对话框视图
      * @throws Exception 反射等操作异常
      */
-    protected DialogView createDialogView() throws Exception {
+    protected Object createEditableView() throws Exception {
         List<EditField> editFields = new ArrayList<>();
         ReflectionUtils.doWithFields(modelClass, field -> editFields.add(new EditField(field.getName(), field.getName())));
         return new DialogView(editFields);

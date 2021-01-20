@@ -2,9 +2,9 @@ package com.github.yiuman.citrus.system.rest;
 
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
+import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
+import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
-import com.github.yiuman.citrus.support.model.DialogView;
-import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.support.utils.ConvertUtils;
 import com.github.yiuman.citrus.system.dto.ScopeDto;
@@ -44,10 +44,10 @@ public class ScopeController extends BaseCrudController<ScopeDto, Long> {
     }
 
     @Override
-    protected Page<ScopeDto> createPage() throws Exception {
-        Page<ScopeDto> page = super.createPage();
-        page.addHeader("数据范围名称", "scopeName");
-        page.addHeader("所属组织", "organName", (entity) -> {
+    protected Object createView() {
+        PageTableView<ScopeDto> view = new PageTableView<>();
+        view.addHeader("数据范围名称", "scopeName");
+        view.addHeader("所属组织", "organName", (entity) -> {
             if (-1 == entity.getOrganId()) {
                 return "系统通用数据范围";
             }
@@ -55,13 +55,13 @@ public class ScopeController extends BaseCrudController<ScopeDto, Long> {
             return organization == null ? "" : organization.getOrganName();
         });
 
-        page.addButton(Buttons.defaultButtonsWithMore());
-        page.addActions(Buttons.defaultActions());
-        return page;
+        view.addButton(Buttons.defaultButtonsWithMore());
+        view.addAction(Buttons.defaultActions());
+        return view;
     }
 
     @Override
-    protected DialogView createDialogView() throws Exception {
+    protected Object createEditableView() throws Exception {
         DialogView dialogView = new DialogView();
         dialogView.addEditField("数据范围名称", "scopeName");
         dialogView.addEditField("所属组织", "organId", organService.getOrganTree("选择机构", "organId", false));

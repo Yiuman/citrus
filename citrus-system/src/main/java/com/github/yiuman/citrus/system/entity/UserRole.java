@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus.system.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -35,6 +34,6 @@ public class UserRole {
 
 
     public String getId() {
-        return String.format("%s-%s-%s",userId,roleId,organId);
+        return String.format("%s-%s-%s", userId, roleId, organId);
     }
 }

@@ -7,10 +7,11 @@ import java.util.List;
 
 /**
  * 基础树形结构
+ *
  * @author yiuman
  * @date 2020/5/22
  */
-public abstract class BaseTree<T extends BaseTree<T,K>, K> implements Tree<K> {
+public abstract class BaseTree<T extends BaseTree<T, K>, K> implements Tree<K> {
 
     @TableField(exist = false)
     private List<T> children;
@@ -20,7 +21,7 @@ public abstract class BaseTree<T extends BaseTree<T,K>, K> implements Tree<K> {
 
     @Override
     public boolean isLeaf() {
-       return CollectionUtils.isEmpty(getChildren());
+        return CollectionUtils.isEmpty(getChildren());
     }
 
     @Override

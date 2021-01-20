@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus.security.authenticate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.http.ResponseStatusCode;
 import lombok.extern.slf4j.Slf4j;

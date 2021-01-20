@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.crud.query.QueryParam;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
-import com.github.yiuman.citrus.support.model.DialogView;
-import com.github.yiuman.citrus.support.model.Page;
+import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
+import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.widget.Selects;
@@ -79,11 +79,11 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
     }
 
     @Override
-    protected Page<RoleDto> createPage() throws Exception {
-        Page<RoleDto> page = super.createPage();
-        page.addHeader("ID", "roleId");
-        page.addHeader("角色名", "roleName");
-        page.addHeader("拥有权限", "authNames", (entity) -> {
+    protected Object createView() {
+        PageTableView<RoleDto> view = new PageTableView<>();
+        view.addHeader("ID", "roleId");
+        view.addHeader("角色名", "roleName");
+        view.addHeader("拥有权限", "authNames", (entity) -> {
             List<Authority> authorities = roleService.getAuthoritiesByRoleId(entity.getRoleId());
             if (CollectionUtils.isEmpty(authorities)) {
                 return "-";
@@ -92,16 +92,16 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
             return authorities.parallelStream().map(Authority::getAuthorityName).collect(Collectors.joining(","));
         });
 
-        page.addWidget("角色名", "roleName");
+        view.addWidget("角色名", "roleName");
         //添加默认按钮
-        page.addButton(Buttons.defaultButtonsWithMore());
+        view.addButton(Buttons.defaultButtonsWithMore());
         //添加默认行内操作
-        page.addActions(Buttons.defaultActions());
-        return page;
+        view.addAction(Buttons.defaultActions());
+        return view;
     }
 
     @Override
-    protected DialogView createDialogView() throws InvocationTargetException, IllegalAccessException {
+    protected Object createEditableView() throws InvocationTargetException, IllegalAccessException {
         DialogView dialogView = new DialogView();
         dialogView.addEditField("角色名", "roleName").addRule("required");
         dialogView.addEditField("选择权限", "authIds", CrudUtils.getWidget(this, "getAuthorities"));

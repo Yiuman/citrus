@@ -5,6 +5,7 @@ import lombok.Data;
 
 /**
  * 字典项
+ *
  * @author yiuman
  * @date 2020/4/8
  */

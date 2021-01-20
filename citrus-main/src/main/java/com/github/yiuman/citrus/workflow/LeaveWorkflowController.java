@@ -1,7 +1,7 @@
 package com.github.yiuman.citrus.workflow;
 
-import com.github.yiuman.citrus.support.model.DialogView;
-import com.github.yiuman.citrus.support.model.Page;
+import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
+import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.system.service.UserService;
@@ -36,21 +36,22 @@ public class LeaveWorkflowController extends EntityWorkflowController<Leave, Lon
 
 
     @Override
-    protected Page<Leave> createPage() throws Exception {
-        Page<Leave> page = super.createPage();
-        page.addHeader("ID", "leaveId");
-        page.addHeader("请假天数", "leaveDay");
-        page.addHeader("申请人", "username", entity -> userService.get(entity.getUserId()).getUsername());
-        page.addHeader("流程ID", "processInstanceId");
-        page.addButton(Buttons.defaultButtonsWithMore());
-        page.addActions(Buttons.defaultActions());
-        return page;
+    protected Object createView() {
+        PageTableView<Leave> view = new PageTableView<>();
+        view.addHeader("ID", "leaveId");
+        view.addHeader("请假天数", "leaveDay");
+        view.addHeader("申请人", "username", entity -> userService.get(entity.getUserId()).getUsername());
+        view.addHeader("流程ID", "processInstanceId");
+        view.addButton(Buttons.defaultButtonsWithMore());
+        view.addAction(Buttons.defaultActions());
+        return view;
     }
 
     @Override
-    protected DialogView createDialogView() {
+    protected Object createEditableView() throws Exception {
         DialogView view = new DialogView();
-        view.addEditField(new Inputs("请假天数","leaveDay").type("number")).addRule("required");
+        view.addEditField(new Inputs("请假天数", "leaveDay").type("number")).addRule("required");
         return view;
     }
+
 }

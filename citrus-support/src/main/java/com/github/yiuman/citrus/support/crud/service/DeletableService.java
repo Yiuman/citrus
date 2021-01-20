@@ -29,6 +29,7 @@ public interface DeletableService<E, K> {
 
     /**
      * 删除
+     *
      * @param wrappers 删除的条件
      * @return 是否删除成功true/false
      */

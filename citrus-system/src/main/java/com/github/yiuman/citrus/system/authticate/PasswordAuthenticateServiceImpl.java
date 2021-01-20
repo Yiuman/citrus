@@ -23,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -78,7 +77,7 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService, Use
             throw new BadCredentialsException("用户名或密码错误");
         }
 
-        if(StringUtils.isBlank(user.getUuid())){
+        if (StringUtils.isBlank(user.getUuid())) {
             throw new BadCredentialsException("此用户目前不存在密匙");
         }
 

@@ -1,4 +1,3 @@
-
 package com.github.yiuman.citrus.support.datasource;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -23,7 +22,7 @@ public class DynamicDataSourceAnnotationInterceptor implements MethodInterceptor
     public Object invoke(MethodInvocation invocation) throws Throwable {
         try {
             String dsKey = dataSourceClassResolver.findDSKey(invocation.getMethod(), invocation.getThis());
-            if(StringUtils.isNotBlank(dsKey)){
+            if (StringUtils.isNotBlank(dsKey)) {
                 DynamicDataSourceHolder.push(dsKey);
             }
 

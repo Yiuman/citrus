@@ -34,6 +34,6 @@ public class UserOrgan {
     }
 
     public String getId() {
-        return String.format("%s-%s",userId,organId);
+        return String.format("%s-%s", userId, organId);
     }
 }

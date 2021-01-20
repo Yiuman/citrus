@@ -77,7 +77,7 @@ public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
         return roleMapper.hasPermission(userId, resourceId);
     }
 
-    public List<RoleAuthority> getRoleAuthorityByAuthAuthIds(List<Long>  authIds){
+    public List<RoleAuthority> getRoleAuthorityByAuthAuthIds(List<Long> authIds) {
         return roleAuthorityMapper.selectList(Wrappers.<RoleAuthority>lambdaQuery().in(RoleAuthority::getAuthorityId, authIds));
     }
 

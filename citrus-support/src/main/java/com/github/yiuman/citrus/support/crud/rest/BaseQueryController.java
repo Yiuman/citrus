@@ -22,7 +22,7 @@ public abstract class BaseQueryController<T, K extends Serializable> extends Bas
     @SuppressWarnings("unchecked")
     @GetMapping
     public ResponseEntity<Page<T>> getPageList(HttpServletRequest request) throws Exception {
-        BaseQueryController<T,K> currentProxy = Optional.ofNullable((BaseQueryController<T, K>) AopContext.currentProxy()).orElse(this);
+        BaseQueryController<T, K> currentProxy = Optional.ofNullable((BaseQueryController<T, K>) AopContext.currentProxy()).orElse(this);
         return ResponseEntity.ok(currentProxy.page(request));
     }
 

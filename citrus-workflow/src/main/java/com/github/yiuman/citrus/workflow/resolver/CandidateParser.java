@@ -13,5 +13,5 @@ public interface CandidateParser {
 
     boolean support(String dimension);
 
-    <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext,T candidateModel);
+    <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext, T candidateModel);
 }

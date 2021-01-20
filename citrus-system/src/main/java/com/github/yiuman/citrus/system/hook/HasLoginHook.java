@@ -1,7 +1,7 @@
 package com.github.yiuman.citrus.system.hook;
 
-import com.github.yiuman.citrus.system.service.UserService;
 import com.github.yiuman.citrus.security.authorize.AuthorizeHook;
+import com.github.yiuman.citrus.system.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 

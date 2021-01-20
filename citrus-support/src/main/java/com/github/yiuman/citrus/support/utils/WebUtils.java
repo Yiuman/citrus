@@ -8,10 +8,12 @@ import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.github.yiuman.citrus.support.crud.view.TableView;
 import com.github.yiuman.citrus.support.http.JsonServletRequestWrapper;
 import com.github.yiuman.citrus.support.model.Header;
 import com.github.yiuman.citrus.support.model.Page;
@@ -66,7 +68,8 @@ public final class WebUtils {
      * 忽略实体没有的字段
      */
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-            .configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
+            .configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true)
+            .setSerializationInclusion(JsonInclude.Include.ALWAYS);
 
     private WebUtils() {
     }
@@ -281,21 +284,28 @@ public final class WebUtils {
      */
     public static void exportExcel(HttpServletResponse response, Page<?> page, String name) throws Exception {
         addExportFileNameHeaders(response, name);
-        List<Header> pageHeaders = page.getHeaders();
         List<?> records = page.getRecords();
-        List<List<String>> headers = new ArrayList<>(pageHeaders.size());
+        List<Header> pageHeaders = null;
+        Object view = page.getView();
+        if (view instanceof TableView) {
+            TableView tableView = (TableView) view;
+            pageHeaders = tableView.getHeaders();
+        }
+
+
         List<List<Object>> data = new ArrayList<>(records.size());
         Map<String, Map<String, Object>> recordExtend = page.getRecordExtend();
-
+        List<List<String>> headers = new ArrayList<>(pageHeaders.size());
         pageHeaders.forEach(header -> headers.add(Collections.singletonList(header.getText())));
         //这里记录字段与表头的对应关系，方便后边操作，遍历一次后之后不需要重新取
         final Class<?> recordClass = records.get(0).getClass();
         Field recordKeyField = ReflectionUtils.findField(recordClass, page.getItemKey());
         recordKeyField.setAccessible(true);
         final Map<String, Field> fieldMap = new HashMap<>(256);
+        List<Header> finalPageHeaders = pageHeaders;
         records.forEach(record -> {
-            List<Object> objects = new ArrayList<>(pageHeaders.size());
-            pageHeaders.forEach(header -> {
+            List<Object> objects = new ArrayList<>(finalPageHeaders.size());
+            finalPageHeaders.forEach(header -> {
                 Object fieldValue;
                 String fieldName = header.getValue();
                 try {
@@ -304,10 +314,7 @@ public final class WebUtils {
                     fieldValue = field.get(record);
                     fieldMap.put(fieldName, field);
 
-                } catch (IllegalAccessException e) {
-                    if (CollectionUtils.isEmpty(recordExtend)) {
-                        page.initFunctionalRecords();
-                    }
+                } catch (IllegalAccessException | NullPointerException e) {
                     try {
                         Map<String, Object> singleRecordExtendData = recordExtend.get(recordKeyField.get(record).toString());
                         fieldValue = Objects.nonNull(singleRecordExtendData) ? singleRecordExtendData.get(fieldName) : null;

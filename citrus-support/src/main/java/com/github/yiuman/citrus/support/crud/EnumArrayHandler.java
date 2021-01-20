@@ -78,7 +78,7 @@ public class EnumArrayHandler<E extends Enum<E>> extends BaseTypeHandler<E[]> {
             }
 
         }
-        if (containsOneChar==0) {
+        if (containsOneChar == 0) {
             return null;
         }
 

@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus.support.model;
 
-import lombok.Builder;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;

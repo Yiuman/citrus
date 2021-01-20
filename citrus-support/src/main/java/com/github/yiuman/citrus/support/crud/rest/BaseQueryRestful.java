@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.crud.query.QueryParam;
 import com.github.yiuman.citrus.support.crud.query.QueryParamHandler;
+import com.github.yiuman.citrus.support.crud.view.impl.SimpleTableView;
 import com.github.yiuman.citrus.support.exception.ValidateException;
 import com.github.yiuman.citrus.support.inject.InjectAnnotationParserHolder;
 import com.github.yiuman.citrus.support.model.Page;
@@ -12,7 +13,6 @@ import com.github.yiuman.citrus.support.model.SortBy;
 import com.github.yiuman.citrus.support.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,35 +49,30 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
         this.paramClass = paramClass;
     }
 
-
     /**
      * 创建列表分页页面
      *
      * @return 分页页面对象
-     * @throws Exception 反射、数据库操作等异常
+     * @throws Exception 反射等异常
      */
-    protected Page<T> createPage() throws Exception {
-        Page<T> page = new Page<>();
+    protected Object createView() throws Exception {
+        SimpleTableView<T> view = new SimpleTableView<>();
         //构造页面小部件
-        CrudUtils.getCrudWidgets(this)
-                .forEach(widget -> page.addWidget(widget, true));
-        return page;
+        CrudUtils.getCrudWidgets(this).forEach(widget -> view.addWidget(widget, true));
+        //构造默认表头
+        ReflectionUtils.doWithFields(modelClass, field -> view.addHeader(field.getName(), field.getName()));
+        return view;
     }
 
     @Override
     public Page<T> page(HttpServletRequest request) throws Exception {
-        //获取pageNo
-        Page<T> page = createPage();
-        //添加默表头
-        if (CollectionUtils.isEmpty(page.getHeaders())) {
-            ReflectionUtils.doWithFields(modelClass, field -> page.addHeader(field.getName(), field.getName()));
-        }
-
-        //绑定页面参数
-        WebUtils.requestDataBind(page, request);
 
         QueryWrapper<T> queryWrapper = Optional.ofNullable(getQueryWrapper(request)).orElse(Wrappers.query());
         handleSortWrapper(queryWrapper, request);
+        //获取pageNo
+        Page<T> page = new Page<>();
+        //绑定页面参数
+        WebUtils.requestDataBind(page, request);
 
         //这里需要调用了page方法查询后再进行设置ItemKey,原因是Service中的mapper为动态注入，调用查询才会初始化mapper构造表信息
         Page<T> realPage = selectPage(page, queryWrapper);
@@ -85,7 +80,8 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
             realPage.setItemKey(getService().getKeyProperty());
         }
 
-        realPage.beforeShow();
+        realPage.setView(createView());
+
         return realPage;
     }
 
@@ -114,14 +110,16 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
 
         QueryWrapper<T> queryWrapper = Optional.ofNullable(getQueryWrapper(request)).orElse(Wrappers.query());
         handleSortWrapper(queryWrapper, request);
-        Page<T> createPage = createPage();
-        createPage.setSize(-1);
-        Page<T> resultPage = selectPage(createPage, queryWrapper);
-        if (StringUtils.isBlank(resultPage.getItemKey())) {
-            resultPage.setItemKey(getService().getKeyProperty());
+        Page<T> page = new Page<>();
+
+        page.setSize(-1);
+        page = selectPage(page, queryWrapper);
+        if (StringUtils.isBlank(page.getItemKey())) {
+            page.setItemKey(getService().getKeyProperty());
         }
-        resultPage.setItemKey(getService().getKeyProperty());
-        WebUtils.exportExcel(response, resultPage, fileName);
+
+        page.setView(createView());
+        WebUtils.exportExcel(response, page, fileName);
     }
 
     /**
@@ -211,6 +209,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
         }
 
     }
+
 
     /**
      * 根据参数，处理查询wrapper

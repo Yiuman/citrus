@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.workflow.model;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * 流程人员模型，用于定义流程环节中的操作的当前处理人与下环节候选人或办理人

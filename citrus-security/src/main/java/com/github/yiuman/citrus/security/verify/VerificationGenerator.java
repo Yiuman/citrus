@@ -12,6 +12,7 @@ public interface VerificationGenerator<T extends Verification<?>> {
 
     /**
      * 根据当前请求构造验证信息
+     *
      * @param httpServletRequest 当前请求
      * @return 验证信息实体 如验证码
      */

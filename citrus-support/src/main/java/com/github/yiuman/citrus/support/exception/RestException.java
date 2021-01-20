@@ -2,12 +2,13 @@ package com.github.yiuman.citrus.support.exception;
 
 /**
  * Rest异常
+ *
  * @author yiuman
  * @date 2020/4/6
  */
 public class RestException extends RuntimeException {
 
-    private final Integer code ;
+    private final Integer code;
 
     public RestException(Integer code) {
         this.code = code;

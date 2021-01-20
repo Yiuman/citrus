@@ -23,7 +23,7 @@ public class ResourceService extends BaseDtoService<Resource, Long, ResourceDto>
 
     public Resource selectByUri(String requestUri, String method) {
         List<Resource> resources = getBaseMapper().selectList(Wrappers.<Resource>query().eq("path", requestUri).eq("operation", method));
-        return CollectionUtils.isEmpty(resources)?null:resources.get(0);
+        return CollectionUtils.isEmpty(resources) ? null : resources.get(0);
     }
 
     public Resource selectByCode(String code) {

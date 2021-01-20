@@ -3,8 +3,9 @@ package com.github.yiuman.citrus.system.rest;
 import com.github.yiuman.citrus.support.crud.query.QueryParam;
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
-import com.github.yiuman.citrus.support.model.DialogView;
-import com.github.yiuman.citrus.support.model.TreeDisplay;
+import com.github.yiuman.citrus.support.crud.view.TreeView;
+import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
+import com.github.yiuman.citrus.support.crud.view.impl.PageTreeView;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.service.OrganService;
@@ -43,19 +44,20 @@ public class OrganController extends BaseTreeController<Organization, Long> {
     }
 
     @Override
-    protected TreeDisplay<Organization> createTree() throws Exception {
-        TreeDisplay<Organization> tree = super.createTree();
-        tree.setItemText("organName");
-        tree.addWidget("组织名称", "organName");
-        tree.addButton(Buttons.defaultButtonsWithMore());
-        return tree;
+    protected TreeView<Organization> createTreeView() throws Exception {
+        PageTreeView<Organization> view = new PageTreeView<>();
+        view.setItemText("organName");
+        view.addWidget("组织名称", "organName");
+        view.addButton(Buttons.defaultButtonsWithMore());
+        return view;
     }
 
+
     @Override
-    protected DialogView createDialogView() throws Exception {
+    protected DialogView createEditableView() throws Exception {
         DialogView dialogView = new DialogView();
-        dialogView.addEditField("组织机构名称", "organName");
-        dialogView.addEditField("组织机构代码", "organCode");
+        dialogView.addEditField("组织机构名称", "organName").addRule("required");
+        dialogView.addEditField("组织机构代码", "organCode").addRule("required");
         dialogView.addEditField("备注", "remark");
         return dialogView;
     }

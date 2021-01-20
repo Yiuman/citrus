@@ -8,7 +8,7 @@ import java.util.function.Function;
  * @author yiuman
  * @date 2020/5/11
  */
-public class FieldFunction<T,R> {
+public class FieldFunction<T, R> {
 
     private String filedName;
 

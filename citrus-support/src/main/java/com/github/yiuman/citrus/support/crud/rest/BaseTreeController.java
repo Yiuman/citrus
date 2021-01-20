@@ -7,10 +7,12 @@ import com.github.yiuman.citrus.support.crud.service.BasePreOrderTreeService;
 import com.github.yiuman.citrus.support.crud.service.BaseSimpleTreeService;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
+import com.github.yiuman.citrus.support.crud.view.TreeView;
+import com.github.yiuman.citrus.support.crud.view.impl.PageTreeView;
+import com.github.yiuman.citrus.support.crud.view.impl.SimpleTreeView;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.BasePreOrderTree;
 import com.github.yiuman.citrus.support.model.Tree;
-import com.github.yiuman.citrus.support.model.TreeDisplay;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.utils.WebUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 基础树结构控制器
@@ -77,27 +80,29 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
      * @return 树形结构的显示视图
      * @throws Exception 反射异常
      */
-    protected TreeDisplay<T> createTree() throws Exception {
-        return new TreeDisplay<>();
+    protected TreeView<T> createTreeView() throws Exception {
+        return null;
     }
 
     /**
      * 加载树,支持查询
      */
+    @SuppressWarnings("unchecked")
     @GetMapping(Operations.Tree.TREE)
-    public ResponseEntity<TreeDisplay<T>> load(HttpServletRequest request) throws Exception {
-        TreeDisplay<T> tree = this.createTree();
+    public <R extends TreeView<T>> ResponseEntity<R> load(HttpServletRequest request) throws Exception {
+        TreeView<T> treeView = Optional.ofNullable(createTreeView()).orElse(new PageTreeView<>());
         QueryWrapper<T> queryWrapper = getQueryWrapper(request);
         if (queryWrapper != null) {
-            tree.setTree(getCrudService().treeQuery(queryWrapper));
-            return ResponseEntity.ok(tree);
+            treeView.setTree(getCrudService().treeQuery(queryWrapper));
+            return (ResponseEntity<R>) ResponseEntity.ok(treeView);
         }
 
-        tree.setTree(getCrudService().load(isLazy));
-        tree.setLazy(isLazy);
-        tree.setDialogView(createDialogView());
-        tree.setItemKey(getService().getKeyProperty());
-        return ResponseEntity.ok(tree);
+        treeView.setTree(getCrudService().load(isLazy));
+        if (treeView instanceof PageTreeView) {
+            ((PageTreeView<T>) treeView).setEditableView(createEditableView());
+        }
+
+        return (ResponseEntity<R>) ResponseEntity.ok(treeView);
     }
 
     /**
@@ -133,7 +138,7 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
 
     @Override
     public void exp(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ResponseEntity<TreeDisplay<T>> load = this.load(request);
+        ResponseEntity<SimpleTreeView<T>> load = this.load(request);
         String fileName = WebUtils.getRequestParam("fileName");
         if (StringUtils.isBlank(fileName)) {
             fileName = String.valueOf(System.currentTimeMillis());

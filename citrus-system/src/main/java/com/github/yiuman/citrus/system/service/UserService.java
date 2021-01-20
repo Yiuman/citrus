@@ -72,7 +72,7 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
             //若是新增则添加默认密码及默认版本号
             entity.setPassword(passwordEncoder.encode("123456"));
             entity.setVersion(1);
-            entity.setUuid(UUID.randomUUID().toString().replace("-",""));
+            entity.setUuid(UUID.randomUUID().toString().replace("-", ""));
         }
 
         return true;

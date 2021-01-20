@@ -45,5 +45,4 @@ public interface Tree<K> {
      */
     List<? extends Tree<K>> getChildren();
 
-
 }

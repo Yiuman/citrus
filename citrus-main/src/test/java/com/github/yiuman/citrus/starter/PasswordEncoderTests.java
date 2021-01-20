@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus.starter;
 
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

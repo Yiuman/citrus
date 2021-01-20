@@ -32,7 +32,7 @@ public final class Buttons {
         return ADD;
     }
 
-    public static  Button edit(){
+    public static Button edit() {
         return EDIT;
     }
 

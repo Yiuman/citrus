@@ -34,11 +34,11 @@ public class RoleCandidateParserImpl implements CandidateParser {
     }
 
     @Override
-    public <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext,T candidateModel) {
+    public <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext, T candidateModel) {
         List<String> roleIds = candidateModel.getValues();
         List<User> usersByRoleIds = userService.getUsersByRoleIds(
-                        roleIds.parallelStream().map(Long::valueOf).collect(Collectors.toList())
-                );
+                roleIds.parallelStream().map(Long::valueOf).collect(Collectors.toList())
+        );
 
         if (CollectionUtils.isEmpty(usersByRoleIds)) {
             return null;

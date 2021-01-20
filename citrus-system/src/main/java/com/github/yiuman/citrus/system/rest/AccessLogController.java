@@ -3,8 +3,8 @@ package com.github.yiuman.citrus.system.rest;
 import cn.hutool.core.date.DateUtil;
 import com.github.yiuman.citrus.support.crud.query.QueryParam;
 import com.github.yiuman.citrus.support.crud.rest.BaseQueryController;
+import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.model.Header;
-import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.system.entity.AccessLog;
 import lombok.Data;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,16 +38,15 @@ public class AccessLogController extends BaseQueryController<AccessLog, Long> {
     }
 
     @Override
-    protected Page<AccessLog> createPage() throws Exception {
-        Page<AccessLog> page = super.createPage();
-        page.setHasSelect(false);
-        page.addHeader("用户", "username").align(Header.Align.center);
-        page.addHeader("IP地址", "ipAddress");
-        page.addHeader("请求", "method_url", entity -> String.format("%s  %s", entity.getRequestMethod(), entity.getUrl()));
-        page.addHeader("参数","params");
-        page.addHeader("资源名称", "resourceName");
-        page.addHeader("时间", "createTime_",entity-> DateUtil.format(entity.getCreateTime(),"yyyy-MM-dd hh:mm:ss"));
-        return page;
+    protected Object createView() throws Exception {
+        PageTableView<AccessLog> view = new PageTableView<>(false);
+        view.addHeader(Header.builder().text("用户").value("username").align(Header.Align.center).build());
+        view.addHeader("IP地址", "ipAddress");
+        view.addHeader("请求", "method_url", entity -> String.format("%s  %s", entity.getRequestMethod(), entity.getUrl()));
+        view.addHeader("参数", "params");
+        view.addHeader("资源名称", "resourceName");
+        view.addHeader("时间", "createTime_", entity -> DateUtil.format(entity.getCreateTime(), "yyyy-MM-dd hh:mm:ss"));
+        return view;
     }
 
 }

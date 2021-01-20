@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.system.authticate;
 
+import com.github.yiuman.citrus.support.crud.view.ActionableView;
 import com.github.yiuman.citrus.support.model.Button;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
@@ -44,41 +45,43 @@ public class PageAuthenticateAdvice {
     public Page<?> returnPageObject(ProceedingJoinPoint joinPoint) throws Throwable {
         UserOnlineInfo currentUserOnlineInfo = rbacMixinService.getUserService().getCurrentUserOnlineInfo();
         Page<?> proceed = (Page<?>) joinPoint.proceed();
-        boolean isOperationEmpty = CollectionUtils.isEmpty(proceed.getButtons()) && CollectionUtils.isEmpty(proceed.getActions());
-        if (currentUserOnlineInfo.getAdmin()
-                || isOperationEmpty) {
-            return proceed;
+        Object view = proceed.getView();
+        if (view instanceof ActionableView) {
+            ActionableView actionableView = (ActionableView) view;
+            List<Button> buttons = actionableView.getButtons();
+            List<Button> actions = actionableView.getActions();
+            boolean isOperationEmpty = CollectionUtils.isEmpty(buttons) && CollectionUtils.isEmpty(actions);
+            if (currentUserOnlineInfo.getAdmin()
+                    || isOperationEmpty) {
+                return proceed;
+            }
+
+            HttpServletRequest request = (HttpServletRequest) joinPoint.getArgs()[0];
+            final Resource currentResource = (Resource) request.getAttribute(RbacHook.CURRENT_RESOURCE_ATTR);
+            //根据当前用户的资源查出当前请求的相关操作资源
+
+
+            final Set<String> resources = currentUserOnlineInfo.getResources()
+                    .parallelStream().filter(resource -> resource.getType() == 2 && currentResource.getParentId().equals(resource.getParentId()))
+                    .map(Resource::getResourceCode)
+                    .collect(Collectors.toSet());
+
+
+            final List<Button> newButtons = new ArrayList<>();
+            buttons.forEach(button -> filterOperation(newButtons, button, resources));
+
+            //过滤操作资源
+            actionableView.setButtons(newButtons);
+            actionableView.setActions(actions.stream().filter(action -> resources.contains(action.getAction())).collect(Collectors.toList()));
+
         }
-
-        HttpServletRequest request = (HttpServletRequest) joinPoint.getArgs()[0];
-        final Resource currentResource = (Resource) request.getAttribute(RbacHook.CURRENT_RESOURCE_ATTR);
-        //根据当前用户的资源查出当前请求的相关操作资源
-
-
-        final Set<String> resources = currentUserOnlineInfo.getResources()
-                .parallelStream().filter(resource -> resource.getType() == 2 && currentResource.getParentId().equals(resource.getParentId()))
-                .map(Resource::getResourceCode)
-                .collect(Collectors.toSet());
-
-
-        final List<Button> buttons = new ArrayList<>();
-        proceed.getButtons().forEach(button -> {
-            filterOperation(buttons, button, resources);
-        });
-
-
-        //过滤操作资源
-        proceed.setButtons(buttons);
-        proceed.setActions(proceed.getActions().stream().filter(action -> resources.contains(action.getAction())).collect(Collectors.toList()));
         return proceed;
     }
 
     private void filterOperation(List<Button> buttons, Button button, Set<String> operationResources) {
         if (button.isGroup()) {
             List<Button> groupActions = new ArrayList<>();
-            button.getActions().forEach(button1 -> {
-                filterOperation(groupActions, button1, operationResources);
-            });
+            button.getActions().forEach(button1 -> filterOperation(groupActions, button1, operationResources));
             if (!CollectionUtils.isEmpty(groupActions)) {
                 button.setActions(groupActions);
                 buttons.add(button);

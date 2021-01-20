@@ -21,7 +21,10 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * CRUD工具类
@@ -179,11 +182,11 @@ public final class CrudUtils {
 
 
     public static <M extends BaseMapper<T>, T> M getCrudMapper(Class<T> entityClass) throws Exception {
-        return  getMapper(entityClass, CrudMapper.class);
+        return getMapper(entityClass, CrudMapper.class);
     }
 
     public static <M extends BaseMapper<T>, T> M getTreeMapper(Class<T> entityClass) throws Exception {
-        return  getMapper(entityClass, TreeMapper.class);
+        return getMapper(entityClass, TreeMapper.class);
     }
 
     /**
@@ -278,6 +281,5 @@ public final class CrudUtils {
 
         return (W) new Selections(text, selects.bind(), selectItems, selects.multiple());
     }
-
 
 }

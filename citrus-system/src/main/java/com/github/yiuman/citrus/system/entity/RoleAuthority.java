@@ -34,6 +34,6 @@ public class RoleAuthority {
     }
 
     public String getId() {
-        return String.format("%s-%s",role,authorityId);
+        return String.format("%s-%s", role, authorityId);
     }
 }

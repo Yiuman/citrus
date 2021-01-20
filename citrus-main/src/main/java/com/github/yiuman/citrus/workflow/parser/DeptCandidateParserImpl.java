@@ -33,7 +33,7 @@ public class DeptCandidateParserImpl implements CandidateParser {
     }
 
     @Override
-    public <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext,T candidateModel) {
+    public <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext, T candidateModel) {
         List<Long> deptIds = candidateModel.getValues().stream()
                 .map(Long::valueOf)
                 .collect(Collectors.toList());

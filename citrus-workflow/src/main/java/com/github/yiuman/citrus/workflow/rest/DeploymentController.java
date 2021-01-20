@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.workflow.rest;
 
 import com.github.yiuman.citrus.support.crud.rest.BaseQueryController;
 import com.github.yiuman.citrus.support.crud.rest.Operations;
+import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.WebUtils;
@@ -58,8 +59,19 @@ public class DeploymentController extends BaseQueryController<Deployment, String
     }
 
     @Override
+    protected Object createView() throws Exception {
+        PageTableView<Deployment> view = new PageTableView<>();
+        view.addWidget("流程部署Key", "deploymentKeyLike");
+        view.addWidget("名称", "deploymentNameLike");
+        view.addWidget("目录", "deploymentCategoryLike");
+        view.addWidget("租户ID", "deploymentTenantIdLike");
+        view.addWidget("流程部署定义Key", "deploymentDefinitionKeyLike");
+        return view;
+    }
+
+    @Override
     public Page<Deployment> page(HttpServletRequest request) throws Exception {
-        Page<Deployment> page = createPage();
+        Page<Deployment> page = new Page<>();
         WebUtils.requestDataBind(page, request);
         DeploymentQuery deploymentQuery = repositoryService.createDeploymentQuery();
         page.setTotal(deploymentQuery.count());
@@ -71,11 +83,7 @@ public class DeploymentController extends BaseQueryController<Deployment, String
                         (int) page.getSize()
                 )
         );
-        page.addWidget("流程部署Key", "deploymentKeyLike");
-        page.addWidget("名称", "deploymentNameLike");
-        page.addWidget("目录", "deploymentCategoryLike");
-        page.addWidget("租户ID", "deploymentTenantIdLike");
-        page.addWidget("流程部署定义Key", "deploymentDefinitionKeyLike");
+        page.setView(createView());
         return page;
     }
 

@@ -7,12 +7,12 @@ import com.github.yiuman.citrus.support.crud.query.QueryParam;
 import com.github.yiuman.citrus.support.crud.query.QueryParamHandler;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
+import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
+import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.exception.RestException;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.http.ResponseStatusCode;
-import com.github.yiuman.citrus.support.model.DialogView;
 import com.github.yiuman.citrus.support.model.Header;
-import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.widget.Inputs;
@@ -75,34 +75,34 @@ public class UserController extends BaseCrudController<UserDto, Long> {
     }
 
     @Override
-    protected Page<UserDto> createPage() throws Exception {
-        Page<UserDto> page = super.createPage();
-        page.addHeader("ID", "userId").setAlign(Header.Align.start);
-        page.addHeader("用户名", "username", true);
-        page.addHeader("手机号码", "mobile");
-        page.addHeader("邮箱", "email");
-        page.addHeader("所属角色", "roleNames", (entity) -> {
+    protected Object createView() {
+        PageTableView<UserDto> view = new PageTableView<>();
+        view.addHeader("ID", "userId").setAlign(Header.Align.start);
+        view.addHeader("用户名", "username", true);
+        view.addHeader("手机号码", "mobile");
+        view.addHeader("邮箱", "email");
+        view.addHeader("所属角色", (entity) -> {
             List<Role> roleByUser = userService.getRoleByUser(entity);
             entity.setRoleIds(roleByUser.parallelStream().map(Role::getRoleId).collect(Collectors.toList()));
             return roleByUser.parallelStream().map(Role::getRoleName).collect(Collectors.joining(","));
         });
 
-        page.addHeader("所属机构", "organNames", (entity) -> {
+        view.addHeader("所属机构", (entity) -> {
             List<Organization> organByUser = userService.getOrganByUser(entity.getUserId());
             entity.setOrganIds(organByUser.parallelStream().map(Organization::getOrganId).collect(Collectors.toList()));
             return organByUser.parallelStream().map(Organization::getOrganName).collect(Collectors.joining(","));
         });
 
-        page.addWidget(new Inputs("用户名", "username"));
+        view.addWidget(new Inputs("用户名", "username"));
         //添加默认按钮
-        page.addButton(Buttons.defaultButtonsWithMore());
+        view.addButton(Buttons.defaultButtonsWithMore());
         //添加默认行内操作
-        page.addActions(Buttons.defaultActions());
-        return page;
+        view.addAction(Buttons.defaultActions());
+        return view;
     }
 
     @Override
-    protected DialogView createDialogView() throws Exception {
+    protected DialogView createEditableView() throws Exception {
         DialogView dialogView = new DialogView();
         dialogView.addEditField("登录名", "loginId").addRule("required");
         dialogView.addEditField("用户名", "username").addRule("required");
