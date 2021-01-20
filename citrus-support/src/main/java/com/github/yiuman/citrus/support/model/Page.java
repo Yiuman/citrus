@@ -2,7 +2,6 @@ package com.github.yiuman.citrus.support.model;
 
 import com.github.yiuman.citrus.support.crud.view.RecordExtender;
 import com.github.yiuman.citrus.support.crud.view.TableView;
-import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
 import com.github.yiuman.citrus.support.crud.view.impl.SimpleTableView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ReflectionUtils;
@@ -10,6 +9,7 @@ import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,22 +57,25 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
         this.itemKey = itemKey;
     }
 
-    @SuppressWarnings("unchecked")
+
     public Map<String, Map<String, Object>> getRecordExtend() {
-        if (this.recordExtend == null) {
-            this.recordExtend = new HashMap<>();
-            if (!StringUtils.isEmpty(itemKey)) {
-                if (view instanceof RecordExtender) {
-                    RecordExtender<T> recordExtender = (RecordExtender<T>) view;
-                    getRecords().forEach(record -> recordExtend.put(key(record), recordExtender.apply(record)));
-                }
-            }
-        }
         return recordExtend;
     }
 
     public void setRecordExtend(Map<String, Map<String, Object>> recordExtend) {
         this.recordExtend = recordExtend;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<T> getRecords() {
+        List<T> records = super.getRecords();
+        if (this.recordExtend == null && !StringUtils.isEmpty(itemKey) && view instanceof RecordExtender) {
+            this.recordExtend = new HashMap<>();
+            RecordExtender<T> recordExtender = (RecordExtender<T>) view;
+            records.forEach(record -> recordExtend.put(key(record), recordExtender.apply(record)));
+        }
+        return records;
     }
 
     public Object getView() {
