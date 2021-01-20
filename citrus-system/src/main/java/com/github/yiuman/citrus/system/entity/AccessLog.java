@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.github.yiuman.citrus.system.commons.model.AbstractAuditingEntity;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -19,7 +18,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @TableName("sys_access_log")
-public class AccessLog extends AbstractAuditingEntity {
+public class AccessLog {
 
     /**
      * 主键
