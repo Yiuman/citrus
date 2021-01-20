@@ -50,7 +50,7 @@ CREATE TABLE `sys_role`
   `type`               int        NOT NULL COMMENT '类型 0：角色 1：角色组',
   `role_name`          varchar(45) DEFAULT NULL COMMENT '名字',
   `created_time`        datetime    DEFAULT NULL COMMENT '创建时间',
-  `create_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
+  `created_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
   `last_modified_time` datetime    DEFAULT NULL COMMENT '最后的更新时间',
   `last_modified_by`   bigint(20)  DEFAULT NULL COMMENT '最后的更新人',
   `order_id`           int         DEFAULT NULL COMMENT '排序标识',
