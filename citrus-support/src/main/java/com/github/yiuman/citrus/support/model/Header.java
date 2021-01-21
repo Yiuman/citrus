@@ -23,8 +23,10 @@ public class Header {
      */
     private String value;
 
+    @Builder.Default
     private Align align = Align.start;
 
+    @Builder.Default
     private Boolean sortable = false;
 
     private Integer width;
