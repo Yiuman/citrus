@@ -23,7 +23,7 @@ import java.util.List;
 public class AccessLogController extends BaseQueryController<AccessLog, Long> {
 
     public AccessLogController() {
-        addSortBy("createTime", true);
+        addSortBy("createdTime", true);
         setParamClass(AccessLogQuery.class);
     }
 

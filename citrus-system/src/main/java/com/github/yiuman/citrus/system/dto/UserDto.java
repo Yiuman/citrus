@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.system.dto;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
@@ -29,14 +30,14 @@ public class UserDto {
     @NotBlank
     private String mobile;
 
-    @JsonIgnore
     @ExcelIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private String email;
 
     @ExcelIgnore
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String avatar;
 
     @JsonSerialize(contentUsing = ToStringSerializer.class)
