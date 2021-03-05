@@ -13,10 +13,7 @@ import org.activiti.engine.repository.DeploymentBuilder;
 import org.activiti.engine.repository.DeploymentQuery;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -114,16 +111,13 @@ public class DeploymentController extends BaseQueryController<Deployment, String
      * @throws IOException IO异常
      */
     @PostMapping("/deploy")
-    public ResponseEntity<Deployment> deploy(MultipartFile file) throws IOException {
+    public ResponseEntity<String> deploy(@RequestBody MultipartFile file) throws IOException {
         // 获取上传的文件名
         String fileName = file.getOriginalFilename();
-
         // 得到输入流（字节流）对象
         InputStream fileInputStream = file.getInputStream();
-
         // 文件的扩展名
         String extension = FilenameUtils.getExtension(fileName);
-
         // zip或者bar类型的文件用ZipInputStream方式部署
         DeploymentBuilder deployment = repositoryService.createDeployment();
         if ("zip".equals(extension) || "bar".equals(extension)) {
@@ -134,8 +128,7 @@ public class DeploymentController extends BaseQueryController<Deployment, String
             deployment.addInputStream(fileName, fileInputStream);
         }
         Deployment result = deployment.deploy();
-
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(result.getId());
     }
 
     @DeleteMapping(Operations.DELETE)

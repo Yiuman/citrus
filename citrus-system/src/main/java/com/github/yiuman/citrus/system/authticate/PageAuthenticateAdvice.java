@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,36 +44,38 @@ public class PageAuthenticateAdvice {
 
     @Around("queryRestful()")
     public Page<?> returnPageObject(ProceedingJoinPoint joinPoint) throws Throwable {
-        UserOnlineInfo currentUserOnlineInfo = rbacMixinService.getUserService().getCurrentUserOnlineInfo();
+
         Page<?> proceed = (Page<?>) joinPoint.proceed();
         Object view = proceed.getView();
         if (view instanceof ActionableView) {
-            ActionableView actionableView = (ActionableView) view;
-            List<Button> buttons = actionableView.getButtons();
-            List<Button> actions = actionableView.getActions();
-            boolean isOperationEmpty = CollectionUtils.isEmpty(buttons) && CollectionUtils.isEmpty(actions);
-            if (currentUserOnlineInfo.getAdmin()
-                    || isOperationEmpty) {
-                return proceed;
-            }
-
             HttpServletRequest request = (HttpServletRequest) joinPoint.getArgs()[0];
             final Resource currentResource = (Resource) request.getAttribute(RbacHook.CURRENT_RESOURCE_ATTR);
-            //根据当前用户的资源查出当前请求的相关操作资源
+            if (Objects.nonNull(currentResource)) {
+                UserOnlineInfo currentUserOnlineInfo = rbacMixinService.getUserService().getCurrentUserOnlineInfo();
+                ActionableView actionableView = (ActionableView) view;
+                List<Button> buttons = actionableView.getButtons();
+                List<Button> actions = actionableView.getActions();
+                boolean isOperationEmpty = CollectionUtils.isEmpty(buttons) && CollectionUtils.isEmpty(actions);
+                if (currentUserOnlineInfo.getAdmin()
+                        || isOperationEmpty) {
+                    return proceed;
+                }
+
+                //根据当前用户的资源查出当前请求的相关操作资源
+
+                final Set<String> resources = currentUserOnlineInfo.getResources()
+                        .parallelStream().filter(resource -> resource.getType() == 2 && currentResource.getParentId().equals(resource.getParentId()))
+                        .map(Resource::getResourceCode)
+                        .collect(Collectors.toSet());
 
 
-            final Set<String> resources = currentUserOnlineInfo.getResources()
-                    .parallelStream().filter(resource -> resource.getType() == 2 && currentResource.getParentId().equals(resource.getParentId()))
-                    .map(Resource::getResourceCode)
-                    .collect(Collectors.toSet());
+                final List<Button> newButtons = new ArrayList<>();
+                buttons.forEach(button -> filterOperation(newButtons, button, resources));
 
-
-            final List<Button> newButtons = new ArrayList<>();
-            buttons.forEach(button -> filterOperation(newButtons, button, resources));
-
-            //过滤操作资源
-            actionableView.setButtons(newButtons);
-            actionableView.setActions(actions.stream().filter(action -> resources.contains(action.getAction())).collect(Collectors.toList()));
+                //过滤操作资源
+                actionableView.setButtons(newButtons);
+                actionableView.setActions(actions.stream().filter(action -> resources.contains(action.getAction())).collect(Collectors.toList()));
+            }
 
         }
         return proceed;
