@@ -30,6 +30,9 @@ public class TaskCandidateResolverImpl implements TaskCandidateResolver {
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * 候选人解析器实现集合
+     */
     private final List<CandidateParser> candidateParsers;
 
     @Autowired(required = false)

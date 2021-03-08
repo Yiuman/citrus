@@ -54,4 +54,10 @@ public class UserOnlineInfo extends User {
         return userOnlineInfo;
     }
 
+    public static UserOnlineInfo anonymous() {
+        UserOnlineInfo userOnlineInfo = new UserOnlineInfo();
+        userOnlineInfo.setUsername("anonymousUser");
+        userOnlineInfo.setPassword("");
+        return userOnlineInfo;
+    }
 }

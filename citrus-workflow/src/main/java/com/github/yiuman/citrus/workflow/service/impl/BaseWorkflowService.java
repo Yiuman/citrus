@@ -21,6 +21,7 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -40,7 +41,7 @@ public abstract class BaseWorkflowService implements WorkflowService {
     @Override
     public ProcessEngine getProcessEngine() {
         workflowEngineGetter = Optional.ofNullable(workflowEngineGetter)
-                .orElse(new DefaultWorkflowEngineGetterImpl());
+                .orElse(new WorkflowEngineGetterImpl());
         return workflowEngineGetter.getProcessEngine();
     }
 
@@ -113,13 +114,13 @@ public abstract class BaseWorkflowService implements WorkflowService {
         taskService.setVariablesLocal(task.getId(), model.getTaskVariables());
         taskService.complete(task.getId());
         //完成此环节后，检查有没下个环节，有的话且是未设置办理人或候选人的情况下，使用模型进行设置
-        Task nextTask = taskService.createTaskQuery()
+        List<Task> taskList = taskService.createTaskQuery()
                 .processInstanceId(task.getProcessInstanceId())
                 .active()
-                .singleResult();
+                .list();
 
-        if (Objects.nonNull(nextTask)) {
-            setCandidateOrAssigned(nextTask, model);
+        if (!CollectionUtils.isEmpty(taskList)) {
+            taskList.forEach(nextTask -> setCandidateOrAssigned(nextTask, model));
         }
 
     }

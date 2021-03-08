@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -125,7 +126,8 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService, Use
 
     @Override
     public UserDetails loadUserByUsername(String uuid) throws UsernameNotFoundException {
-        UserOnlineInfo userOnlineInfo = rbacMixinService.getUserService().getUserOnlineCache().find(uuid);
+        UserOnlineInfo userOnlineInfo = Optional.ofNullable(rbacMixinService.getUserService().getUserOnlineCache().find(uuid))
+                .orElse(UserOnlineInfo.anonymous());
         return new org.springframework.security.core.userdetails.User(userOnlineInfo.getUsername(), userOnlineInfo.getPassword(), Collections.emptyList());
     }
 }

@@ -59,6 +59,10 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
                 .orElse(new WorkflowServiceImpl());
     }
 
+    protected void setProcessService(WorkflowService processService) {
+        this.processService = processService;
+    }
+
     @Override
     public List<E> list(Wrapper<E> wrapper) {
         return super.list(wrapper);

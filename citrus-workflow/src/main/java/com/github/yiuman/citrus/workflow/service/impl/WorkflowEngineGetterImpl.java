@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.workflow.service.impl;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
 import com.github.yiuman.citrus.workflow.service.WorkflowEngineGetter;
 import org.activiti.engine.ProcessEngine;
+import org.activiti.spring.SpringProcessEngineConfiguration;
 
 import java.util.Optional;
 
@@ -12,16 +13,20 @@ import java.util.Optional;
  * @author yiuman
  * @date 2020/12/17
  */
-public class DefaultWorkflowEngineGetterImpl implements WorkflowEngineGetter {
+public class WorkflowEngineGetterImpl implements WorkflowEngineGetter {
 
     private ProcessEngine processEngine;
 
-    public DefaultWorkflowEngineGetterImpl() {
+    public WorkflowEngineGetterImpl() {
     }
 
     @Override
     public ProcessEngine getProcessEngine() {
-        return processEngine = Optional.ofNullable(processEngine)
+        ProcessEngine processEngine = Optional.ofNullable(this.processEngine)
                 .orElse(SpringUtils.getBean(ProcessEngine.class, true));
+        this.processEngine = processEngine;
+        //这里置空
+//        ((SpringProcessEngineConfiguration) processEngine.getProcessEngineConfiguration()).setUserGroupManager(null);
+        return processEngine;
     }
 }
