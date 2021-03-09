@@ -57,48 +57,6 @@ public class ProcessDefinitionController extends BaseWorkflowQueryController<Pro
         return view;
     }
 
-//    @Override
-//    public Page<ProcessDefinition> page(HttpServletRequest request) throws Exception {
-//        Page<ProcessDefinition> page = new Page<>();
-//        WebUtils.requestDataBind(page, request);
-//        ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery();
-//        page.setTotal(processDefinitionQuery.count());
-//        page.setRecords(
-//                getPageableDeployments(
-//                        processDefinitionQuery,
-//                        (ProcessDefinitionQueryParams) getQueryParams(request),
-//                        (int) page.getCurrent(),
-//                        (int) page.getSize()
-//                )
-//        );
-//        page.setView(createView());
-//        return page;
-//    }
-
-//    private List<ProcessDefinition> getPageableDeployments(ProcessDefinitionQuery query, ProcessDefinitionQueryParams params, int current, int pageSize) {
-//        if (Objects.nonNull(params)) {
-//            ReflectionUtils.doWithMethods(query.getClass(), method -> {
-//                try {
-//                    Field field = ReflectionUtils.findField(ProcessDefinitionQueryParams.class, method.getName());
-//                    if (Objects.nonNull(field)) {
-//                        Object paramValue = field.get(params);
-//                        if (Objects.nonNull(paramValue)) {
-//                            method.invoke(query, paramValue);
-//                        }
-//                    }
-//                } catch (Exception ignore) {
-//                }
-//
-//            }, method -> method.getName().endsWith("Like"));
-//        }
-//
-//        return query.listPage(current, pageSize).stream().map(item -> {
-//            ProcessDefinitionInfo processDefinitionInfo = new ProcessDefinitionInfo();
-//            BeanUtils.copyProperties(item, processDefinitionInfo);
-//            return processDefinitionInfo;
-//        }).collect(Collectors.toList());
-//    }
-
     /**
      * 流程部署
      *

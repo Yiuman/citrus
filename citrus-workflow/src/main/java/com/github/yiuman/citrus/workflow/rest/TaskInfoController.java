@@ -2,9 +2,16 @@ package com.github.yiuman.citrus.workflow.rest;
 
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import lombok.Data;
+import org.activiti.api.task.model.impl.TaskImpl;
+import org.activiti.engine.task.DelegationState;
 import org.activiti.engine.task.Task;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Date;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * 任务查询控制器
@@ -38,35 +45,62 @@ public class TaskInfoController extends BaseWorkflowQueryController<Task, String
     }
 
 
-//    static class TaskInfo extends TaskEntityImpl {
-//
-//        @Override
-//        public Map<String, VariableInstance> getVariableInstances() {
-//            return null;
-//        }
-//
-//        @Override
-//        public ExecutionEntity getExecution() {
-//            return null;
-//        }
-//
-//        @Override
-//        public ExecutionEntity getProcessInstance() {
-//            return null;
-//        }
-//
-//        @Override
-//        protected VariableScopeImpl getParentVariableScope() {
-//            return null;
-//        }
-//    }
+    @Data
+    static class TaskInfo implements Task {
+        private String id;
+        private String owner;
+        private int assigneeUpdatedCount; // needed for v5 compatibility
+        private String originalAssignee; // needed for v5 compatibility
+        private String assignee;
+        private DelegationState delegationState;
+        private String parentTaskId;
+        private String name;
+        private String localizedName;
+        private String description;
+        private String localizedDescription;
+        private int priority = DEFAULT_PRIORITY;
+        private Date createTime; // The time when the task has been created
+        private Date dueDate;
+        private int suspensionState;
+        private String category;
+        private boolean isIdentityLinksInitialized;
+        private String executionId;
+        private String processInstanceId;
+        private String processDefinitionId;
+        private String taskDefinitionKey;
+        private String formKey;
+        private boolean isDeleted;
+        private boolean isCanceled;
+        private String eventName;
+        private String tenantId;
+        private boolean forcedUpdate;
+        private boolean suspended;
+        private Date claimTime;
+        private Integer appVersion;
+        private String businessKey;
 
-//    @Override
-//    protected Function<Task, ? extends Task> getTransformFunc() {
-//        return item -> {
-//            TaskInfo taskInfo = new TaskInfo();
-//            BeanUtils.copyProperties(item, taskInfo, "execution","processInstance","parentVariableScope");
-//            return taskInfo;
-//        };
-//    }
+        @Override
+        public Map<String, Object> getTaskLocalVariables() {
+            return null;
+        }
+
+        @Override
+        public Map<String, Object> getProcessVariables() {
+            return null;
+        }
+    }
+
+
+    @Override
+    protected Function<Task, ? extends Task> getTransformFunc() {
+        return item -> {
+            getProcessEngine().getTaskService().createTaskQuery().singleResult();
+            TaskInfo taskInfo = new TaskInfo();
+//            BeanUtils.copyProperties(item, taskInfo, "execution", "processInstance", "parentVariableScope", "transientVariables", "variables", "variablesLocal", "variableInstances");
+            BeanUtils.copyProperties(item, taskInfo);
+            return taskInfo;
+        };
+    }
+
+
 }
