@@ -14,7 +14,6 @@ import com.github.yiuman.citrus.workflow.service.EntityCrudWorkflowService;
 import com.github.yiuman.citrus.workflow.service.WorkflowService;
 import lombok.extern.slf4j.Slf4j;
 import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
@@ -137,13 +136,9 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
                             .active()
                             .singleResult()
             ).orElseThrow(() -> new WorkflowException(String.format("can not find Task for taskId:[%s]", taskId)));
-
-            RuntimeService runtimeService = getProcessEngine().getRuntimeService();
-            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(task.getProcessInstanceId()).singleResult();
-
-            Map<String, Object> businessObject = (Map<String, Object>) variables.get(processInstance.getBusinessKey());
+            Map<String, Object> businessObject = (Map<String, Object>) variables.get(task.getBusinessKey());
             if (Objects.nonNull(businessObject)) {
-                save(ConvertUtils.mapAssignment(get((K) processInstance.getBusinessKey()), businessObject));
+                save(ConvertUtils.mapAssignment(get((K) task.getBusinessKey()), businessObject));
             }
 
         }

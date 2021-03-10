@@ -61,7 +61,6 @@ public abstract class BaseWorkflowService implements WorkflowService {
                         .latestVersion()
                         .singleResult()
         ).orElseThrow(() -> new IllegalArgumentException(String.format("can not find ProcessDefinition for key:[%s]", processDefineId)));
-
         //开起流程
         Map<String, Object> processInstanceVars = model.getVariables();
         ProcessInstance processInstance = getProcessEngine().getRuntimeService().startProcessInstanceById(
@@ -69,7 +68,6 @@ public abstract class BaseWorkflowService implements WorkflowService {
                 model.getBusinessKey(),
                 processInstanceVars
         );
-
         //找到当前流程的任务节点。
         //若任务处理人与申请人一致，则自动完成任务，直接进入下一步
         //如请假申请为流程的第一步，则此任务自动完成
@@ -112,6 +110,7 @@ public abstract class BaseWorkflowService implements WorkflowService {
         }
         taskService.setVariables(task.getId(), model.getVariables());
         taskService.setVariablesLocal(task.getId(), model.getTaskVariables());
+        task.getBusinessKey();
         taskService.complete(task.getId());
         //完成此环节后，检查有没下个环节，有的话且是未设置办理人或候选人的情况下，使用模型进行设置
         List<Task> taskList = taskService.createTaskQuery()

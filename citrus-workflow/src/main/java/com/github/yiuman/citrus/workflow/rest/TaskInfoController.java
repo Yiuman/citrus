@@ -2,7 +2,6 @@ package com.github.yiuman.citrus.workflow.rest;
 
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import lombok.Data;
-import org.activiti.api.task.model.impl.TaskImpl;
 import org.activiti.engine.task.DelegationState;
 import org.activiti.engine.task.Task;
 import org.springframework.beans.BeanUtils;
@@ -36,14 +35,12 @@ public class TaskInfoController extends BaseWorkflowQueryController<Task, String
     protected Object createView() {
         PageTableView<Task> view = new PageTableView<>();
         view.addWidget("处理人或候选人", "taskCandidateOrAssigned");
-
         view.addHeader("任务名称", "name");
         view.addHeader("处理人", "assignee");
         view.addHeader("创建时间", "createTime");
         view.addHeader("处理时间", "dueDate");
         return view;
     }
-
 
     @Data
     static class TaskInfo implements Task {
@@ -88,19 +85,17 @@ public class TaskInfoController extends BaseWorkflowQueryController<Task, String
         public Map<String, Object> getProcessVariables() {
             return null;
         }
-    }
 
+        static TaskInfo copy(Task task) {
+            TaskInfo taskInfo = new TaskInfo();
+            BeanUtils.copyProperties(task, taskInfo);
+            return taskInfo;
+        }
+    }
 
     @Override
     protected Function<Task, ? extends Task> getTransformFunc() {
-        return item -> {
-            getProcessEngine().getTaskService().createTaskQuery().singleResult();
-            TaskInfo taskInfo = new TaskInfo();
-//            BeanUtils.copyProperties(item, taskInfo, "execution", "processInstance", "parentVariableScope", "transientVariables", "variables", "variablesLocal", "variableInstances");
-            BeanUtils.copyProperties(item, taskInfo);
-            return taskInfo;
-        };
+        return TaskInfo::copy;
     }
-
 
 }

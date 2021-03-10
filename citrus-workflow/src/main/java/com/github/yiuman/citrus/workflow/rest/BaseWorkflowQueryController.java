@@ -12,6 +12,7 @@ import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.query.Query;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.task.Task;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -100,7 +101,7 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
             ReflectionUtils.doWithFields(paramClass, (field) -> {
                 field.setAccessible(true);
                 Object methodAttr = field.get(params);
-                if (Objects.nonNull(methodAttr)) {
+                if (!ObjectUtils.isEmpty(methodAttr)) {
                     try {
                         Method method = query.getClass().getMethod(field.getName(), field.getType());
                         method.invoke(query, methodAttr);
