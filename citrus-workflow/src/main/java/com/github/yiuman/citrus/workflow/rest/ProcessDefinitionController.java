@@ -8,7 +8,6 @@ import org.activiti.engine.impl.persistence.entity.IdentityLinkEntity;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntityImpl;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.DeploymentBuilder;
-import org.activiti.engine.repository.ProcessDefinition;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +28,17 @@ import java.util.zip.ZipInputStream;
  */
 @RestController
 @RequestMapping("/rest/procdef")
-public class ProcessDefinitionController extends BaseWorkflowQueryController<ProcessDefinition, String> {
+public class ProcessDefinitionController extends BaseWorkflowQueryController<ProcessDefinitionController.ProcessDefinitionInfo, String> {
 
-    public ProcessDefinitionController() {
-        setParamClass(ProcessDefinitionQueryParams.class);
+    /**
+     * 防止序列化报错，重写getIdentityLinks
+     */
+    static class ProcessDefinitionInfo extends ProcessDefinitionEntityImpl {
+
+        @Override
+        public List<IdentityLinkEntity> getIdentityLinks() {
+            return null;
+        }
     }
 
     @Data
@@ -45,6 +51,11 @@ public class ProcessDefinitionController extends BaseWorkflowQueryController<Pro
         String processDefinitionCategoryLike;
     }
 
+
+    public ProcessDefinitionController() {
+        setParamClass(ProcessDefinitionQueryParams.class);
+    }
+
     @Override
     protected Object createView() {
         PageTableView<Deployment> view = new PageTableView<>();
@@ -55,6 +66,20 @@ public class ProcessDefinitionController extends BaseWorkflowQueryController<Pro
         view.addHeader("流程定义名称", "name");
         view.addHeader("版本号", "version");
         return view;
+    }
+
+    @Override
+    public String getKeyQueryField() {
+        return "processDefinitionId";
+    }
+
+    @Override
+    protected Function<? super Object, ? extends ProcessDefinitionInfo> getTransformFunc() {
+        return item -> {
+            ProcessDefinitionInfo processDefinitionInfo = new ProcessDefinitionInfo();
+            BeanUtils.copyProperties(item, processDefinitionInfo);
+            return processDefinitionInfo;
+        };
     }
 
     /**
@@ -91,24 +116,9 @@ public class ProcessDefinitionController extends BaseWorkflowQueryController<Pro
         return ResponseEntity.ok();
     }
 
-
-    /**
-     * 防止序列化报错，重写getIdentityLinks
-     */
-    static class ProcessDefinitionInfo extends ProcessDefinitionEntityImpl {
-
-        @Override
-        public List<IdentityLinkEntity> getIdentityLinks() {
-            return null;
-        }
+    @GetMapping("/bpmn" + Operations.KEY)
+    public ResponseEntity<InputStream> getBpmnFile(@PathVariable String key) {
+        return ResponseEntity.ok(getProcessEngine().getRepositoryService().getProcessModel(key));
     }
 
-    @Override
-    protected Function<ProcessDefinition, ? extends ProcessDefinition> getTransformFunc() {
-        return item -> {
-            ProcessDefinitionInfo processDefinitionInfo = new ProcessDefinitionInfo();
-            BeanUtils.copyProperties(item, processDefinitionInfo);
-            return processDefinitionInfo;
-        };
-    }
 }

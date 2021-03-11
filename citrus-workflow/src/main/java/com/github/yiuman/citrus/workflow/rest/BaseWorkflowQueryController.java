@@ -2,13 +2,16 @@ package com.github.yiuman.citrus.workflow.rest;
 
 import com.github.yiuman.citrus.support.crud.rest.BaseQueryController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
+import com.github.yiuman.citrus.support.crud.service.KeyBasedService;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.WebUtils;
 import com.github.yiuman.citrus.workflow.exception.WorkflowException;
 import com.github.yiuman.citrus.workflow.service.WorkflowService;
 import com.github.yiuman.citrus.workflow.service.impl.WorkflowServiceImpl;
+import lombok.SneakyThrows;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.history.HistoricActivityInstance;
+import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.query.Query;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.task.Task;
@@ -30,29 +33,37 @@ import java.util.stream.Collectors;
  * @date 2021/3/8
  */
 public abstract class BaseWorkflowQueryController<E, K extends Serializable>
-        extends BaseQueryController<E, K> {
+        extends BaseQueryController<E, K> implements KeyBasedService<E, K> {
 
     private WorkflowService workflowService;
 
     /**
      * 对应实体匹配的查询器
      */
-    private final Map<Class<?>, Supplier<? extends Query<?, ?>>> QUERY_MAPPING =
-            new HashMap<>();
+    private final Map<Class<?>, Supplier<? extends Query<?, ?>>> QUERY_MAPPING = new HashMap<>();
 
     public BaseWorkflowQueryController() {
+        initQueryMapping();
+    }
 
-        QUERY_MAPPING.put(ProcessDefinition.class, () -> getProcessEngine()
+    private void initQueryMapping() {
+        ProcessEngine processEngine = getProcessEngine();
+        //流程定义
+        QUERY_MAPPING.put(ProcessDefinition.class, () -> processEngine
                 .getRepositoryService()
                 .createProcessDefinitionQuery());
-
-        QUERY_MAPPING.put(Task.class, () -> getProcessEngine()
+        //任务
+        QUERY_MAPPING.put(Task.class, () -> processEngine
                 .getTaskService()
                 .createTaskQuery());
-
-        QUERY_MAPPING.put(HistoricActivityInstance.class, () -> getProcessEngine()
+        //活动历史
+        QUERY_MAPPING.put(HistoricActivityInstance.class, () -> processEngine
                 .getHistoryService()
                 .createHistoricActivityInstanceQuery());
+        //历史任务
+        QUERY_MAPPING.put(HistoricTaskInstance.class, () -> processEngine
+                .getHistoryService()
+                .createHistoricTaskInstanceQuery());
     }
 
     /**
@@ -95,7 +106,42 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
         return page;
     }
 
-    protected <Q extends Query<Q, E>> List<E> getPageable(Object params, int current, int pageSize) {
+
+    @SneakyThrows
+    @Override
+    public E get(K key) {
+        Query<?, ?> query = getQuery();
+        Class<?> queryClass = query.getClass();
+        Method method = Optional.ofNullable(ReflectionUtils
+                .findMethod(queryClass, getKeyQueryField(), getKeyType()))
+                .orElseThrow(()
+                        -> new WorkflowException(
+                        String.format("cannot found key's field query method by %s,please check class %s",
+                                queryClass.getName(),
+                                queryClass.getName())
+                ));
+        method.setAccessible(true);
+        method.invoke(query, key);
+        return getTransformFunc().apply(query.singleResult());
+    }
+
+    /**
+     * 获取根据主键查询出实体的字段，如TaskQuery ,那么这里返回的是taskId
+     *
+     * @return 返回根据主键查询实体的字段
+     */
+    public abstract String getKeyQueryField();
+
+    /**
+     * 获取流程相关的分页数据，如流程定义、任务等
+     *
+     * @param params   查询参数
+     * @param current  当前的页数
+     * @param pageSize 分数大小
+     * @param <Q>      acvitivi的查询对象
+     * @return 分页后的数据
+     */
+    protected <Q extends Query<Q, ?>> List<E> getPageable(Object params, int current, int pageSize) {
         Q query = getQuery();
         if (Objects.nonNull(paramClass) && Objects.nonNull(params)) {
             ReflectionUtils.doWithFields(paramClass, (field) -> {
@@ -112,9 +158,8 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
             });
         }
 
-        Function<E, ? extends E> transformFunc = getTransformFunc();
-        List<E> pageList = query.listPage(current - 1, pageSize);
-        return Objects.nonNull(transformFunc) ? pageList.stream().map(transformFunc).collect(Collectors.toList()) : pageList;
+        List<?> pageList = query.listPage(current - 1, pageSize);
+        return pageList.stream().map(getTransformFunc()).collect(Collectors.toList());
     }
 
     /**
@@ -124,10 +169,10 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
      * @return 匹配的查询对象
      */
     @SuppressWarnings("unchecked")
-    protected <Q extends Query<Q, E>> Q getQuery() {
-        Supplier<? extends Query<?, ?>> supplier = Optional.ofNullable(QUERY_MAPPING.get(modelClass))
+    protected <Q extends Query<Q, ?>> Q getQuery() {
+        Class<?> queryEntityInterface = QUERY_MAPPING.keySet().stream().filter(classKey -> classKey.isAssignableFrom(modelClass)).findFirst()
                 .orElseThrow(() -> new WorkflowException(String.format("cannot found query's supplier for %s,please overwrite method `getQuery`", modelClass)));
-        return (Q) supplier.get();
+        return (Q) QUERY_MAPPING.get(queryEntityInterface).get();
     }
 
     /**
@@ -135,8 +180,9 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
      *
      * @return 转化的函数
      */
-    protected Function<E, ? extends E> getTransformFunc() {
-        return null;
+    @SuppressWarnings("unchecked")
+    protected Function<? super Object, ? extends E> getTransformFunc() {
+        return item -> (E) item;
     }
 
 }
