@@ -3,13 +3,17 @@ package com.github.yiuman.citrus.workflow.rest;
 import com.github.yiuman.citrus.support.crud.rest.Operations;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
+import com.github.yiuman.citrus.support.utils.WebUtils;
 import lombok.Data;
+import org.activiti.engine.RepositoryService;
 import org.activiti.engine.impl.persistence.entity.IdentityLinkEntity;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntityImpl;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.DeploymentBuilder;
+import org.activiti.engine.repository.ProcessDefinition;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -116,9 +120,21 @@ public class ProcessDefinitionController extends BaseWorkflowQueryController<Pro
         return ResponseEntity.ok();
     }
 
-    @GetMapping("/bpmn" + Operations.KEY)
-    public ResponseEntity<InputStream> getBpmnFile(@PathVariable String key) {
-        return ResponseEntity.ok(getProcessEngine().getRepositoryService().getProcessModel(key));
+    /**
+     * 获取流程的资源文件
+     *
+     * @param processDefinitionId 流程定义ID
+     * @param type                资源类型 默认/0 bpmn 1 png
+     */
+    @GetMapping("/resource/{processDefinitionId}")
+    public void getProcessResource(@PathVariable String processDefinitionId, Integer type) throws IOException {
+        RepositoryService repositoryService = getProcessEngine().getRepositoryService();
+        ProcessDefinition processDefinition = repositoryService.getProcessDefinition(processDefinitionId);
+        String resourceName = ObjectUtils.isEmpty(type) || type == 0
+                ? processDefinition.getResourceName()
+                : processDefinition.getDiagramResourceName();
+        InputStream resourceAsStream = repositoryService.getResourceAsStream(processDefinition.getDeploymentId(), resourceName);
+        WebUtils.export(resourceAsStream, resourceName);
     }
 
 }

@@ -20,12 +20,10 @@ import com.github.yiuman.citrus.support.model.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.util.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.support.WebRequestDataBinder;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -42,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
@@ -233,7 +232,7 @@ public final class WebUtils {
     }
 
     public static void exportJson(HttpServletResponse response, Object data, String name) throws IOException {
-        addExportFileNameHeaders(response, name, "json");
+        addExportFilenameHeaders(response, name, "json");
         response.getWriter().write(OBJECT_MAPPER.writeValueAsString(data));
     }
 
@@ -249,11 +248,13 @@ public final class WebUtils {
      * @throws IOException IO异常
      */
     public static <T> void exportExcel(HttpServletResponse response, Class<T> clazz, List<T> data, String name) throws IOException {
-        addExportFileNameHeaders(response, name);
+        addExportFilenameHeaders(response, name);
+        response.setContentType(APPLICATION_VND_MS_EXCEL);
         EasyExcel.write(response.getOutputStream(), clazz)
                 .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
                 .sheet("sheet1").doWrite(data);
     }
+
 
     /**
      * 动态列导出Excel
@@ -265,7 +266,8 @@ public final class WebUtils {
      * @throws IOException IO异常
      */
     public static void exportExcel(HttpServletResponse response, List<List<String>> headers, List<List<Object>> data, String name) throws IOException {
-        addExportFileNameHeaders(response, name);
+        addExportFilenameHeaders(response, name + ".xls");
+        response.setContentType(APPLICATION_VND_MS_EXCEL);
         EasyExcel.write(response.getOutputStream())
                 .registerConverter(new LocalDateExportConvertor())
                 .head(headers)
@@ -283,7 +285,8 @@ public final class WebUtils {
      * @throws IOException IO异常
      */
     public static void exportExcel(HttpServletResponse response, Page<?> page, String name) throws Exception {
-        addExportFileNameHeaders(response, name);
+        addExportFilenameHeaders(response, name + ".xls");
+        response.setContentType(APPLICATION_VND_MS_EXCEL);
         List<?> records = page.getRecords();
         List<Header> pageHeaders = null;
         Object view = page.getView();
@@ -337,25 +340,25 @@ public final class WebUtils {
      * 添加导出文件名的请求头
      *
      * @param response 当前请求的响应
-     * @param fileName 文件名
+     * @param filename 文件名
      * @throws UnsupportedEncodingException 编码异常
      */
-    public static void addExportFileNameHeaders(HttpServletResponse response, String fileName) throws UnsupportedEncodingException {
-        addExportFileNameHeaders(response, fileName, "xls");
+    public static void addExportFilenameHeaders(HttpServletResponse response, String filename) throws UnsupportedEncodingException {
+        int lastPointIndex = filename.lastIndexOf(".");
+        addExportFilenameHeaders(response, filename.substring(0, lastPointIndex), filename.substring(lastPointIndex + 1, filename.length()));
     }
 
     /**
      * 添加导出文件名的请求头
      *
      * @param response 当前请求的响应
-     * @param fileName 文件名
+     * @param filename 文件名
      * @throws UnsupportedEncodingException 编码异常
      */
-    public static void addExportFileNameHeaders(HttpServletResponse response, String fileName, String fileType) throws UnsupportedEncodingException {
-        response.setContentType(APPLICATION_VND_MS_EXCEL);
+    public static void addExportFilenameHeaders(HttpServletResponse response, String filename, String fileType) throws UnsupportedEncodingException {
         response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
         // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s.%s", URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString()), fileType));
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s.%s", URLEncoder.encode(filename, StandardCharsets.UTF_8.toString()), fileType));
     }
 
     /**
@@ -369,6 +372,45 @@ public final class WebUtils {
      */
     public static <T> void importExcel(MultipartFile file, Class<T> clazz, ReadListener<T> readListener) throws IOException {
         EasyExcel.read(file.getInputStream(), clazz, readListener).doReadAll();
+    }
+
+    /**
+     * 导出资源文件
+     *
+     * @param resource 资源文件
+     * @throws IOException IO异常
+     */
+    public static void export(Resource resource) throws IOException {
+        export(resource, resource.getFilename());
+    }
+
+    /**
+     * 导出资源文件
+     *
+     * @param resource 资源文件
+     * @param filename 文件名
+     * @throws IOException IO异常
+     */
+    public static void export(Resource resource, String filename) throws IOException {
+        HttpServletResponse response = getResponse();
+        addExportFilenameHeaders(response, filename);
+        StreamUtils.copy(resource.getInputStream(), response.getOutputStream());
+        response.flushBuffer();
+    }
+
+
+    /**
+     * 导出资源文件
+     *
+     * @param stream   输入流
+     * @param filename 文件名
+     * @throws IOException IO异常
+     */
+    public static void export(InputStream stream, String filename) throws IOException {
+        HttpServletResponse response = getResponse();
+        addExportFilenameHeaders(response, filename);
+        StreamUtils.copy(stream, response.getOutputStream());
+        response.flushBuffer();
     }
 
 
