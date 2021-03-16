@@ -1,4 +1,4 @@
-package com.github.yiuman.citrus.system.entity;
+package com.github.yiuman.citrus.system.dto;
 
 import lombok.Data;
 

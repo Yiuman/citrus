@@ -17,12 +17,24 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "citrus")
 public class CitrusProperties {
 
+    /**
+     * 是否打印banner
+     */
     private boolean banner = true;
 
+    /**
+     * 安全配置
+     */
     private SecurityProperties security = new SecurityProperties();
 
+    /**
+     * 校验码配置
+     */
     private VerifyProperties verify = new VerifyProperties();
 
+    /**
+     * JWT相关配置
+     */
     private JwtProperties jwt = new JwtProperties();
 
     public CitrusProperties() {

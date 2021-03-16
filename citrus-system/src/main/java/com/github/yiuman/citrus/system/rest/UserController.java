@@ -21,7 +21,7 @@ import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.Organization;
-import com.github.yiuman.citrus.system.entity.PasswordUpdateDto;
+import com.github.yiuman.citrus.system.dto.PasswordUpdateDto;
 import com.github.yiuman.citrus.system.entity.Role;
 import com.github.yiuman.citrus.system.entity.UserRole;
 import com.github.yiuman.citrus.system.hook.HasLoginHook;
