@@ -17,6 +17,8 @@ import com.github.yiuman.citrus.security.jwt.JwtAccessDeniedHandler;
 import com.github.yiuman.citrus.security.jwt.JwtAuthenticationEntryPoint;
 import com.github.yiuman.citrus.security.jwt.JwtAuthenticationFilter;
 import com.github.yiuman.citrus.security.jwt.JwtSecurityConfigurerAdapter;
+import com.github.yiuman.citrus.support.file.FileStorageService;
+import com.github.yiuman.citrus.support.file.LocalFileStorageServiceImpl;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -135,6 +138,18 @@ public class SystemDefaultBeanConfiguration {
         template.afterPropertiesSet();
 
         return template;
+    }
+
+
+    /**
+     * 默认的文件存储服务类，本地路径classpath:
+     *
+     * @return 文件存储服务类
+     */
+    @Bean
+    @ConditionalOnMissingBean(FileStorageService.class)
+    public FileStorageService getFileStorageService() throws FileNotFoundException {
+        return new LocalFileStorageServiceImpl();
     }
 
 

@@ -225,7 +225,6 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
      *
      * @param dynamicSqlSessionTemplate 动态数据源模板
      * @return SqlSessionFactory
-     * @throws Exception in case of creation errors
      */
     @Bean
     @ConditionalOnMissingBean

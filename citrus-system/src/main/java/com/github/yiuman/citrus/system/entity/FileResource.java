@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.system.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.github.yiuman.citrus.system.commons.model.AbstractAuditingEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,6 +15,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@TableName("sys_file")
 public class FileResource extends AbstractAuditingEntity {
 
     /**
@@ -25,7 +27,12 @@ public class FileResource extends AbstractAuditingEntity {
     /**
      * 文件资源的MD5值，后续用来做断点续传
      */
-    private String md5;
+    private String identify;
+
+    /**
+     * 文件的编号，若是使用分片上传，这里记录的就是分片的下标
+     */
+    private Integer fileNo;
 
     /**
      * 文件名称

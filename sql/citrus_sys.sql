@@ -281,3 +281,27 @@ CREATE TABLE `sys_access_log`
   ROW_FORMAT = DYNAMIC COMMENT ='访问日志表';
 
 -- ----------------------------
+
+
+-- ------------系统文件表表----------------
+DROP TABLE IF EXISTS `sys_file`;
+CREATE TABLE `sys_file`
+(
+  `file_id`            varchar(50)   NOT NULL COMMENT '主键',
+  `identify`           varchar(250)  NOT NULL COMMENT '文件标识，用于标识是否是同一文件',
+  `file_no`             int           DEFAULT NULL COMMENT '文件编号',
+  `filename`           varchar(2000) NOT NULL COMMENT '文件名',
+  `bytes`              longblob      DEFAULT NULL COMMENT '文件的二进制',
+  `path`               varchar(2000) DEFAULT NULL COMMENT '文件存储路径',
+  `size`               bigint(20)    NOT NULL COMMENT '文件大小',
+  `file_type`          varchar(50)   NOT NULL COMMENT '文件类型',
+  `created_time`       datetime      DEFAULT NULL COMMENT '创建时间',
+  `created_by`         bigint(20)    DEFAULT NULL COMMENT '创建人',
+  `last_modified_time` datetime      DEFAULT NULL COMMENT '最后的更新时间',
+  `last_modified_by`   bigint(20)    DEFAULT NULL COMMENT '最后的更新人',
+  PRIMARY KEY (`file_id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  ROW_FORMAT = DYNAMIC COMMENT ='系统文件表表';
+
+-- ----------------------------
