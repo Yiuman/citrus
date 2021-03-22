@@ -97,7 +97,7 @@
    @RequestMapping("/rest/menus")
    public class MenuController extends BaseTreeController<Menu, Long> {
      
-    		public MenuController() {
+       public MenuController() {
          //是否懒加载
        	setLazy(true)
        }
@@ -128,7 +128,7 @@
         addSortBy("studentNo",true)
       }
     
-    	@Override
+      @Override
       public Long save(Student entity) throws Exception {
           if(Objects.isNull(entity.getStudentId())){
             entity.setStudentNo(UUID.randomUUID().toString());
@@ -147,8 +147,8 @@
   @RequestMapping("/rest/students")
   public class StudentController extends BaseCrudController<Student, Long> {
   
-    	//注入逻辑层
-  		private final StudentService studentService
+      //注入逻辑层
+  	  private final StudentService studentService
   
       public StudentController(StudentService studentService) {
         //根据学生编码进行倒序排序
@@ -156,7 +156,7 @@
         this.studentService = studentService;
       }
     
-   		@Override
+      @Override
       protected CrudService<Student, Long> getService() {
           return studentService;
       }
@@ -167,7 +167,7 @@
   继承BaseService,实现自己的逻辑
   
   ```java
-   @Service
+    @Service
     public class StudentService extends BaseService<Student, Long> {
     
       	//保存前设置学生编码
@@ -275,7 +275,7 @@
           return true;
       }
   
-    	//实体保存后的操作
+      //实体保存后的操作
       @Override
       public void afterSave(UserDto entity) {
           //保存组织机构信息
@@ -449,13 +449,13 @@
    @Slf4j
    public class UserController extends BaseCrudController<UserDto, Long> {
      
-    		public UserController(UserService userService) {
+       public UserController(UserService userService) {
          	//设置查询类
-           setParamClass(UserQuery.class);
+            setParamClass(UserQuery.class);
          
-         	//添加查询排序
-         	addSortBy("createdTime",true);
-         	addSortBy("userId");
+            //添加查询排序
+            addSortBy("createdTime",true);
+            addSortBy("userId");
        }
    }
    ```
