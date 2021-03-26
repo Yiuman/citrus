@@ -42,6 +42,7 @@
         <module>citrus-boot-starter</module>
         <module>citrus-system</module>
         <module>citrus-workflow</module>
+        <module>citrus-workflow-impl</module>
     </modules>
 
     <properties>

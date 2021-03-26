@@ -1,4 +1,4 @@
-package com.github.yiuman.citrus.workflow.parser;
+package com.github.yiuman.citrus.workflowimpl;
 
 import com.github.yiuman.citrus.system.entity.RoleAuthority;
 import com.github.yiuman.citrus.system.service.RbacMixinService;

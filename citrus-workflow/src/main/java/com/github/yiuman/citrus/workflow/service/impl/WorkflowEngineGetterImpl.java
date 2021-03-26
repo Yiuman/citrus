@@ -3,7 +3,6 @@ package com.github.yiuman.citrus.workflow.service.impl;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
 import com.github.yiuman.citrus.workflow.service.WorkflowEngineGetter;
 import org.activiti.engine.ProcessEngine;
-import org.activiti.spring.SpringProcessEngineConfiguration;
 
 import java.util.Optional;
 

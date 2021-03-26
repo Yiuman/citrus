@@ -19,6 +19,7 @@
             <artifactId>citrus-support</artifactId>
             <version>${citrus.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>

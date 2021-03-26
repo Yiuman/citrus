@@ -40,6 +40,12 @@
             <artifactId>citrus-workflow</artifactId>
             <version>0.1.2.RELEASE</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.yiuman</groupId>
+            <artifactId>citrus-workflow-impl</artifactId>
+            <version>0.1.2.RELEASE</version>
+        </dependency>
     </dependencies>
 
 </project>
