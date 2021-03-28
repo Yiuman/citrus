@@ -16,7 +16,6 @@ import java.io.IOException;
  * @author yiuman
  * @date 2020/6/20
  */
-@Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final ObjectMapper objectMapper;

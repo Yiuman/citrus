@@ -46,7 +46,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 @ComponentScans({
         @ComponentScan("com.github.yiuman.citrus.support"),
         @ComponentScan("com.github.yiuman.citrus.security"),
-        @ComponentScan("com.github.yiuman.citrus.system")
+        @ComponentScan("com.github.yiuman.citrus.system"),
 })
 @MapperScan(basePackages = "com.github.yiuman.citrus.system.mapper")
 @Import({SystemDefaultBeanConfiguration.class, VerifyConfiguration.class, DynamicDataSourceAutoConfiguration.class})
