@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.workflow.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
+import com.github.yiuman.citrus.workflow.cmd.JumpTaskCmd;
 import com.github.yiuman.citrus.workflow.exception.WorkflowException;
 import com.github.yiuman.citrus.workflow.model.ProcessPersonalModel;
 import com.github.yiuman.citrus.workflow.model.StartProcessModel;
@@ -68,8 +69,8 @@ public abstract class BaseWorkflowService implements WorkflowService {
                 model.getBusinessKey(),
                 processInstanceVars
         );
-        //找到当前流程的任务节点。
-        //若任务处理人与申请人一致，则自动完成任务，直接进入下一步
+        //1.找到当前流程的任务节点。
+        //2.若任务处理人与申请人一致，则自动完成任务，直接进入下一步
         //如请假申请为流程的第一步，则此任务自动完成
         TaskService taskService = getProcessEngine().getTaskService();
         Task applyUserTask = taskService.createTaskQuery()
@@ -94,6 +95,7 @@ public abstract class BaseWorkflowService implements WorkflowService {
     public void complete(TaskCompleteModel model) {
         Assert.notNull(model.getTaskId(), "The taskId of the process can not be empty!");
         TaskService taskService = getProcessEngine().getTaskService();
+
         //扎到相关任务
         Task task = Optional.ofNullable(taskService.createTaskQuery()
                 .taskId(model.getTaskId())
@@ -112,6 +114,11 @@ public abstract class BaseWorkflowService implements WorkflowService {
         taskService.setVariablesLocal(task.getId(), model.getTaskVariables());
         task.getBusinessKey();
         taskService.complete(task.getId());
+
+        //如果有设置目标任务关键字则进行任务跳转
+        if (StringUtils.isNotBlank(model.getTargetTaskKey())) {
+            jump(task, model.getTargetTaskKey());
+        }
         //完成此环节后，检查有没下个环节，有的话且是未设置办理人或候选人的情况下，使用模型进行设置
         List<Task> taskList = taskService.createTaskQuery()
                 .processInstanceId(task.getProcessInstanceId())
@@ -124,10 +131,15 @@ public abstract class BaseWorkflowService implements WorkflowService {
 
     }
 
+    /**
+     * 设置候选人或处理人
+     *
+     * @param task  当前的任务
+     * @param model 流程人员模型
+     */
     protected void setCandidateOrAssigned(Task task, ProcessPersonalModel model) {
         task.getProcessInstanceId();
         TaskService taskService = getProcessEngine().getTaskService();
-
         //查询当前任务是否已经有候选人或办理人
         RepositoryService repositoryService = getProcessEngine().getRepositoryService();
         BpmnModel bpmnModel = repositoryService.getBpmnModel(task.getProcessDefinitionId());
@@ -188,6 +200,16 @@ public abstract class BaseWorkflowService implements WorkflowService {
         }
 
         taskService.claim(taskId, userId);
+    }
+
+    @Override
+    public void jump(Task task, String targetTaskKey) {
+        //构建跳转命令并执行
+        getProcessEngine().getManagementService().executeCommand(JumpTaskCmd.builder()
+                .executionId(task.getExecutionId())
+                .targetTaskKey(targetTaskKey)
+                .build());
+
     }
 
     @Override

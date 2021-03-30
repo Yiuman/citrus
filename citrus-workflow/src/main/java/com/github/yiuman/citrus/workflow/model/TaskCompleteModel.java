@@ -30,4 +30,12 @@ public interface TaskCompleteModel extends ProcessPersonalModel {
      * @return 属于任务的任务变量
      */
     Map<String, Object> getTaskVariables();
+
+    /**
+     * 获取下一步目标任务的Key，用于任务完成时任务跳转等操作
+     *
+     * @return 流程图定义的活动key
+     * @see org.activiti.bpmn.model.Activity
+     */
+    String getTargetTaskKey();
 }

@@ -27,6 +27,8 @@ public class TaskCompleteModelImpl implements TaskCompleteModel {
 
     private List<String> candidateOrAssigned;
 
+    private String targetTaskKey;
+
     @Override
     public String getTaskId() {
         return taskId;
@@ -50,5 +52,10 @@ public class TaskCompleteModelImpl implements TaskCompleteModel {
     @Override
     public List<String> getCandidateOrAssigned() {
         return candidateOrAssigned;
+    }
+
+    @Override
+    public String getTargetTaskKey() {
+        return targetTaskKey;
     }
 }
