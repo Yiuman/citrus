@@ -7,9 +7,8 @@ import org.activiti.bpmn.model.Process;
 import org.activiti.engine.ActivitiEngineAgenda;
 import org.activiti.engine.impl.interceptor.Command;
 import org.activiti.engine.impl.interceptor.CommandContext;
-import org.activiti.engine.impl.persistence.deploy.DeploymentManager;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
-import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.impl.util.ProcessDefinitionUtil;
 
 import java.util.Objects;
 
@@ -42,18 +41,17 @@ public class JumpTaskCmd implements Command<Void> {
                 .forEach(task -> commandContext.getTaskEntityManager().deleteTask(task, "jump", false, false));
         //2.找到当前执行实例
         ExecutionEntity executionEntity = commandContext.getExecutionEntityManager().findById(executionId);
-        DeploymentManager deploymentManager = commandContext.getProcessEngineConfiguration().getDeploymentManager();
-        ProcessDefinition processDefinition = deploymentManager.findDeployedProcessDefinitionById(executionEntity.getProcessDefinitionId());
         //3.找到当前的流程
-        Process process = deploymentManager.resolveProcessDefinition(processDefinition).getProcess();
-        FlowElement flowElement = process.getFlowElement(targetTaskKey);
-        if (Objects.isNull(flowElement)) {
+        Process process = ProcessDefinitionUtil.getProcess(executionEntity.getProcessDefinitionId());
+        FlowElement targetFlowElement = process.getFlowElement(targetTaskKey);
+        if (Objects.isNull(targetFlowElement)) {
             throw new WorkflowException(String.format("can not found FlowElement with key `%s`", targetTaskKey));
         }
         //4.将目标节点设置到当前的执行实例中
-        executionEntity.setCurrentFlowElement(flowElement);
-        ActivitiEngineAgenda agenda = commandContext.getAgenda();
+        executionEntity.setCurrentFlowElement(targetFlowElement);
+
         //5.触发实例流转
+        ActivitiEngineAgenda agenda = commandContext.getAgenda();
         agenda.planContinueProcessInCompensation(executionEntity);
 
         return null;
