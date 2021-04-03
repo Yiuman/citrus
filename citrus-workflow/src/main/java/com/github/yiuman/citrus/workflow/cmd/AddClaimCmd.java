@@ -1,7 +1,9 @@
 package com.github.yiuman.citrus.workflow.cmd;
 
 import com.github.yiuman.citrus.workflow.exception.WorkflowException;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import org.activiti.bpmn.model.Activity;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.MultiInstanceLoopCharacteristics;
@@ -23,6 +25,7 @@ import org.activiti.engine.impl.util.ProcessDefinitionUtil;
  * @date 2021/4/2
  */
 @Builder
+@AllArgsConstructor
 public class AddClaimCmd implements Command<Void> {
 
     /**

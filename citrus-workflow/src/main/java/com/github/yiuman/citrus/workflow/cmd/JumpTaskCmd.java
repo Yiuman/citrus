@@ -1,7 +1,9 @@
 package com.github.yiuman.citrus.workflow.cmd;
 
 import com.github.yiuman.citrus.workflow.exception.WorkflowException;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import org.activiti.bpmn.model.FlowElement;
 import org.activiti.bpmn.model.Process;
 import org.activiti.engine.ActivitiEngineAgenda;
@@ -19,6 +21,7 @@ import java.util.Objects;
  * @date 2021/3/30
  */
 @Builder
+@AllArgsConstructor
 public class JumpTaskCmd implements Command<Void> {
 
     /**
