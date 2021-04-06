@@ -24,8 +24,6 @@ public class WorkflowEngineGetterImpl implements WorkflowEngineGetter {
         ProcessEngine processEngine = Optional.ofNullable(this.processEngine)
                 .orElse(SpringUtils.getBean(ProcessEngine.class, true));
         this.processEngine = processEngine;
-        //这里置空
-//        ((SpringProcessEngineConfiguration) processEngine.getProcessEngineConfiguration()).setUserGroupManager(null);
         return processEngine;
     }
 }

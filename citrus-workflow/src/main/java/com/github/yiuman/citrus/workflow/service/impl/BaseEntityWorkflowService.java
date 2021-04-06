@@ -117,7 +117,7 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
      */
     protected Map<String, Object> getVariables(E entity) {
         K key = getKey(entity);
-        Map<String, Object> variables = new HashMap<>();
+        Map<String, Object> variables = new HashMap<>(  2);
         variables.put(CURRENT_USER_ID, getCurrentUserId());
         variables.put(BUSINESS_KEY, key.toString());
         return variables;

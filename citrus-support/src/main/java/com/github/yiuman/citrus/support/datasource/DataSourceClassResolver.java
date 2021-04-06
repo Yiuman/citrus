@@ -72,7 +72,7 @@ public class DataSourceClassResolver {
      * @param targetObject 目标对象
      * @return ds
      */
-    public String findDSKey(Method method, Object targetObject) {
+    public String findDataSourceKey(Method method, Object targetObject) {
         if (method.getDeclaringClass() == Object.class) {
             return "";
         }

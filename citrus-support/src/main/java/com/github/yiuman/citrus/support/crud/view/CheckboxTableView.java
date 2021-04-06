@@ -8,6 +8,10 @@ package com.github.yiuman.citrus.support.crud.view;
  */
 public interface CheckboxTableView extends TableView {
 
+    /**
+     * 是否可勾选
+     * @return true/false
+     */
     boolean getCheckable();
 
 }

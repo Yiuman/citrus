@@ -14,5 +14,12 @@ import java.util.List;
 @FunctionalInterface
 public interface TaskCandidateResolver {
 
+    /**
+     * 根据流程上下文与候选人集合解析真正的候选人信息
+     *
+     * @param workflowContext     流程上下文
+     * @param taskCandidateDefine 候选人定义
+     * @return 真正的候选人信息
+     */
     List<String> resolve(WorkflowContext workflowContext, List<String> taskCandidateDefine);
 }

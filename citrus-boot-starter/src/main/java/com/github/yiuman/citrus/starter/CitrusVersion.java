@@ -8,7 +8,7 @@ package com.github.yiuman.citrus.starter;
  */
 public class CitrusVersion {
 
-    public static final String Banner =
+    public static final String BANNER =
             " ____  _  _____  ____  _     ____ \n" +
                     "/   _\\/ \\/__ __\\/  __\\/ \\ /\\/ ___\\\n" +
                     "|  /  | |  / \\  |  \\/|| | |||    \\\n" +
@@ -21,7 +21,7 @@ public class CitrusVersion {
     }
 
     public static void printBanner() {
-        System.out.println(Banner);
+        System.out.println(BANNER);
         System.out.printf(CITRUS + "v%s%n", getVersion());
     }
 

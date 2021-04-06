@@ -180,7 +180,7 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
     }
 
     private DataSource buildDataSource(String resourceName, DataSourceProperties properties, boolean enableMultipleTx) {
-        return enableMultipleTx ? buildDruidXADataSource(resourceName, properties) : buildDruidDataSource(properties);
+        return enableMultipleTx ? buildDruidXaDataSource(resourceName, properties) : buildDruidDataSource(properties);
     }
 
 
@@ -207,7 +207,7 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
      * @param properties   数据源配置
      * @return XA数据源
      */
-    public DataSource buildDruidXADataSource(String resourceName, DataSourceProperties properties) {
+    public DataSource buildDruidXaDataSource(String resourceName, DataSourceProperties properties) {
         DruidXADataSource druidDataSource = new DruidXADataSource();
         druidDataSource.setUrl(properties.getUrl());
         druidDataSource.setUsername(properties.getUsername());

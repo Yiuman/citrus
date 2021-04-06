@@ -16,8 +16,8 @@ public class BaseTaskVo {
 
     private String id;
     private String owner;
-    private int assigneeUpdatedCount; // needed for v5 compatibility
-    private String originalAssignee; // needed for v5 compatibility
+    private int assigneeUpdatedCount;
+    private String originalAssignee;
     private String assignee;
     private DelegationState delegationState;
     private String parentTaskId;
@@ -26,7 +26,7 @@ public class BaseTaskVo {
     private String description;
     private String localizedDescription;
     private int priority = DEFAULT_PRIORITY;
-    private Date createTime; // The time when the task has been created
+    private Date createTime;
     private Date dueDate;
     private int suspensionState;
     private String category;

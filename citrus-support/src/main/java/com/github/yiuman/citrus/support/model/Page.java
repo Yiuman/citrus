@@ -71,7 +71,7 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     public List<T> getRecords() {
         List<T> records = super.getRecords();
         if (this.recordExtend == null && !StringUtils.isEmpty(itemKey) && view instanceof RecordExtender) {
-            this.recordExtend = new HashMap<>();
+            this.recordExtend = new HashMap<>(records.size());
             RecordExtender<T> recordExtender = (RecordExtender<T>) view;
             records.forEach(record -> recordExtend.put(key(record), recordExtender.apply(record)));
         }

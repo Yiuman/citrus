@@ -10,5 +10,10 @@ import com.github.yiuman.citrus.workflow.model.ProcessPersonalModel;
  */
 public interface ProcessPersonalService {
 
+    /**
+     * 获取流程的人员信息模型
+     *
+     * @return 流程人员信息模型
+     */
     ProcessPersonalModel getModel();
 }

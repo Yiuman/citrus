@@ -50,7 +50,7 @@ public final class JwtUtils {
     }
 
     public static JwtToken generateToken(String identity, Long expireInSeconds, Map<String, Object> claims) {
-        claims = Optional.ofNullable(claims).orElse(new HashMap<>());
+        claims = Optional.ofNullable(claims).orElse(new HashMap<>(1));
         claims.put(getIdentityKey(), identity);
         expireInSeconds = Optional.ofNullable(expireInSeconds).orElse((Long) getJwt().find(JwtProperties.JwtConstants.Attribute.VALIDATE_IN_SECONDS));
         long expireTimestamp = System.currentTimeMillis() + expireInSeconds * 1000;

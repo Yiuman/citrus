@@ -5,7 +5,7 @@ import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.system.service.UserService;
-import com.github.yiuman.citrus.workflow.rest.EntityWorkflowController;
+import com.github.yiuman.citrus.workflow.rest.BaseEntityWorkflowController;
 import com.github.yiuman.citrus.workflow.service.EntityCrudWorkflowService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/rest/leaves")
-public class LeaveWorkflowController extends EntityWorkflowController<Leave, Long> {
+public class LeaveWorkflowControllerBase extends BaseEntityWorkflowController<Leave, Long> {
 
     private final LeaveWorkflowService workflowService;
 
     private final UserService userService;
 
-    public LeaveWorkflowController(LeaveWorkflowService workflowService, UserService userService) {
+    public LeaveWorkflowControllerBase(LeaveWorkflowService workflowService, UserService userService) {
         this.workflowService = workflowService;
         this.userService = userService;
     }

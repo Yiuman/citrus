@@ -79,6 +79,7 @@ public class SimpleTreeView<T extends Tree<?>> extends BaseActionableView implem
         return itemKey;
     }
 
+    @Override
     public void setItemKey(String itemKey) {
         this.itemKey = itemKey;
     }
@@ -88,14 +89,17 @@ public class SimpleTreeView<T extends Tree<?>> extends BaseActionableView implem
         return itemText;
     }
 
+    @Override
     public void setItemText(String itemText) {
         this.itemText = itemText;
     }
 
+    @Override
     public List<Object> getWidgets() {
         return widgets;
     }
 
+    @Override
     public void setWidgets(List<Object> widgets) {
         this.widgets = widgets;
     }
@@ -130,15 +134,18 @@ public class SimpleTreeView<T extends Tree<?>> extends BaseActionableView implem
         this.actions = actions;
     }
 
+    @Override
     public <W extends Widget<?>> void addWidget(W widget) {
         addWidget(widget, false);
     }
 
+    @Override
     public void addWidget(String text, String fieldName) {
         Inputs inputs = new Inputs(text, fieldName);
         addWidget(inputs);
     }
 
+    @Override
     public <W extends Widget<?>> void addWidget(W widget, boolean refresh) {
         if (refresh || !widgets.contains(widget)) {
             int indexOf = widgets.indexOf(widget);
@@ -150,6 +157,7 @@ public class SimpleTreeView<T extends Tree<?>> extends BaseActionableView implem
         }
     }
 
+    @Override
     public void addButton(Button button) {
         buttons.add(button);
     }
@@ -158,6 +166,7 @@ public class SimpleTreeView<T extends Tree<?>> extends BaseActionableView implem
         buttons.forEach(this::addButton);
     }
 
+    @Override
     public void addAction(Button button) {
         actions.add(button);
     }

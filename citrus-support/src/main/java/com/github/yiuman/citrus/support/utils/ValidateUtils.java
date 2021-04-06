@@ -70,7 +70,7 @@ public final class ValidateUtils {
         ValidationResult validationResult = new ValidationResult();
         if (CollectionUtils.isNotEmpty(validateSet)) {
             validationResult.setHasErrors(true);
-            Map<String, String> errorMsgMap = new HashMap<>();
+            Map<String, String> errorMsgMap = new HashMap<>(validateSet.size());
             for (ConstraintViolation<T> constraintViolation : validateSet) {
                 errorMsgMap.put(constraintViolation.getPropertyPath().toString(), constraintViolation.getMessage());
             }

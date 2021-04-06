@@ -52,9 +52,9 @@ public final class ConvertUtils {
      * @param <S> 类型
      */
     public static <S> Map<String, Object> objectToMap(S s) throws IntrospectionException, InvocationTargetException, IllegalAccessException {
-        Map<String, Object> map = new HashMap<>();
         BeanInfo beanInfo = Introspector.getBeanInfo(s.getClass());
         PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
+        Map<String, Object> map = new HashMap<>(pds.length);
         for (PropertyDescriptor pd : pds) {
             if ("class".equals(pd.getName())) {
                 continue;
@@ -74,7 +74,7 @@ public final class ConvertUtils {
      */
     public static <T extends Enum<?>> List<Map<String, ?>> enumToListMap(Class<T> enumClass) {
         return Arrays.stream(enumClass.getEnumConstants()).map(enumObject -> {
-            Map<String, Object> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>(1);
             ReflectionUtils.doWithFields(enumClass, (field -> {
                 field.setAccessible(true);
                 map.put(field.getName(), field.get(enumObject));

@@ -72,46 +72,10 @@ public class DataRangeServiceImpl implements DataRangeService {
 
             //下面使用并行流处理，这时使用的是线程安全的Set
             Set<Long> authDeptIds = new CopyOnWriteArraySet<>();
-            OrganService organService = rbacMixinService.getOrganService();
+
             //这里处理数据范围
             scopeDefines.parallelStream().forEach(scopeDefine -> {
-                Long scopeOrganId = scopeDefine.getOrganId();
-                //获取范围定义部门
-                Set<Long> currentOrganIds = new HashSet<>();
-                ScopeType[] scopeTypes = scopeDefine.getScopeTypes();
-
-                //数据范围定义的部门ID>0时为正常情况，按照正常逻辑处理
-                if (scopeOrganId > 0) {
-                    //根据数据范围类型算出数据范围定义的部门ID集合
-                    Organization organization = organService.get(scopeDefine.getOrganId());
-                    for (ScopeType scopeType : scopeTypes) {
-                        currentOrganIds.addAll(getScopeOrganIds(scopeType, organization));
-                    }
-                } else {
-                    //剩下都是基于现有用户的部门去处理的
-                    List<Organization> currentUserOrgans = userService.getCurrentUserOrgans();
-                    if (CollectionUtils.isEmpty(currentUserOrgans)) {
-                        return;
-                    }
-                    //数据范围定义的部门ID=0时表示当前用户的部门，遍历当前用户部门处理
-                    if (scopeOrganId == 0) {
-                        currentUserOrgans.parallelStream().forEach(organization -> {
-                            for (ScopeType scopeType : scopeTypes) {
-                                currentOrganIds.addAll(getScopeOrganIds(scopeType, organization));
-                            }
-                        });
-                    } else {
-                        //数据范围定义的部门ID<0时为，-(scopeOrganId)的级别，则部门树的深度
-                        int deep = Math.toIntExact(-scopeOrganId);
-                        currentUserOrgans.parallelStream().forEach(organization -> {
-                            for (ScopeType scopeType : scopeTypes) {
-                                currentOrganIds.addAll(getScopeOrganIds(scopeType, organService.parent(organization, deep)));
-                            }
-                        });
-                    }
-
-                }
-
+                Set<Long> currentOrganIds = getScopeAuthDeptIds(scopeDefine);
                 //获取到的当前的数据范围
                 if (!CollectionUtils.isEmpty(currentOrganIds)) {
                     //包含
@@ -133,7 +97,66 @@ public class DataRangeServiceImpl implements DataRangeService {
         return null;
     }
 
-    private Collection<Long> getScopeOrganIds(ScopeType scopeType, Organization organization) {
+    /**
+     * 根据数据范围定义，获取符合定义的组织机构ID集合
+     *
+     * @param scopeDefine 数据范围定义实体
+     * @return 符合的组织机构ID集合
+     */
+    private Set<Long> getScopeAuthDeptIds(ScopeDefine scopeDefine) {
+        OrganService organService = rbacMixinService.getOrganService();
+        UserService userService = rbacMixinService.getUserService();
+
+        Long scopeOrganId = scopeDefine.getOrganId();
+        //获取范围定义部门
+        Set<Long> currentOrganIds = new HashSet<>();
+        ScopeType[] scopeTypes = scopeDefine.getScopeTypes();
+
+        //数据范围定义的部门ID>0时为正常情况，按照正常逻辑处理
+        if (scopeOrganId > 0) {
+            //根据数据范围类型算出数据范围定义的部门ID集合
+            Organization organization = organService.get(scopeDefine.getOrganId());
+            for (ScopeType scopeType : scopeTypes) {
+                currentOrganIds.addAll(getScopeTypeOrganIds(scopeType, organization));
+            }
+        } else {
+            //剩下都是基于现有用户的部门去处理的
+            List<Organization> currentUserOrgans = userService.getCurrentUserOrgans();
+            if (CollectionUtils.isEmpty(currentUserOrgans)) {
+                return null;
+            }
+            //数据范围定义的部门ID=0时表示当前用户的部门，遍历当前用户部门处理
+            if (scopeOrganId == 0) {
+                currentUserOrgans.parallelStream().forEach(organization -> {
+                    for (ScopeType scopeType : scopeTypes) {
+                        currentOrganIds.addAll(getScopeTypeOrganIds(scopeType, organization));
+                    }
+                });
+            } else {
+                //数据范围定义的部门ID<0时为，-(scopeOrganId)的级别，则部门树的深度
+                int deep = Math.toIntExact(-scopeOrganId);
+                currentUserOrgans.parallelStream().forEach(organization -> {
+                    for (ScopeType scopeType : scopeTypes) {
+                        currentOrganIds.addAll(getScopeTypeOrganIds(scopeType, organService.parent(organization, deep)));
+                    }
+                });
+            }
+
+        }
+
+        return currentOrganIds;
+
+
+    }
+
+    /**
+     * 根据数据范围类型获取符合的组织机构主键
+     *
+     * @param scopeType    数据范围类型
+     * @param organization 组织机构信息
+     * @return 符合的组织机构主键
+     */
+    private Collection<Long> getScopeTypeOrganIds(ScopeType scopeType, Organization organization) {
         OrganService organService = rbacMixinService.getOrganService();
         switch (scopeType) {
             //找子部门

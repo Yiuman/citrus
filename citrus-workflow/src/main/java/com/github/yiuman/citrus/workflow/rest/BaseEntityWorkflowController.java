@@ -24,10 +24,10 @@ import java.util.Map;
  * @date 2020/12/14
  */
 @Slf4j
-public abstract class EntityWorkflowController<E extends ProcessBusinessModel, K extends Serializable>
+public abstract class BaseEntityWorkflowController<E extends ProcessBusinessModel, K extends Serializable>
         extends BaseCrudController<E, K> {
 
-    public EntityWorkflowController() {
+    public BaseEntityWorkflowController() {
     }
 
     @SuppressWarnings("unchecked")

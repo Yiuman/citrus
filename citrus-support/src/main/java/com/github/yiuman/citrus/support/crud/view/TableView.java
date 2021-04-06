@@ -12,5 +12,10 @@ import java.util.List;
  */
 public interface TableView extends View {
 
+    /**
+     * 获取表头集合
+     *
+     * @return 表格信息集合
+     */
     List<Header> getHeaders();
 }

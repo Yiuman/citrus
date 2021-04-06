@@ -19,6 +19,11 @@ public interface ActionableView {
      */
     List<Object> getWidgets();
 
+    /**
+     * 设置小部件集合
+     *
+     * @param widgets 小部件集合
+     */
     void setWidgets(List<Object> widgets);
 
     /**
@@ -28,6 +33,11 @@ public interface ActionableView {
      */
     List<Button> getButtons();
 
+    /**
+     * 设置按钮集合
+     *
+     * @param buttons 按钮集合
+     */
     void setButtons(List<Button> buttons);
 
     /**
@@ -37,6 +47,11 @@ public interface ActionableView {
      */
     List<Button> getActions();
 
+    /**
+     * 设置动作集合
+     *
+     * @param actions 动作集合
+     */
     void setActions(List<Button> actions);
 
 }
