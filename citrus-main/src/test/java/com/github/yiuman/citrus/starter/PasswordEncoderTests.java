@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
  * @author yiuman
@@ -14,7 +13,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@WebAppConfiguration
 public class PasswordEncoderTests {
 
     @Autowired
@@ -23,7 +21,6 @@ public class PasswordEncoderTests {
     @Test
     public void testEncode() {
         System.out.println(passwordEncoder.encode("123456"));
-
     }
 
 }

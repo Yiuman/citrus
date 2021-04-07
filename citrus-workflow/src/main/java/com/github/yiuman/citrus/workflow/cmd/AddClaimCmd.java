@@ -3,7 +3,6 @@ package com.github.yiuman.citrus.workflow.cmd;
 import com.github.yiuman.citrus.workflow.exception.WorkflowException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import org.activiti.bpmn.model.Activity;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.MultiInstanceLoopCharacteristics;

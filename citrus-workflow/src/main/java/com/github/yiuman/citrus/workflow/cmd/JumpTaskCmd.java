@@ -3,7 +3,6 @@ package com.github.yiuman.citrus.workflow.cmd;
 import com.github.yiuman.citrus.workflow.exception.WorkflowException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import org.activiti.bpmn.model.FlowElement;
 import org.activiti.bpmn.model.Process;
 import org.activiti.engine.ActivitiEngineAgenda;
@@ -39,21 +38,26 @@ public class JumpTaskCmd implements Command<Void> {
 
     @Override
     public Void execute(CommandContext commandContext) {
-        //1.删除当前执行中的任务
-        commandContext.getTaskEntityManager().findTasksByExecutionId(executionId)
-                .forEach(task -> commandContext.getTaskEntityManager().deleteTask(task, "jump", false, false));
-        //2.找到当前执行实例
+
+        //1.找到当前执行实例
         ExecutionEntity executionEntity = commandContext.getExecutionEntityManager().findById(executionId);
-        //3.找到当前的流程
+        //2.找到当前的流程
         Process process = ProcessDefinitionUtil.getProcess(executionEntity.getProcessDefinitionId());
         FlowElement targetFlowElement = process.getFlowElement(targetTaskKey);
         if (Objects.isNull(targetFlowElement)) {
             throw new WorkflowException(String.format("can not found FlowElement with key `%s`", targetTaskKey));
         }
+
+        //3.将当前的执行实例活动删除，删除原因为jump
+        commandContext.getHistoryManager().recordActivityEnd(executionEntity, "jump");
         //4.将目标节点设置到当前的执行实例中
         executionEntity.setCurrentFlowElement(targetFlowElement);
 
-        //5.触发实例流转
+        //5.删除当前执行中的任务
+        commandContext.getTaskEntityManager().findTasksByExecutionId(executionId)
+                .forEach(task -> commandContext.getTaskEntityManager().deleteTask(task, "jump", false, true));
+
+        //6.触发实例流转
         ActivitiEngineAgenda agenda = commandContext.getAgenda();
         agenda.planContinueProcessInCompensation(executionEntity);
 

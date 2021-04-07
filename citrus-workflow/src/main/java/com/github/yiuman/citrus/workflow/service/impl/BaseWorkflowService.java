@@ -7,6 +7,7 @@ import com.github.yiuman.citrus.workflow.exception.WorkflowException;
 import com.github.yiuman.citrus.workflow.model.ProcessPersonalModel;
 import com.github.yiuman.citrus.workflow.model.StartProcessModel;
 import com.github.yiuman.citrus.workflow.model.TaskCompleteModel;
+import com.github.yiuman.citrus.workflow.model.impl.TaskCompleteModelImpl;
 import com.github.yiuman.citrus.workflow.model.impl.WorkflowContextImpl;
 import com.github.yiuman.citrus.workflow.resolver.TaskCandidateResolver;
 import com.github.yiuman.citrus.workflow.service.WorkflowEngineGetter;
@@ -72,20 +73,23 @@ public abstract class BaseWorkflowService implements WorkflowService {
         //1.找到当前流程的任务节点。
         //2.若任务处理人与申请人一致，则自动完成任务，直接进入下一步
         //如请假申请为流程的第一步，则此任务自动完成
-        TaskService taskService = getProcessEngine().getTaskService();
-        Task applyUserTask = taskService.createTaskQuery()
-                .processInstanceId(processInstance.getId())
-                .taskCandidateOrAssigned(model.getUserId())
-                .active()
-                .singleResult();
-        if (Objects.nonNull(applyUserTask)) {
-            taskService.complete(applyUserTask.getId(), processInstanceVars);
-            //完成后，设置下一步的候选人或办理人
-            Optional.ofNullable(
-                    taskService.createTaskQuery()
-                            .processInstanceId(processInstance.getId())
-                            .active().singleResult()
-            ).ifPresent(nextTask -> setCandidateOrAssigned(nextTask, model));
+        if (StringUtils.isNotBlank(model.getUserId())) {
+            TaskService taskService = getProcessEngine().getTaskService();
+            Task applyUserTask = taskService.createTaskQuery()
+                    .processInstanceId(processInstance.getId())
+                    .taskCandidateOrAssigned(model.getUserId())
+                    .active()
+                    .singleResult();
+
+            if (Objects.nonNull(applyUserTask)) {
+                complete(TaskCompleteModelImpl.builder()
+                        .taskId(applyUserTask.getId())
+                        .taskVariables(processInstanceVars)
+                        .userId(model.getUserId())
+                        .candidateOrAssigned(model.getCandidateOrAssigned())
+                        .build());
+
+            }
         }
 
         return processInstance;
@@ -151,7 +155,11 @@ public abstract class BaseWorkflowService implements WorkflowService {
             //没有负责人，则用解析器解析流程任务定义的候选人或参数传入来的候选人
             if (StringUtils.isBlank(task.getAssignee())) {
                 List<String> allCandidateOrAssigned = new ArrayList<>();
-                allCandidateOrAssigned.addAll(model.getCandidateOrAssigned());
+                List<String> modelCandidateOrAssigned = model.getCandidateOrAssigned();
+                if (!CollectionUtils.isEmpty(modelCandidateOrAssigned)) {
+                    allCandidateOrAssigned.addAll(modelCandidateOrAssigned);
+                }
+
                 allCandidateOrAssigned.addAll(taskCandidateUsersDefine);
 
                 //删除任务候选人
@@ -176,7 +184,7 @@ public abstract class BaseWorkflowService implements WorkflowService {
                             if (resolvedCandidates.size() == 1) {
                                 taskService.setAssignee(task.getId(), resolvedCandidates.get(1));
                             } else {
-                                resolvedCandidates.forEach(realUserId -> taskService.addCandidateUser(task.getId(), realUserId));
+                                resolvedCandidates.stream().filter(Objects::nonNull).forEach(realUserId -> taskService.addCandidateUser(task.getId(), realUserId));
                             }
                         });
             }
