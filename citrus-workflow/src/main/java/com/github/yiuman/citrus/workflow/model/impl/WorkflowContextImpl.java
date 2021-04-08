@@ -19,10 +19,13 @@ public class WorkflowContextImpl implements WorkflowContext {
 
     private ProcessInstance processInstance;
 
+    private String executionId;
+
     private Task task;
 
     private String currentUserId;
 
     private FlowElement flowElement;
+
 
 }

@@ -26,6 +26,14 @@ public interface WorkflowContext {
      */
     FlowElement getFlowElement();
 
+
+    /**
+     * 当前执行实例的ID
+     *
+     * @return 执行实例ID
+     */
+    String getExecutionId();
+
     /**
      * 当前任务
      *
@@ -39,5 +47,6 @@ public interface WorkflowContext {
      * @return 用户ID字符串
      */
     String getCurrentUserId();
+
 
 }

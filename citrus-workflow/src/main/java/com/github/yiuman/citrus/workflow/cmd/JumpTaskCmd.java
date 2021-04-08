@@ -20,20 +20,21 @@ import java.util.Objects;
  * @date 2021/3/30
  */
 @Builder
-@AllArgsConstructor
 public class JumpTaskCmd implements Command<Void> {
 
     /**
      * 当前的执行ID
      */
-    private String executionId;
+    private final String executionId;
 
     /**
      * 目标任务定义的key
      */
-    private String targetTaskKey;
+    private final String targetTaskKey;
 
-    public JumpTaskCmd() {
+    public JumpTaskCmd(String executionId, String targetTaskKey) {
+        this.executionId = executionId;
+        this.targetTaskKey = targetTaskKey;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.github.yiuman.citrus.workflow.model.WorkflowContext;
 import com.github.yiuman.citrus.workflow.model.impl.CandidateModelImpl;
 import com.github.yiuman.citrus.workflow.resolver.CandidateParser;
 import com.github.yiuman.citrus.workflow.resolver.TaskCandidateResolver;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
  * @date 2020/12/18
  */
 @Component
+@Slf4j
 public class TaskCandidateResolverImpl implements TaskCandidateResolver {
 
     private final ObjectMapper objectMapper;
@@ -59,13 +61,14 @@ public class TaskCandidateResolverImpl implements TaskCandidateResolver {
                         //找到就进行解释,没找到直接加入
                         realUserIds.addAll(candidateParser.isPresent()
                                 ? candidateParser.get().parse(workflowContext, candidateModel)
-                                : candidateModel
+                                : (candidateModel
                                 .getValues()
                                 .stream()
                                 .map(dimensionValue -> String.format("%s#%s", candidateModel.getDimension(), dimensionValue))
-                                .collect(Collectors.toList()));
+                                .collect(Collectors.toList())));
 
-                    } catch (JsonProcessingException ignore) {
+                    } catch (JsonProcessingException exception) {
+                        log.info(String.format("%s resolver exception:", getClass().getName()), exception);
                         realUserIds.add(taskCandidate);
                     }
                 });

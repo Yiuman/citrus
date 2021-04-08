@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yiuman.citrus.support.crud.service.BaseService;
 import com.github.yiuman.citrus.support.utils.ConvertUtils;
+import com.github.yiuman.citrus.support.utils.SpringUtils;
 import com.github.yiuman.citrus.workflow.exception.WorkflowException;
 import com.github.yiuman.citrus.workflow.model.ProcessBusinessModel;
 import com.github.yiuman.citrus.workflow.model.StartProcessModel;
@@ -55,7 +56,7 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
      */
     protected WorkflowService getProcessService() {
         return processService = Optional.ofNullable(processService)
-                .orElse(new WorkflowServiceImpl());
+                .orElse(SpringUtils.getBean(WorkflowServiceImpl.class, true));
     }
 
     protected void setProcessService(WorkflowService processService) {
@@ -117,7 +118,7 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
      */
     protected Map<String, Object> getVariables(E entity) {
         K key = getKey(entity);
-        Map<String, Object> variables = new HashMap<>(  2);
+        Map<String, Object> variables = new HashMap<>(2);
         variables.put(CURRENT_USER_ID, getCurrentUserId());
         variables.put(BUSINESS_KEY, key.toString());
         return variables;
@@ -167,7 +168,7 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
 
     @Override
     public void jump(Task task, String targetTaskKey) {
-        getProcessService().jump(task,targetTaskKey);
+        getProcessService().jump(task, targetTaskKey);
     }
 
     @Override

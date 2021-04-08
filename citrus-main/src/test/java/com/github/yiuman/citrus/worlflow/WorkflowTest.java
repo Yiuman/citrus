@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.worlflow;
 
+import com.github.yiuman.citrus.support.utils.SpringUtils;
 import com.github.yiuman.citrus.workflow.model.impl.StartProcessModelImpl;
 import com.github.yiuman.citrus.workflow.model.impl.TaskCompleteModelImpl;
 import com.github.yiuman.citrus.workflow.service.impl.WorkflowServiceImpl;
@@ -24,14 +25,17 @@ public class WorkflowTest {
      * # 查询流程定义
      * select *
      * from act_re_procdef;
+     * <p>
      * # 根据定义id查询流程实例
      * select *
      * from act_hi_procinst
      * where PROC_DEF_ID_ = 'test_task_jump:1:75e9971d-96b2-11eb-b265-863668d795e3';
+     * <p>
      * # 根据流程实例ID查询任务
      * select *
      * from act_ru_task
      * where PROC_INST_ID_ = '360790c8-96be-11eb-962f-863668d795e3';
+     * <p>
      * #根据流程实例ID查询历史活动
      * select *
      * from act_hi_actinst
@@ -50,7 +54,7 @@ public class WorkflowTest {
 
     @Test
     public void startProcess() {
-        WorkflowServiceImpl workflowService = new WorkflowServiceImpl();
+        WorkflowServiceImpl workflowService = SpringUtils.getBean(WorkflowServiceImpl.class,true);
         StartProcessModelImpl startProcessModel = StartProcessModelImpl.builder().processDefineKey("test_task_jump")
                 .userId("1")
                 .variables(new HashedMap<String, Object>() {{

@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.workflow.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
 import com.github.yiuman.citrus.workflow.cmd.JumpTaskCmd;
 import com.github.yiuman.citrus.workflow.exception.WorkflowException;
@@ -43,7 +44,7 @@ public abstract class BaseWorkflowService implements WorkflowService {
     @Override
     public ProcessEngine getProcessEngine() {
         workflowEngineGetter = Optional.ofNullable(workflowEngineGetter)
-                .orElse(new WorkflowEngineGetterImpl());
+                .orElse(SpringUtils.getBean(WorkflowEngineGetterImpl.class, true));
         return workflowEngineGetter.getProcessEngine();
     }
 
@@ -129,8 +130,9 @@ public abstract class BaseWorkflowService implements WorkflowService {
                 .active()
                 .list();
 
-        if (!CollectionUtils.isEmpty(taskList)) {
-            taskList.forEach(nextTask -> setCandidateOrAssigned(nextTask, model));
+        if (!taskList.isEmpty()) {
+            //设置任务的候选人
+            taskList.forEach(LambdaUtils.consumerWrapper(nextTask -> setCandidateOrAssigned(nextTask, model)));
         }
 
     }
@@ -141,7 +143,7 @@ public abstract class BaseWorkflowService implements WorkflowService {
      * @param task  当前的任务
      * @param model 流程人员模型
      */
-    protected void setCandidateOrAssigned(Task task, ProcessPersonalModel model) {
+    protected void setCandidateOrAssigned(Task task, ProcessPersonalModel model) throws Exception {
         task.getProcessInstanceId();
         TaskService taskService = getProcessEngine().getTaskService();
         //查询当前任务是否已经有候选人或办理人
@@ -189,7 +191,6 @@ public abstract class BaseWorkflowService implements WorkflowService {
                         });
             }
         }
-
 
     }
 

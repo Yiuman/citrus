@@ -4,6 +4,7 @@ import com.github.yiuman.citrus.support.crud.rest.BaseQueryController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.crud.service.KeyBasedService;
 import com.github.yiuman.citrus.support.model.Page;
+import com.github.yiuman.citrus.support.utils.SpringUtils;
 import com.github.yiuman.citrus.support.utils.WebUtils;
 import com.github.yiuman.citrus.workflow.exception.WorkflowException;
 import com.github.yiuman.citrus.workflow.service.WorkflowService;
@@ -73,7 +74,7 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
      */
     protected WorkflowService getProcessService() {
         return workflowService = Optional.ofNullable(workflowService)
-                .orElse(new WorkflowServiceImpl());
+                .orElse(SpringUtils.getBean(WorkflowServiceImpl.class, true));
     }
 
     protected void setProcessService(WorkflowService workflowService) {

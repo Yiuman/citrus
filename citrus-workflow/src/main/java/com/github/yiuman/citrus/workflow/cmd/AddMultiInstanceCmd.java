@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.workflow.cmd;
 
 import com.github.yiuman.citrus.workflow.exception.WorkflowException;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.activiti.bpmn.model.Activity;
 import org.activiti.bpmn.model.BpmnModel;
@@ -24,8 +23,7 @@ import org.activiti.engine.impl.util.ProcessDefinitionUtil;
  * @date 2021/4/2
  */
 @Builder
-@AllArgsConstructor
-public class AddClaimCmd implements Command<Void> {
+public class AddMultiInstanceCmd implements Command<Void> {
 
     /**
      * 参数名：当前的任务实例
@@ -39,14 +37,16 @@ public class AddClaimCmd implements Command<Void> {
     /**
      * 任务ID，需要加签的任务
      */
-    private String taskId;
+    private final String taskId;
 
     /**
      * 处理人
      */
-    private String assignee;
+    private final String assignee;
 
-    public AddClaimCmd() {
+    public AddMultiInstanceCmd(String taskId, String assignee) {
+        this.taskId = taskId;
+        this.assignee = assignee;
     }
 
     @Override
@@ -56,23 +56,26 @@ public class AddClaimCmd implements Command<Void> {
 
         //1.根据任务id获取任务实例
         TaskEntity taskEntity = taskEntityManager.findById(taskId);
+
         //2.根据当前任务获取当前的执行实例
         ExecutionEntity multiExecutionEntity = executionEntityManager.findById(taskEntity.getExecutionId());
-
         BpmnModel bpmnModel = ProcessDefinitionUtil.getBpmnModel(multiExecutionEntity.getProcessDefinitionId());
         Activity activityElement = (Activity) bpmnModel.getFlowElement(multiExecutionEntity.getCurrentActivityId());
         MultiInstanceLoopCharacteristics loopCharacteristics = activityElement.getLoopCharacteristics();
+
         //3.判断当前执行的节点是否为会签节点
         if (loopCharacteristics == null) {
             throw new WorkflowException(String.format("This FlowElement is not a multi-instance node:%s", activityElement.getId()));
         }
+
         //4.判断是否是并行多实例
         if (loopCharacteristics.isSequential()) {
-            throw new WorkflowException(String.format("This FlowElement  is not a parallel node:%s", activityElement.getId()));
+            throw new WorkflowException(String.format("This FlowElement is not a parallel node:%s", activityElement.getId()));
         }
 
         //5.获取父执行实例（即流程的执行实例）
         ExecutionEntity parentExecutionEntity = multiExecutionEntity.getParent();
+
         //6.创建一个新的子执行实例,设置处理人
         ExecutionEntity newChildExecution = executionEntityManager.createChildExecution(parentExecutionEntity);
         newChildExecution.setCurrentFlowElement(activityElement);
@@ -83,9 +86,11 @@ public class AddClaimCmd implements Command<Void> {
         Integer nrOfActiveInstances = (Integer) parentExecutionEntity.getVariableLocal(NUMBER_OF_ACTIVE_INSTANCES);
         parentExecutionEntity.setVariableLocal(NUMBER_OF_INSTANCES, nrOfInstances + 1);
         parentExecutionEntity.setVariableLocal(NUMBER_OF_ACTIVE_INSTANCES, nrOfActiveInstances + 1);
+
         //8.通知活动开始
         HistoryManager historyManager = commandContext.getHistoryManager();
         historyManager.recordActivityStart(newChildExecution);
+
         //9.获取处理行为类并执行行为
         ParallelMultiInstanceBehavior parallelMultiInstanceBehavior = (ParallelMultiInstanceBehavior) activityElement.getBehavior();
         AbstractBpmnActivityBehavior innerActivityBehavior = parallelMultiInstanceBehavior.getInnerActivityBehavior();

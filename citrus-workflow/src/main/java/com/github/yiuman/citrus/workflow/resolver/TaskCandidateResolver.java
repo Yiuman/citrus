@@ -20,6 +20,7 @@ public interface TaskCandidateResolver {
      * @param workflowContext     流程上下文
      * @param taskCandidateDefine 候选人定义
      * @return 真正的候选人信息
+     * @throws Exception 解析过程中的异常
      */
-    List<String> resolve(WorkflowContext workflowContext, List<String> taskCandidateDefine);
+    List<String> resolve(WorkflowContext workflowContext, List<String> taskCandidateDefine) throws Exception;
 }

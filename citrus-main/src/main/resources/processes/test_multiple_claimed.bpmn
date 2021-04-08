@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:activiti="http://activiti.org/bpmn" id="sample-diagram" targetNamespace="http://activiti.org/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="test_multiple_claimed" name="测试并行多实例加签" isExecutable="true">
+    <bpmn2:startEvent id="Event_1qph4eb">
+      <bpmn2:outgoing>Flow_02eb1ip</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_02eb1ip" sourceRef="Event_1qph4eb" targetRef="Activity_1t7bv00" />
+    <bpmn2:userTask id="Activity_1t7bv00" name="申请" activiti:assignee="1">
+      <bpmn2:incoming>Flow_02eb1ip</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0uau85x</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_0uau85x" sourceRef="Activity_1t7bv00" targetRef="Activity_087k0pl" />
+    <bpmn2:endEvent id="Event_0enoed3">
+      <bpmn2:incoming>Flow_0nh7vyp</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_0nh7vyp" sourceRef="Activity_087k0pl" targetRef="Event_0enoed3" />
+    <bpmn2:userTask id="Activity_087k0pl" name="并行多实例" activiti:assignee="${assignee}">
+      <bpmn2:incoming>Flow_0uau85x</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0nh7vyp</bpmn2:outgoing>
+      <bpmn2:multiInstanceLoopCharacteristics 
+      activiti:collection="${assignments.resolve(execution,'[{&#34;dimension&#34;:&#34;user&#34;,&#34;values&#34;:[&#34;c8274ade69fd496f915a568d86aae687&#34;,&#34;YvuYEvtWSLYjsKb3VlTEcxgbtPQC3pAK9D&#34;,&#34;YvuYEvtWSLYjsKb3VlTEcxgbtPQC3pAK9C&#34;]}]')}" 
+      activiti:elementVariable="assignee" />
+    </bpmn2:userTask>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="test_multiple_claimed">
+      <bpmndi:BPMNEdge id="Flow_02eb1ip_di" bpmnElement="Flow_02eb1ip">
+        <di:waypoint x="188" y="330" />
+        <di:waypoint x="240" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uau85x_di" bpmnElement="Flow_0uau85x">
+        <di:waypoint x="340" y="330" />
+        <di:waypoint x="460" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nh7vyp_di" bpmnElement="Flow_0nh7vyp">
+        <di:waypoint x="560" y="330" />
+        <di:waypoint x="712" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1qph4eb_di" bpmnElement="Event_1qph4eb">
+        <dc:Bounds x="152" y="312" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ebur8t_di" bpmnElement="Activity_1t7bv00">
+        <dc:Bounds x="240" y="290" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0enoed3_di" bpmnElement="Event_0enoed3">
+        <dc:Bounds x="712" y="312" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mbpvu8_di" bpmnElement="Activity_087k0pl">
+        <dc:Bounds x="460" y="290" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>
