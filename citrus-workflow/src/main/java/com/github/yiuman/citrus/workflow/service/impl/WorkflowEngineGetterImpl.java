@@ -21,9 +21,7 @@ public class WorkflowEngineGetterImpl implements WorkflowEngineGetter {
 
     @Override
     public ProcessEngine getProcessEngine() {
-        ProcessEngine processEngine = Optional.ofNullable(this.processEngine)
+        return processEngine = Optional.ofNullable(this.processEngine)
                 .orElse(SpringUtils.getBean(ProcessEngine.class, true));
-        this.processEngine = processEngine;
-        return processEngine;
     }
 }

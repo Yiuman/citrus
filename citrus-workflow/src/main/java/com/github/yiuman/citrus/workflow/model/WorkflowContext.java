@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.workflow.model;
 
 import org.activiti.bpmn.model.FlowElement;
+import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 
@@ -11,6 +12,13 @@ import org.activiti.engine.task.Task;
  * @date 2020/12/29
  */
 public interface WorkflowContext {
+
+    /**
+     * 获取流程引擎
+     *
+     * @return 流程引擎
+     */
+    ProcessEngine getProcessEngine();
 
     /**
      * 当前流程实例

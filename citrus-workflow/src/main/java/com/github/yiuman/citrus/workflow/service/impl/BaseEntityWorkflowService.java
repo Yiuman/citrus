@@ -167,8 +167,8 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
     }
 
     @Override
-    public void jump(Task task, String targetTaskKey) {
-        getProcessService().jump(task, targetTaskKey);
+    public void jump(String taskId, String targetTaskKey) {
+        getProcessService().jump(taskId, targetTaskKey);
     }
 
     @Override

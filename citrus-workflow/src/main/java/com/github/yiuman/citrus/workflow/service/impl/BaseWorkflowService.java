@@ -106,7 +106,7 @@ public abstract class BaseWorkflowService implements WorkflowService {
                 .taskId(model.getTaskId())
                 .active()
                 .singleResult())
-                .orElseThrow(() -> new WorkflowException(String.format("can not find Task for taskId:[%s]", model.getTaskId())));
+                .orElseThrow(() -> new WorkflowException(String.format("cannot find Task for taskId:[%s]", model.getTaskId())));
 
         //1.找到任务的处理人，若任务未签收（没有处理人），则抛出异常
         //2.若处理人与任务模型的用户不匹配也抛出异常
@@ -122,7 +122,7 @@ public abstract class BaseWorkflowService implements WorkflowService {
 
         //如果有设置目标任务关键字则进行任务跳转
         if (StringUtils.isNotBlank(model.getTargetTaskKey())) {
-            jump(task, model.getTargetTaskKey());
+            jump(task.getId(), model.getTargetTaskKey());
         }
         //完成此环节后，检查有没下个环节，有的话且是未设置办理人或候选人的情况下，使用模型进行设置
         List<Task> taskList = taskService.createTaskQuery()
@@ -170,6 +170,7 @@ public abstract class BaseWorkflowService implements WorkflowService {
                 RuntimeService runtimeService = getProcessEngine().getRuntimeService();
 
                 WorkflowContextImpl workflowContext = WorkflowContextImpl.builder()
+                        .processEngine(getProcessEngine())
                         .processInstance(
                                 runtimeService
                                         .createProcessInstanceQuery()
@@ -212,7 +213,17 @@ public abstract class BaseWorkflowService implements WorkflowService {
     }
 
     @Override
-    public void jump(Task task, String targetTaskKey) {
+    public void jump(String taskId, String targetTaskKey) {
+        TaskService taskService = getProcessEngine().getTaskService();
+
+        Task task = Optional.ofNullable(taskService.createTaskQuery().taskId(taskId).singleResult())
+                .orElseThrow(() -> new WorkflowException(String.format("cannot find Task for taskId:[%s]", taskId)));
+
+        Optional.ofNullable(getProcessEngine().getRuntimeService()
+                .createProcessInstanceQuery()
+                .processInstanceId(task.getProcessInstanceId()).
+                        active().singleResult()).orElseThrow(() -> new WorkflowException("This ProcessInstance is not active,cannot do jump"));
+
         //构建跳转命令并执行
         getProcessEngine().getManagementService().executeCommand(JumpTaskCmd.builder()
                 .executionId(task.getExecutionId())

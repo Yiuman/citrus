@@ -4,6 +4,7 @@ import com.github.yiuman.citrus.workflow.model.WorkflowContext;
 import lombok.Builder;
 import lombok.Data;
 import org.activiti.bpmn.model.FlowElement;
+import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 
@@ -16,6 +17,8 @@ import org.activiti.engine.task.Task;
 @Builder
 @Data
 public class WorkflowContextImpl implements WorkflowContext {
+
+    private ProcessEngine processEngine;
 
     private ProcessInstance processInstance;
 

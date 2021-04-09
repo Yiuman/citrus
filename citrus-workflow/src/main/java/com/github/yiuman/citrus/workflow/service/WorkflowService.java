@@ -3,7 +3,6 @@ package com.github.yiuman.citrus.workflow.service;
 import com.github.yiuman.citrus.workflow.model.StartProcessModel;
 import com.github.yiuman.citrus.workflow.model.TaskCompleteModel;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.activiti.engine.task.Task;
 
 /**
  * 流程服务类
@@ -40,11 +39,10 @@ public interface WorkflowService extends WorkflowEngineGetter {
 
     /**
      * 任务跳转
-     *
-     * @param task          当前的任务
+     *  @param taskId          当前的任务
      * @param targetTaskKey 目前任务的定义key
      */
-    void jump(Task task, String targetTaskKey);
+    void jump(String taskId, String targetTaskKey);
 
     /**
      * 挂起流程

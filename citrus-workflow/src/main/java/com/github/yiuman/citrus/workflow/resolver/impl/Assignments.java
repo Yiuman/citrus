@@ -51,6 +51,7 @@ public class Assignments implements ExpressionResolver<List<String>> {
         }
         //构建流程上下文
         WorkflowContextImpl workflowContext = WorkflowContextImpl.builder()
+                .processEngine(workflowService.getProcessEngine())
                 .processInstance(
                         runtimeService
                                 .createProcessInstanceQuery()
