@@ -13,6 +13,7 @@
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.test.skip>true</maven.test.skip>
     </properties>
 
     <dependencies>
@@ -38,7 +39,7 @@
         <dependency>
             <groupId>com.github.yiuman</groupId>
             <artifactId>citrus-workflow</artifactId>
-            <version>0.1.2.RELEASE</version>
+            <version>0.11.0</version>
         </dependency>
 
         <dependency>
