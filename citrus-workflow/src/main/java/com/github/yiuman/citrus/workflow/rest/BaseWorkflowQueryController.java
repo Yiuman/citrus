@@ -48,21 +48,20 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
     }
 
     private void initQueryMapping() {
-        ProcessEngine processEngine = getProcessEngine();
         //流程定义
-        QUERY_MAPPING.put(ProcessDefinition.class, () -> processEngine
+        QUERY_MAPPING.put(ProcessDefinition.class, () -> getProcessEngine()
                 .getRepositoryService()
                 .createProcessDefinitionQuery());
         //任务
-        QUERY_MAPPING.put(Task.class, () -> processEngine
+        QUERY_MAPPING.put(Task.class, () -> getProcessEngine()
                 .getTaskService()
                 .createTaskQuery());
         //活动历史
-        QUERY_MAPPING.put(HistoricActivityInstance.class, () -> processEngine
+        QUERY_MAPPING.put(HistoricActivityInstance.class, () -> getProcessEngine()
                 .getHistoryService()
                 .createHistoricActivityInstanceQuery());
         //历史任务
-        QUERY_MAPPING.put(HistoricTaskInstance.class, () -> processEngine
+        QUERY_MAPPING.put(HistoricTaskInstance.class, () -> getProcessEngine()
                 .getHistoryService()
                 .createHistoricTaskInstanceQuery());
     }
