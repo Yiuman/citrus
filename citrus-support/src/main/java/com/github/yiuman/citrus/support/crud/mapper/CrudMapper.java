@@ -69,6 +69,7 @@ public interface CrudMapper<T> extends BaseMapper<T> {
         if (!first.isPresent()) {
             return false;
         }
+
         T entity = first.get();
         Class<?> realEntityClass = ClassUtils.getRealClass(entity.getClass());
         TableInfo tableInfo = TableInfoHelper.getTableInfo(realEntityClass);
@@ -80,8 +81,6 @@ public interface CrudMapper<T> extends BaseMapper<T> {
             return StringUtils.checkValNull(keyFieldValue)
                     || Objects.isNull(selectById((Serializable) keyFieldValue));
         }));
-
-
 
         Class<?> realThisClass = ClassUtils.getRealClass(this.getClass());
         boolean result = true;
