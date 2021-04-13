@@ -92,7 +92,7 @@ public interface CrudMapper<T> extends BaseMapper<T> {
         }
         //update分组
         List<T> updates = collect.get(false);
-        if (CollectionUtils.isEmpty(updates)) {
+        if (!CollectionUtils.isEmpty(updates)) {
             String sqlStatement = SqlHelper.getSqlStatement(realThisClass, SqlMethod.UPDATE_BY_ID);
             result &= executeBatch(updates, (sqlSession, handlerEntity) -> {
                 MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
@@ -114,10 +114,13 @@ public interface CrudMapper<T> extends BaseMapper<T> {
      * @return 是否执行成功 true/false
      */
     default boolean executeBatch(Collection<T> entities, BiConsumer<SqlSession, T> consumer) {
-        Class<?> realClass = ClassUtils.getRealClass(getClass());
-        Class<?> entityClass = ReflectionKit.getSuperClassGenericType(realClass, 0);
+        if(Objects.isNull(entities) || entities.isEmpty()){
+            return false;
+        }
+
+        Class<?> realEntityClass = ClassUtils.getRealClass(entities.stream().findAny().get().getClass());
         return SqlHelper.executeBatch(
-                entityClass,
+                realEntityClass,
                 LogFactory.getLog(ClassUtils.getRealClass(getClass())),
                 entities,
                 entities.size(),

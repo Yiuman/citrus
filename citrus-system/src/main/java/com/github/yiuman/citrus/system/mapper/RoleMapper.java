@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.system.entity.Authority;
 import com.github.yiuman.citrus.system.entity.Role;
 import org.apache.ibatis.annotations.Mapper;
@@ -17,7 +18,7 @@ import java.util.Set;
  */
 @Mapper
 @Repository
-public interface RoleMapper extends BaseMapper<Role> {
+public interface RoleMapper extends CrudMapper<Role> {
 
     /**
      * 根据用户id及资源id查询用于角色数

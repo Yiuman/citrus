@@ -6,6 +6,7 @@ import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
 import com.github.yiuman.citrus.support.crud.rest.CrudRestful;
 import com.github.yiuman.citrus.support.crud.rest.QueryRestful;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
+import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.widget.Selections;
 import com.github.yiuman.citrus.support.widget.Selects;
 import com.github.yiuman.citrus.support.widget.Widget;
@@ -181,11 +182,11 @@ public final class CrudUtils {
     }
 
 
-    public static <M extends BaseMapper<T>, T> M getCrudMapper(Class<T> entityClass) throws Exception {
+    public static <M extends CrudMapper<T>, T> M getCrudMapper(Class<T> entityClass) throws Exception {
         return getMapper(entityClass, CrudMapper.class);
     }
 
-    public static <M extends BaseMapper<T>, T> M getTreeMapper(Class<T> entityClass) throws Exception {
+    public static <M extends TreeMapper<T>, T extends Tree<?>> M getTreeMapper(Class<T> entityClass) throws Exception {
         return getMapper(entityClass, TreeMapper.class);
     }
 

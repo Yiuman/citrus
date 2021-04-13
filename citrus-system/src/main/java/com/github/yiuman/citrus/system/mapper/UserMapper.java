@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.system.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.entity.Role;
 import com.github.yiuman.citrus.system.entity.User;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Mapper
 @Repository
-public interface UserMapper extends BaseMapper<User> {
+public interface UserMapper extends CrudMapper<User> {
 
     /**
      * 根据UUID查找用户
