@@ -60,7 +60,7 @@ public interface CrudMapper<T> extends BaseMapper<T> {
     /**
      * 批量保存实体
      *
-     * @param entityList 实体集合
+     * @param entities 实体集合
      * @return 保存成功返回true，否则false
      */
     @Transactional(rollbackFor = Exception.class)

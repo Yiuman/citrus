@@ -22,7 +22,7 @@ public class TableOperationTestController {
     public void testCreateTable() {
         TableEntity tableEntity = new TableEntity();
         tableEntity.setTableName("sys_test_create");
-        tableEntity.setColums(Arrays.asList("id", "name"));
+        tableEntity.setColumns(Arrays.asList("id", "name"));
         tableOperateMapper.createTable(tableEntity);
     }
 }

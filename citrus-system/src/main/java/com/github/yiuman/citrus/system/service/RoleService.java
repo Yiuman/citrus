@@ -1,7 +1,7 @@
 package com.github.yiuman.citrus.system.service;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.entity.Authority;
@@ -35,7 +35,7 @@ public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
     }
 
     @Override
-    public void afterSave(RoleDto entity) throws Exception {
+    public void afterSave(RoleDto entity) {
         List<Long> authIds = entity.getAuthIds();
         if (!CollectionUtils.isEmpty(authIds)) {
             //删除旧的关联关系
@@ -51,7 +51,7 @@ public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
     }
 
     @Override
-    protected BaseMapper<Role> getBaseMapper() {
+    protected CrudMapper<Role> getBaseMapper() {
         return roleMapper;
     }
 
@@ -69,7 +69,7 @@ public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
         return roleMapper.selectAuthoritiesByUserId(userId);
     }
 
-    public boolean hasPermission(Long userId, Long resourceId) throws Exception {
+    public boolean hasPermission(Long userId, Long resourceId) {
         if (roleAuthorityMapper.selectCount(Wrappers.<RoleAuthority>query().eq(getKeyColumn(), resourceId)) == 0) {
             return true;
         }

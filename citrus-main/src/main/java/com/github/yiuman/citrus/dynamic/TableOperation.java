@@ -12,9 +12,9 @@ public class TableOperation {
 
     public String provideSql(TableEntity entity) {
         StringBuilder createSqlBuilder = new StringBuilder("create table ${tableName} (");
-        entity.getColums().forEach(item -> {
+        entity.getColumns().forEach(item -> {
             createSqlBuilder.append(item).append(" varchar(50)");
-            if (entity.getColums().indexOf(item) != entity.getColums().size() - 1) {
+            if (entity.getColumns().indexOf(item) != entity.getColumns().size() - 1) {
                 createSqlBuilder.append(" , ");
             }
         });

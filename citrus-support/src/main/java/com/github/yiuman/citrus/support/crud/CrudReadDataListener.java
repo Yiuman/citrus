@@ -20,7 +20,7 @@ public class CrudReadDataListener<T, K extends Serializable> extends AnalysisEve
 
     private final static int BATCH_COUNT = 3000;
 
-    private List<T> list = new ArrayList<>();
+    private final List<T> list = new ArrayList<>();
 
     private final CrudService<T, K> service;
 

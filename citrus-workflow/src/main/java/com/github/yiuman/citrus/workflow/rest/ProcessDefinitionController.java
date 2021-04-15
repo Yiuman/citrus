@@ -19,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.zip.ZipInputStream;
 
@@ -33,6 +35,11 @@ import java.util.zip.ZipInputStream;
 @RestController
 @RequestMapping("/rest/procdef")
 public class ProcessDefinitionController extends BaseWorkflowQueryController<ProcessDefinitionController.ProcessDefinitionInfo, String> {
+
+    private static final Set<String> COMPRESSED_PACKAGE = new HashSet<String>() {{
+        add("zip");
+        add("bar");
+    }};
 
     /**
      * 防止序列化报错，重写getIdentityLinks
@@ -103,7 +110,7 @@ public class ProcessDefinitionController extends BaseWorkflowQueryController<Pro
         String extension = FilenameUtils.getExtension(fileName);
         // zip或者bar类型的文件用ZipInputStream方式部署
         DeploymentBuilder deployment = getProcessEngine().getRepositoryService().createDeployment();
-        if ("zip".equals(extension) || "bar".equals(extension)) {
+        if (COMPRESSED_PACKAGE.contains(extension)) {
             ZipInputStream zip = new ZipInputStream(fileInputStream);
             deployment.addZipInputStream(zip);
         } else {

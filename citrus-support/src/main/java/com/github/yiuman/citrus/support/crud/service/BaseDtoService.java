@@ -2,10 +2,10 @@ package com.github.yiuman.citrus.support.crud.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.utils.ConvertUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.beans.BeanUtils;
@@ -14,6 +14,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -44,10 +45,9 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
      *
      * @return Mybatis Mapper
      */
-    protected BaseMapper<E> getBaseMapper() {
+    protected CrudMapper<E> getBaseMapper() {
         return ekBaseService.getMapper();
     }
-
 
     @SuppressWarnings("unchecked")
     private Class<D> currentDtoClass() {
@@ -85,8 +85,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean batchSave(Iterable<D> entityIterable) {
-        entityIterable.forEach(LambdaUtils.consumerWrapper(this::save));
-        return true;
+        return getBaseMapper().saveBatch((Collection<E>) entityIterable);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -103,7 +102,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
 
 
     @Override
-    public boolean remove(D entity) throws Exception {
+    public boolean remove(D entity)  {
         return this.beforeRemove(entity) && ekBaseService.remove(dtoToEntity().apply(entity));
     }
 

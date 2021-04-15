@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.system.service;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.security.authenticate.NoPermissionException;
+import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.support.exception.RestException;
 import com.github.yiuman.citrus.support.http.ResponseStatusCode;
@@ -105,7 +106,7 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
 
 
     @Override
-    protected BaseMapper<User> getBaseMapper() {
+    protected CrudMapper<User> getBaseMapper() {
         return userMapper;
     }
 

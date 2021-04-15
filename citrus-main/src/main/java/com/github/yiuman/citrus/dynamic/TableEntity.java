@@ -13,6 +13,6 @@ public class TableEntity {
 
     private String tableName;
 
-    private List<String> colums;
+    private List<String> columns;
 
 }

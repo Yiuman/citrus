@@ -127,11 +127,10 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     }
 
     @Override
-    public void batchRemove(Iterable<K> keys) throws Exception {
+    public void batchRemove(Iterable<K> keys) {
         List<K> keyList = new ArrayList<>();
         keys.forEach(keyList::add);
-        List<E> list = list(Wrappers.<E>query().in(getKeyColumn(), keyList));
-        list.forEach(LambdaUtils.consumerWrapper(this::remove));
+        getTreeMapper().deleteBatch(list(Wrappers.<E>query().in(getKeyColumn(), keyList)));
     }
 
     @Override
@@ -183,7 +182,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     }
 
     @Override
-    public E load(boolean isLazy) throws Exception {
+    public E load(boolean isLazy) {
         E current = getRoot();
         if (current == null) {
             return null;
@@ -193,7 +192,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     }
 
     @Override
-    public E treeQuery(Wrapper<E> wrapper) throws Exception {
+    public E treeQuery(Wrapper<E> wrapper) {
         if (wrapper == null) {
             return load(false);
         }
@@ -233,7 +232,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     }
 
     @Override
-    public void load(E current) throws Exception {
+    public void load(E current) {
         load(current, true);
     }
 
