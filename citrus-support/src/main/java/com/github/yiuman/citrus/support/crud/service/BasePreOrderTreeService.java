@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
 import com.github.yiuman.citrus.support.model.BasePreOrderTree;
 import com.github.yiuman.citrus.support.model.Tree;
@@ -37,7 +38,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
 
     private final BaseService<E, K> ekBaseService = new BaseService<E, K>() {
         @Override
-        protected BaseMapper<E> getMapper() {
+        protected CrudMapper<E> getMapper() {
             return getTreeMapper();
         }
 
