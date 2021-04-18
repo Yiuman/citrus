@@ -14,10 +14,7 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * JWT工具
@@ -65,10 +62,7 @@ public final class JwtUtils {
 
     public static boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(signKey())
-                    .build()
-                    .parse(token);
+            getClaims(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT signature.");

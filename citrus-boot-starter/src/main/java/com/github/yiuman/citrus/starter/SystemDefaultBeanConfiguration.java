@@ -30,7 +30,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
-import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -148,7 +147,7 @@ public class SystemDefaultBeanConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(FileStorageService.class)
-    public FileStorageService getFileStorageService() throws FileNotFoundException {
+    public FileStorageService getFileStorageService() {
         return new LocalFileStorageServiceImpl();
     }
 
