@@ -1,0 +1,86 @@
+{
+  "groups": [
+    {
+      "name": "citrus.jwt",
+      "type": "com.github.yiuman.citrus.security.jwt.JwtProperties",
+      "sourceType": "com.github.yiuman.citrus.security.properties.CitrusProperties",
+      "sourceMethod": "getJwt()"
+    },
+    {
+      "name": "citrus.security",
+      "type": "com.github.yiuman.citrus.security.properties.SecurityProperties",
+      "sourceType": "com.github.yiuman.citrus.security.properties.CitrusProperties",
+      "sourceMethod": "getSecurity()"
+    }
+  ],
+  "properties": [
+    {
+      "name": "citrus.jwt.tokenHeader",
+      "type": "java.lang.String",
+      "defaultValue": "Authorization",
+      "description": "token headers (token请求头值设置).",
+      "sourceType": "com.github.yiuman.citrus.security.jwt.JwtProperties"
+    },
+    {
+      "name": "citrus.jwt.tokenPrefix",
+      "type": "java.lang.String",
+      "defaultValue": "Bearer ",
+      "description": "token prefix (token值的前缀，如Bearer （注意此处有空格）).",
+      "sourceType": "com.github.yiuman.citrus.security.jwt.JwtProperties"
+    },
+    {
+      "name": "citrus.jwt.secret",
+      "type": "java.lang.String",
+      "description": "token secret. The token must be encoded with at least 88 bits of Base64 (Jwt签名，必须使用最少88位的Base64对该令牌进行编码).",
+      "sourceType": "com.github.yiuman.citrus.security.jwt.JwtProperties"
+    },
+    {
+      "name": "citrus.jwt.identityKey",
+      "type": "java.lang.String",
+      "defaultValue": "Identity",
+      "description": "The identity value of the authentication, which is then used to resolve the current authenticated user instance from the identity value (身份认证的标识值，用于后面根据标识值解析出当前认证用户实例).",
+      "sourceType": "com.github.yiuman.citrus.security.jwt.JwtProperties"
+    },
+    {
+      "name": "citrus.jwt.tokenValidateInSeconds",
+      "type": "java.lang.Long",
+      "defaultValue": 900,
+      "description": "jwt validate expire time. default value is 900s (token的过期时间).",
+      "sourceType": "com.github.yiuman.citrus.security.jwt.JwtProperties"
+    },
+    {
+      "name": "citrus.jwt.rememberMeValidateInSeconds",
+      "type": "java.lang.Long",
+      "defaultValue": 10080,
+      "description": "jwt validate remember expire time.default value is 10080s (`记住我`时的token过期时间).",
+      "sourceType": "com.github.yiuman.citrus.security.jwt.JwtProperties"
+    },
+    {
+      "name": "citrus.security.authenticateEndpoint",
+      "type": "java.lang.String",
+      "defaultValue": "/rest/authenticate",
+      "description": "Endpoint for authentication (身份认证端点).",
+      "sourceType": "com.github.yiuman.citrus.security.properties.SecurityProperties"
+    },
+    {
+      "name": "citrus.security.logoutEndpoint",
+      "type": "java.lang.String",
+      "defaultValue": "/rest/logout",
+      "description": "Endpoint for cancellation (注销端点).",
+      "sourceType": "com.github.yiuman.citrus.security.properties.SecurityProperties"
+    },
+    {
+      "name": "citrus.security.verifyEndpointPrefix",
+      "type": "java.lang.String",
+      "defaultValue": "/rest/verify",
+      "description": "Endpoint for verification (验证码端点).",
+      "sourceType": "com.github.yiuman.citrus.security.properties.SecurityProperties"
+    },
+    {
+      "name": "citrus.security.excludedUris",
+      "type": "java.lang.String[]",
+      "description": "URLs to exclude (排除验证URL).",
+      "sourceType": "com.github.yiuman.citrus.security.properties.SecurityProperties"
+    }
+  ]
+}
