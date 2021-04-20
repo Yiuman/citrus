@@ -1,9 +1,14 @@
 package com.github.yiuman.citrus.security.verify;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
 /**
  * @author yiuman
  * @date 2020/3/22
  */
+@Component
+@ConfigurationProperties(prefix = "citrus.verify")
 public class VerifyProperties {
 
     private String store = Store.SESSION;

@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.security.properties;
 import com.github.yiuman.citrus.security.jwt.JwtProperties;
 import com.github.yiuman.citrus.security.verify.VerifyProperties;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 

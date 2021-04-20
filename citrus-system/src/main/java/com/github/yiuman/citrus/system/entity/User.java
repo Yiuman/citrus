@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.github.yiuman.citrus.system.commons.model.AbstractAuditingEntity;
+import com.github.yiuman.citrus.support.crud.AbstractAuditingEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.ClobTypeHandler;

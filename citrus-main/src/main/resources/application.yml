@@ -23,4 +23,4 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 citrus:
   jwt:
-    token-validate-in-seconds: 60
+    tokenValidateInSeconds: 60

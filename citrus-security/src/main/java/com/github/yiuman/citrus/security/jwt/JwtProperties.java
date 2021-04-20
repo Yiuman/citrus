@@ -1,11 +1,16 @@
 package com.github.yiuman.citrus.security.jwt;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
 /**
  * Jwt相关配置
  *
  * @author yiuman
  * @date 2020/3/16
  */
+@Component
+@ConfigurationProperties(prefix = "citrus.jwt")
 public class JwtProperties {
 
     /**

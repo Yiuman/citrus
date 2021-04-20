@@ -1,11 +1,17 @@
 package com.github.yiuman.citrus.security.properties;
 
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
 /**
  * 系统安全认证配置
  *
  * @author yiuman
  * @date 2020/3/22
  */
+@Component
+@ConfigurationProperties(prefix = "citrus.security")
 public class SecurityProperties {
 
     /**

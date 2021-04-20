@@ -1,4 +1,4 @@
-package com.github.yiuman.citrus.system.commons.model;
+package com.github.yiuman.citrus.system.inject;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
