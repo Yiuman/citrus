@@ -28,7 +28,6 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
 
     protected static final Logger log = LoggerFactory.getLogger(BaseService.class);
 
-
     public BaseService() {
     }
 
@@ -46,7 +45,6 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
         }
 
     }
-
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -66,7 +64,6 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
 
         return null;
     }
-
 
     @Override
     public boolean batchSave(Iterable<E> entityIterable) {

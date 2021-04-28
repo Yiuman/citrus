@@ -7,6 +7,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 /**
  * Spring相关工具
  *
@@ -32,16 +34,16 @@ public class SpringUtils implements ApplicationContextAware {
         return context;
     }
 
-    public static <T> T getBean(Class<T> tClass) {
-        return getBean(tClass, false);
+    public static <T> T getBean(Class<T> clazz) {
+        return getBean(clazz, false);
     }
 
-    public static <T> T getBean(Class<T> tClass, boolean force) {
+    public static <T> T getBean(Class<T> clazz, boolean force) {
         T bean;
         try {
-            bean = context.getBean(tClass);
+            bean = context.getBean(clazz);
         } catch (NoSuchBeanDefinitionException ex) {
-            bean = force ? context.getAutowireCapableBeanFactory().createBean(tClass) : null;
+            bean = force ? context.getAutowireCapableBeanFactory().createBean(clazz) : null;
         }
         return bean;
     }
@@ -50,14 +52,18 @@ public class SpringUtils implements ApplicationContextAware {
         return context.getBean(name, tClass);
     }
 
-    public static <T> T getBean(Class<T> tClass, String name, boolean force) {
+    public static <T> T getBean(Class<T> clazz, String name, boolean force) {
         T bean;
         try {
-            bean = context.getBean(name, tClass);
+            bean = context.getBean(name, clazz);
         } catch (NoSuchBeanDefinitionException ex) {
-            bean = force ? context.getAutowireCapableBeanFactory().createBean(tClass) : null;
+            bean = force ? context.getAutowireCapableBeanFactory().createBean(clazz) : null;
         }
         return bean;
+    }
+
+    public static <T> Map<String,T> getBeanOfType(Class<T> type){
+        return context.getBeansOfType(type);
     }
 
 }
