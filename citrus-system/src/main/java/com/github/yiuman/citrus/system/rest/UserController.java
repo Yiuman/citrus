@@ -191,7 +191,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
                 if (roleIds == null) {
                     return;
                 }
-                List<Long> userRoles = userRoleMapper.selectList(Wrappers.<UserRole>query().in("role_id", roleIds))
+                List<Long> userRoles = userRoleMapper.selectList(Wrappers.<UserRole>lambdaQuery().in(UserRole::getRoleId, roleIds))
                         .stream()
                         .map(UserRole::getUserId)
                         .collect(Collectors.toList());

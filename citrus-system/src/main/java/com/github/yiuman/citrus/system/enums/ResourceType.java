@@ -23,7 +23,6 @@ public interface ResourceType {
      */
     int OPERATION = 2;
 
-
     /**
      * 未知
      */

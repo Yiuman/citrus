@@ -12,16 +12,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrganService extends BasePreOrderTreeService<Organization, Long> {
 
-    public OrganService() {
-    }
-
     /**
      * 获取机构选择控件
      *
      * @return 组织机构的TreeNode控件
      * @throws Exception 数据库异常
      */
-    public TreeNode<Organization> getOrganTree(String label, String fieldKey, boolean multipleSelect) throws Exception {
+    public TreeNode<Organization> getOrganTree(String label, String fieldKey, boolean multipleSelect) {
         TreeNode<Organization> organizationTreeNode = new TreeNode<>(label, fieldKey, treeQuery(null));
         organizationTreeNode.setMultipleSelect(multipleSelect);
         organizationTreeNode.setModelKeyField(getKeyProperty());

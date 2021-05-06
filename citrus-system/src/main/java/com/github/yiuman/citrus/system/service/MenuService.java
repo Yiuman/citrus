@@ -45,14 +45,13 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
         return list(null);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public List<Resource> list(Wrapper<Resource> wrapper) {
         if (wrapper == null) {
             wrapper = Wrappers.query();
         }
         //菜单为0
-        ((QueryWrapper) wrapper).eq("type", 0);
+        ((QueryWrapper<Resource>) wrapper).lambda().eq(Resource::getType, 0);
         return super.list(wrapper);
     }
 
@@ -85,7 +84,7 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
         });
         Class<? extends QueryRestful> restBeanClass = targetClass.get();
         if (Objects.nonNull(restBeanClass)) {
-            resourceService.remove(Wrappers.<ResourceDto>query().eq("parent_id", entity.getResourceId()));
+            resourceService.remove(Wrappers.<ResourceDto>lambdaQuery().eq(ResourceDto::getParentId, entity.getResourceId()));
             createQueryDefaultResource(entity);
 
             if (BaseCrudController.class.isAssignableFrom(restBeanClass)) {
@@ -106,7 +105,7 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
      * @return 操作资源列表
      */
     public List<Resource> getOperationByKey(Long key) {
-        return super.list(Wrappers.<Resource>query().eq(getParentField(), key).eq("type", 2));
+        return super.list(Wrappers.<Resource>query().eq(getParentField(), key).lambda().eq(Resource::getType, 2));
     }
 
     /**

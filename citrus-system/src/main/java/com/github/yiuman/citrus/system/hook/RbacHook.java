@@ -6,6 +6,7 @@ import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.service.AccessLogService;
 import com.github.yiuman.citrus.system.service.RbacMixinService;
+import com.github.yiuman.citrus.system.service.ResourceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ import java.util.Optional;
 public class RbacHook implements AuthorizeServiceHook {
 
     public static final String CURRENT_RESOURCE_ATTR = "CURRENT_RESOURCE_ID";
+
+    public static final String RESOURCE_HEADER = "RESOURCE_ID";
 
     private final RbacMixinService mixinService;
 
@@ -47,15 +50,19 @@ public class RbacHook implements AuthorizeServiceHook {
 
             //没登录不给进,登录了校验权限
             Optional<User> user = mixinService.getUserService().getUser(authentication);
+
             //获取当前请求的对应的RequestMapping路径
             String mvcDefineMapping = WebUtils.getRequestMapping(httpServletRequest);
             if (mvcDefineMapping == null) {
                 accessLogService.pointAccess(httpServletRequest, user.orElse(null), null);
                 return true;
             }
+            ResourceService resourceService = mixinService.getResourceService();
 
             //没有配置资源的情况下都可以访问
-            Resource resource = mixinService.getResourceService().selectByUri(mvcDefineMapping, httpServletRequest.getMethod());
+            Resource resource = Optional
+                    .ofNullable(resourceService.getRealEntity(Long.valueOf(httpServletRequest.getHeader(RESOURCE_HEADER))))
+                    .orElse(resourceService.selectByUri(mvcDefineMapping, httpServletRequest.getMethod()));
             accessLogService.pointAccess(httpServletRequest, user.orElse(null), resource);
             if (resource == null) {
                 return true;

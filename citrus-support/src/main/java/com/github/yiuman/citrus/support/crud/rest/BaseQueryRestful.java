@@ -143,7 +143,6 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
         sortByList.add(new SortBy(column, false));
     }
 
-
     /**
      * 构造查询wrapper
      *

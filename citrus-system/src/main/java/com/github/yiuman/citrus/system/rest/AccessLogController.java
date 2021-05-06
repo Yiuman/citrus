@@ -38,7 +38,7 @@ public class AccessLogController extends BaseQueryController<AccessLog, Long> {
     }
 
     @Override
-    protected Object createView() throws Exception {
+    protected Object createView()  {
         PageTableView<AccessLog> view = new PageTableView<>(false);
         view.addHeader(Header.builder().text("用户").value("username").align(Header.Align.center).build());
         view.addHeader("IP地址", "ipAddress");

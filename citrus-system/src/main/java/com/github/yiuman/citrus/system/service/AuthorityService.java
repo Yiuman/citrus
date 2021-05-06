@@ -34,14 +34,14 @@ public class AuthorityService extends BaseDtoService<Authority, Long, AuthorityD
         List<AuthorityResource> authorityResources = authorityResourceMapper.selectList(
                 Wrappers.<AuthorityResource>query()
                         .eq(getKeyColumn(), authorityDto.getAuthorityId())
-                        .eq("type", 0)
+                        .lambda().eq(AuthorityResource::getType, 0)
         );
         authorityResources.forEach(item -> item.setOperations(
                 authorityResourceMapper.selectList(
                         Wrappers.<AuthorityResource>query()
                                 .eq(getKeyColumn(), authorityDto.getAuthorityId())
-                                .eq("object_id", item.getResourceId())
-                                .eq("type", 2))
+                                .lambda().eq(AuthorityResource::getObjectId, item.getResourceId())
+                                .eq(AuthorityResource::getType, 2))
                 )
         );
 
@@ -50,7 +50,7 @@ public class AuthorityService extends BaseDtoService<Authority, Long, AuthorityD
     }
 
     @Override
-    public void afterSave(AuthorityDto entity) throws Exception {
+    public void afterSave(AuthorityDto entity)  {
         //保存资源与权限的关系
         List<AuthorityResource> resources = entity.getResources();
 

@@ -22,11 +22,13 @@ public class ResourceService extends BaseDtoService<Resource, Long, ResourceDto>
     }
 
     public Resource selectByUri(String requestUri, String method) {
-        List<Resource> resources = getBaseMapper().selectList(Wrappers.<Resource>query().eq("path", requestUri).eq("operation", method));
+        List<Resource> resources = getBaseMapper()
+                .selectList(Wrappers.<Resource>lambdaQuery()
+                        .eq(Resource::getPath, requestUri).eq(Resource::getOperation, method));
         return CollectionUtils.isEmpty(resources) ? null : resources.get(0);
     }
 
     public Resource selectByCode(String code) {
-        return getBaseMapper().selectOne(Wrappers.<Resource>query().eq("resource_code", code));
+        return getBaseMapper().selectOne(Wrappers.<Resource>lambdaQuery().eq(Resource::getResourceCode, code));
     }
 }

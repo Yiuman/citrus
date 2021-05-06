@@ -36,7 +36,7 @@ public class ScopeService extends BaseDtoService<Scope, Long, ScopeDto> {
     }
 
     @Override
-    public boolean beforeSave(ScopeDto entity) throws Exception {
+    public boolean beforeSave(ScopeDto entity)  {
         if (entity.getOrganId() == null) {
             entity.setOrganId(-1L);
         }
@@ -44,7 +44,7 @@ public class ScopeService extends BaseDtoService<Scope, Long, ScopeDto> {
     }
 
     @Override
-    public void afterSave(ScopeDto entity) throws Exception {
+    public void afterSave(ScopeDto entity)  {
         //删除旧的
         scopeDefineMapper.delete(Wrappers.<ScopeDefine>lambdaQuery().eq(ScopeDefine::getScopeId, entity.getScopeId()));
 

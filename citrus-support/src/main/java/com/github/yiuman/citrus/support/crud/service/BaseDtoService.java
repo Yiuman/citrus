@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
+ * 复杂实体类型（需传输转化的逻辑基类）
+ *
  * @author yiuman
  * @date 2020/4/15
  */
@@ -70,6 +72,10 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         });
     }
 
+    public E getRealEntity(K key) {
+        return dtoToEntity().apply(get(key));
+    }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public K save(D entity) throws Exception {
@@ -102,7 +108,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
 
 
     @Override
-    public boolean remove(D entity)  {
+    public boolean remove(D entity) {
         return this.beforeRemove(entity) && ekBaseService.remove(dtoToEntity().apply(entity));
     }
 
