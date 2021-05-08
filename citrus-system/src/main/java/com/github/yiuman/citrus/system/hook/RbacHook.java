@@ -10,6 +10,7 @@ import com.github.yiuman.citrus.system.service.ResourceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -57,12 +58,16 @@ public class RbacHook implements AuthorizeServiceHook {
                 accessLogService.pointAccess(httpServletRequest, user.orElse(null), null);
                 return true;
             }
-            ResourceService resourceService = mixinService.getResourceService();
 
             //没有配置资源的情况下都可以访问
-            Resource resource = Optional
-                    .ofNullable(resourceService.getRealEntity(Long.valueOf(httpServletRequest.getHeader(RESOURCE_HEADER))))
-                    .orElse(resourceService.selectByUri(mvcDefineMapping, httpServletRequest.getMethod()));
+            ResourceService resourceService = mixinService.getResourceService();
+            Resource resource;
+            if (!StringUtils.isEmpty(httpServletRequest.getHeader(RESOURCE_HEADER))) {
+                resource = resourceService.getRealEntity(Long.valueOf(httpServletRequest.getHeader(RESOURCE_HEADER)));
+            } else {
+                resource = resourceService.selectByUri(mvcDefineMapping, httpServletRequest.getMethod());
+            }
+
             accessLogService.pointAccess(httpServletRequest, user.orElse(null), resource);
             if (resource == null) {
                 return true;

@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 分页页面对象
@@ -57,7 +58,6 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
         this.itemKey = itemKey;
     }
 
-
     public Map<String, Map<String, Object>> getRecordExtend() {
         return recordExtend;
     }
@@ -70,10 +70,19 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     @Override
     public List<T> getRecords() {
         List<T> records = super.getRecords();
-        if (this.recordExtend == null && !StringUtils.isEmpty(itemKey) && view instanceof RecordExtender) {
+        if (this.recordExtend == null
+                && !StringUtils.isEmpty(itemKey)
+                && Objects.nonNull(view)
+                && view instanceof RecordExtender) {
             this.recordExtend = new HashMap<>(records.size());
             RecordExtender<T> recordExtender = (RecordExtender<T>) view;
-            records.forEach(record -> recordExtend.put(key(record), recordExtender.apply(record)));
+            records.forEach(record -> {
+                Map<String, Object> result = recordExtender.apply(record);
+                if (Objects.nonNull(result)) {
+                    recordExtend.put(key(record), result);
+                }
+
+            });
         }
         return records;
     }
