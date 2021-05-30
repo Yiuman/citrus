@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus.system.service;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.security.authenticate.NoPermissionException;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;

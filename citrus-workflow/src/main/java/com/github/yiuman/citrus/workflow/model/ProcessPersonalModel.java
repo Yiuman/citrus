@@ -19,9 +19,9 @@ public interface ProcessPersonalModel {
 
     /**
      * 1.下一个环节的候选人ID，若是只有一个，则为处理人
-     * @see CandidateModel 2.也可能为维度候选人模型的JSON字符串，
      *
      * @return 候选人ID列表
+     * @see CandidateModel 2.也可能为维度候选人模型的JSON字符串，
      */
     List<String> getCandidateOrAssigned();
 }

@@ -10,6 +10,7 @@ public interface CheckboxTableView extends TableView {
 
     /**
      * 是否可勾选
+     *
      * @return true/false
      */
     boolean getCheckable();

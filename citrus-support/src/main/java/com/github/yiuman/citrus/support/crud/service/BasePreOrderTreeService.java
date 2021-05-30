@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.support.crud.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -114,7 +113,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     }
 
     @Override
-    public boolean remove(E entity) throws Exception {
+    public boolean remove(E entity) {
         if (!this.beforeRemove(entity)) {
             return false;
         }

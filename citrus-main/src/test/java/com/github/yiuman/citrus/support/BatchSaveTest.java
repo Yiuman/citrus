@@ -53,7 +53,7 @@ public class BatchSaveTest {
         CrudMapper<Dictionary> crudMapper = CrudUtils.getCrudMapper(Dictionary.class);
         List<Dictionary> dictionaries = crudMapper.selectList(Wrappers.emptyWrapper());
         int size = dictionaries.size();
-        dictionaries.forEach(item->item.setDictCode("updateupdate"+item.getDictCode()));
+        dictionaries.forEach(item -> item.setDictCode("updateupdate" + item.getDictCode()));
         for (int i = 0; i < 10; i++) {
             Dictionary dictionary = new Dictionary();
             dictionary.setDictCode("di" + i);
@@ -67,7 +67,7 @@ public class BatchSaveTest {
 
         log.info("source size {},dictionaries size {}", size, dictionaries.size());
         List<Dictionary> selectList = crudMapper.selectList(Wrappers.emptyWrapper());
-        Assert.assertEquals(size+10, selectList.size());
+        Assert.assertEquals(size + 10, selectList.size());
     }
 
 }

@@ -34,6 +34,7 @@ public interface TreeView<T extends Tree<?>> extends View {
 
     /**
      * 设置树
+     *
      * @param tree 树实现
      */
     void setTree(T tree);
@@ -47,6 +48,7 @@ public interface TreeView<T extends Tree<?>> extends View {
 
     /**
      * 设置树的项主键
+     *
      * @param itemKey 字符串主键
      */
     void setItemKey(String itemKey);
@@ -60,6 +62,7 @@ public interface TreeView<T extends Tree<?>> extends View {
 
     /**
      * 设置实体项的展示文本标识
+     *
      * @param itemText 展示文本标识
      */
     void setItemText(String itemText);

@@ -54,7 +54,7 @@ public class WorkflowTest {
 
     @Test
     public void startProcess() {
-        WorkflowServiceImpl workflowService = SpringUtils.getBean(WorkflowServiceImpl.class,true);
+        WorkflowServiceImpl workflowService = SpringUtils.getBean(WorkflowServiceImpl.class, true);
         StartProcessModelImpl startProcessModel = StartProcessModelImpl.builder().processDefineKey("test_task_jump")
                 .userId("1")
                 .variables(new HashedMap<String, Object>() {{

@@ -31,7 +31,7 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
     }
 
     @Override
-    public void reInit()  {
+    public void reInit() {
     }
 
     @Override
@@ -42,7 +42,7 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
     }
 
     @Override
-    public E treeQuery(Wrapper<E> wrapper)  {
+    public E treeQuery(Wrapper<E> wrapper) {
         return initSimpleTreeByList(list(wrapper));
     }
 
@@ -72,7 +72,7 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
     }
 
     @Override
-    public void load(E current, boolean isLazy)  {
+    public void load(E current, boolean isLazy) {
         List<E> children = loadByParent(current.getId());
         current.setChildren(children);
         if (!isLazy) {

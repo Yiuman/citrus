@@ -39,7 +39,8 @@ public interface WorkflowService extends WorkflowEngineGetter {
 
     /**
      * 任务跳转
-     *  @param taskId          当前的任务
+     *
+     * @param taskId        当前的任务
      * @param targetTaskKey 目前任务的定义key
      */
     void jump(String taskId, String targetTaskKey);

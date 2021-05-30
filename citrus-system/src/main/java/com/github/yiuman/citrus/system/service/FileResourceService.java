@@ -32,8 +32,8 @@ public class FileResourceService extends BaseService<FileResource, String> {
     public String upload(String identify, MultipartFile file) throws Exception {
 
         //没有传文件标识即计算一次md5哈希值作为唯一标识
-        if(StringUtils.isEmpty(identify)){
-            identify =  makeIdentify(file.getInputStream());
+        if (StringUtils.isEmpty(identify)) {
+            identify = makeIdentify(file.getInputStream());
         }
 
         FileResource fileResource = get(Wrappers.<FileResource>lambdaQuery().eq(FileResource::getIdentify, identify));

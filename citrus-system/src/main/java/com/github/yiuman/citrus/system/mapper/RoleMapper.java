@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus.system.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.system.entity.Authority;
 import com.github.yiuman.citrus.system.entity.Role;

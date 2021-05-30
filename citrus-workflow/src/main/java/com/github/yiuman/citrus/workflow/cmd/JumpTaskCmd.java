@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.workflow.cmd;
 
 import com.github.yiuman.citrus.workflow.exception.WorkflowException;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.activiti.bpmn.model.FlowElement;
 import org.activiti.bpmn.model.Process;

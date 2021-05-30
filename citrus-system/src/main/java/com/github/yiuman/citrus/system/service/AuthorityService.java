@@ -50,7 +50,7 @@ public class AuthorityService extends BaseDtoService<Authority, Long, AuthorityD
     }
 
     @Override
-    public void afterSave(AuthorityDto entity)  {
+    public void afterSave(AuthorityDto entity) {
         //保存资源与权限的关系
         List<AuthorityResource> resources = entity.getResources();
 
