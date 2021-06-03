@@ -8,10 +8,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 分页页面对象
@@ -98,13 +95,19 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     @Override
     public String key(T entity) {
         try {
-            if (keyFiled == null) {
-                keyFiled = ReflectionUtils.findField(entity.getClass(), itemKey);
-                keyFiled.setAccessible(true);
+            if (entity instanceof Map) {
+                return ((Map<?, ?>) entity).get(itemKey).toString();
             }
+
+            keyFiled = Optional.ofNullable(keyFiled)
+                    .orElse(ReflectionUtils.findField(entity.getClass(), itemKey));
+            if (Objects.isNull(keyFiled)) {
+                return entity.toString();
+            }
+            keyFiled.setAccessible(true);
             return keyFiled.get(entity).toString();
         } catch (Exception ex) {
-            log.info("获取主键异常", ex);
+            log.warn("获取主键异常", ex);
             return entity.toString();
         }
     }

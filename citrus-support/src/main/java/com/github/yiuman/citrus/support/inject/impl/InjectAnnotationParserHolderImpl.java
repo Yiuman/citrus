@@ -77,6 +77,9 @@ public class InjectAnnotationParserHolderImpl implements InjectAnnotationParserH
                     continue;
                 }
                 Field field = ReflectionUtils.findField(targetClass, pd.getName());
+                if (Objects.isNull(field)) {
+                    continue;
+                }
                 ReflectionUtils.makeAccessible(field);
                 Method writeMethod = pd.getWriteMethod();
                 ReflectionUtils.makeAccessible(writeMethod);
