@@ -33,7 +33,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> extends BaseQue
      * @throws Exception 反射、数据库操作等异常
      */
     @Override
-    protected Object createView() throws Exception {
+    protected Object createView()  {
         PageTableView<T> view = new PageTableView<>();
         //构造页面小部件
         CrudUtils.getCrudWidgets(this).forEach(widget -> view.addWidget(widget, true));

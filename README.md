@@ -12,10 +12,10 @@
     <img alt="code style" src="https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg">
   </a>
   <a href="http://spring.io/projects/spring-boot">
-    <img alt="springboot-2.3.2" src="https://img.shields.io/badge/spring--boot-2.3.2-release.svg">
+    <img alt="springboot-2.5.0" src="https://img.shields.io/badge/spring--boot-2.5.0.svg">
   </a>
   <a href="http://mp.baomidou.com">
-    <img alt="mybatis-plus-3.4.1" src="https://img.shields.io/badge/mybatis--plus-3.4.1-blue.svg">
+    <img alt="mybatis-plus-3.4.3" src="https://img.shields.io/badge/mybatis--plus-3.4.3-blue.svg">
   </a>
    <a href="https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.yiuman%22%20AND%20a%3A%22citrus%22">
     <img alt="maven" src="https://img.shields.io/maven-central/v/com.github.yiuman/citrus?style=flat">
