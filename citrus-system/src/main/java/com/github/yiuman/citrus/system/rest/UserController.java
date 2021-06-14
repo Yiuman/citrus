@@ -3,8 +3,10 @@ package com.github.yiuman.citrus.system.rest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.security.authorize.Authorize;
-import com.github.yiuman.citrus.support.crud.query.QueryParam;
 import com.github.yiuman.citrus.support.crud.query.QueryParamHandler;
+import com.github.yiuman.citrus.support.crud.query.QueryParamMeta;
+import com.github.yiuman.citrus.support.crud.query.annotations.Like;
+import com.github.yiuman.citrus.support.crud.query.annotations.QueryParam;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
@@ -165,7 +167,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
     @Data
     static class UserQuery {
 
-        @QueryParam(type = "like")
+        @Like
         private String username;
 
         @QueryParam(handler = UserQueryHandler.class)
@@ -185,7 +187,8 @@ public class UserController extends BaseCrudController<UserDto, Long> {
 
             @SuppressWarnings("unchecked")
             @Override
-            public void handle(QueryParam queryParam, Object object, Field field, QueryWrapper<?> queryWrapper) {
+            public void handle(QueryParamMeta queryParamMeta, Object object, QueryWrapper<?> queryWrapper) {
+                Field field = queryParamMeta.getField();
                 ReflectionUtils.makeAccessible(field);
                 List<Long> roleIds = (List<Long>) ReflectionUtils.getField(field, object);
                 if (roleIds == null) {

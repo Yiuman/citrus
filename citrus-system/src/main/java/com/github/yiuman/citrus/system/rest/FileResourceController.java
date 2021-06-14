@@ -32,7 +32,6 @@ public class FileResourceController extends BaseQueryRestful<FileResource, Strin
         return fileResourceService;
     }
 
-
     @PostMapping("/upload")
     public String upload(String identify, MultipartFile file) throws Exception {
         return fileResourceService.upload(identify, file);

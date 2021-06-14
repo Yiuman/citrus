@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.system.rest;
 
-import com.github.yiuman.citrus.support.crud.query.QueryParam;
+import com.github.yiuman.citrus.support.crud.query.annotations.Equals;
+import com.github.yiuman.citrus.support.crud.query.annotations.Like;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
@@ -31,10 +32,10 @@ public class ResourceController extends BaseCrudController<ResourceDto, Long> {
     @Data
     static class ResourceQuery {
 
-        @QueryParam(type = "like")
+        @Like
         private String resourceName;
 
-        @QueryParam
+        @Equals
         private Long parentId;
     }
 

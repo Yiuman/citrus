@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.system.rest;
 
-import com.github.yiuman.citrus.support.crud.query.QueryParam;
+import com.github.yiuman.citrus.support.crud.query.annotations.Like;
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
 import com.github.yiuman.citrus.support.crud.view.TreeView;
@@ -33,7 +33,7 @@ public class OrganController extends BaseTreeController<Organization, Long> {
     @Data
     static class OrganQuery {
 
-        @QueryParam(type = "like")
+        @Like
         private String organName;
 
     }
@@ -44,7 +44,7 @@ public class OrganController extends BaseTreeController<Organization, Long> {
     }
 
     @Override
-    protected TreeView<Organization> createTreeView() throws Exception {
+    protected TreeView<Organization> createTreeView() {
         PageTreeView<Organization> view = new PageTreeView<>();
         view.setItemText("organName");
         view.addWidget("组织名称", "organName");
@@ -54,7 +54,7 @@ public class OrganController extends BaseTreeController<Organization, Long> {
 
 
     @Override
-    protected DialogView createEditableView() throws Exception {
+    protected DialogView createEditableView() {
         DialogView dialogView = new DialogView();
         dialogView.addEditField("组织机构名称", "organName").addRule("required");
         dialogView.addEditField("组织机构代码", "organCode").addRule("required");

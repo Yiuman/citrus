@@ -3,7 +3,7 @@ package com.github.yiuman.citrus.system.rest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.github.yiuman.citrus.support.crud.query.QueryParam;
+import com.github.yiuman.citrus.support.crud.query.annotations.Like;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
@@ -47,7 +47,7 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
     @Data
     static class RoleQuery {
 
-        @QueryParam(type = "like")
+        @Like
         private String roleName;
 
         private List<Long> authIds;

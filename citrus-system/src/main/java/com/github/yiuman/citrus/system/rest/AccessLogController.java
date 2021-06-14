@@ -1,7 +1,8 @@
 package com.github.yiuman.citrus.system.rest;
 
 import cn.hutool.core.date.DateUtil;
-import com.github.yiuman.citrus.support.crud.query.QueryParam;
+import com.github.yiuman.citrus.support.crud.query.annotations.Equals;
+import com.github.yiuman.citrus.support.crud.query.annotations.In;
 import com.github.yiuman.citrus.support.crud.rest.BaseQueryController;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.model.Header;
@@ -30,10 +31,10 @@ public class AccessLogController extends BaseQueryController<AccessLog, Long> {
     @Data
     static class AccessLogQuery {
 
-        @QueryParam
+        @Equals
         private Long userId;
 
-        @QueryParam(type = "in")
+        @In(mapping = "resource_type")
         private List<Long> resourceType;
     }
 
@@ -46,6 +47,8 @@ public class AccessLogController extends BaseQueryController<AccessLog, Long> {
         view.addHeader("参数", "params");
         view.addHeader("资源名称", "resourceName");
         view.addHeader("时间", "createTime_", entity -> DateUtil.format(entity.getCreatedTime(), "yyyy-MM-dd hh:mm:ss"));
+
+        view.addWidget("用户", "userId");
         return view;
     }
 

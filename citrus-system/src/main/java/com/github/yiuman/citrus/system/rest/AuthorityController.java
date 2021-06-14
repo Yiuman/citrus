@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.system.rest;
 
-import com.github.yiuman.citrus.support.crud.query.QueryParam;
+import com.github.yiuman.citrus.support.crud.query.annotations.Like;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.utils.Buttons;
@@ -30,10 +30,9 @@ public class AuthorityController extends BaseCrudController<AuthorityDto, Long> 
     @Data
     static class AuthorityQuery {
 
-        @QueryParam
+        @Like
         private String authorityName;
     }
-
 
     @Override
     protected AuthorityService getService() {
