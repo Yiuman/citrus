@@ -53,7 +53,7 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
             return null;
         }
         BaseMapper<E> mapper = getMapper();
-        Assert.notNull(mapper, "error: can not execute. because can not find mapper for entity!");
+        Assert.notNull(mapper, String.format("error: can not execute. because can not find mapper for entity:[%s]", getEntityType().getName()));
 
         if (Objects.nonNull(entity)) {
             getMapper().saveEntity(entity);

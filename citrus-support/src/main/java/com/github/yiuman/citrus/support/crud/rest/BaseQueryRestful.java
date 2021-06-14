@@ -3,14 +3,16 @@ package com.github.yiuman.citrus.support.crud.rest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.github.yiuman.citrus.support.crud.query.QueryParam;
-import com.github.yiuman.citrus.support.crud.query.QueryParamHandler;
+import com.github.yiuman.citrus.support.crud.query.QueryWrapperHelper;
 import com.github.yiuman.citrus.support.crud.view.impl.SimpleTableView;
 import com.github.yiuman.citrus.support.exception.ValidateException;
 import com.github.yiuman.citrus.support.inject.InjectAnnotationParserHolder;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.model.SortBy;
-import com.github.yiuman.citrus.support.utils.*;
+import com.github.yiuman.citrus.support.utils.CrudUtils;
+import com.github.yiuman.citrus.support.utils.SpringUtils;
+import com.github.yiuman.citrus.support.utils.ValidateUtils;
+import com.github.yiuman.citrus.support.utils.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.ReflectionUtils;
@@ -19,7 +21,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -55,7 +60,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
      * @return 分页页面对象
      * @throws Exception 反射等异常
      */
-    protected Object createView() throws Exception {
+    protected Object createView() {
         SimpleTableView<T> view = new SimpleTableView<>();
         //构造页面小部件
         CrudUtils.getCrudWidgets(this).forEach(widget -> view.addWidget(widget, true));
@@ -158,7 +163,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
         //将请求转化成参数
         Object params = WebUtils.requestDataBind(paramClass, request, true);
         //注解注入
-        if (paramClass != null) {
+        if (Objects.nonNull(paramClass)) {
             if (Objects.isNull(params)) {
                 params = BeanUtils.instantiateClass(paramClass);
             }
@@ -169,13 +174,14 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
     }
 
     protected QueryWrapper<T> getQueryWrapper(Object params) {
-        if (params == null) {
+        if (Objects.isNull(params)) {
             return null;
         }
 
-        QueryWrapper<T> wrapper = Wrappers.query();
         //检验参数
         ValidateUtils.validateEntityAndThrows(params, result -> new ValidateException(result.getMessage()));
+
+        QueryWrapper<T> wrapper = Wrappers.query();
         //拼接查询条件
         handleQueryWrapper(wrapper, params);
         if (!org.springframework.util.StringUtils.hasText(wrapper.getTargetSql())) {
@@ -197,7 +203,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
 
         //拼接排序条件
         SortBy sortBy = WebUtils.requestDataBind(SortBy.class, request);
-        if (sortBy != null && org.springframework.util.StringUtils.hasText(sortBy.getSortBy())) {
+        if (Objects.nonNull(sortBy) && org.springframework.util.StringUtils.hasText(sortBy.getSortBy())) {
             sortItemHandler.accept(sortBy);
             sortByList.stream().filter(sortByItem -> !sortByItem.getSortBy().equals(sortBy.getSortBy()))
                     .forEach(sortItemHandler);
@@ -217,17 +223,18 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
      * @param params  参数对象
      */
     protected void handleQueryWrapper(final QueryWrapper<T> wrapper, Object params) {
-        Arrays.stream(paramClass.getDeclaredFields())
-                .filter(field -> field.getAnnotation(QueryParam.class) != null)
-                .forEach(LambdaUtils.consumerWrapper(field -> {
-                            QueryParam annotation = field.getAnnotation(QueryParam.class);
-                            Class<? extends QueryParamHandler> handlerClass = annotation.handler();
-                            if (!handlerClass.isInterface()) {
-                                QueryParamHandler handler = SpringUtils.getBean(handlerClass, true);
-                                handler.handle(annotation, params, field, wrapper);
-                            }
-                        })
-                );
+        QueryWrapperHelper.doInjectQueryWrapper(wrapper, params);
+//        Arrays.stream(paramClass.getDeclaredFields())
+//                .filter(field -> field.getAnnotation(QueryParam.class) != null)
+//                .forEach(LambdaUtils.consumerWrapper(field -> {
+//                            QueryParam annotation = field.getAnnotation(QueryParam.class);
+//                            Class<? extends QueryParamHandler> handlerClass = annotation.handler();
+//                            if (!handlerClass.isInterface()) {
+//                                QueryParamHandler handler = SpringUtils.getBean(handlerClass, true);
+//                                handler.handle(annotation, params, field, wrapper);
+//                            }
+//                        })
+//                );
     }
 
 }

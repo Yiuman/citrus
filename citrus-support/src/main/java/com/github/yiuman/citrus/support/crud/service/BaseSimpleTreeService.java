@@ -35,7 +35,7 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
     }
 
     @Override
-    public E load(boolean isLazy) throws Exception {
+    public E load(boolean isLazy) {
         E root = getRoot();
         load(root, isLazy);
         return root;
@@ -67,7 +67,7 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
     }
 
     @Override
-    public void load(E current) throws Exception {
+    public void load(E current) {
         load(true);
     }
 
