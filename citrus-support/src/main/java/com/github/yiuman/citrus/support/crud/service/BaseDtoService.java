@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.support.crud.service;
 
+import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -14,7 +15,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -91,7 +92,9 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean batchSave(Iterable<D> entityIterable) {
-        return getBaseMapper().saveBatch((Collection<E>) entityIterable);
+        final List<E> entityList = new ArrayList<>();
+        entityIterable.forEach(dto -> entityList.add(dtoToEntity().apply(dto)));
+        return getBaseMapper().saveBatch(entityList);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -114,8 +117,9 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean remove(Wrapper<D> wrappers) {
-        return ekBaseService.remove((Wrapper<E>) wrappers);
+    public boolean remove(Wrapper<D> wrapper) {
+        assertWrapper(wrapper);
+        return ekBaseService.remove((Wrapper<E>) wrapper);
     }
 
     @Override
@@ -136,6 +140,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
     @SuppressWarnings("unchecked")
     @Override
     public D get(Wrapper<D> wrapper) {
+        assertWrapper(wrapper);
         return entityToDto().apply(getBaseMapper().selectOne((Wrapper<E>) wrapper));
     }
 
@@ -147,11 +152,13 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
     @SuppressWarnings("unchecked")
     @Override
     public List<D> list(Wrapper<D> wrapper) {
+        assertWrapper(wrapper);
         return ConvertUtils.listConvert(dtoClass, ekBaseService.list((Wrapper<E>) wrapper));
     }
 
     @Override
     public <P extends IPage<D>> P page(P page, Wrapper<D> queryWrapper) {
+        assertWrapper(queryWrapper);
         //拷贝
         Page<E> entityPage = new Page<>();
         BeanUtils.copyProperties(page, entityPage);
@@ -167,6 +174,19 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         Field field = ReflectionUtils.findField(dtoClass, ekBaseService.getKeyProperty());
         field.setAccessible(true);
         field.set(entity, key);
+    }
+
+    /**
+     * 断言当前的Wrapper是否使用了Lambda的实现，如果是则抛出异常。
+     * 因为DTO并没有映射数据库表信息，Lambda实现会反射找到DTO实体类对应的数据表信息，找不到会出异常
+     * 所以DTO服务类中使用普通的wrapper
+     *
+     * @param wrapper Wrapper
+     */
+    private void assertWrapper(Wrapper<D> wrapper) {
+        if (wrapper instanceof AbstractLambdaWrapper) {
+            throw new RuntimeException(String.format("DTO's service class cannot use LambdaWrapper:[%s]", wrapper.getClass()));
+        }
     }
 
 }

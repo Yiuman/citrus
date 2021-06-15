@@ -5,11 +5,11 @@ import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.crud.service.KeyBasedService;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
-import com.github.yiuman.citrus.support.utils.WebUtils;
 import com.github.yiuman.citrus.workflow.exception.WorkflowException;
 import com.github.yiuman.citrus.workflow.service.WorkflowService;
 import com.github.yiuman.citrus.workflow.service.impl.WorkflowServiceImpl;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
  * @author yiuman
  * @date 2021/3/8
  */
+@Slf4j
 public abstract class BaseWorkflowQueryController<E, K extends Serializable>
         extends BaseQueryController<E, K> implements KeyBasedService<E, K> {
 
@@ -41,7 +42,7 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
     /**
      * 对应实体匹配的查询器
      */
-    private final Map<Class<?>, Supplier<? extends Query<?, ?>>> QUERY_MAPPING = new HashMap<>();
+    private final Map<Class<?>, Supplier<? extends Query<?, ?>>> QUERY_MAPPING = new HashMap<>(8);
 
     public BaseWorkflowQueryController() {
         initQueryMapping();
@@ -76,10 +77,6 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
                 .orElse(SpringUtils.getBean(WorkflowServiceImpl.class, true));
     }
 
-    protected void setProcessService(WorkflowService workflowService) {
-        this.workflowService = workflowService;
-    }
-
     protected ProcessEngine getProcessEngine() {
         return getProcessService().getProcessEngine();
     }
@@ -92,15 +89,19 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
     @Override
     public Page<E> page(HttpServletRequest request) throws Exception {
         Page<E> page = new Page<>();
-        WebUtils.requestDataBind(page, request);
-        page.setTotal(getQuery().count());
-        page.setRecords(
-                getPageable(
-                        getQueryParams(request),
-                        (int) page.getCurrent(),
-                        (int) page.getSize()
-                )
-        );
+        Object queryParams = getQueryParams(request);
+        //注入参数查询总数
+        page.setTotal(getCount(queryParams));
+        if (page.getTotal() > 0) {
+            page.setRecords(
+                    getPageable(
+                            getQueryParams(request),
+                            (int) page.getCurrent(),
+                            (int) page.getSize()
+                    )
+            );
+        }
+
         page.setView(createView());
         page.setItemKey("id");
         return page;
@@ -142,6 +143,12 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
      * @return 分页后的数据
      */
     protected <Q extends Query<Q, ?>> List<E> getPageable(Object params, int current, int pageSize) {
+        Q query = doInjectQuery(params);
+        List<?> pageList = query.listPage(current - 1, pageSize);
+        return pageList.stream().map(getTransformFunc()).collect(Collectors.toList());
+    }
+
+    public <Q extends Query<Q, ?>> Q doInjectQuery(Object params) {
         Q query = getQuery();
         if (Objects.nonNull(paramClass) && Objects.nonNull(params)) {
             ReflectionUtils.doWithFields(paramClass, (field) -> {
@@ -149,17 +156,29 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
                 Object methodAttr = field.get(params);
                 if (!ObjectUtils.isEmpty(methodAttr)) {
                     try {
-                        Method method = query.getClass().getMethod(field.getName(), field.getType());
-                        method.invoke(query, methodAttr);
-                    } catch (Exception ignore) {
+                        Method method;
+                        if (Boolean.class.equals(field.getType())) {
+                            method = query.getClass().getMethod(field.getName());
+                            method.invoke(query);
+
+                        } else {
+                            method = query.getClass().getMethod(field.getName(), field.getType());
+                            method.invoke(query, methodAttr);
+                        }
+
+
+                    } catch (Throwable ex) {
+                        log.debug("Error in executing query instance method", ex);
                     }
                 }
 
             });
         }
+        return query;
+    }
 
-        List<?> pageList = query.listPage(current - 1, pageSize);
-        return pageList.stream().map(getTransformFunc()).collect(Collectors.toList());
+    protected long getCount(Object params) {
+        return doInjectQuery(params).count();
     }
 
     /**

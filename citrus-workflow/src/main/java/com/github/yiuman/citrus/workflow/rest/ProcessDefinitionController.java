@@ -60,6 +60,16 @@ public class ProcessDefinitionController extends BaseWorkflowQueryController<Pro
         String processDefinitionNameLike;
 
         String processDefinitionCategoryLike;
+
+        /**
+         * 活动的
+         */
+        Boolean active = true;
+
+        /**
+         * 最新的版本
+         */
+        Boolean latestVersion = true;
     }
 
 
@@ -69,12 +79,13 @@ public class ProcessDefinitionController extends BaseWorkflowQueryController<Pro
 
     @Override
     protected Object createView() {
-        PageTableView<Deployment> view = new PageTableView<>();
+        PageTableView<Deployment> view = new PageTableView<>(false);
         view.addWidget("流程定义Key", "processDefinitionKeyLike");
         view.addWidget("名称", "processDefinitionNameLike");
         view.addWidget("目录", "processDefinitionCategoryLike");
         view.addHeader("ID", "id");
         view.addHeader("流程定义名称", "name");
+        view.addHeader("目录", "category");
         view.addHeader("版本号", "version");
         return view;
     }

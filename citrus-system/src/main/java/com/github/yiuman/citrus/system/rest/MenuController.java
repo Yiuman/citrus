@@ -39,7 +39,7 @@ public class MenuController extends BaseTreeController<Resource, Long> {
     }
 
     @Override
-    protected TreeView<Resource> createTreeView() throws Exception {
+    protected TreeView<Resource> createTreeView()  {
         PageTreeView<Resource> view = new PageTreeView<>();
         view.setItemText("resourceName");
         view.addWidget("菜单名称", "resourceName");
@@ -49,7 +49,7 @@ public class MenuController extends BaseTreeController<Resource, Long> {
     }
 
     @Override
-    protected Object createEditableView() throws Exception {
+    protected Object createEditableView()  {
         DialogView view = new DialogView();
         view.addEditField("菜单名称", "resourceName").addRule("required");
         view.addEditField("路径", "path");

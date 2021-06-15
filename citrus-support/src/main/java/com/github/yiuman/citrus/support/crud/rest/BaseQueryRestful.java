@@ -108,7 +108,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
 
     @Override
     public void exp(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String fileName = WebUtils.getRequestParam("fileName");
+        String fileName = WebUtils.getRequestParam("filename");
         if (StringUtils.isBlank(fileName)) {
             fileName = String.valueOf(System.currentTimeMillis());
         }
@@ -224,17 +224,6 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
      */
     protected void handleQueryWrapper(final QueryWrapper<T> wrapper, Object params) {
         QueryWrapperHelper.doInjectQueryWrapper(wrapper, params);
-//        Arrays.stream(paramClass.getDeclaredFields())
-//                .filter(field -> field.getAnnotation(QueryParam.class) != null)
-//                .forEach(LambdaUtils.consumerWrapper(field -> {
-//                            QueryParam annotation = field.getAnnotation(QueryParam.class);
-//                            Class<? extends QueryParamHandler> handlerClass = annotation.handler();
-//                            if (!handlerClass.isInterface()) {
-//                                QueryParamHandler handler = SpringUtils.getBean(handlerClass, true);
-//                                handler.handle(annotation, params, field, wrapper);
-//                            }
-//                        })
-//                );
     }
 
 }

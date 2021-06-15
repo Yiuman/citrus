@@ -84,7 +84,8 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
         });
         Class<? extends QueryRestful> restBeanClass = targetClass.get();
         if (Objects.nonNull(restBeanClass)) {
-            resourceService.remove(Wrappers.<ResourceDto>lambdaQuery().eq(ResourceDto::getParentId, entity.getResourceId()));
+            //这里只能用QueryWrapper不能用LambdaQuery实现，AbstractLambdaQuery会找表，ResourceDto没有对应的表
+            resourceService.remove(Wrappers.<ResourceDto>query().eq("parent_id", entity.getResourceId()));
             createQueryDefaultResource(entity);
 
             if (BaseCrudController.class.isAssignableFrom(restBeanClass)) {
