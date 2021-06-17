@@ -1,10 +1,10 @@
-### 通用CRUD指南
+# 通用CRUD指南
 
-#### 如何使用？
+## 如何使用？
 
-##### 最简单的方式
+### 最简单的方式
 
-1. 定义表实体，如Student
+1. **定义表实体，如Student**
 
    ```java
    @Data
@@ -21,7 +21,7 @@
    }
    ```
 
-2. 继承基础REST控制器BaseCrudController
+2. **继承基础REST控制器BaseCrudController**
 
    ```java
    @RestController
@@ -42,9 +42,9 @@
 
 
 
-##### 树形结构
+### 树形结构
 
-1. 定义表实体，继承BaseTree（最简单的树形）或BasePreOrderTree（预遍历树，有左右值）
+1. **定义表实体，继承BaseTree（最简单的树形）或BasePreOrderTree（预遍历树，有左右值）**
 
    ```java
    @Data
@@ -90,7 +90,7 @@
    
 
 
-2. 继承基础的树形控制器BaseTreeController
+2. **继承基础的树形控制器BaseTreeController**
 
    ```java
    @RestController
@@ -103,20 +103,18 @@
        }
    }
    ```
-   
-   
-
-
 
 > 至此，通用的树形CRUD功能已经实现，已经包含除基础REST风格的CRUD功能（分页、保存、获取、更新、删除）外的树形相关操作接口，如加载树形接口/tree ，根据父节加载/tree/{parentKey}，导出树形JSON文件等。
 
 
 
-##### 复杂业务逻辑的CRUD
+### 复杂业务逻辑的CRUD
 
-**情况一**：接参与库表基本一致时，可不使用DTO进行传输，简单的重写相关方法进行逻辑处理，如Student的学号属性需要初始化。下面提供两种方式进行处理
+**情况一**：
 
-- 方式一，重写BaseCrudController中的save方法
+> 接参与库表基本一致时，可不使用DTO进行传输，简单的重写相关方法进行逻辑处理，如Student的学号属性需要初始化。下面提供两种方式进行处理
+
+- **方式一，重写BaseCrudController中的save方法**
 
   ```java
   @RestController
@@ -140,7 +138,7 @@
 
   
 
-- 方式二：重写protected CrudService<T, K> getService() 方法，引用自己的逻辑层进行实现
+- **方式二：重写protected CrudService<T, K> getService() 方法，引用自己的逻辑层进行实现**
 
   ```java
   @RestController
@@ -180,13 +178,14 @@
     
   ```
   
-  
 
 
 
-**情况二**，表单与库表差距巨大，业务逻辑复杂，需要定义传输类DTO进行表单接收及逻辑处理。
+**情况二**：
 
-- 定义逻辑表单传输类DTO
+>  表单与库表差距巨大，业务逻辑复杂，需要定义传输类DTO进行表单接收及逻辑处理。
+
+- **定义逻辑表单传输类DTO**
 
   ```java
   @Data
@@ -229,7 +228,7 @@
 
   
 
-- 继承BaseDtoService<E, K extends Serializable, D>实现业务逻辑
+- **继承BaseDtoService<E, K extends Serializable, D>实现业务逻辑**
 
   ```java
   @Service
@@ -306,7 +305,7 @@
 
   
 
-- 重写contorller中的protected CrudService<T, K> getService()方法
+- **重写contorller中的protected CrudService<T, K> getService()方法**
 
   ```java
   @RestController
@@ -331,29 +330,26 @@
   
   ```
   
-  
-  
-  
 
 
 > 至此，非常复杂的业务逻辑，使用DTO进行前后端交互的CRUD例子已完成
 
 
 
-##### 查询、排序
+### 查询、排序
 
 > 一遍的列表或者树形都有或许简单、或许复杂的查询，底层用的是Mybatis-plus，顶层已经进行了注解式封装及简化。
 
-1. 定义查询参数类
+#### 定义查询参数类
 
    ```java
    @Data
    public class StudentQuery {
    
-       @QueryParam(type = "like")
+       @Like
        private String studentName;
    
-     	@QueryParam(type = "eq",mapping="student_no")
+     	@Eq
        private String studentNo
          
        @QueryParam(handler=ClassIdsQueryHandler.class)  
@@ -361,9 +357,15 @@
    }
    ```
 
+   上面的**查询参数类**的例子中，使用了`@Like`、`@Eq`注解，这些查询注解都在程序包`com.github.yiuman.citrus.support.crud.query.annotations`下。当请求进来时，会根据查询类实体的字段名称与请求参数绑定进行自动注入，构造成一个**查询参数类的实例（已注入数据）**,然后根据这些注解的作用，将值赋值到对应的查询**QueryWrapper**中。
+
    
 
-   上面的`@QueryParam`用于标记此字段是查询参数字段，若类中没有进行标记的则不作查询参数处理，请看下面是QueryParam的详细解释
+   >  这些注解的**“父注解”**都是`@QueryParam`，你也可以快乐地定义自己的注解。最终会调用注定定义的handler属性进行对参数类的自动注入。
+
+   
+
+ `@QueryParam`用于标记此字段是查询参数字段，若类中没有进行标记的则不作查询参数处理，请看下面是QueryParam的详细解释
 
    ```java
    @Target({ElementType.FIELD, ElementType.TYPE})
@@ -402,7 +404,9 @@
    }
    ```
 
-   查询参数处理器目前默认使用的是`DefaultQueryParamHandler`，会对参数自定自行封装及处理拼接，也可自定义参数参数的拼接，如下上面的查询参数类的classIds所属班级的复杂查询拼接
+
+
+查询参数处理器目前默认使用的是`com.github.yiuman.citrus.support.crud.query.impl.DefaultQueryParamHandler`，会对参数自定自行封装及处理拼接，也可自定义参数参数的拼接，如下上面的查询参数类的classIds所属班级的复杂查询拼接。
 
    ```java
    @Component
@@ -441,7 +445,7 @@
 
    
 
-2. 在Controller构造进行设置查询类型与字段排序方式
+#### 在Controller构造进行设置查询类型与字段排序方式
 
    ```java
    @RestController
@@ -481,7 +485,9 @@
    protected void addSortBy(String column) {}
    ```
 
-3. 自动入参填充/重写手动拼写查询参数
+
+
+#### 自动入参填充/重写手动拼写查询参数
 
    如步骤2中已经设置了查询参数类以及添加了排序，则会基于Mybatis-plus的QueryWrapper自动拼接查询，拼出来的实现如下：
 
@@ -508,7 +514,7 @@
 
 
 
-##### 查询参数自定义注解注入
+#### 查询参数自定义注解注入
 
 > 通过自定义注解实现查询参数的动态注入，下面以动态注入当前用户ID为例
 
@@ -546,7 +552,7 @@
    @Data
    public class UserQuery {
    
-   	@QueryParam
+   	@Eq
    	@UserId
    	private Long userId;
    }
@@ -554,7 +560,7 @@
 
    
 
-#### 相关基类说明
+### 相关基类说明
 
    基础的相关的CRUD操作已抽出基础的三层，即Controller-Service-Dao，控制层-逻辑层-持久层。
 
@@ -573,16 +579,15 @@
 
 
 
-#### 背后的魔法
+### 背后的魔法
 
 ##### 1.为什么只要定义实体继承基础的控制器便可实现基础的增删改查？
 
-> 根据定义的实体类，使用字节码技术动态地构造一层或者两层的CRUD操作实现，如上面的StudentController,会根据Student实体，构造出StudentService，StudentMapper并放进Spring进行管理。相当于生成器自动生成了3层代码。
+​	根据定义的实体类，使用字节码技术动态地构造一层或者两层的CRUD操作实现，如上面的StudentController,会根据Student实体，构造出StudentService，StudentMapper并放进Spring进行管理。相当于生成器自动生成了3层代码。
 
 ##### 2.从接口入参到数据库查询的实现流程
 
-> 查询接口通过HttpServletRequest进行接口参数，通过反射与DataBinder对request中的参数进行解释及将绑定到对应的查询类上。此时已知查询条件。再通过解析查询类中标记的@QueryParms注解，找到Mybatis-Plus中的Wrapper相关方法进行拼接进行查询
-
+​	查询接口通过HttpServletRequest进行接口参数，通过反射与DataBinder对request中的参数进行解释及将绑定到对应的查询类上。此时已知查询条件。再通过解析查询类中标记的@QueryParms注解，找到Mybatis-Plus中的Wrapper相关方法进行拼接进行查询.
 
 
 
