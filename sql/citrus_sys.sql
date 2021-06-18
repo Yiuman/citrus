@@ -4,13 +4,15 @@ CREATE DATABASE IF NOT EXISTS citrus DEFAULT CHARSET utf8 COLLATE utf8_general_c
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
+use citrus;
+
 -- ------------用户表----------------
 DROP TABLE IF EXISTS `sys_user`;
 CREATE TABLE `sys_user`
 (
   `user_id`            bigint(20) NOT NULL COMMENT '主键id',
   `login_id`           varchar(45) DEFAULT NULL COMMENT '登录Id',
-  `password`           varchar(45) DEFAULT NULL COMMENT '密码',
+  `password`           varchar(100) DEFAULT NULL COMMENT '密码',
   `username`           varchar(45) DEFAULT NULL COMMENT '名字',
   `email`              varchar(45) DEFAULT NULL COMMENT '电子邮件',
   `mobile`             varchar(45) DEFAULT NULL COMMENT '手机',
@@ -32,12 +34,6 @@ create index IX_SYS_USER_LOGINID on sys_user (login_id);
 create index IX_SYS_USER_USERNAME on sys_user (username);
 create index IX_SYS_USER_UUID on sys_user (uuid);
 create index IX_SYS_USER_MOBILE on sys_user (mobile);
-
-INSERT INTO sys_user (user_id, login_id, password, username, email, mobile, uuid, status, created_time, created_by,
-                      last_modified_time, last_modified_by, version, admin, avatar)
-VALUES (1, 'admin', '$2a$10$gK0BhYud6iSM7um4RLCYvuYEvtWSLYjsKb3VlTEcxgbtPQC3pAK9C', '平台管理员', '415481084@qq.com',
-        '13119593102', 'YvuYEvtWSLYjsKb3VlTEcxgbtPQC3pAK9C', 1, '2020-09-23 03:27:51', null, '2020-09-23 03:27:51', 1,
-        1, 1, null);
 
 -- ----------------------------
 
@@ -87,7 +83,6 @@ CREATE TABLE `sys_resource`
   ROW_FORMAT = DYNAMIC COMMENT ='资源表';
 
 create index IX_SYS_RESOURCE_RESOURCENAME on sys_resource (resource_name);
-create index IX_SYS_RESOURCE_PATH on sys_resource (path);
 -- ----------------------------
 
 -- ------------组织机构表----------------
@@ -128,15 +123,6 @@ CREATE TABLE `sys_scope`
   DEFAULT CHARSET = utf8
   ROW_FORMAT = DYNAMIC COMMENT ='数据范围表';
 
-
-INSERT INTO sys_scope (scope_id, scope_name, organ_id)
-VALUES (1, '当前部门', -1);
-INSERT INTO sys_scope (scope_id, scope_name, organ_id)
-VALUES (2, '当前部门及下属部门', -1);
-INSERT INTO sys_scope (scope_id, scope_name, organ_id)
-VALUES (3, '当前部门的下属部门', -1);
-INSERT INTO sys_scope (scope_id, scope_name, organ_id)
-VALUES (4, '当前部门及上级部门', -1);
 -- ----------------------------
 
 -- ------------数据范围定义表----------------
@@ -153,14 +139,6 @@ CREATE TABLE `sys_scope_define`
   DEFAULT CHARSET = utf8
   ROW_FORMAT = DYNAMIC COMMENT ='数据范围定义表';
 
-INSERT INTO sys_scope_define (id, scope_id, organ_id, scope_rule, scope_types)
-VALUES (1, 1, 0, 0, 1);
-INSERT INTO sys_scope_define (id, scope_id, organ_id, scope_rule, scope_types)
-VALUES (2, 2, 0, 0, 3);
-INSERT INTO sys_scope_define (id, scope_id, organ_id, scope_rule, scope_types)
-VALUES (3, 3, 0, 0, 2);
-INSERT INTO sys_scope_define (id, scope_id, organ_id, scope_rule, scope_types)
-VALUES (4, 4, 0, 0, 5);
 -- ----------------------------
 
 -- ------------权限表----------------
