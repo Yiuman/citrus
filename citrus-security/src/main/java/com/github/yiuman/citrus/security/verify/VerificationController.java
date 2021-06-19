@@ -24,6 +24,7 @@ import java.util.List;
  * @author yiuman
  * @date 2020/3/30
  */
+@SuppressWarnings("MVCPathVariableInspection")
 @Controller
 @RequestMapping("#{citrusProperties.security.verifyEndpointPrefix}")
 public class VerificationController {

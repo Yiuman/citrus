@@ -45,7 +45,7 @@ public class AuthenticateProcessorImpl implements AuthenticateProcessor {
 
     @Override
     public AuthenticateService findByMode(String mode) throws AuthenticationException {
-        if (StringUtils.isEmpty(mode)) {
+        if (!StringUtils.hasText(mode)) {
             throw new AuthenticationServiceException("The Authenticate's parameter 'model' must not be null");
         }
 

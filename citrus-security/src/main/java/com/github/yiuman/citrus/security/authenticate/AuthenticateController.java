@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2020/3/26
  */
 @RestController
+@SuppressWarnings("MVCPathVariableInspection")
 public class AuthenticateController {
 
     private final AuthenticateProcessor authenticateProcessor;

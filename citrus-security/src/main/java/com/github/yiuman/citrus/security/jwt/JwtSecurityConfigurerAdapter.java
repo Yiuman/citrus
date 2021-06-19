@@ -22,7 +22,7 @@ public class JwtSecurityConfigurerAdapter extends SecurityConfigurerAdapter<Defa
     }
 
     @Override
-    public void configure(HttpSecurity http) throws Exception {
+    public void configure(HttpSecurity http) {
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
     }
 }

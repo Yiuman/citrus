@@ -22,6 +22,7 @@ public class SystemAuthorizeConfigProvider implements AuthorizeConfigProvider {
         this.citrusProperties = citrusProperties;
     }
 
+    @SuppressWarnings("SpringElInspection")
     @Override
     public boolean config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
         config.antMatchers(citrusProperties.getSecurity().getAuthenticateEndpoint(),
