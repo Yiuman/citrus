@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.support.crud.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 可删除的Service接口
@@ -17,6 +18,7 @@ public interface DeletableService<E, K> {
      * @return 是否删除成功 true/false
      * @throws Exception 一般为数据库操作异常，或实体操作过程中的异常
      */
+    @Transactional(rollbackFor = Exception.class)
     boolean remove(E entity) throws Exception;
 
     /**
@@ -25,6 +27,7 @@ public interface DeletableService<E, K> {
      * @param keys 数据主键集合
      * @throws Exception 一般为数据库操作异常，或实体操作过程中的异常
      */
+    @Transactional(rollbackFor = Exception.class)
     void batchRemove(Iterable<K> keys) throws Exception;
 
     /**
@@ -33,11 +36,13 @@ public interface DeletableService<E, K> {
      * @param wrappers 删除的条件
      * @return 是否删除成功true/false
      */
+    @Transactional(rollbackFor = Exception.class)
     boolean remove(Wrapper<E> wrappers);
 
     /**
      * 删除全部记录
      */
+    @Transactional(rollbackFor = Exception.class)
     void clear();
 
 }
