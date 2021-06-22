@@ -9,7 +9,7 @@ import com.github.yiuman.citrus.system.enums.ScopeType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -43,7 +43,7 @@ public class DataRangeServiceImpl implements DataRangeService {
         try {
             Resource resource;
             ResourceService resourceService = rbacMixinService.getResourceService();
-            if (StringUtils.isEmpty(code)) {
+            if (ObjectUtils.isEmpty(code)) {
                 HttpServletRequest request = WebUtils.getRequest();
                 String mvcDefineMapping = WebUtils.getRequestMapping(request);
                 //没找到配置资源证明没有配置资源，需要要数据范围

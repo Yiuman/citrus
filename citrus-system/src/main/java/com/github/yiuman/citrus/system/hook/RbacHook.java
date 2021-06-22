@@ -10,7 +10,7 @@ import com.github.yiuman.citrus.system.service.ResourceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -62,7 +62,7 @@ public class RbacHook implements AuthorizeServiceHook {
             //没有配置资源的情况下都可以访问
             ResourceService resourceService = mixinService.getResourceService();
             Resource resource;
-            if (!StringUtils.isEmpty(httpServletRequest.getHeader(RESOURCE_HEADER))) {
+            if (!ObjectUtils.isEmpty(httpServletRequest.getHeader(RESOURCE_HEADER))) {
                 resource = resourceService.getRealEntity(Long.valueOf(httpServletRequest.getHeader(RESOURCE_HEADER)));
             } else {
                 resource = resourceService.selectByUri(mvcDefineMapping, httpServletRequest.getMethod());
