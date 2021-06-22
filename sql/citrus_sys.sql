@@ -89,18 +89,18 @@ create index IX_SYS_RESOURCE_RESOURCENAME on sys_resource (resource_name);
 DROP TABLE IF EXISTS `sys_organ`;
 CREATE TABLE `sys_organ`
 (
-  `organ_id`           bigint(20) NOT NULL COMMENT '主键id',
-  `organ_name`         varchar(250) NOT NULL COMMENT '资源名字',
-  `organ_code`         varchar(50)  NOT NULL COMMENT '组织机构代码',
-  `deep`               int  NOT NULL COMMENT '树的深度',
-  `parent_id`          bigint(20) NOT NULL NULL COMMENT '父ID',
-  `left_value`         int(7)     NOT NULL COMMENT '左值',
-  `right_value`        int(7)     NOT NULL COMMENT '右值',
-  `created_time`        datetime    DEFAULT NULL COMMENT '创建时间',
-  `created_by`          bigint(20)  DEFAULT NULL COMMENT '创建人',
-  `last_modified_time` datetime    DEFAULT NULL COMMENT '最后的更新时间',
-  `last_modified_by`   bigint(20)  DEFAULT NULL COMMENT '最后的更新人',
-  `remark`             varchar(1000)  DEFAULT NULL COMMENT '最后的更新人',
+  `organ_id`           bigint(20) AUTO_INCREMENT NOT NULL COMMENT '主键id',
+  `organ_name`         varchar(250)              NOT NULL COMMENT '资源名字',
+  `organ_code`         varchar(50)               NOT NULL COMMENT '组织机构代码',
+  `deep`               int                       NOT NULL COMMENT '树的深度',
+  `parent_id`          bigint(20)                NOT NULL NULL COMMENT '父ID',
+  `left_value`         int(7)                    NOT NULL COMMENT '左值',
+  `right_value`        int(7)                    NOT NULL COMMENT '右值',
+  `created_time`       datetime      DEFAULT NULL COMMENT '创建时间',
+  `created_by`         bigint(20)    DEFAULT NULL COMMENT '创建人',
+  `last_modified_time` datetime      DEFAULT NULL COMMENT '最后的更新时间',
+  `last_modified_by`   bigint(20)    DEFAULT NULL COMMENT '最后的更新人',
+  `remark`             varchar(1000) DEFAULT NULL COMMENT '最后的更新人',
   PRIMARY KEY (`organ_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
