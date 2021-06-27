@@ -341,6 +341,7 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private <T> void getBeansThen(Class<T> clazz, Consumer<List<T>> consumer) {
         if (this.applicationContext.getBeanNamesForType(clazz, false, false).length > 0) {
             Map<String, T> beansOfType = this.applicationContext.getBeansOfType(clazz);

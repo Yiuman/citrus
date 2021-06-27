@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.workflow.resolver;
 
+import com.github.yiuman.citrus.workflow.exception.WorkflowException;
 import org.activiti.engine.delegate.DelegateExecution;
 
 /**
@@ -27,5 +28,5 @@ public interface ExpressionResolver<T> {
      * @return 解释后的模型
      * @throws Exception 解析异常
      */
-    T resolve(DelegateExecution execution, String expressionStr) throws Exception;
+    T resolve(DelegateExecution execution, String expressionStr) throws WorkflowException;
 }

@@ -30,7 +30,6 @@ public abstract class BaseCrudRestful<T, K extends Serializable> extends BaseQue
      * 创建列表分页页面
      *
      * @return 分页页面对象
-     * @throws Exception 反射、数据库操作等异常
      */
     @Override
     protected Object createView() {

@@ -46,11 +46,13 @@ public abstract class BaseCrudController<T, K extends Serializable> extends Base
         return ResponseEntity.ok(save(entity));
     }
 
+    @SuppressWarnings("MVCPathVariableInspection")
     @DeleteMapping(Operations.DELETE)
     public ResponseEntity<Boolean> deleteByKey(@PathVariable @NotNull K key) throws Exception {
         return ResponseEntity.ok(delete(key));
     }
 
+    @SuppressWarnings("MVCPathVariableInspection")
     @GetMapping(Operations.GET)
     public ResponseEntity<T> getByKey(@PathVariable K key) {
         return ResponseEntity.ok(get(key));

@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.support.widget;
 
+import java.util.Objects;
+
 /**
  * 控件基类
  *
@@ -61,12 +63,15 @@ public abstract class BaseWidget<M> implements Widget<M> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BaseWidget)) return false;
+        if (this == o){
+            return true;
+        }
+        if (!(o instanceof BaseWidget)){
+            return false;
+        }
 
         BaseWidget<?> that = (BaseWidget<?>) o;
-
-        return key != null ? key.equals(that.key) : that.key == null;
+        return Objects.equals(key, that.key);
     }
 
     @Override

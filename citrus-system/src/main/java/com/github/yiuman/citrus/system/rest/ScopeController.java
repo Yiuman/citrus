@@ -61,7 +61,7 @@ public class ScopeController extends BaseCrudController<ScopeDto, Long> {
     }
 
     @Override
-    protected Object createEditableView() throws Exception {
+    protected Object createEditableView() {
         DialogView dialogView = new DialogView();
         dialogView.addEditField("数据范围名称", "scopeName");
         dialogView.addEditField("所属组织", "organId", organService.getOrganTree("选择机构", "organId", false));

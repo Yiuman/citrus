@@ -78,9 +78,8 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
      * 创建树形显示视图
      *
      * @return 树形结构的显示视图
-     * @throws Exception 反射异常
      */
-    protected TreeView<T> createTreeView() throws Exception {
+    protected TreeView<T> createTreeView() {
         return null;
     }
 
