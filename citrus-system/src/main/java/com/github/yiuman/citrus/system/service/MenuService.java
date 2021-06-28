@@ -10,6 +10,7 @@ import com.github.yiuman.citrus.support.crud.rest.QueryRestful;
 import com.github.yiuman.citrus.support.crud.service.BaseSimpleTreeService;
 import com.github.yiuman.citrus.system.dto.ResourceDto;
 import com.github.yiuman.citrus.system.entity.Resource;
+import com.github.yiuman.citrus.system.enums.ResourceType;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpMethod;
@@ -51,7 +52,7 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
             wrapper = Wrappers.query();
         }
         //菜单为0
-        ((QueryWrapper<Resource>) wrapper).lambda().eq(Resource::getType, 0);
+        ((QueryWrapper<Resource>) wrapper).lambda().eq(Resource::getType, ResourceType.MENU);
         return super.list(wrapper);
     }
 
@@ -64,7 +65,7 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
 
     @Override
     public boolean beforeSave(Resource entity) {
-        entity.setType(0);
+        entity.setType(ResourceType.MENU);
         return true;
     }
 
@@ -106,7 +107,7 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
      * @return 操作资源列表
      */
     public List<Resource> getOperationByKey(Long key) {
-        return super.list(Wrappers.<Resource>query().eq(getParentField(), key).lambda().eq(Resource::getType, 2));
+        return super.list(Wrappers.<Resource>query().eq(getParentField(), key).lambda().eq(Resource::getType, ResourceType.OPERATION));
     }
 
     /**
@@ -115,23 +116,20 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
      * @param menu 当前菜单
      */
     private void createCrudDefaultResource(Resource menu) {
-        final Integer resourceType = 2;
         resourceService.batchSave(Arrays.asList(
-                new ResourceDto("新增", resourceType, menu.getId(), menu.getPath(), HttpMethod.POST.name(), Operations.Code.ADD),
-                new ResourceDto("编辑", resourceType, menu.getId(), menu.getPath(), HttpMethod.POST.name(), Operations.Code.EDIT),
-                new ResourceDto("删除", resourceType, menu.getId(), menu.getPath() + Operations.DELETE, HttpMethod.DELETE.name(), Operations.Code.DELETE),
-                new ResourceDto("批量删除", resourceType, menu.getId(), menu.getPath() + Operations.BATCH_DELETE, HttpMethod.POST.name(), Operations.Code.BATCH_DELETE),
-                new ResourceDto("导入", resourceType, menu.getId(), menu.getPath() + Operations.IMPORT, HttpMethod.POST.name(), Operations.Code.IMPORT)
+                new ResourceDto("新增", ResourceType.OPERATION, menu.getId(), menu.getPath(), HttpMethod.POST.name(), Operations.Code.ADD),
+                new ResourceDto("编辑", ResourceType.OPERATION, menu.getId(), menu.getPath(), HttpMethod.POST.name(), Operations.Code.EDIT),
+                new ResourceDto("删除", ResourceType.OPERATION, menu.getId(), menu.getPath() + Operations.DELETE, HttpMethod.DELETE.name(), Operations.Code.DELETE),
+                new ResourceDto("批量删除", ResourceType.OPERATION, menu.getId(), menu.getPath() + Operations.BATCH_DELETE, HttpMethod.POST.name(), Operations.Code.BATCH_DELETE),
+                new ResourceDto("导入", ResourceType.OPERATION, menu.getId(), menu.getPath() + Operations.IMPORT, HttpMethod.POST.name(), Operations.Code.IMPORT)
         ));
     }
 
     private void createQueryDefaultResource(Resource menu) {
-
-        final Integer resourceType = 2;
         resourceService.batchSave(Arrays.asList(
-                new ResourceDto("列表", resourceType, menu.getId(), menu.getPath(), HttpMethod.GET.name(), Operations.Code.LIST),
-                new ResourceDto("查看", resourceType, menu.getId(), menu.getPath() + Operations.GET, HttpMethod.GET.name(), Operations.Code.GET),
-                new ResourceDto("导出", resourceType, menu.getId(), menu.getPath() + Operations.EXPORT, HttpMethod.GET.name(), Operations.Code.EXPORT)
+                new ResourceDto("列表", ResourceType.OPERATION, menu.getId(), menu.getPath(), HttpMethod.GET.name(), Operations.Code.LIST),
+                new ResourceDto("查看", ResourceType.OPERATION, menu.getId(), menu.getPath() + Operations.GET, HttpMethod.GET.name(), Operations.Code.GET),
+                new ResourceDto("导出", ResourceType.OPERATION, menu.getId(), menu.getPath() + Operations.EXPORT, HttpMethod.GET.name(), Operations.Code.EXPORT)
         ));
     }
 
@@ -141,12 +139,11 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
      * @param menu 当前树形菜单资源
      */
     private void createTreeDefaultResource(Resource menu) {
-        final Integer resourceType = 2;
         resourceService.batchSave(Arrays.asList(
-                new ResourceDto("加载树", resourceType, menu.getId(), menu.getPath() + Operations.Tree.TREE, HttpMethod.GET.name()),
-                new ResourceDto("加载子节点", resourceType, menu.getId(), menu.getPath() + Operations.Tree.GET_BY_PARENT, HttpMethod.GET.name()),
-                new ResourceDto("移动", resourceType, menu.getId(), menu.getPath() + Operations.Tree.MOVE, HttpMethod.POST.name(), Operations.Code.MOVE),
-                new ResourceDto("初始化", resourceType, menu.getId(), menu.getPath() + Operations.Tree.INIT, HttpMethod.POST.name())
+                new ResourceDto("加载树", ResourceType.OPERATION, menu.getId(), menu.getPath() + Operations.Tree.TREE, HttpMethod.GET.name()),
+                new ResourceDto("加载子节点", ResourceType.OPERATION, menu.getId(), menu.getPath() + Operations.Tree.GET_BY_PARENT, HttpMethod.GET.name()),
+                new ResourceDto("移动", ResourceType.OPERATION, menu.getId(), menu.getPath() + Operations.Tree.MOVE, HttpMethod.POST.name(), Operations.Code.MOVE),
+                new ResourceDto("初始化", ResourceType.OPERATION, menu.getId(), menu.getPath() + Operations.Tree.INIT, HttpMethod.POST.name())
         ));
     }
 }

@@ -5,6 +5,7 @@ import com.github.yiuman.citrus.support.model.Button;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.Resource;
+import com.github.yiuman.citrus.system.enums.ResourceType;
 import com.github.yiuman.citrus.system.hook.RbacHook;
 import com.github.yiuman.citrus.system.service.RbacMixinService;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -64,7 +65,9 @@ public class PageAuthenticateAdvice {
                 //根据当前用户的资源查出当前请求的相关操作资源
 
                 final Set<String> resources = currentUserOnlineInfo.getResources()
-                        .parallelStream().filter(resource -> resource.getType() == 2 && currentResource.getParentId().equals(resource.getParentId()))
+                        .parallelStream().filter(
+                                resource -> resource.getType() == ResourceType.OPERATION
+                                        && currentResource.getParentId().equals(resource.getParentId()))
                         .map(Resource::getResourceCode)
                         .collect(Collectors.toSet());
 
