@@ -89,7 +89,7 @@ create index IX_SYS_RESOURCE_RESOURCENAME on sys_resource (resource_name);
 DROP TABLE IF EXISTS `sys_organ`;
 CREATE TABLE `sys_organ`
 (
-  `organ_id`           bigint(20) NOT NULL COMMENT '主键id',
+  `organ_id`           bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `organ_name`         varchar(250) NOT NULL COMMENT '资源名字',
   `organ_code`         varchar(50)  NOT NULL COMMENT '组织机构代码',
   `deep`               int  NOT NULL COMMENT '树的深度',
@@ -181,7 +181,7 @@ CREATE TABLE `sys_auth_resource`
 
 -- ------------用户机构关系表----------------
 DROP TABLE IF EXISTS `sys_user_organ`;
-CREATE TABLE `sys_user_role`
+CREATE TABLE `sys_user_organ`
 (
   `user_id`  bigint(20) NOT NULL COMMENT '用户ID',
   `organ_id` bigint(20) NOT NULL COMMENT '组织ID',

@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -81,8 +82,17 @@ public class CitrusAutoConfiguration {
             this.authorizeConfigManager = authorizeConfigManager;
             this.accessDeniedHandler = accessDeniedHandler;
         }
+        
+        
 
         @Override
+		public void configure(WebSecurity web) throws Exception {
+			web.ignoring().antMatchers("/css/**","/fonts/**","/img/**","/js/**","**.ico","index.html");
+		}
+
+
+
+		@Override
         protected void configure(HttpSecurity http) throws Exception {
             http
                     // 禁用 CSRF
