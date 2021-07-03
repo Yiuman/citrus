@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.system.service;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -15,6 +16,7 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Arrays;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * 菜单树逻辑层
@@ -98,6 +101,19 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
             }
         }
 
+    }
+
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean beforeRemove(Resource entity) {
+        //当前菜单删除时，先清空当前菜单下的所有资源
+        List<Resource> children = children(entity);
+        if (CollectionUtil.isNotEmpty(children)) {
+            batchRemove(children.stream().map(Resource::getId).collect(Collectors.toList()));
+        }
+
+        return true;
     }
 
     /**
