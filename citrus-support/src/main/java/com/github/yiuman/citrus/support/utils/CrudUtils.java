@@ -22,10 +22,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * CRUD工具类
@@ -261,12 +258,8 @@ public final class CrudUtils {
                 String labelFieldName = org.springframework.util.StringUtils.hasText(selects.label())
                         ? selects.label()
                         : selects.key();
-                Field valueField = ReflectionUtils.findField(item.getClass(), selects.key());
-                if (valueField == null) {
-                    return;
-                }
-                valueField.setAccessible(true);
-                Object value = valueField.get(item);
+                Map<?, ?> beanJsonMap = ConvertUtils.bean2JsonMap(item);
+                Object value = beanJsonMap.get(selects.key());
                 String label;
                 if (labelFieldName.equals(selects.key())) {
                     label = item.toString();
@@ -276,7 +269,7 @@ public final class CrudUtils {
                     label = ReflectionUtils.getField(labelField, item).toString();
                 }
 
-                selectItems.add(new Selections.SelectItem(selects.key(), label, value.toString()));
+                selectItems.add(new Selections.SelectItem(selects.key(), label, value));
             }));
         }
 

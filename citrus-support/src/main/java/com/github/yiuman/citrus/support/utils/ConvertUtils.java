@@ -1,6 +1,11 @@
 package com.github.yiuman.citrus.support.utils;
 
 import cn.hutool.core.convert.Convert;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.util.ReflectionUtils;
@@ -23,6 +28,10 @@ import java.util.stream.Collectors;
 public final class ConvertUtils {
 
     private final static ExpressionParser EXPRESSION_PARSER = new SpelExpressionParser();
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true)
+            .setSerializationInclusion(JsonInclude.Include.ALWAYS);
 
     private ConvertUtils() {
     }
@@ -108,6 +117,11 @@ public final class ConvertUtils {
         }));
         return target;
 
+    }
+
+    public static <T> Map<?, ?> bean2JsonMap(T target) throws JsonProcessingException {
+        String jsonString = OBJECT_MAPPER.writeValueAsString(target);
+        return OBJECT_MAPPER.readValue(jsonString, Map.class);
     }
 
 
