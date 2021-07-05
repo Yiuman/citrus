@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.system.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 /**
@@ -9,7 +11,8 @@ import lombok.Data;
 @Data
 public class OrganDto {
 
-    private Integer organId;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long organId;
 
     /**
      * 组织名
@@ -24,7 +27,8 @@ public class OrganDto {
     /**
      * 上级ID
      */
-    private Integer parentId;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long parentId;
 
     /**
      * 描述说明

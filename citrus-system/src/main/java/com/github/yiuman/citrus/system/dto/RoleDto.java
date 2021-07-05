@@ -16,6 +16,7 @@ import java.util.List;
 @Data
 public class RoleDto {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long roleId;
 
     /**
@@ -27,7 +28,8 @@ public class RoleDto {
     /**
      * 父角色Id
      */
-    private Integer parentId;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long parentId;
 
     /**
      * 0：角色 1：角色组（）

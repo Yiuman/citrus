@@ -3,6 +3,8 @@ package com.github.yiuman.citrus.system.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.github.yiuman.citrus.support.crud.AbstractAuditingEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,6 +21,7 @@ import lombok.EqualsAndHashCode;
 public class Role extends AbstractAuditingEntity {
 
     @TableId(type = IdType.ASSIGN_ID)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long roleId;
 
     /**
@@ -29,6 +32,7 @@ public class Role extends AbstractAuditingEntity {
     /**
      * 父角色Id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer parentId;
 
     /**

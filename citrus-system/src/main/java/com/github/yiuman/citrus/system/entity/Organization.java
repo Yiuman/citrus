@@ -21,6 +21,7 @@ import lombok.EqualsAndHashCode;
 public class Organization extends BasePreOrderTree<Organization, Long> {
 
     @TableId(type = IdType.AUTO)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long organId;
 
     /**
@@ -36,6 +37,7 @@ public class Organization extends BasePreOrderTree<Organization, Long> {
     /**
      * 上级ID
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long parentId;
 
     /**

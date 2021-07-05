@@ -1,6 +1,8 @@
 package com.github.yiuman.citrus.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 /**
@@ -16,6 +18,7 @@ public class DictionaryItem {
      * 主键
      */
     @TableId
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long itemId;
 
     /**
@@ -36,6 +39,7 @@ public class DictionaryItem {
     /**
      * 所属字典
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long dictId;
 
 }
