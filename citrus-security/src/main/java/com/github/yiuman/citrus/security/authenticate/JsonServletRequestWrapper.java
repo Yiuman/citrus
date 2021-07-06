@@ -74,7 +74,7 @@ public class JsonServletRequestWrapper extends HttpServletRequestWrapper {
     }
 
     @Override
-    public BufferedReader getReader()  {
+    public BufferedReader getReader() {
         return new BufferedReader(new InputStreamReader(getInputStream()));
     }
 

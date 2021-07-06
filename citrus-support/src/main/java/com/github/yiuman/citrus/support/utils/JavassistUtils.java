@@ -29,7 +29,7 @@ public class JavassistUtils {
         return POOL.get(className);
     }
 
-    public static CtClass makeClass(String className)  {
+    public static CtClass makeClass(String className) {
         return POOL.makeClass(className);
     }
 

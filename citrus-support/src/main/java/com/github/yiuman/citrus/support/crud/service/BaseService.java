@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.support.crud.service;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -67,7 +69,12 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
 
     @Override
     public boolean batchSave(Iterable<E> entityIterable) {
-        return getMapper().saveBatch((Collection<E>) entityIterable);
+        entityIterable.forEach(LambdaUtils.consumerWrapper(this::beforeSave));
+        boolean assertSave = getMapper().saveBatch((Collection<E>) entityIterable);
+        if (assertSave) {
+            entityIterable.forEach(LambdaUtils.consumerWrapper(this::afterSave));
+        }
+        return assertSave;
     }
 
     @Override
@@ -87,6 +94,12 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
 
     @Override
     public void batchRemove(Iterable<K> keys) {
+        List<K> keyList = new ArrayList<>();
+        keys.forEach(keyList::add);
+        List<E> list = list(Wrappers.<E>query().in(getKeyColumn(), keyList));
+        if (CollectionUtil.isNotEmpty(list)) {
+            list.forEach(this::beforeRemove);
+        }
         getMapper().deleteBatchIds((Collection<? extends Serializable>) keys);
     }
 

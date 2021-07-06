@@ -63,10 +63,10 @@ public abstract class BaseWidget<M> implements Widget<M> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o){
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof BaseWidget)){
+        if (!(o instanceof BaseWidget)) {
             return false;
         }
 

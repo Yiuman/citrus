@@ -1,10 +1,12 @@
 package com.github.yiuman.citrus.support.crud.service;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.utils.ConvertUtils;
@@ -18,6 +20,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 复杂实体类型（需传输转化的逻辑基类）
@@ -73,10 +76,6 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         });
     }
 
-    public E getRealEntity(K key) {
-        return dtoToEntity().apply(get(key));
-    }
-
     @Transactional(rollbackFor = Exception.class)
     @Override
     public K save(D entity) throws Exception {
@@ -92,9 +91,17 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean batchSave(Iterable<D> entityIterable) {
+        entityIterable.forEach(LambdaUtils.consumerWrapper(this::beforeSave));
         final List<E> entityList = new ArrayList<>();
         entityIterable.forEach(dto -> entityList.add(dtoToEntity().apply(dto)));
-        return getBaseMapper().saveBatch(entityList);
+        boolean assertSave = getBaseMapper().saveBatch(entityList);
+        if (assertSave) {
+            entityList.stream()
+                    .map(realEntity -> this.entityToDto().apply(realEntity))
+                    .collect(Collectors.toList())
+                    .forEach(LambdaUtils.consumerWrapper(this::afterSave));
+        }
+        return assertSave;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -124,6 +131,12 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
 
     @Override
     public void batchRemove(Iterable<K> keys) {
+        List<K> keyList = new ArrayList<>();
+        keys.forEach(keyList::add);
+        List<D> list = list(Wrappers.<D>query().in(getKeyColumn(), keyList));
+        if (CollectionUtil.isNotEmpty(list)) {
+            list.forEach(this::beforeRemove);
+        }
         ekBaseService.batchRemove(keys);
     }
 

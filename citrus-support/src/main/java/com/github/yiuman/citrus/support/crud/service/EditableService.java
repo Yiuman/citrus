@@ -25,9 +25,10 @@ public interface EditableService<E, K> extends DeletableService<E, K>, SelectSer
      *
      * @param entityIterable 可迭代的集合
      * @return 是否保存成功 true/false
+     * @throws Exception 数据库操作异常
      */
     @Transactional(rollbackFor = Exception.class)
-    boolean batchSave(Iterable<E> entityIterable);
+    boolean batchSave(Iterable<E> entityIterable) throws Exception;
 
     /**
      * 更新实体
