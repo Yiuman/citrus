@@ -1,9 +1,8 @@
 package com.github.yiuman.citrus.support.crud.rest;
 
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.github.yiuman.citrus.support.crud.service.BaseService;
+import com.github.yiuman.citrus.support.crud.service.CrudHelper;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
-import com.github.yiuman.citrus.support.utils.CrudUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -22,6 +21,8 @@ public abstract class BaseRestful<T, K extends Serializable> {
      */
     protected Class<T> modelClass = currentModelClass();
 
+    protected Class<K> keyClass = currentKeyClass();
+
     public BaseRestful() {
     }
 
@@ -30,22 +31,17 @@ public abstract class BaseRestful<T, K extends Serializable> {
         return (Class<T>) ReflectionKit.getSuperClassGenericType(getClass(), 0);
     }
 
+    @SuppressWarnings("unchecked")
+    private Class<K> currentKeyClass() {
+        return (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 1);
+    }
+
     /**
      * 获取CRUD逻辑层服务类
      *
      * @return 实现了 CrudService的逻辑层
      */
-    @SuppressWarnings("unchecked")
     protected CrudService<T, K> getService() {
-        try {
-            return CrudUtils.getCrudService(
-                    modelClass,
-                    (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 1),
-                    BaseService.class);
-        } catch (Exception e) {
-            log.info("获取CrudService报错", e);
-            return null;
-        }
-
+        return CrudHelper.getCrudService(modelClass, keyClass);
     }
 }

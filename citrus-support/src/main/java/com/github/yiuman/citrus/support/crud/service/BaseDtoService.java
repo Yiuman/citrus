@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.utils.ConvertUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
@@ -28,23 +29,14 @@ import java.util.stream.Collectors;
  * @author yiuman
  * @date 2020/4/15
  */
+@Slf4j
 public abstract class BaseDtoService<E, K extends Serializable, D> implements CrudService<D, K> {
 
     private final Class<D> dtoClass = currentDtoClass();
 
-    private final BaseService<E, K> ekBaseService = new BaseService<E, K>() {
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public Class<E> getEntityType() {
-            return (Class<E>) ReflectionKit.getSuperClassGenericType(BaseDtoService.this.getClass(), 0);
-        }
-
-        @Override
-        public Class<K> getKeyType() {
-            return BaseDtoService.this.getKeyType();
-        }
-    };
+    protected BaseService<E, K> getService() {
+        return CrudHelper.getCrudService(getClass());
+    }
 
     /**
      * Mybatis Mapper
@@ -52,7 +44,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
      * @return Mybatis Mapper
      */
     protected CrudMapper<E> getBaseMapper() {
-        return ekBaseService.getMapper();
+        return getService().getMapper();
     }
 
     @SuppressWarnings("unchecked")
@@ -62,7 +54,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
 
     protected Function<D, E> dtoToEntity() {
         return LambdaUtils.functionWrapper(d -> {
-            E e = ekBaseService.getEntityType().newInstance();
+            E e = getService().getEntityType().newInstance();
             BeanUtils.copyProperties(d, e);
             return e;
         });
@@ -76,13 +68,17 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         });
     }
 
+    public E getRealEntity(K key) {
+        return dtoToEntity().apply(get(key));
+    }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public K save(D entity) throws Exception {
         if (!beforeSave(entity)) {
             return null;
         }
-        K key = ekBaseService.save(dtoToEntity().apply(entity));
+        K key = getService().save(dtoToEntity().apply(entity));
         setKey(entity, key);
         afterSave(entity);
         return key;
@@ -97,7 +93,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         boolean assertSave = getBaseMapper().saveBatch(entityList);
         if (assertSave) {
             entityList.stream()
-                    .map(realEntity -> this.entityToDto().apply(realEntity))
+                    .map(realEntity -> entityToDto().apply(realEntity))
                     .collect(Collectors.toList())
                     .forEach(LambdaUtils.consumerWrapper(this::afterSave));
         }
@@ -107,10 +103,10 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
     @Transactional(rollbackFor = Exception.class)
     @Override
     public K update(D entity) throws Exception {
-        if (!this.beforeUpdate(entity)) {
+        if (!beforeUpdate(entity)) {
             return null;
         }
-        K key = this.save(entity);
+        K key = save(entity);
         setKey(entity, key);
         afterUpdate(entity);
         return key;
@@ -119,14 +115,14 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
 
     @Override
     public boolean remove(D entity) {
-        return this.beforeRemove(entity) && ekBaseService.remove(dtoToEntity().apply(entity));
+        return beforeRemove(entity) && getService().remove(dtoToEntity().apply(entity));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean remove(Wrapper<D> wrapper) {
         assertWrapper(wrapper);
-        return ekBaseService.remove((Wrapper<E>) wrapper);
+        return getService().remove((Wrapper<E>) wrapper);
     }
 
     @Override
@@ -137,17 +133,17 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         if (CollectionUtil.isNotEmpty(list)) {
             list.forEach(this::beforeRemove);
         }
-        ekBaseService.batchRemove(keys);
+        getService().batchRemove(keys);
     }
 
     @Override
     public void clear() {
-        ekBaseService.clear();
+        getService().clear();
     }
 
     @Override
     public D get(K key) {
-        return entityToDto().apply(ekBaseService.get(key));
+        return entityToDto().apply(getService().get(key));
     }
 
     @SuppressWarnings("unchecked")
@@ -159,14 +155,14 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
 
     @Override
     public List<D> list() {
-        return ConvertUtils.listConvert(dtoClass, ekBaseService.list());
+        return ConvertUtils.listConvert(dtoClass, getService().list());
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<D> list(Wrapper<D> wrapper) {
         assertWrapper(wrapper);
-        return ConvertUtils.listConvert(dtoClass, ekBaseService.list((Wrapper<E>) wrapper));
+        return ConvertUtils.listConvert(dtoClass, getService().list((Wrapper<E>) wrapper));
     }
 
     @Override
@@ -175,7 +171,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         //拷贝
         Page<E> entityPage = new Page<>();
         BeanUtils.copyProperties(page, entityPage);
-        ekBaseService.page(entityPage, (QueryWrapper<E>) queryWrapper);
+        getService().page(entityPage, (QueryWrapper<E>) queryWrapper);
         //反拷贝
         BeanUtils.copyProperties(entityPage, page);
         page.setRecords(ConvertUtils.listConvert(dtoClass, entityPage.getRecords()));
@@ -184,7 +180,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
 
     @Override
     public void setKey(D entity, K key) throws Exception {
-        Field field = ReflectionUtils.findField(dtoClass, ekBaseService.getKeyProperty());
+        Field field = ReflectionUtils.findField(dtoClass, getService().getKeyProperty());
         field.setAccessible(true);
         field.set(entity, key);
     }
