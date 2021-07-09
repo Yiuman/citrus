@@ -113,6 +113,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
     }
 
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean remove(D entity) {
         return beforeRemove(entity) && getService().remove(dtoToEntity().apply(entity));
@@ -125,6 +126,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         return getService().remove((Wrapper<E>) wrapper);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchRemove(Iterable<K> keys) {
         List<K> keyList = new ArrayList<>();
@@ -136,6 +138,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         getService().batchRemove(keys);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void clear() {
         getService().clear();
