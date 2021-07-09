@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.workflow.resolver;
 
+import com.github.yiuman.citrus.workflow.exception.WorkflowException;
 import com.github.yiuman.citrus.workflow.model.WorkflowContext;
 
 import java.util.List;
@@ -22,5 +23,5 @@ public interface TaskCandidateResolver {
      * @return 真正的候选人信息
      * @throws Exception 解析过程中的异常
      */
-    List<String> resolve(WorkflowContext workflowContext, List<String> taskCandidateDefine) throws Exception;
+    List<String> resolve(WorkflowContext workflowContext, List<String> taskCandidateDefine) throws WorkflowException;
 }

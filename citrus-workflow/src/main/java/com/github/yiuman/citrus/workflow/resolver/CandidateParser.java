@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.workflow.resolver;
 
+import com.github.yiuman.citrus.workflow.exception.WorkflowException;
 import com.github.yiuman.citrus.workflow.model.CandidateModel;
 import com.github.yiuman.citrus.workflow.model.WorkflowContext;
 
@@ -29,5 +30,5 @@ public interface CandidateParser {
      * @param <T>             维度候选人模型泛型
      * @return 候选人列表，如本框架下就是用户id
      */
-    <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext, T candidateModel);
+    <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext, T candidateModel) throws WorkflowException;
 }

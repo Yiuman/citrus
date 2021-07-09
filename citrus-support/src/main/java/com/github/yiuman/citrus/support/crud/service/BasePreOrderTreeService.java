@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
 import com.github.yiuman.citrus.support.model.BasePreOrderTree;
 import com.github.yiuman.citrus.support.model.Tree;
@@ -35,22 +34,10 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
 
     private final static String UPDATE_REDUCTION_FORMAT = "%s=%s-%s";
 
-    private final BaseService<E, K> ekBaseService = new BaseService<E, K>() {
-        @Override
-        protected CrudMapper<E> getMapper() {
-            return getTreeMapper();
-        }
 
-        @Override
-        public Class<E> getEntityType() {
-            return BasePreOrderTreeService.this.getEntityType();
-        }
-
-        @Override
-        public Class<K> getKeyType() {
-            return BasePreOrderTreeService.this.getKeyType();
-        }
-    };
+    protected BaseService<E, K> getService() {
+        return CrudHelper.getCrudService(getClass());
+    }
 
     protected TreeMapper<E> getTreeMapper() {
         try {
@@ -78,7 +65,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
             rightValue = parent.getRightValue();
             deep = parent.getDeep() + 1;
             parent.setRightValue(rightValue + 2);
-            ekBaseService.save(parent);
+            getService().save(parent);
             entity.setParentId(parent.getId());
         } else {
             entity.setParentId(null);
@@ -97,12 +84,12 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         if (!this.beforeSave(entity)) {
             return null;
         }
-        return ekBaseService.save(entity);
+        return getService().save(entity);
     }
 
     @Override
     public boolean batchSave(Iterable<E> entityIterable) {
-        return ekBaseService.batchSave(entityIterable);
+        return getService().batchSave(entityIterable);
     }
 
     @Override
@@ -118,12 +105,12 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
             return false;
         }
 
-        return ekBaseService.remove(entity);
+        return getService().remove(entity);
     }
 
     @Override
     public boolean remove(Wrapper<E> wrappers) {
-        return ekBaseService.remove(wrappers);
+        return getService().remove(wrappers);
     }
 
     @Override
@@ -135,32 +122,32 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
 
     @Override
     public void clear() {
-        ekBaseService.clear();
+        getService().clear();
     }
 
     @Override
     public E get(K key) {
-        return ekBaseService.get(key);
+        return getService().get(key);
     }
 
     @Override
     public E get(Wrapper<E> wrapper) {
-        return ekBaseService.get(wrapper);
+        return getService().get(wrapper);
     }
 
     @Override
     public List<E> list() {
-        return ekBaseService.list();
+        return getService().list();
     }
 
     @Override
     public List<E> list(Wrapper<E> wrapper) {
-        return ekBaseService.list(wrapper);
+        return getService().list(wrapper);
     }
 
     @Override
     public <P extends IPage<E>> P page(P page, Wrapper<E> queryWrapper) {
-        return ekBaseService.page(page, queryWrapper);
+        return getService().page(page, queryWrapper);
     }
 
     @Override
@@ -174,7 +161,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     }
 
     protected void reInit(E current) throws Exception {
-        ekBaseService.save(current);
+        getService().save(current);
         List<E> children = loadByParent(current.getId());
         if (!CollectionUtils.isEmpty(children)) {
             children.forEach(LambdaUtils.consumerWrapper(this::reInit));
@@ -203,7 +190,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         }
         //找到列表ID
         List<K> ids = list.parallelStream().map(Tree::getId).collect(Collectors.toList());
-        TableInfo table = SqlHelper.table(ekBaseService.getEntityType());
+        TableInfo table = SqlHelper.table(getService().getEntityType());
 
         //将查询到的列表的项的所有父节点查出来
         String parentSql = "t1.leftValue > t2. leftValue and t1.rightValue < t2.rightValue"
@@ -262,7 +249,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         this.beforeDeleteOrMove(current);
         //变更父ID
         current.setParentId(moveTo);
-        ekBaseService.save(current);
+        getService().save(current);
 
         List<E> children = children(current);
         //子节点不为空时重新生成左右值

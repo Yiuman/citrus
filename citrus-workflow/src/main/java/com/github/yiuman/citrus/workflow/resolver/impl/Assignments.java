@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.workflow.resolver.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
+import com.github.yiuman.citrus.workflow.exception.WorkflowException;
 import com.github.yiuman.citrus.workflow.model.impl.WorkflowContextImpl;
 import com.github.yiuman.citrus.workflow.resolver.ExpressionResolver;
 import com.github.yiuman.citrus.workflow.resolver.TaskCandidateResolver;
@@ -39,7 +40,7 @@ public class Assignments implements ExpressionResolver<List<String>> {
     }
 
     @Override
-    public List<String> resolve(DelegateExecution execution, String expressionStr) throws Exception {
+    public List<String> resolve(DelegateExecution execution, String expressionStr) throws WorkflowException {
         WorkflowServiceImpl workflowService = SpringUtils.getBean(WorkflowServiceImpl.class, true);
         ProcessEngine processEngine = workflowService.getProcessEngine();
         RuntimeService runtimeService = processEngine.getRuntimeService();

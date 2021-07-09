@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.support.crud.service;
 
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * 可编辑的实体Service
  *
@@ -22,8 +24,9 @@ public interface EditableService<E, K> extends DeletableService<E, K>, SelectSer
      *
      * @param entityIterable 可迭代的集合
      * @return 是否保存成功 true/false
+     * @throws Exception 数据库操作异常
      */
-    boolean batchSave(Iterable<E> entityIterable);
+    boolean batchSave(Iterable<E> entityIterable) throws Exception;
 
     /**
      * 更新实体
@@ -32,7 +35,8 @@ public interface EditableService<E, K> extends DeletableService<E, K>, SelectSer
      * @return 主键
      * @throws Exception 数据库异常或实体操作异常
      */
+    @Transactional(rollbackFor = Exception.class)
     default K update(E entity) throws Exception {
-        return this.save(entity);
+        return save(entity);
     }
 }

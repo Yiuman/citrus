@@ -6,8 +6,8 @@ import com.github.yiuman.citrus.support.file.FileStorageService;
 import com.github.yiuman.citrus.system.entity.FileResource;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class FileResourceService extends BaseService<FileResource, String> {
     public String upload(String identify, MultipartFile file) throws Exception {
 
         //没有传文件标识即计算一次md5哈希值作为唯一标识
-        if (StringUtils.isEmpty(identify)) {
+        if (ObjectUtils.isEmpty(identify)) {
             identify = makeIdentify(file.getInputStream());
         }
 

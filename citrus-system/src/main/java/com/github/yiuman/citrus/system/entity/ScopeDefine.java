@@ -42,6 +42,7 @@ public class ScopeDefine {
      *
      * @see Organization
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long organId;
 
     /**

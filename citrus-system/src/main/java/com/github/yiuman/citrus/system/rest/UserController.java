@@ -138,7 +138,6 @@ public class UserController extends BaseCrudController<UserDto, Long> {
      * @return Void
      */
     @PostMapping("/profile")
-    @Authorize(HasLoginHook.class)
     public ResponseEntity<Void> saveProfile(@Validated @RequestBody UserDto entity) {
         UserOnlineInfo currentUserOnlineInfo = userService.getCurrentUserOnlineInfo();
         if (!entity.getUserId().equals(currentUserOnlineInfo.getUserId())) {
@@ -158,7 +157,6 @@ public class UserController extends BaseCrudController<UserDto, Long> {
      * @throws Exception 数据库操作异常
      */
     @PostMapping("/password")
-    @Authorize(HasLoginHook.class)
     public ResponseEntity<Void> updatePassword(@Validated @RequestBody PasswordUpdateDto passwordUpdate) throws Exception {
         userService.updatePassword(passwordUpdate.getOldPassword(), passwordUpdate.getNewPassword());
         return ResponseEntity.ok();

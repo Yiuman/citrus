@@ -2,6 +2,8 @@ package com.github.yiuman.citrus.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 /**
@@ -18,20 +20,17 @@ public class UserRole {
     @TableId
     private String id;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long roleId;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long organId;
 
     public UserRole() {
     }
-
-    public UserRole(Long userId, Long roleId) {
-        this.userId = userId;
-        this.roleId = roleId;
-    }
-
 
     public String getId() {
         return String.format("%s-%s-%s", userId, roleId, organId);

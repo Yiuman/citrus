@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.support.crud.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.github.yiuman.citrus.support.model.Tree;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
@@ -62,6 +63,7 @@ public interface TreeOperation<T extends Tree<K>, K extends Serializable> {
      *
      * @throws Exception 一般为数据库异常或反射异常
      */
+    @Transactional(rollbackFor = Exception.class)
     void reInit() throws Exception;
 
     /**
@@ -114,6 +116,7 @@ public interface TreeOperation<T extends Tree<K>, K extends Serializable> {
      * @param moveTo  移动到的节点
      * @throws Exception 一般为数据库异常或反射异常
      */
+    @Transactional(rollbackFor = Exception.class)
     void move(T current, K moveTo) throws Exception;
 
     /**
