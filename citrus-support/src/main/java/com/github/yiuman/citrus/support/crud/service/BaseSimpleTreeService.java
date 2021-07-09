@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.model.BaseTree;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -86,6 +87,7 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
         return parentKey == null ? list(queryWrapper.isNull(getParentField())) : list(queryWrapper.eq(getParentField(), parentKey));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void move(E current, K moveTo) throws Exception {
         current.setParentId(moveTo);

@@ -12,6 +12,7 @@ import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
@@ -48,6 +49,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean beforeSave(E entity) throws Exception {
         if (entity.getId() != null) {
@@ -79,6 +81,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         //Over
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public K save(E entity) throws Exception {
         if (!this.beforeSave(entity)) {
@@ -87,11 +90,13 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         return getService().save(entity);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean batchSave(Iterable<E> entityIterable) {
         return getService().batchSave(entityIterable);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean beforeRemove(E entity) {
         //1.更新所有右值小于当前父节点右值的节点左值 -2
@@ -99,6 +104,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         return true;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean remove(E entity) {
         if (!this.beforeRemove(entity)) {
@@ -108,11 +114,13 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         return getService().remove(entity);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean remove(Wrapper<E> wrappers) {
         return getService().remove(wrappers);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchRemove(Iterable<K> keys) {
         List<K> keyList = new ArrayList<>();
@@ -120,6 +128,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         getTreeMapper().deleteBatch(list(Wrappers.<E>query().in(getKeyColumn(), keyList)));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void clear() {
         getService().clear();
@@ -155,11 +164,13 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         return getTreeMapper().selectOne(Wrappers.<E>query().isNull(getParentField()));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public synchronized void reInit() throws Exception {
         reInit(getRoot());
     }
 
+    @Transactional(rollbackFor = Exception.class)
     protected void reInit(E current) throws Exception {
         getService().save(current);
         List<E> children = loadByParent(current.getId());
@@ -243,6 +254,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         return list(Wrappers.<E>query().eq(getParentField(), parentKey));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void move(E current, K moveTo) throws Exception {
         //更新树

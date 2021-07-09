@@ -67,6 +67,7 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
         return null;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean batchSave(Iterable<E> entityIterable) {
         entityIterable.forEach(LambdaUtils.consumerWrapper(this::beforeSave));
@@ -77,6 +78,7 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
         return assertSave;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public K update(E entity) throws Exception {
         if (!this.beforeUpdate(entity)) {
@@ -87,11 +89,13 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
         return key;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean remove(E entity) {
         return this.beforeRemove(entity) && getMapper().deleteById(getKey(entity)) > 1;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchRemove(Iterable<K> keys) {
         List<K> keyList = new ArrayList<>();
@@ -103,12 +107,12 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
         getMapper().deleteBatchIds((Collection<? extends Serializable>) keys);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void clear() {
-        getMapper().deleteBatchIds(
-                list().parallelStream()
-                        .map(LambdaUtils.functionWrapper(this::getKey))
-                        .collect(Collectors.toList()));
+        getMapper().deleteBatchIds(list().parallelStream()
+                .map(LambdaUtils.functionWrapper(this::getKey))
+                .collect(Collectors.toList()));
     }
 
     @Override
@@ -136,6 +140,7 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
         return getMapper().selectPage(page, queryWrapper);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean remove(Wrapper<E> wrapper) {
         return getMapper().delete(wrapper) >= 0;
