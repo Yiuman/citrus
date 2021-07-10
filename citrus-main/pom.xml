@@ -14,7 +14,7 @@
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
         <maven.test.skip>true</maven.test.skip>
-        <citrus.version>0.12.0</citrus.version>
+        <citrus.version>0.13.0</citrus.version>
     </properties>
 
     <dependencies>
