@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.system.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.yiuman.citrus.support.crud.query.QueryWrapperHelper;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.AuthorityResource;
 import com.github.yiuman.citrus.system.entity.Resource;
@@ -9,6 +11,9 @@ import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -73,7 +78,18 @@ public class RbacMixinService {
             userOnlineInfo.setRoles(userService.getRolesByUserId(userId));
             userOnlineInfo.setOrganizations(userService.getUserOrgansByUserId(userId));
             Set<Resource> userResources = authorityService.getUserResources(userId);
-            userOnlineInfo.setMenus(userResources.parallelStream().filter(resource -> 0 == resource.getType()).collect(Collectors.toList()));
+            
+            userOnlineInfo.setMenus(userResources.stream().filter(resource -> 0 == resource.getType()).collect(Collectors.toList()));
+            userOnlineInfo.getMenus().sort(new Comparator<Resource>() {
+				@Override
+				public int compare(Resource o1, Resource o2) {
+					return o1.getId()<o2.getId()?-1:1;
+				}
+			});
+            //加入上一层菜单
+            QueryWrapper<Resource> qw = new QueryWrapper<>();
+            qw.in("resource_id", userOnlineInfo.getMenus().stream().filter(r -> r.getParentId()!=null).map(Resource::getParentId).distinct().collect(Collectors.toList()));
+            userOnlineInfo.getMenus().addAll(menuService.list(qw));            
             userOnlineInfo.setResources(userResources);
             userOnlineInfo.setAuthorities(authorityService.getAuthoritiesByUserId(userId));
             userOnlineInfo.setAuthorityResources(authorityService.getAuthorityResourceByUserIdAndResourceId(userId));

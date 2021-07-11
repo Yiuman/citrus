@@ -181,7 +181,7 @@ CREATE TABLE `sys_auth_resource`
 
 -- ------------用户机构关系表----------------
 DROP TABLE IF EXISTS `sys_user_organ`;
-CREATE TABLE `sys_user_role`
+CREATE TABLE `sys_user_organ`
 (
   `user_id`  bigint(20) NOT NULL COMMENT '用户ID',
   `organ_id` bigint(20) NOT NULL COMMENT '组织ID',
