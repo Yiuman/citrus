@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -39,13 +38,10 @@ public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
         List<Long> authIds = entity.getAuthIds();
         if (!CollectionUtils.isEmpty(authIds)) {
             //删除旧的关联关系
-            roleAuthorityMapper.delete(
-                    Wrappers.<RoleAuthority>query()
-                            .eq(getKeyColumn(), entity.getRoleId())
-            );
-
+            roleAuthorityMapper.delete(Wrappers.<RoleAuthority>query().eq(getKeyColumn(), entity.getRoleId()));
             roleAuthorityMapper.saveBatch(authIds.stream()
-                    .map(authId -> new RoleAuthority(entity.getRoleId(), authId)).collect(Collectors.toList()));
+                    .map(authId -> new RoleAuthority(entity.getRoleId(), authId))
+                    .collect(Collectors.toList()));
         }
 
     }
@@ -57,24 +53,6 @@ public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
 
     public List<Authority> getAuthoritiesByRoleId(Long roleId) {
         return roleMapper.selectAuthoritiesByRoleId(roleId);
-    }
-
-    /**
-     * 根据用户获取权限集合
-     *
-     * @param userId 用户ID
-     * @return 权限集合
-     */
-    public Set<Authority> getAuthoritiesByUserId(Long userId) {
-        return roleMapper.selectAuthoritiesByUserId(userId);
-    }
-
-    public boolean hasPermission(Long userId, Long resourceId) {
-        if (roleAuthorityMapper.selectCount(Wrappers.<RoleAuthority>query().eq(getKeyColumn(), resourceId)) == 0) {
-            return true;
-        }
-
-        return roleMapper.hasPermission(userId, resourceId);
     }
 
     public List<RoleAuthority> getRoleAuthorityByAuthAuthIds(List<Long> authIds) {

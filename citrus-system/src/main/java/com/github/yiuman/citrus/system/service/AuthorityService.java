@@ -40,7 +40,8 @@ public class AuthorityService extends BaseDtoService<Authority, Long, AuthorityD
                 authorityResourceMapper.selectList(
                         Wrappers.<AuthorityResource>query()
                                 .eq(getKeyColumn(), authorityDto.getAuthorityId())
-                                .lambda().eq(AuthorityResource::getObjectId, item.getResourceId())
+                                .lambda()
+                                .eq(AuthorityResource::getObjectId, item.getResourceId())
                                 .eq(AuthorityResource::getType, 2))
                 )
         );

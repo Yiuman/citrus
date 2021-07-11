@@ -1,20 +1,18 @@
 package com.github.yiuman.citrus.system.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.yiuman.citrus.support.crud.query.QueryWrapperHelper;
+import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.AuthorityResource;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.User;
+import com.github.yiuman.citrus.system.enums.ResourceType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -77,23 +75,60 @@ public class RbacMixinService {
             final Long userId = userOnlineInfo.getUserId();
             userOnlineInfo.setRoles(userService.getRolesByUserId(userId));
             userOnlineInfo.setOrganizations(userService.getUserOrgansByUserId(userId));
-            Set<Resource> userResources = authorityService.getUserResources(userId);
-            
-            userOnlineInfo.setMenus(userResources.stream().filter(resource -> 0 == resource.getType()).collect(Collectors.toList()));
-            userOnlineInfo.getMenus().sort(new Comparator<Resource>() {
-				@Override
-				public int compare(Resource o1, Resource o2) {
-					return o1.getId()<o2.getId()?-1:1;
-				}
-			});
-            //加入上一层菜单
-            QueryWrapper<Resource> qw = new QueryWrapper<>();
-            qw.in("resource_id", userOnlineInfo.getMenus().stream().filter(r -> r.getParentId()!=null).map(Resource::getParentId).distinct().collect(Collectors.toList()));
-            userOnlineInfo.getMenus().addAll(menuService.list(qw));            
-            userOnlineInfo.setResources(userResources);
+            Set<Resource> userResourcesWithAll = getUserResourcesWithAll(userId);
+            //菜单排序 todo 考虑添加一个orderId？
+            Comparator<? super Resource> menuSortComparator = (r1, r2) -> (int) (r1.getId() - r2.getId());
+            List<Resource> menus = userResourcesWithAll.stream()
+                    .filter(resource -> ResourceType.MENU == resource.getType()).sorted(menuSortComparator)
+                    .collect(Collectors.toList());
+
+            userOnlineInfo.setMenus(menus);
+            userOnlineInfo.setResources(userResourcesWithAll);
             userOnlineInfo.setAuthorities(authorityService.getAuthoritiesByUserId(userId));
             userOnlineInfo.setAuthorityResources(authorityService.getAuthorityResourceByUserIdAndResourceId(userId));
         }
 
     }
+
+    /**
+     * 获取用户的所有资源
+     *
+     * @param userId 当前用户ID
+     * @return 资源集合
+     */
+    public Set<Resource> getUserResourcesWithAll(Long userId) {
+        Set<Resource> userResources = authorityService.getUserResources(userId);
+        userResources.addAll(getParentMenus(userResources));
+        return userResources;
+    }
+
+    /**
+     * 找到上级的菜单
+     *
+     * @param userResources 用户菜单资源
+     * @return 获取父级菜单集合
+     */
+    public Set<Resource> getParentMenus(Collection<Resource> userResources) {
+        List<Resource> menus = userResources.stream()
+                .filter(resource -> ResourceType.MENU == resource.getType())
+                .collect(Collectors.toList());
+
+        if (CollectionUtil.isNotEmpty(menus)) {
+            Set<Long> parentIds = menus.stream()
+                    .filter(resource -> Objects.nonNull(resource.getParentId()))
+                    .map(Resource::getParentId).collect(Collectors.toSet());
+            if (CollectionUtil.isEmpty(parentIds)) {
+                return Collections.emptySet();
+            }
+
+            List<Resource> parentResources = menuService.list(Wrappers.<Resource>query().in(resourceService.getKeyColumn(), parentIds));
+            if (CollectionUtil.isNotEmpty(parentResources)) {
+                parentResources.addAll(getParentMenus(parentResources));
+            }
+
+            return new HashSet<>(parentResources);
+        }
+        return Collections.emptySet();
+    }
+
 }
