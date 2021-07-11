@@ -254,7 +254,8 @@ public final class CrudUtils {
         final List<Selections.SelectItem> selectItems = new ArrayList<>();
         if (invoked instanceof Collection) {
             Collection<?> collects = (Collection<?>) invoked;
-            collects.parallelStream().forEach(LambdaUtils.consumerWrapper(item -> {
+            //串行处理
+            collects.forEach(LambdaUtils.consumerWrapper(item -> {
                 String labelFieldName = org.springframework.util.StringUtils.hasText(selects.label())
                         ? selects.label()
                         : selects.key();
