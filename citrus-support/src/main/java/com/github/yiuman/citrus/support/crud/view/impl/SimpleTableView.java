@@ -85,7 +85,6 @@ public class SimpleTableView<T> extends BaseActionableView implements CheckboxTa
         return String.format("ext_field_%s", this.fieldFunctions.size() + 1);
     }
 
-
     @Override
     public Map<String, Object> apply(T object) {
         if (CollectionUtils.isEmpty(this.fieldFunctions)) {

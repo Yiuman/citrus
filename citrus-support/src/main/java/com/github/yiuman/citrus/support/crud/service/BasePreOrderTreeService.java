@@ -5,10 +5,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.github.yiuman.citrus.support.crud.CrudHelper;
 import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
 import com.github.yiuman.citrus.support.model.BasePreOrderTree;
 import com.github.yiuman.citrus.support.model.Tree;
-import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,12 +41,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     }
 
     protected TreeMapper<E> getTreeMapper() {
-        try {
-            return CrudUtils.getTreeMapper(getEntityType());
-        } catch (Throwable throwable) {
-            log.info("初始化mapper报错", throwable);
-            return null;
-        }
+        return CrudHelper.getTreeMapper(getEntityType());
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -1,7 +1,7 @@
 package com.github.yiuman.citrus.support.crud.rest;
 
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.github.yiuman.citrus.support.crud.service.CrudHelper;
+import com.github.yiuman.citrus.support.crud.CrudHelper;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import lombok.extern.slf4j.Slf4j;
 

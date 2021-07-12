@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.yiuman.citrus.support.crud.CrudHelper;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
-import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,13 +39,7 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
      * @return 实体的Mapper
      */
     protected CrudMapper<E> getMapper() {
-        try {
-            return CrudUtils.getCrudMapper(getEntityType());
-        } catch (Throwable throwable) {
-            log.info("初始化Mapper失败", throwable);
-            return null;
-        }
-
+        return CrudHelper.getCrudMapper(getEntityType());
     }
 
     @Transactional(rollbackFor = Exception.class)
