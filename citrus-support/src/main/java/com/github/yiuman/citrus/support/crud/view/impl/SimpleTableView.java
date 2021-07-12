@@ -6,7 +6,11 @@ import com.github.yiuman.citrus.support.model.FieldFunction;
 import com.github.yiuman.citrus.support.model.Header;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /**
@@ -87,7 +91,7 @@ public class SimpleTableView<T> extends BaseActionableView implements CheckboxTa
         if (CollectionUtils.isEmpty(this.fieldFunctions)) {
             return null;
         }
-        Map<String, Object> funcExecutedMap = new HashMap<>(fieldFunctions.size());
+        Map<String, Object> funcExecutedMap = new ConcurrentHashMap<>(fieldFunctions.size());
         fieldFunctions.parallelStream().forEach(fieldFunc
                 -> funcExecutedMap.put(fieldFunc.getFiledName(), fieldFunc.getFunction().apply(object)));
         return funcExecutedMap;

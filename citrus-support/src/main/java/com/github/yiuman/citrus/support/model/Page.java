@@ -4,8 +4,8 @@ import com.github.yiuman.citrus.support.crud.view.RecordExtender;
 import com.github.yiuman.citrus.support.crud.view.TableView;
 import com.github.yiuman.citrus.support.crud.view.impl.SimpleTableView;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -68,7 +68,7 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     public List<T> getRecords() {
         List<T> records = super.getRecords();
         if (this.recordExtend == null
-                && !StringUtils.isEmpty(itemKey)
+                && !ObjectUtils.isEmpty(itemKey)
                 && Objects.nonNull(view)
                 && view instanceof RecordExtender) {
             this.recordExtend = new HashMap<>(records.size());

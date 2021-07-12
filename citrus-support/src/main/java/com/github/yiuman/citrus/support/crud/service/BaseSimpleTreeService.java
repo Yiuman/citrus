@@ -9,10 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -49,7 +46,7 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
 
     protected E initSimpleTreeByList(List<E> list) {
         E root = getRoot();
-        final Set<E> existsEntity = new LinkedHashSet<>(list);
+        final Set<E> existsEntity = Collections.synchronizedSet(new LinkedHashSet<>(list));
         list.parallelStream().forEach(item -> existsEntity.addAll(parents(item)));
         this.mountByList(root, existsEntity);
         return root;

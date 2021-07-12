@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.system.service;
 
+import cn.hutool.core.collection.ConcurrentHashSet;
 import com.github.yiuman.citrus.support.utils.WebUtils;
 import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.entity.Resource;
@@ -109,7 +110,7 @@ public class DataRangeServiceImpl implements DataRangeService {
 
         Long scopeOrganId = scopeDefine.getOrganId();
         //获取范围定义部门
-        Set<Long> currentOrganIds = new HashSet<>();
+        Set<Long> currentOrganIds = new ConcurrentHashSet<>();
         ScopeType[] scopeTypes = scopeDefine.getScopeTypes();
 
         //数据范围定义的部门ID>0时为正常情况，按照正常逻辑处理
