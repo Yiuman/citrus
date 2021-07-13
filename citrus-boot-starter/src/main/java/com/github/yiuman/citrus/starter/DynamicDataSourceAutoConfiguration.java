@@ -25,20 +25,31 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.autoconfigure.transaction.jta.JtaAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.jta.atomikos.AtomikosDataSourceBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.support.StandardServletEnvironment;
 
 import javax.sql.DataSource;
 import java.util.*;
@@ -51,10 +62,38 @@ import java.util.function.Consumer;
  * @date 2020/12/1
  */
 @SuppressWarnings("rawtypes")
-@Configuration
+@Configuration(proxyBeanMethods = false)
+@EnableAutoConfiguration(exclude = JtaAutoConfiguration.class)
 @EnableConfigurationProperties({DynamicDataSourceProperties.class, DataSourceProperties.class, MybatisPlusProperties.class})
 @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
+
 public class DynamicDataSourceAutoConfiguration implements InitializingBean {
+
+    @Configuration
+    @Conditional(DynamicDataSourceAutoConfiguration.MultiplesDatasourceCondition.class)
+    static class CustomJtaAutoConfiguration extends JtaAutoConfiguration {
+    }
+
+    /**
+     * 多数据源条件配置的条件，当配置中出现spring.datasource.multiples关键字配置时生效
+     */
+    static class MultiplesDatasourceCondition extends SpringBootCondition {
+
+        @Override
+        public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            Environment environment = context.getEnvironment();
+            MutablePropertySources propertySources = ((StandardServletEnvironment) environment).getPropertySources();
+            boolean matchMutableDataSources = propertySources.stream()
+                    .filter(propertySource -> propertySource instanceof MapPropertySource)
+                    .anyMatch(propertySource ->
+                            Arrays.stream(((MapPropertySource) propertySource).getPropertyNames())
+                                    .anyMatch(propertyName -> propertyName.startsWith("spring.datasource.multiples")));
+
+            return matchMutableDataSources
+                    ? ConditionOutcome.match()
+                    : ConditionOutcome.noMatch("spring.datasource.multiples");
+        }
+    }
 
     private final DataSourceProperties dataSourceProperties;
 
@@ -125,6 +164,7 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
      */
     @Bean
     @ConditionalOnMissingBean
+    @Conditional(DynamicDataSourceAutoConfiguration.MultiplesDatasourceCondition.class)
     public DataSource dynamicDatasource() {
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
         Map<String, DataSourceProperties> dataSourcePropertiesMap = dynamicDataSourceProperties.getDatasource();
@@ -148,6 +188,7 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
 
     @Bean
     @ConditionalOnMissingBean(SqlSessionTemplate.class)
+    @Conditional(DynamicDataSourceAutoConfiguration.MultiplesDatasourceCondition.class)
     public DynamicSqlSessionTemplate sqlSessionTemplate() throws Exception {
         Map<String, DataSourceProperties> dataSourcePropertiesMap = dynamicDataSourceProperties.getDatasource();
         int dataSourceSize = Objects.nonNull(dataSourcePropertiesMap) ? dataSourcePropertiesMap.size() : 0;
@@ -175,6 +216,7 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
     }
 
     @Bean
+    @Conditional(DynamicDataSourceAutoConfiguration.MultiplesDatasourceCondition.class)
     public DynamicDataSourceAnnotationAdvisor dynamicDataSourceAnnotationAdvisor() {
         return new DynamicDataSourceAnnotationAdvisor(new DynamicDataSourceAnnotationInterceptor());
     }
@@ -182,7 +224,6 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
     private DataSource buildDataSource(String resourceName, DataSourceProperties properties, boolean enableMultipleTx) {
         return enableMultipleTx ? buildDruidXaDataSource(resourceName, properties) : buildDruidDataSource(properties);
     }
-
 
     /**
      * 根据配置构建的druid数据源
@@ -228,6 +269,7 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
      */
     @Bean
     @ConditionalOnMissingBean
+    @Conditional(DynamicDataSourceAutoConfiguration.MultiplesDatasourceCondition.class)
     public SqlSessionFactory sqlSessionFactory(DynamicSqlSessionTemplate dynamicSqlSessionTemplate) {
         return dynamicSqlSessionTemplate.getSqlSessionFactory();
     }
