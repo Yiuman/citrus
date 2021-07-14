@@ -2,10 +2,7 @@ package com.github.yiuman.citrus.starter;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.xa.DruidXADataSource;
-import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
-import com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties;
-import com.baomidou.mybatisplus.autoconfigure.MybatisPlusPropertiesCustomizer;
-import com.baomidou.mybatisplus.autoconfigure.SpringBootVFS;
+import com.baomidou.mybatisplus.autoconfigure.*;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
@@ -25,11 +22,13 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.autoconfigure.transaction.jta.JtaAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -63,37 +62,11 @@ import java.util.function.Consumer;
  */
 @SuppressWarnings("rawtypes")
 @Configuration(proxyBeanMethods = false)
-@EnableAutoConfiguration(exclude = JtaAutoConfiguration.class)
+@AutoConfigureBefore({DataSourceAutoConfiguration.class, MybatisPlusAutoConfiguration.class, JtaAutoConfiguration.class})
+@AutoConfigureAfter({MybatisPlusLanguageDriverAutoConfiguration.class})
 @EnableConfigurationProperties({DynamicDataSourceProperties.class, DataSourceProperties.class, MybatisPlusProperties.class})
 @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
-
 public class DynamicDataSourceAutoConfiguration implements InitializingBean {
-
-    @Configuration
-    @Conditional(DynamicDataSourceAutoConfiguration.MultiplesDatasourceCondition.class)
-    static class CustomJtaAutoConfiguration extends JtaAutoConfiguration {
-    }
-
-    /**
-     * 多数据源条件配置的条件，当配置中出现spring.datasource.multiples关键字配置时生效
-     */
-    static class MultiplesDatasourceCondition extends SpringBootCondition {
-
-        @Override
-        public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
-            Environment environment = context.getEnvironment();
-            MutablePropertySources propertySources = ((StandardServletEnvironment) environment).getPropertySources();
-            boolean matchMutableDataSources = propertySources.stream()
-                    .filter(propertySource -> propertySource instanceof MapPropertySource)
-                    .anyMatch(propertySource ->
-                            Arrays.stream(((MapPropertySource) propertySource).getPropertyNames())
-                                    .anyMatch(propertyName -> propertyName.startsWith("spring.datasource.multiples")));
-
-            return matchMutableDataSources
-                    ? ConditionOutcome.match()
-                    : ConditionOutcome.noMatch("spring.datasource.multiples");
-        }
-    }
 
     private final DataSourceProperties dataSourceProperties;
 
@@ -146,6 +119,7 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
         if (!CollectionUtils.isEmpty(mybatisPlusPropertiesCustomizers)) {
             mybatisPlusPropertiesCustomizers.forEach(i -> i.customize(mybatisPlusProperties));
         }
+        mybatisPlusProperties.getGlobalConfig().setBanner(false);
         checkConfigFileExists();
     }
 
@@ -394,5 +368,31 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
 
     }
 
+
+    @Configuration
+    @Conditional(DynamicDataSourceAutoConfiguration.MultiplesDatasourceCondition.class)
+    static class CustomJtaAutoConfiguration extends JtaAutoConfiguration {
+    }
+
+    /**
+     * 多数据源条件配置的条件，当配置中出现spring.datasource.multiples关键字配置时生效
+     */
+    static class MultiplesDatasourceCondition extends SpringBootCondition {
+
+        @Override
+        public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            Environment environment = context.getEnvironment();
+            MutablePropertySources propertySources = ((StandardServletEnvironment) environment).getPropertySources();
+            boolean matchMutableDataSources = propertySources.stream()
+                    .filter(propertySource -> propertySource instanceof MapPropertySource)
+                    .anyMatch(propertySource ->
+                            Arrays.stream(((MapPropertySource) propertySource).getPropertyNames())
+                                    .anyMatch(propertyName -> propertyName.startsWith("spring.datasource.multiples")));
+
+            return matchMutableDataSources
+                    ? ConditionOutcome.match()
+                    : ConditionOutcome.noMatch("spring.datasource.multiples");
+        }
+    }
 
 }

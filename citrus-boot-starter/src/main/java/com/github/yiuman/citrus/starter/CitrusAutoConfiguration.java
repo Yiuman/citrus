@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.starter;
 
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
-import com.baomidou.mybatisplus.autoconfigure.MybatisPlusLanguageDriverAutoConfiguration;
 import com.github.yiuman.citrus.security.authorize.AuthorizeConfigManager;
 import com.github.yiuman.citrus.security.jwt.JwtSecurityConfigurerAdapter;
 import com.github.yiuman.citrus.security.properties.CitrusProperties;
@@ -10,13 +9,11 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
@@ -40,8 +37,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 @ConditionalOnClass(WebSecurityConfigurerAdapter.class)
 @ConditionalOnMissingBean(WebSecurityConfigurerAdapter.class)
 @EnableConfigurationProperties(CitrusProperties.class)
-@AutoConfigureBefore({MybatisPlusAutoConfiguration.class, JacksonAutoConfiguration.class})
-@AutoConfigureAfter({DataSourceAutoConfiguration.class, MybatisPlusLanguageDriverAutoConfiguration.class})
+@AutoConfigureBefore({JacksonAutoConfiguration.class})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ComponentScans({
         @ComponentScan("com.github.yiuman.citrus.support"),
@@ -49,7 +45,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
         @ComponentScan("com.github.yiuman.citrus.system"),
 })
 @MapperScan(basePackages = "com.github.yiuman.citrus.system.mapper")
-@Import({SystemDefaultBeanConfiguration.class, VerifyConfiguration.class, DynamicDataSourceAutoConfiguration.class})
+@Import({SystemDefaultBeanConfiguration.class, VerifyConfiguration.class})
 @EnableWebSecurity
 @Slf4j
 public class CitrusAutoConfiguration {
