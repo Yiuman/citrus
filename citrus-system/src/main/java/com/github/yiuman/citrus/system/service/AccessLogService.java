@@ -61,10 +61,4 @@ public class AccessLogService extends BaseService<AccessLog, Long> {
         save(accessLog);
     }
 
-    public void pointAccessWithResourceName(HttpServletRequest request, User user, String resourceName) throws Exception {
-        Resource resource = new Resource();
-        resource.setResourceName(resourceName);
-        pointAccess(request, user, resource);
-    }
-
 }

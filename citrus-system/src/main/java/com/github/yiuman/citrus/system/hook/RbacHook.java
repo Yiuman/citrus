@@ -4,7 +4,6 @@ import com.github.yiuman.citrus.security.authorize.AuthorizeServiceHook;
 import com.github.yiuman.citrus.support.utils.WebUtils;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.User;
-import com.github.yiuman.citrus.system.service.AccessLogService;
 import com.github.yiuman.citrus.system.service.RbacMixinService;
 import com.github.yiuman.citrus.system.service.ResourceService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,11 +30,11 @@ public class RbacHook implements AuthorizeServiceHook {
 
     private final RbacMixinService mixinService;
 
-    private final AccessLogService accessLogService;
+    private final AccessPointer accessPointer;
 
-    public RbacHook(RbacMixinService mixinService, AccessLogService accessLogService) {
+    public RbacHook(RbacMixinService mixinService, AccessPointer accessPointer) {
         this.mixinService = mixinService;
-        this.accessLogService = accessLogService;
+        this.accessPointer = accessPointer;
     }
 
     /**
@@ -55,7 +54,7 @@ public class RbacHook implements AuthorizeServiceHook {
             //获取当前请求的对应的RequestMapping路径
             String mvcDefineMapping = WebUtils.getRequestMapping(httpServletRequest);
             if (mvcDefineMapping == null) {
-                accessLogService.pointAccess(httpServletRequest, user.orElse(null), null);
+                accessPointer.doPoint(httpServletRequest, user.orElse(null), null);
                 return true;
             }
 
@@ -68,7 +67,7 @@ public class RbacHook implements AuthorizeServiceHook {
                 resource = resourceService.selectByUri(mvcDefineMapping, httpServletRequest.getMethod());
             }
 
-            accessLogService.pointAccess(httpServletRequest, user.orElse(null), resource);
+            accessPointer.doPoint(httpServletRequest, user.orElse(null), resource);
             if (resource == null) {
                 return true;
             }

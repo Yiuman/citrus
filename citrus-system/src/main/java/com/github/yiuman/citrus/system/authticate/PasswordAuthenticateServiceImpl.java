@@ -7,8 +7,9 @@ import com.github.yiuman.citrus.security.verify.captcha.Captcha;
 import com.github.yiuman.citrus.support.utils.WebUtils;
 import com.github.yiuman.citrus.system.cache.UserOnlineCache;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
+import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.User;
-import com.github.yiuman.citrus.system.service.AccessLogService;
+import com.github.yiuman.citrus.system.hook.AccessPointer;
 import com.github.yiuman.citrus.system.service.RbacMixinService;
 import com.github.yiuman.citrus.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,7 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService, Use
 
     private final RbacMixinService rbacMixinService;
 
-    private final AccessLogService accessLogService;
+    private final AccessPointer accessPointer;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -48,12 +49,12 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService, Use
 
     public PasswordAuthenticateServiceImpl(
             RbacMixinService rbacMixinService,
-            AccessLogService accessLogService,
+            AccessPointer accessPointer,
             PasswordEncoder passwordEncoder,
             VerificationProcessor<Captcha> verificationProcessor
     ) {
         this.rbacMixinService = rbacMixinService;
-        this.accessLogService = accessLogService;
+        this.accessPointer = accessPointer;
         this.passwordEncoder = passwordEncoder;
         this.verificationProcessor = verificationProcessor;
     }
@@ -83,7 +84,7 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService, Use
 
         saveUserOnlineInfo(user);
         try {
-            accessLogService.pointAccessWithResourceName(request, user, "登录");
+            accessPointer.doPoint(request, user, new Resource("登录"));
         } catch (Exception ignore) {
         }
 
