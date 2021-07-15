@@ -12,7 +12,9 @@ import com.github.yiuman.citrus.security.authenticate.AuthenticateProcessor;
 import com.github.yiuman.citrus.security.authenticate.AuthenticateProcessorImpl;
 import com.github.yiuman.citrus.security.authenticate.AuthenticateService;
 import com.github.yiuman.citrus.security.authorize.AuthorizeConfigManager;
+import com.github.yiuman.citrus.security.authorize.AuthorizeConfigManagerImpl;
 import com.github.yiuman.citrus.security.authorize.AuthorizeConfigProvider;
+import com.github.yiuman.citrus.security.authorize.WebSecurityConfigProvider;
 import com.github.yiuman.citrus.security.jwt.JwtAccessDeniedHandler;
 import com.github.yiuman.citrus.security.jwt.JwtAuthenticationEntryPoint;
 import com.github.yiuman.citrus.security.jwt.JwtAuthenticationFilter;
@@ -87,10 +89,9 @@ public class SystemDefaultBeanConfiguration {
      * @return 授权配置管理器
      */
     @Bean
-    @ConditionalOnMissingBean(AuthorizeConfigManager.class)
-    public AuthorizeConfigManager authorizeConfigManager(List<AuthorizeConfigProvider> authorizeConfigProviders) {
-        return new AuthorizeConfigManager(authorizeConfigProviders);
-
+    @ConditionalOnMissingBean(AuthorizeConfigManagerImpl.class)
+    public AuthorizeConfigManager authorizeConfigManager(List<AuthorizeConfigProvider> authorizeConfigProviders, List<WebSecurityConfigProvider> webSecurityConfigProviders) {
+        return new AuthorizeConfigManagerImpl(authorizeConfigProviders,webSecurityConfigProviders);
     }
 
     /**
@@ -135,7 +136,6 @@ public class SystemDefaultBeanConfiguration {
         RedisTemplate<?, ?> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
         template.afterPropertiesSet();
-
         return template;
     }
 

@@ -1,14 +1,10 @@
 package com.github.yiuman.citrus.starter;
 
-import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
 import com.github.yiuman.citrus.security.authorize.AuthorizeConfigManager;
 import com.github.yiuman.citrus.security.jwt.JwtSecurityConfigurerAdapter;
 import com.github.yiuman.citrus.security.properties.CitrusProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
-import org.mybatis.spring.mapper.MapperFactoryBean;
-import org.mybatis.spring.mapper.MapperScannerConfigurer;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -21,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -98,20 +95,10 @@ public class CitrusAutoConfiguration {
             authorizeConfigManager.config(http.authorizeRequests());
         }
 
-    }
-
-
-    @Configuration
-    @Import(MybatisPlusAutoConfiguration.AutoConfiguredMapperScannerRegistrar.class)
-    @ConditionalOnMissingBean({MapperFactoryBean.class, MapperScannerConfigurer.class})
-    public static class MapperScannerRegistrarNotFoundConfiguration implements InitializingBean {
-
         @Override
-        public void afterPropertiesSet() {
-            log.debug(
-                    "Not found configuration for registering mapper bean using @MapperScan, MapperFactoryBean and MapperScannerConfigurer.");
+        public void configure(WebSecurity web) {
+            authorizeConfigManager.config(web);
         }
     }
-
 
 }
