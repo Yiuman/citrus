@@ -91,7 +91,7 @@ public class SystemDefaultBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(AuthorizeConfigManagerImpl.class)
     public AuthorizeConfigManager authorizeConfigManager(List<AuthorizeConfigProvider> authorizeConfigProviders, List<WebSecurityConfigProvider> webSecurityConfigProviders) {
-        return new AuthorizeConfigManagerImpl(authorizeConfigProviders,webSecurityConfigProviders);
+        return new AuthorizeConfigManagerImpl(authorizeConfigProviders, webSecurityConfigProviders);
     }
 
     /**
