@@ -12,7 +12,7 @@
     <img alt="code style" src="https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg">
   </a>
   <a href="http://spring.io/projects/spring-boot">
-    <img alt="springboot-2.5.0" src="https://img.shields.io/badge/spring--boot-2.5.0-release.svg">
+    <img alt="springboot-2.5.2" src="https://img.shields.io/badge/spring--boot-2.5.0-release.svg">
   </a>
   <a href="http://mp.baomidou.com">
     <img alt="mybatis-plus-3.4.3" src="https://img.shields.io/badge/mybatis--plus-3.4.3-blue.svg">
