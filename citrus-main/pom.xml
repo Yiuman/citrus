@@ -5,32 +5,33 @@
     <parent>
         <artifactId>citrus</artifactId>
         <groupId>com.github.yiuman</groupId>
-        <version>0.0.1</version>
+        <version>0.14.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>citrus-main</artifactId>
 
+
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
         <maven.test.skip>true</maven.test.skip>
-        <citrus.version>0.13.0</citrus.version>
+        <citrus.version>0.14.0</citrus.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-test</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jta-atomikos</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-jta-atomikos</artifactId>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.github.yiuman</groupId>
