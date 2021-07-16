@@ -6,18 +6,18 @@ import com.github.yiuman.citrus.workflow.model.impl.TaskCompleteModelImpl;
 import com.github.yiuman.citrus.workflow.service.impl.WorkflowServiceImpl;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.collections4.map.HashedMap;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * @author yiuman
  * @date 2021/4/6
  */
 @SpringBootTest
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 public class WorkflowTest {
 
     /**
@@ -61,7 +61,7 @@ public class WorkflowTest {
                     put("test", "1");
                 }}).build();
         ProcessInstance processInstance = workflowService.starProcess(startProcessModel);
-        Assert.assertNotNull(processInstance);
+        Assertions.assertNotNull(processInstance);
 
     }
 

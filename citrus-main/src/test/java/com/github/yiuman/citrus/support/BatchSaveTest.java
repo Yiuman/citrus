@@ -5,12 +5,12 @@ import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.system.entity.Dictionary;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
  * @author yiuman
  * @date 2021/4/13
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Slf4j
 public class BatchSaveTest {
@@ -40,11 +40,11 @@ public class BatchSaveTest {
             dictionaryList.add(dictionary);
         }
         boolean success = crudMapper.saveBatch(dictionaryList);
-        Assert.assertTrue(success);
+        Assertions.assertTrue(success);
 
         List<Dictionary> dictionaries = crudMapper.selectList(Wrappers.emptyWrapper());
         log.info("source size {},dictionaries size {}", dictionaryList.size(), dictionaries.size());
-        Assert.assertEquals(dictionaryList.size(), dictionaries.size());
+        Assertions.assertEquals(dictionaryList.size(), dictionaries.size());
     }
 
     @Test
@@ -62,12 +62,12 @@ public class BatchSaveTest {
             dictionaries.add(dictionary);
         }
         boolean success = crudMapper.saveBatch(dictionaries);
-        Assert.assertTrue(success);
+        Assertions.assertTrue(success);
 
 
         log.info("source size {},dictionaries size {}", size, dictionaries.size());
         List<Dictionary> selectList = crudMapper.selectList(Wrappers.emptyWrapper());
-        Assert.assertEquals(size + 10, selectList.size());
+        Assertions.assertEquals(size + 10, selectList.size());
     }
 
 }
