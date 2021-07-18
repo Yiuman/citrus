@@ -80,8 +80,12 @@ public final class JwtUtils {
     }
 
     public static String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader((String) getJwt().find(JwtProperties.JwtConstants.Attribute.HEADER));
-        String tokenPrefix = (String) getJwt().find(JwtProperties.JwtConstants.Attribute.PREFIX);
+        InMemoryCache<String, Object> jwtCache = getJwt();
+        //获取token，若请求头中没有则从请求参数中取
+        String bearerToken = Optional
+                .ofNullable(request.getHeader((String) jwtCache.find(JwtProperties.JwtConstants.Attribute.HEADER)))
+                .orElse(request.getParameter((String) jwtCache.find(JwtProperties.JwtConstants.Attribute.PARAM_NAME)));
+        String tokenPrefix = (String) jwtCache.find(JwtProperties.JwtConstants.Attribute.PREFIX);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(tokenPrefix)) {
             return bearerToken.substring(tokenPrefix.length());
         }
