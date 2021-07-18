@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Date;
@@ -84,6 +85,15 @@ public final class JwtUtils {
         String tokenPrefix = (String) getJwt().find(JwtProperties.JwtConstants.Attribute.PREFIX);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(tokenPrefix)) {
             return bearerToken.substring(tokenPrefix.length());
+        }
+        //如果头部没有，尝试从cookies中取
+        if(bearerToken==null) {
+        	Cookie[] ck = request.getCookies();
+        	if(ck!=null)
+        		for(Cookie c : ck) {
+        			if("token".equalsIgnoreCase(c.getName()))
+        				return c.getValue();
+        		}
         }
         return null;
     }
