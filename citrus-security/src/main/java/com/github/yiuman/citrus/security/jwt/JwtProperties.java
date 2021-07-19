@@ -19,6 +19,11 @@ public class JwtProperties {
     private String tokenHeader = JwtConstants.TOKEN_HEADER;
 
     /**
+     * token参数名（请求头没有时从请求参数中取）
+     */
+    private String tokenParamName = JwtConstants.TOKEN_PARAM_NAME;
+
+    /**
      * token值的前缀，如Bearer （注意此处有空格）
      */
     private String tokenPrefix = JwtConstants.TOKEN_PREFIX;
@@ -53,6 +58,14 @@ public class JwtProperties {
 
     public void setTokenHeader(String tokenHeader) {
         this.tokenHeader = tokenHeader;
+    }
+
+    public String getTokenParamName() {
+        return tokenParamName;
+    }
+
+    public void setTokenParamName(String tokenParamName) {
+        this.tokenParamName = tokenParamName;
     }
 
     public String getTokenPrefix() {
@@ -102,6 +115,8 @@ public class JwtProperties {
 
         String TOKEN_HEADER = "Authorization";
 
+        String TOKEN_PARAM_NAME = "token";
+
         String TOKEN_PREFIX = "Bearer ";
 
         String SECRET = "ZmQ0ZGI5NjQ0MDQwY2I4MjMxY2Y3ZmI3MjdhN2ZmMjNhODViOTg1ZGE0NTBjMGM4NDA5NzYxMjdjOWMwYWRmZTBlZjlhNGY3ZTg4Y2U3YTE1ODVkZDU5Y2Y3OGYwZWE1NzUzNWQ2YjFjZDc0NGMxZWU2MmQ3MjY1NzJmNTE0MzI";
@@ -118,6 +133,8 @@ public class JwtProperties {
             String SECRET = "secret";
 
             String HEADER = "tokenHeader";
+
+            String PARAM_NAME = "tokenParamName";
 
             String PREFIX = "tokenPrefix";
 
