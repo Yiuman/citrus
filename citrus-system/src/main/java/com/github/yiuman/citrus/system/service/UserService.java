@@ -124,13 +124,13 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
      * @return Optional<User>
      */
     public Optional<User> getUser(Authentication authentication) {
-        User user = null;
-        Object principal = authentication.getPrincipal();
+        Object principal;
         //匿名不给进
-        if (ANONYMOUS.equals(principal)) {
+        if (Objects.isNull(authentication) || ANONYMOUS.equals(principal = authentication.getPrincipal())) {
             return Optional.empty();
         }
 
+        User user = null;
         if (principal instanceof User) {
             user = (User) principal;
         } else if (principal instanceof String) {
