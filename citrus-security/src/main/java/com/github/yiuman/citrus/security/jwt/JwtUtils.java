@@ -90,15 +90,6 @@ public final class JwtUtils {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(tokenPrefix)) {
             return bearerToken.substring(tokenPrefix.length());
         }
-        //如果头部没有，尝试从cookies中取
-        if(bearerToken==null) {
-        	Cookie[] ck = request.getCookies();
-        	if(ck!=null)
-        		for(Cookie c : ck) {
-        			if("token".equalsIgnoreCase(c.getName()))
-        				return c.getValue();
-        		}
-        }
         return null;
     }
 
