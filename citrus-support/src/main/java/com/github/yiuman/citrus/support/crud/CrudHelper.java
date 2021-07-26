@@ -130,11 +130,13 @@ public final class CrudHelper {
             }
 
             M mapper;
-            try {
-                mapper = (M) sqlSessionTemplate.getMapper(mapperClass);
-            } catch (BindingException e) {
-                sqlSessionTemplate.getConfiguration().addMapper(mapperClass);
-                mapper = (M) sqlSessionTemplate.getMapper(mapperClass);
+            synchronized (mapperClass) {
+                try {
+                    mapper = (M) sqlSessionTemplate.getMapper(mapperClass);
+                } catch (BindingException e) {
+                    sqlSessionTemplate.getConfiguration().addMapper(mapperClass);
+                    mapper = (M) sqlSessionTemplate.getMapper(mapperClass);
+                }
             }
             return mapper;
         } catch (Throwable throwable) {

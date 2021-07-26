@@ -69,7 +69,7 @@ public final class CrudUtils {
      * @throws Exception 反射异常
      */
     @SuppressWarnings("unchecked")
-    public static <E, K extends Serializable, S extends CrudService<E, K>> Class<S> getCrudServiceClass(
+    public synchronized static <E, K extends Serializable, S extends CrudService<E, K>> Class<S> getCrudServiceClass(
             Class<E> entityClass,
             Class<K> keyClass,
             Class<S> superServiceClass) throws Exception {
@@ -154,7 +154,7 @@ public final class CrudUtils {
      * @throws Exception 反射异常，无法创建CLASS异常
      */
     @SuppressWarnings("unchecked")
-    public static <T> Class<? extends BaseMapper<T>> getMapperInterface(Class<T> entityClass, Class<?> mapperClass) throws Exception {
+    public synchronized static <T> Class<? extends BaseMapper<T>> getMapperInterface(Class<T> entityClass, Class<?> mapperClass) throws Exception {
         String entityClassName = entityClass.getName();
         String mapperClassSimpleName = mapperClass.getSimpleName();
         String formatName = String.format("%s$$javassist", (entityClassName + mapperClassSimpleName));
