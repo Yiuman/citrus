@@ -34,7 +34,9 @@
 
 **前端仓库地址**：https://github.com/Yiuman/citrus-vuetify
 
-:smile:[我是一个活生生的例子](http://42.192.95.146/#/login)
+:smile:  [我是一个活生生的例子](http://42.192.95.146/#/login)
+
+欢迎issues、PR~~  如果此项目对你有所帮助，麻烦动动小手给个小星星:star:
 
 
 
@@ -51,7 +53,7 @@
 
 
 
-### 项目结构
+### 项目结构/模块设计及使用指南
 
 - `citrus-boot-starter` 项目自动配置相关
 - `citrus-main` 项目的运行入口（体验开箱即用的快感）
@@ -77,7 +79,7 @@
     </dependency>
     ```
 
-2. 下载 https://github.com/Yiuman/citrus/tree/master/sql  中的sql文件，创建你的数据并执行
+2. 下载 https://github.com/Yiuman/citrus/tree/master/sql  中的sql文件，创建你的数据并执行（多数据源请见多数据源及事务使用指南）
 
 3. 在`application.yml`中配置数据库及应用信息
 
@@ -90,21 +92,14 @@
         password: yiuman
     server:
       port: 8082
-    
-    mybatis-plus:
-      configuration:
-        #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-        local-cache-scope: statement
     ```
-
+    
 4. 启动项目
 
 #### 方式二
 
-1. ```sh
-   git clone https://github.com/Yiuman/citrus.git
-   ```
-
+1. 克隆项目 `git clone https://github.com/Yiuman/citrus.git`
+   
 2. 自行修改项目配置与代码
 
 3. 启动项目
