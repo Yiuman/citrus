@@ -43,6 +43,7 @@
         <module>citrus-system</module>
         <module>citrus-workflow</module>
         <module>citrus-workflow-impl</module>
+        <module>citrus-elasticsearch</module>
     </modules>
 
     <properties>
