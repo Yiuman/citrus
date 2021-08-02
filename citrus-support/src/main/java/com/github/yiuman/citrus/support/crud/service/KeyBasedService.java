@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.support.crud.service;
 
+import cn.hutool.core.util.TypeUtil;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
@@ -24,7 +25,7 @@ public interface KeyBasedService<E, K extends Serializable> extends EntityTypeSe
      */
     @SuppressWarnings("unchecked")
     default Class<K> getKeyType() {
-        return (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 1);
+        return (Class<K>) TypeUtil.getTypeArgument(getClass(), 1);
     }
 
     /**
