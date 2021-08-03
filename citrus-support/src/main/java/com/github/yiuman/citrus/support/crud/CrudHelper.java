@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.TypeUtil;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.github.yiuman.citrus.support.cache.InMemoryCache;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
@@ -66,8 +65,8 @@ public final class CrudHelper {
         }
         try {
             crudService = CrudUtils.getCrudService(entityClass, keyClass, BaseService.class);
-        } catch (Exception e) {
-            log.error("Cannot auto create baseService for entity {}", ReflectionKit.getSuperClassGenericType(entityClass, 0), e);
+        } catch (Throwable e) {
+            log.error("Cannot auto create baseService for entity {}", TypeUtil.getTypeArgument(entityClass, 0), e);
             throw new RuntimeException(e);
         }
         SERVICE_CACHE.save(entityClass, crudService);
@@ -87,8 +86,8 @@ public final class CrudHelper {
     @SuppressWarnings("unchecked")
     public static <E, K extends Serializable, S extends CrudService<E, K>> S getCrudService(Class<?> genericsClass) {
         return getCrudService(
-                (Class<E>) ReflectionKit.getSuperClassGenericType(genericsClass, 0),
-                (Class<K>) ReflectionKit.getSuperClassGenericType(genericsClass, 1)
+                (Class<E>) TypeUtil.getTypeArgument(genericsClass, 0),
+                (Class<K>) TypeUtil.getTypeArgument(genericsClass, 1)
         );
     }
 
