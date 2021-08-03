@@ -7,8 +7,11 @@ import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.entity.Authority;
 import com.github.yiuman.citrus.system.entity.Role;
 import com.github.yiuman.citrus.system.entity.RoleAuthority;
+import com.github.yiuman.citrus.system.entity.UserRole;
 import com.github.yiuman.citrus.system.mapper.RoleAuthorityMapper;
 import com.github.yiuman.citrus.system.mapper.RoleMapper;
+import com.github.yiuman.citrus.system.mapper.UserRoleMapper;
+
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -27,10 +30,14 @@ public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
     private final RoleMapper roleMapper;
 
     private final RoleAuthorityMapper roleAuthorityMapper;
+    
+    private final UserRoleMapper userRoleMapper;
+    
 
-    public RoleService(RoleMapper roleMapper, RoleAuthorityMapper roleAuthorityMapper) {
+    public RoleService(RoleMapper roleMapper, RoleAuthorityMapper roleAuthorityMapper, UserRoleMapper userRoleMapper) {
         this.roleMapper = roleMapper;
         this.roleAuthorityMapper = roleAuthorityMapper;
+        this.userRoleMapper = userRoleMapper;
     }
 
     @Override
@@ -59,5 +66,13 @@ public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
         return roleAuthorityMapper.selectList(Wrappers.<RoleAuthority>lambdaQuery().in(RoleAuthority::getAuthorityId, authIds));
     }
 
+	@Override
+	public boolean beforeRemove(RoleDto entity) {
+		
+		userRoleMapper.delete(Wrappers.<UserRole>lambdaQuery().eq(UserRole::getRoleId, entity.getRoleId()));
+		roleAuthorityMapper.delete(Wrappers.<RoleAuthority>lambdaQuery().eq(RoleAuthority::getRoleId, entity.getRoleId()));
+		return super.beforeRemove(entity);
+	}
 
+    
 }

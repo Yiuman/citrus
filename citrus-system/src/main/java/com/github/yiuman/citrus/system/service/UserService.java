@@ -217,4 +217,15 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
     public List<User> getUsersByDeptIds(List<Long> deptIds) {
         return userOrganMapper.getUsersByDeptIds(deptIds);
     }
+
+	@Override
+	public boolean beforeRemove(UserDto entity) {
+		
+		userOrganMapper.delete(Wrappers.<UserOrgan>lambdaQuery().eq(UserOrgan::getUserId, entity.getUserId()));
+		userRoleMapper.delete(Wrappers.<UserRole>lambdaQuery().eq(UserRole::getUserId, entity.getUserId()));
+		
+		return super.beforeRemove(entity);
+	}
+    
+    
 }
