@@ -6,7 +6,10 @@ import com.github.yiuman.citrus.system.dto.AuthorityDto;
 import com.github.yiuman.citrus.system.entity.Authority;
 import com.github.yiuman.citrus.system.entity.AuthorityResource;
 import com.github.yiuman.citrus.system.entity.Resource;
+import com.github.yiuman.citrus.system.entity.RoleAuthority;
 import com.github.yiuman.citrus.system.mapper.AuthorityResourceMapper;
+import com.github.yiuman.citrus.system.mapper.RoleAuthorityMapper;
+
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -26,6 +29,7 @@ import java.util.Set;
 public class AuthorityService extends BaseDtoService<Authority, Long, AuthorityDto> {
 
     private final AuthorityResourceMapper authorityResourceMapper;
+    private final RoleAuthorityMapper roleAuthorityMapper;
 
     @Override
     public AuthorityDto get(Long key) {
@@ -88,4 +92,14 @@ public class AuthorityService extends BaseDtoService<Authority, Long, AuthorityD
     public Set<Authority> getAuthoritiesByUserId(Long userId) {
         return authorityResourceMapper.getAuthoritiesByUserId(userId);
     }
+
+	@Override
+	public boolean beforeRemove(AuthorityDto entity) {
+		
+		authorityResourceMapper.delete(Wrappers.<AuthorityResource>lambdaQuery().eq(AuthorityResource::getAuthorityId, entity.getAuthorityId()));
+		roleAuthorityMapper.delete(Wrappers.<RoleAuthority>lambdaQuery().eq(RoleAuthority::getAuthorityId, entity.getAuthorityId()));
+		return super.beforeRemove(entity);
+	}
+    
+    
 }
