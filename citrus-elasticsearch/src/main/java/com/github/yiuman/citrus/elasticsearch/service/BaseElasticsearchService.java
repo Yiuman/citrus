@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.TypeUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -12,8 +13,10 @@ import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.ByQueryResponse;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.Query;
@@ -23,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -122,9 +126,7 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void clear() {
-        getRepository().deleteAllById(list().parallelStream()
-                .map(LambdaUtils.functionWrapper(this::getKey))
-                .collect(Collectors.toList()));
+        getRepository().deleteAll();
     }
 
     @Override
@@ -146,8 +148,15 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
      * @return Es'query
      */
     protected Query wrapper2Query(Wrapper<E> wrapper) {
-        return new NativeSearchQueryBuilder()
-                .build();
+        QueryWrapper<E> queryWrapper = (QueryWrapper<E>) wrapper;
+        Map<String, Object> paramNameValuePairs = queryWrapper.getParamNameValuePairs();
+        if (CollectionUtil.isEmpty(paramNameValuePairs)) {
+            NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
+            paramNameValuePairs.forEach((key, value) -> nativeSearchQueryBuilder.withQuery(QueryBuilders.termQuery(key, value)));
+            return nativeSearchQueryBuilder.build();
+        }
+        return null;
+
     }
 
     @Override
@@ -168,8 +177,12 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
     @SuppressWarnings("unchecked")
     @Override
     public <P extends IPage<E>> P page(P page, Wrapper<E> queryWrapper) {
-        getElasticsearchRestTemplate().search(wrapper2Query(queryWrapper), getEntityType());
-        return (P) new Page<E>();
+        SearchHits<E> search = getElasticsearchRestTemplate().search(wrapper2Query(queryWrapper), getEntityType());
+        P returnPage = (P) new Page<E>();
+        returnPage.setCurrent(page.getCurrent());
+        returnPage.setPages(page.getPages());
+        returnPage.setRecords(search.getSearchHits().stream().map(SearchHit::getContent).collect(Collectors.toList()));
+        return returnPage;
     }
 
     @Transactional(rollbackFor = Exception.class)

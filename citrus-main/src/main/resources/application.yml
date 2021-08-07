@@ -4,6 +4,13 @@ spring:
     url: jdbc:mysql://localhost:3306/citrus?zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: yiuman
+  #    multiples:
+  #      txServer:
+  #        driver-class-name: com.mysql.jdbc.Driver
+  #        url: jdbc:mysql://42.192.95.146:3306/citrus?zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8
+  #        username: root
+  #        password: yiuman
+  #    enable-multiple-tx: false
   activiti:
     db-history-used: true
     history-level: audit
@@ -11,9 +18,9 @@ spring:
 server:
   port: 8082
 
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-citrus:
-  jwt:
-    tokenValidateInSeconds: 60
+#mybatis-plus:
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#citrus:
+#  jwt:
+#    tokenValidateInSeconds: 30
