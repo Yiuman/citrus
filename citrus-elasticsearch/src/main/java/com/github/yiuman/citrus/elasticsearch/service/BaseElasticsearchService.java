@@ -22,7 +22,6 @@ import org.springframework.data.elasticsearch.core.query.ByQueryResponse;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -89,7 +88,6 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
         return true;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public K update(E entity) throws Exception {
         if (!this.beforeUpdate(entity)) {
