@@ -13,6 +13,7 @@ import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -56,7 +57,6 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
         return SpringUtils.getBean(ElasticsearchRestTemplate.class, true);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public K save(E entity) throws Exception {
         if (!this.beforeSave(entity)) {
@@ -81,7 +81,6 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
         return (K) ReflectUtil.getFieldValue(entity, getKeyProperty());
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean batchSave(Iterable<E> entityIterable) {
         entityIterable.forEach(LambdaUtils.consumerWrapper(this::beforeSave));
@@ -101,7 +100,6 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
         return key;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean remove(E entity) {
         if (!this.beforeRemove(entity)) {
@@ -111,7 +109,6 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
         return true;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchRemove(Iterable<K> keys) {
         List<K> keyList = new ArrayList<>();
@@ -123,7 +120,6 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
         getRepository().deleteAllById(keys);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void clear() {
         getRepository().deleteAll();
@@ -150,12 +146,13 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
     protected Query wrapper2Query(Wrapper<E> wrapper) {
         QueryWrapper<E> queryWrapper = (QueryWrapper<E>) wrapper;
         Map<String, Object> paramNameValuePairs = queryWrapper.getParamNameValuePairs();
-        if (CollectionUtil.isEmpty(paramNameValuePairs)) {
-            NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
-            paramNameValuePairs.forEach((key, value) -> nativeSearchQueryBuilder.withQuery(QueryBuilders.termQuery(key, value)));
-            return nativeSearchQueryBuilder.build();
+        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
+        if (CollectionUtil.isNotEmpty(paramNameValuePairs)) {
+            BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+            paramNameValuePairs.forEach((key, value) -> boolQueryBuilder.must(QueryBuilders.termQuery(key, value)));
         }
-        return null;
+
+        return nativeSearchQueryBuilder.build();
 
     }
 
@@ -185,7 +182,6 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
         return returnPage;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean remove(Wrapper<E> wrapper) {
         ByQueryResponse delete = getElasticsearchRestTemplate().delete(wrapper2Query(wrapper), getEntityType());
