@@ -25,7 +25,7 @@ public final class ElasticsearchUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static synchronized <E, K extends Serializable> Class<? extends ElasticsearchRepository<E, K>>
+    public static synchronized <E, K extends Serializable> Class<ElasticsearchRepository<E, K>>
     getElasticsearchRepositoryInterface(Class<E> entityClass, Class<K> keyClass) throws Exception {
         String entityClassName = entityClass.getName();
         String formatName = String.format("%sElasticsearchRepository$$javassist", entityClassName);
@@ -43,14 +43,15 @@ public final class ElasticsearchUtils {
                 elasticsearchRepositoryInterface = ctClass.toClass();
             }
         }
-        return (Class<? extends ElasticsearchRepository<E, K>>) elasticsearchRepositoryInterface;
+        return (Class<ElasticsearchRepository<E, K>>) elasticsearchRepositoryInterface;
     }
 
+    @SuppressWarnings("unchecked")
     public static <E, K extends Serializable, T extends ElasticsearchRepository<E, K>> T getRepository(Class<E> entityClass, Class<K> keyClass) {
         try {
             ElasticsearchRepositoryFactory elasticsearchRepositoryFactory = SpringUtils.getBean(ElasticsearchRepositoryFactory.class);
             Assert.notNull(elasticsearchRepositoryFactory, "cannot found ElasticsearchRepositoryFactory bean in Spring context");
-            return elasticsearchRepositoryFactory.getRepository(getElasticsearchRepositoryInterface(entityClass, keyClass));
+            return (T) elasticsearchRepositoryFactory.getRepository(getElasticsearchRepositoryInterface(entityClass, keyClass));
         } catch (Throwable throwable) {
             log.error("Cannot auto create baseService for entity {}", TypeUtil.getTypeArgument(entityClass, 0), throwable);
             throw new RuntimeException(throwable);

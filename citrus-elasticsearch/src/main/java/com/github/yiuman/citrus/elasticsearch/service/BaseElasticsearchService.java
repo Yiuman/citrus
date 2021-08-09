@@ -2,13 +2,11 @@ package com.github.yiuman.citrus.elasticsearch.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ReflectUtil;
-import cn.hutool.core.util.TypeUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.github.yiuman.citrus.elasticsearch.utils.ElasticsearchUtils;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
@@ -21,12 +19,10 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.ByQueryResponse;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.Query;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,15 +39,6 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
     public BaseElasticsearchService() {
     }
 
-    @SuppressWarnings("unchecked")
-    public ElasticsearchRepository<E, K> getRepository() {
-        return ElasticsearchUtils.getRepository(
-                (Class<E>) TypeUtil.getTypeArgument(getClass(), 0),
-                (Class<K>) TypeUtil.getTypeArgument(getClass(), 1)
-        );
-
-    }
-
     public ElasticsearchRestTemplate getElasticsearchRestTemplate() {
         return SpringUtils.getBean(ElasticsearchRestTemplate.class, true);
     }
@@ -61,11 +48,10 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
         if (!this.beforeSave(entity)) {
             return null;
         }
-        ElasticsearchRepository<E, K> repository = getRepository();
-        Assert.notNull(repository, String.format("error: can not execute. because can not find repository for entity:[%s]", getEntityType().getName()));
 
+        ElasticsearchRestTemplate elasticsearchRestTemplate = getElasticsearchRestTemplate();
         if (Objects.nonNull(entity)) {
-            repository.save(entity);
+            elasticsearchRestTemplate.save(entity);
             //如果找不到主键就直接插入
             this.afterSave(entity);
             return getKey(entity);
@@ -82,8 +68,9 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
 
     @Override
     public boolean batchSave(Iterable<E> entityIterable) {
+        ElasticsearchRestTemplate elasticsearchRestTemplate = getElasticsearchRestTemplate();
         entityIterable.forEach(LambdaUtils.consumerWrapper(this::beforeSave));
-        getRepository().saveAll(entityIterable);
+        elasticsearchRestTemplate.save(entityIterable);
         entityIterable.forEach(LambdaUtils.consumerWrapper(this::afterSave));
         return true;
     }
@@ -103,7 +90,8 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
         if (!this.beforeRemove(entity)) {
             return false;
         }
-        getRepository().deleteById(getKey(entity));
+
+        getElasticsearchRestTemplate().delete(getKey(entity));
         return true;
     }
 
@@ -112,20 +100,25 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
         List<K> keyList = new ArrayList<>();
         keys.forEach(keyList::add);
         List<E> list = list(Wrappers.<E>query().in(getKeyColumn(), keyList));
+
         if (CollectionUtil.isNotEmpty(list)) {
-            list.forEach(this::beforeRemove);
+            ElasticsearchRestTemplate elasticsearchRestTemplate = getElasticsearchRestTemplate();
+            list.forEach(entity -> {
+                this.beforeRemove(entity);
+                elasticsearchRestTemplate.delete(entity);
+            });
         }
-        getRepository().deleteAllById(keys);
     }
 
     @Override
     public void clear() {
-        getRepository().deleteAll();
+        getElasticsearchRestTemplate().delete(Query.findAll(), getEntityType());
     }
 
     @Override
     public E get(K key) {
-        return getRepository().findById(key).orElse(null);
+        ElasticsearchRestTemplate elasticsearchRestTemplate = getElasticsearchRestTemplate();
+        return elasticsearchRestTemplate.get(key.toString(), getEntityType());
     }
 
     @Override
@@ -143,11 +136,14 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
      */
     protected Query wrapper2Query(Wrapper<E> wrapper) {
         QueryWrapper<E> queryWrapper = (QueryWrapper<E>) wrapper;
-        Map<String, Object> paramNameValuePairs = queryWrapper.getParamNameValuePairs();
+        //这个是普通查询
+        NormalSegmentList normal = queryWrapper.getExpression().getNormal();
         NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
-        if (CollectionUtil.isNotEmpty(paramNameValuePairs)) {
+        if (CollectionUtil.isNotEmpty(normal)) {
             BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-            paramNameValuePairs.forEach((key, value) -> boolQueryBuilder.must(QueryBuilders.termQuery(key, value)));
+//            normal.forEach(queryItem -> {
+//                boolQueryBuilder.must(QueryBuilders.termQuery(queryItem, value))
+//            });
         }
 
         return nativeSearchQueryBuilder.build();
@@ -156,7 +152,12 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
 
     @Override
     public List<E> list() {
-        return (List<E>) getRepository().findAll();
+        SearchHits<E> search = getElasticsearchRestTemplate().search(Query.findAll(), getEntityType());
+        if (CollectionUtil.isEmpty(search)) {
+            return null;
+        }
+
+        return search.stream().map(SearchHit::getContent).collect(Collectors.toList());
     }
 
     @Override
@@ -172,7 +173,9 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
     @SuppressWarnings("unchecked")
     @Override
     public <P extends IPage<E>> P page(P page, Wrapper<E> queryWrapper) {
-        SearchHits<E> search = getElasticsearchRestTemplate().search(wrapper2Query(queryWrapper), getEntityType());
+        ElasticsearchRestTemplate elasticsearchRestTemplate = getElasticsearchRestTemplate();
+        SearchHits<E> search = elasticsearchRestTemplate
+                .search(wrapper2Query(queryWrapper), getEntityType());
         P returnPage = (P) new Page<E>();
         returnPage.setCurrent(page.getCurrent());
         returnPage.setPages(page.getPages());

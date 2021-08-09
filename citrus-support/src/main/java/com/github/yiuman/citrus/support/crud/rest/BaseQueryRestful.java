@@ -70,8 +70,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
     }
 
     @Override
-    public Page<T> page(HttpServletRequest request) throws Exception {
-
+    public Page<T>  page(HttpServletRequest request) throws Exception {
         QueryWrapper<T> queryWrapper = Optional.ofNullable(getQueryWrapper(request)).orElse(Wrappers.query());
         handleSortWrapper(queryWrapper, request);
         //获取pageNo

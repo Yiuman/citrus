@@ -1,0 +1,53 @@
+#构建ElasticSearch+IK分词+ ElasticHD
+version: '3.3'
+services:
+  elasticsearch:
+    #    没镜像的情况下使用
+    #    build:
+    #      context: ./
+    #      dockerfile: Dockerfile
+    image: es-ik:7.14.0
+    container_name: elasticsearch
+    networks:
+      - net-es
+    #这里将elasticsearch的数据文件映射本地，以保证下次如果删除了容器还有数据
+    volumes:
+      - ../data/elasticsearch/data:/usr/share/elasticsearch/data　　
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+
+  elastichd:
+    image: containerize/elastichd:latest
+    container_name: elasticsearch-hd
+    networks:
+      - net-es
+    ports:
+      - "9800:9800"
+    depends_on:
+      - "elasticsearch"
+    links:
+      - "elasticsearch:demo"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.14.0
+    container_name: kibana
+    networks:
+      - net-es
+    ports:
+      - "5601:5601"
+    depends_on:
+      - "elasticsearch"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      I18N_LOCALE: zh-CN
+
+#这里要注意，es和eshd要在相同网络才能被links
+networks:
+  net-es:
+    external: false
+
+#运行
+#    docker-compose -f ./docker-compose-es-hd.yml up
