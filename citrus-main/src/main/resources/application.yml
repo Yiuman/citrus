@@ -9,6 +9,7 @@ spring:
     db-history-used: true
     history-level: audit
 
+
 server:
   port: 8082
 
