@@ -3,9 +3,9 @@ version: '3.3'
 services:
   elasticsearch:
     #    没镜像的情况下使用
-    #    build:
-    #      context: ./
-    #      dockerfile: Dockerfile
+    build:
+      context: ./
+      dockerfile: Dockerfile
     image: es-ik:7.14.0
     container_name: elasticsearch
     networks:
@@ -50,4 +50,4 @@ networks:
     external: false
 
 #运行
-#    docker-compose -f ./docker-compose-es-hd.yml up
+#    docker-compose -f ./docker-compose.yml up
