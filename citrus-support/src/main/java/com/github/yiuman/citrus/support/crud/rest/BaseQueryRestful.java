@@ -58,7 +58,6 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
      * 创建列表分页页面
      *
      * @return 分页页面对象
-     * @throws Exception 反射等异常
      */
     protected Object createView() {
         SimpleTableView<T> view = new SimpleTableView<>();
@@ -70,7 +69,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
     }
 
     @Override
-    public Page<T>  page(HttpServletRequest request) throws Exception {
+    public Page<T> page(HttpServletRequest request) throws Exception {
         QueryWrapper<T> queryWrapper = Optional.ofNullable(getQueryWrapper(request)).orElse(Wrappers.query());
         handleSortWrapper(queryWrapper, request);
         //获取pageNo
