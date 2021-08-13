@@ -32,10 +32,4 @@ public class ResourceService extends BaseDtoService<Resource, Long, ResourceDto>
         return getBaseMapper().selectOne(Wrappers.<Resource>lambdaQuery().eq(Resource::getResourceCode, code));
     }
 
-	@Override
-	public String getKeyColumn() {		
-		return "resource_id";
-	}
-    
-    
 }

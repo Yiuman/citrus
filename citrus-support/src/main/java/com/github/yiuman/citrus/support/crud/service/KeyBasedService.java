@@ -2,8 +2,8 @@ package com.github.yiuman.citrus.support.crud.service;
 
 import cn.hutool.core.util.TypeUtil;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.github.yiuman.citrus.support.crud.CrudHelper;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
@@ -36,7 +36,7 @@ public interface KeyBasedService<E, K extends Serializable> extends EntityTypeSe
      */
     @SuppressWarnings("unchecked")
     default K getKey(E entity) {
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityType());
+        TableInfo tableInfo = CrudHelper.getTableInfo(getEntityType());
         return Objects.nonNull(tableInfo) ? (K) ReflectionKit.getFieldValue(entity, tableInfo.getKeyProperty()) : null;
     }
 
@@ -59,7 +59,7 @@ public interface KeyBasedService<E, K extends Serializable> extends EntityTypeSe
      * @return 主键的属性名称 即TableId对应的Field
      */
     default String getKeyProperty() {
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityType());
+        TableInfo tableInfo = CrudHelper.getTableInfo(getEntityType());
         return Objects.nonNull(tableInfo) ? tableInfo.getKeyProperty() : null;
     }
 
@@ -69,7 +69,7 @@ public interface KeyBasedService<E, K extends Serializable> extends EntityTypeSe
      * @return 主键列名 即TableId
      */
     default String getKeyColumn() {
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityType());
+        TableInfo tableInfo = CrudHelper.getTableInfo(getEntityType());
         return Objects.nonNull(tableInfo) ? tableInfo.getKeyColumn() : null;
     }
 

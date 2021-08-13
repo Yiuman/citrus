@@ -41,6 +41,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotatedTypeMetadata;
@@ -48,7 +49,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.context.support.StandardServletEnvironment;
 
 import javax.sql.DataSource;
 import java.util.*;
@@ -369,7 +369,7 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
     }
 
 
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @Conditional(DynamicDataSourceAutoConfiguration.MultiplesDatasourceCondition.class)
     static class CustomJtaAutoConfiguration extends JtaAutoConfiguration {
     }
@@ -382,7 +382,7 @@ public class DynamicDataSourceAutoConfiguration implements InitializingBean {
         @Override
         public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
             Environment environment = context.getEnvironment();
-            MutablePropertySources propertySources = ((StandardServletEnvironment) environment).getPropertySources();
+            MutablePropertySources propertySources = ((StandardEnvironment) environment).getPropertySources();
             boolean matchMutableDataSources = propertySources.stream()
                     .filter(propertySource -> propertySource instanceof MapPropertySource)
                     .anyMatch(propertySource ->

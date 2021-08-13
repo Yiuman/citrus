@@ -4,6 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.TypeUtil;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.github.yiuman.citrus.support.cache.InMemoryCache;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
@@ -152,4 +154,13 @@ public final class CrudHelper {
     public static <M extends TreeMapper<T>, T extends Tree<?>> M getTreeMapper(Class<T> entityClass) {
         return getMapper(entityClass, TreeMapper.class);
     }
+
+    public static TableInfo getTableInfo(Class<?> entityClass){
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        if(Objects.isNull(tableInfo) && Objects.isNull(MAPPER_CACHE.find(entityClass))){
+            getCrudMapper(entityClass);
+        }
+        return TableInfoHelper.getTableInfo(entityClass);
+    }
+
 }

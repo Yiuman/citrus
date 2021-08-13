@@ -2,7 +2,6 @@ package com.github.yiuman.citrus.support.crud.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -42,13 +41,14 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
         return CrudHelper.getCrudMapper(getEntityType());
     }
 
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public K save(E entity) throws Exception {
         if (!this.beforeSave(entity)) {
             return null;
         }
-        BaseMapper<E> mapper = getMapper();
+        CrudMapper<E> mapper = getMapper();
         Assert.notNull(mapper, String.format("error: can not execute. because can not find mapper for entity:[%s]", getEntityType().getName()));
 
         if (Objects.nonNull(entity)) {
