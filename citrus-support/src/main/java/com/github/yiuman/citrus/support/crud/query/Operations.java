@@ -1,7 +1,5 @@
 package com.github.yiuman.citrus.support.crud.query;
 
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-
 /**
  * 查询操作类型
  *
@@ -13,41 +11,47 @@ public enum Operations {
     /**
      * SQL IN
      */
-    IN("IN"),
+    IN("in"),
 
-    NOT_IN("NOT IN"),
+    IN_SQL("inSql"),
 
-    LIKE("LIKE"),
+    NOT_IN("notIn"),
 
-    NOT_LIKE("NOT LIKE"),
+    LIKE("like"),
 
-    EQ("="),
+    NOT_LIKE("notLike"),
 
-    NE("<>"),
+    EQ("eq"),
 
-    GT(StringPool.RIGHT_CHEV),
+    NE("ne"),
 
-    GE(">="),
+    GT("gt"),
 
-    LT(StringPool.LEFT_CHEV),
+    GE("ge"),
 
-    LE("<="),
+    LT("lt"),
 
-    IS_NULL("IS NULL"),
+    LE("le"),
 
-    IS_NOT_NULL("IS NOT NULL"),
+    IS_NULL("isNull"),
 
-    EXISTS("EXISTS"),
+    IS_NOT_NULL("isNotNull"),
 
-    NOT_EXISTS("NOT EXISTS"),
+    EXISTS("exists"),
 
-    BETWEEN("BETWEEN"),
+    NOT_EXISTS("notExists"),
 
-    NOT_BETWEEN("NOT BETWEEN");
+    BETWEEN("between"),
+
+    NOT_BETWEEN("notBetween");
 
     private final String type;
 
     Operations(String type) {
         this.type = type;
+    }
+
+    public String getType() {
+        return type;
     }
 }

@@ -108,20 +108,24 @@ public final class QueryHelper {
         //拼接查询条件
         if (CollUtil.isNotEmpty(query.getConditions())) {
             query.getConditions().forEach(LambdaUtils.consumerWrapper(conditionInfo -> {
+                Class<?> lastParameterType = Operations.IN_SQL.getType().equals(conditionInfo.getOperator())
+                        || Operations.NOT_IN.getType().equals(conditionInfo.getOperator())
+                        ? String.class :
+                        getParameterClass(conditionInfo.getType());
                 Method conditionMethod = queryWrapper
                         .getClass()
-                        .getMethod(conditionInfo.getOperator(), Object.class, getParameterClass(conditionInfo.getType()));
+                        .getMethod(conditionInfo.getOperator(), boolean.class, Object.class, lastParameterType);
                 conditionMethod.setAccessible(true);
                 String fieldName = ObjectUtil.isNotEmpty(conditionInfo.getMapping())
                         ? conditionInfo.getMapping()
                         : conditionInfo.getParameter();
-                conditionMethod.invoke(queryWrapper, fieldName, conditionInfo.getValue());
+                conditionMethod.invoke(queryWrapper, true, fieldName, conditionInfo.getValue());
             }));
         }
 
         if (CollUtil.isNotEmpty(query.getSorts())) {
             final Consumer<SortBy> sortItemHandler = (sortBy) -> queryWrapper
-                      .orderBy(true, !sortBy.getSortDesc(), sortBy.getSortBy());
+                    .orderBy(true, !sortBy.getSortDesc(), sortBy.getSortBy());
             query.getSorts().forEach(sortItemHandler);
         }
 

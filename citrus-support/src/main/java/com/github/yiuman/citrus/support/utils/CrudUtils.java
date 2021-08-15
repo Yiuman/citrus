@@ -180,9 +180,14 @@ public final class CrudUtils {
     }
 
 
-    public static <W extends Widget<?>> W getWidget(CrudRestful<?, ?> restful, String methodName) throws InvocationTargetException, IllegalAccessException {
+    public static <W extends Widget<?>> W getWidget(CrudRestful<?, ?> restful, String methodName) {
         Method method = ReflectionUtils.findMethod(restful.getClass(), methodName);
-        return getWidget(restful, method);
+        try {
+            return getWidget(restful, method);
+        } catch (Throwable throwable) {
+            log.warn("cannot find widget by crud ", throwable);
+            return null;
+        }
     }
 
     @SuppressWarnings("unchecked")

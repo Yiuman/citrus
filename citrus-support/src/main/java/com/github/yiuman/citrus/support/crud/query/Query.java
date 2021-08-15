@@ -47,46 +47,24 @@ public class Query {
         return this;
     }
 
-    public Query eq(String parameter, Object val) {
-        conditions.add(ConditionInfo.builder()
-                .operator("eq")
-                .parameter(parameter)
-                .mapping(parameter)
-                .value(val)
-                .type(val.getClass())
-                .build());
+    public Query eq(String parameter, Object valUE) {
+        addConditionInfo(parameter, valUE, Operations.EQ);
         return this;
     }
 
-    public Query in(String parameter, Collection<?> parentIds) {
-        conditions.add(ConditionInfo.builder()
-                .operator("in")
-                .parameter(parameter)
-                .mapping(parameter)
-                .value(parentIds)
-                .type(parentIds.getClass())
-                .build());
+    public Query in(String parameter, Collection<?> values) {
+        addConditionInfo(parameter, values, Operations.IN);
         return this;
     }
 
     public Query like(String parameter, Object value) {
-        conditions.add(ConditionInfo.builder()
-                .operator("like")
-                .parameter(parameter)
-                .mapping(parameter)
-                .value(value)
-                .type(value.getClass())
-                .build());
+        addConditionInfo(parameter, value, Operations.LIKE);
         return this;
     }
 
-    public Query express(String parameter, String express) {
-        conditions.add(ConditionInfo.builder()
-                .operator(express)
-                .value(express)
-                .parameter(parameter)
-                .mapping(parameter)
-                .build());
+    @SuppressWarnings("UnusedReturnValue")
+    public Query inSql(String parameter, String value) {
+        addConditionInfo(parameter, value, Operations.IN_SQL);
         return this;
     }
 
@@ -99,5 +77,15 @@ public class Query {
     public Query orderBy(SortBy sortBy) {
         sorts.add(sortBy);
         return this;
+    }
+
+    private void addConditionInfo(String parameter, Object value, Operations operations) {
+        conditions.add(ConditionInfo.builder()
+                .operator(operations.getType())
+                .parameter(parameter)
+                .mapping(parameter)
+                .value(value)
+                .type(value.getClass())
+                .build());
     }
 }

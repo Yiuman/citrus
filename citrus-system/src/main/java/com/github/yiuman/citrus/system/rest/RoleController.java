@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.system.rest;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.query.annotations.Like;
@@ -64,15 +65,14 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
         RoleQuery roleQuery = (RoleQuery) params;
         List<Long> authIds = roleQuery.getAuthIds();
         //拼接权限ID筛选条件
-        if (roleQuery != null && !org.springframework.util.CollectionUtils.isEmpty(authIds)) {
+        if (roleQuery != null && CollUtil.isNotEmpty(authIds)) {
             query = Optional.ofNullable(query).orElse(Query.of());
 
             String inSql = String.format(
                     "select role_id from sys_role_auth where authority_id in (%s)"
                     , authIds.parallelStream().map(String::valueOf).collect(Collectors.joining(","))
             );
-            query.express(getService().getKeyColumn(), inSql);
-//            queryWrapper.inSql(getService().getKeyColumn(), inSql);
+            query.inSql(getService().getKeyColumn(), inSql);
         }
 
 
@@ -94,6 +94,7 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
         });
 
         view.addWidget("角色名", "roleName");
+        view.addWidget(CrudUtils.getWidget(this, "getAuthorities"));
         //添加默认按钮
         view.addButton(Buttons.defaultButtonsWithMore());
         //添加默认行内操作

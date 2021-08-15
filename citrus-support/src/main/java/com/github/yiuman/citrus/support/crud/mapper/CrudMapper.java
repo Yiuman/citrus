@@ -124,6 +124,7 @@ public interface CrudMapper<T> extends BaseMapper<T> {
      * @param entities 实体集合
      * @return 若集合为空或删除成功返回true 否则返回false
      */
+    @SuppressWarnings({"unused", "RedundantSuppression"})
     @Transactional(rollbackFor = Exception.class)
     default boolean deleteBatch(Collection<T> entities) {
         if (Objects.isNull(entities) || entities.isEmpty()) {
