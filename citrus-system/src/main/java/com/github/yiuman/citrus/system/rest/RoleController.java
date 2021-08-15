@@ -1,8 +1,7 @@
 package com.github.yiuman.citrus.system.rest;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.query.annotations.Like;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
@@ -47,7 +46,7 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
     @Data
     static class RoleQuery {
 
-        @Like
+        @Like(mapping = "role_name")
         private String roleName;
 
         private List<Long> authIds;
@@ -60,22 +59,24 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
     }
 
     @Override
-    protected QueryWrapper<RoleDto> getQueryWrapper(Object params) {
-        QueryWrapper<RoleDto> queryWrapper = super.getQueryWrapper(params);
+    protected Query getQueryCondition(Object params) {
+        Query query = super.getQueryCondition(params);
         RoleQuery roleQuery = (RoleQuery) params;
         List<Long> authIds = roleQuery.getAuthIds();
         //拼接权限ID筛选条件
         if (roleQuery != null && !org.springframework.util.CollectionUtils.isEmpty(authIds)) {
-            queryWrapper = Optional.ofNullable(queryWrapper).orElse(Wrappers.query());
+            query = Optional.ofNullable(query).orElse(Query.of());
 
             String inSql = String.format(
                     "select role_id from sys_role_auth where authority_id in (%s)"
                     , authIds.parallelStream().map(String::valueOf).collect(Collectors.joining(","))
             );
-            queryWrapper.inSql(getService().getKeyColumn(), inSql);
+            query.express(getService().getKeyColumn(), inSql);
+//            queryWrapper.inSql(getService().getKeyColumn(), inSql);
         }
 
-        return queryWrapper;
+
+        return query;
     }
 
     @Override

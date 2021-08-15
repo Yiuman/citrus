@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.system.service;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.service.BaseService;
 import com.github.yiuman.citrus.support.file.FileStorageService;
 import com.github.yiuman.citrus.system.entity.FileResource;
@@ -36,7 +36,7 @@ public class FileResourceService extends BaseService<FileResource, String> {
             identify = makeIdentify(file.getInputStream());
         }
 
-        FileResource fileResource = get(Wrappers.<FileResource>lambdaQuery().eq(FileResource::getIdentify, identify));
+        FileResource fileResource = get(Query.of().eq("identify", identify));
         if (Objects.nonNull(fileResource)) {
             return fileResource.getFileId();
         }

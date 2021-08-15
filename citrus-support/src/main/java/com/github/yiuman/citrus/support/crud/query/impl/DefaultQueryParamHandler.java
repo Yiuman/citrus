@@ -1,7 +1,8 @@
 package com.github.yiuman.citrus.support.crud.query.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.query.QueryParamHandler;
 import com.github.yiuman.citrus.support.crud.query.QueryParamMeta;
 
@@ -22,7 +23,7 @@ public class DefaultQueryParamHandler implements QueryParamHandler {
     }
 
     @Override
-    public void handle(QueryParamMeta paramMeta, Object object, QueryWrapper<?> queryWrapper) throws Exception {
+    public void handle(QueryParamMeta paramMeta, Object object, Query query) throws Exception {
         Field field = paramMeta.getField();
         field.setAccessible(true);
         Object value = field.get(object);
@@ -30,12 +31,14 @@ public class DefaultQueryParamHandler implements QueryParamHandler {
             return;
         }
 
-        Method conditionMethod = queryWrapper
+        Method conditionMethod = query
                 .getClass()
-                .getMethod(paramMeta.getType(), boolean.class, Object.class, getParameterClass(field));
+                .getMethod(paramMeta.getType(), String.class, getParameterClass(field));
         conditionMethod.setAccessible(true);
-        String fieldName = org.springframework.util.StringUtils.hasText(paramMeta.getMapping()) ? paramMeta.getMapping() : field.getName();
-        conditionMethod.invoke(queryWrapper, paramMeta.isCondition(), StringUtils.camelToUnderline(fieldName), field.get(object));
+        String fieldName = ObjectUtil.isNotEmpty(paramMeta.getMapping())
+                ? paramMeta.getMapping()
+                : field.getName();
+        conditionMethod.invoke(query, fieldName, field.get(object));
     }
 
     private Class<?> getParameterClass(Field field) {

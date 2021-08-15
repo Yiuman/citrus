@@ -1,23 +1,24 @@
 package com.github.yiuman.citrus.support.crud.service;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.crud.CrudHelper;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
+import com.github.yiuman.citrus.support.crud.query.Query;
+import com.github.yiuman.citrus.support.crud.query.QueryHelper;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * 基础的Service
@@ -92,9 +93,8 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchRemove(Iterable<K> keys) {
-        List<K> keyList = new ArrayList<>();
-        keys.forEach(keyList::add);
-        List<E> list = list(Wrappers.<E>query().in(getKeyColumn(), keyList));
+        List<K> ids = StreamSupport.stream(keys.spliterator(), false).collect(Collectors.toList());
+        List<E> list = getMapper().selectList(Wrappers.<E>query().in(getKeyColumn(), ids));
         if (CollectionUtil.isNotEmpty(list)) {
             list.forEach(this::beforeRemove);
         }
@@ -115,8 +115,8 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
     }
 
     @Override
-    public E get(Wrapper<E> wrapper) {
-        return getMapper().selectOne(wrapper);
+    public E get(Query query) {
+        return getMapper().selectOne(QueryHelper.getQueryWrapper(query));
     }
 
     @Override
@@ -125,18 +125,18 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
     }
 
     @Override
-    public List<E> list(Wrapper<E> wrapper) {
-        return getMapper().selectList(wrapper);
+    public List<E> list(Query query) {
+        return getMapper().selectList(QueryHelper.getQueryWrapper(query));
     }
 
     @Override
-    public <P extends IPage<E>> P page(P page, Wrapper<E> queryWrapper) {
-        return getMapper().selectPage(page, queryWrapper);
+    public <P extends IPage<E>> P page(P page, Query query) {
+        return getMapper().selectPage(page, QueryHelper.getQueryWrapper(query));
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean remove(Wrapper<E> wrapper) {
-        return getMapper().delete(wrapper) >= 0;
+    public boolean remove(Query query) {
+        return getMapper().delete(QueryHelper.getQueryWrapper(query)) >= 0;
     }
 }

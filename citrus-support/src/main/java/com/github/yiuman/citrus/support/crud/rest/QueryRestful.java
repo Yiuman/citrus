@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author yiuman
  * @date 2020/10/1
  */
-public interface QueryRestful<T, K> extends Condition<T> {
+public interface QueryRestful<T, K> extends Condition {
 
     /**
      * 分页

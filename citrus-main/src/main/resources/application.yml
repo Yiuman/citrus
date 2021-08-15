@@ -1,3 +1,5 @@
+server:
+  port: 8082
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
@@ -8,8 +10,3 @@ spring:
   activiti:
     db-history-used: true
     history-level: audit
-
-
-server:
-  port: 8082
-

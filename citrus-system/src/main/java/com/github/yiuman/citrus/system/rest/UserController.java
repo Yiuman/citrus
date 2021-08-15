@@ -1,8 +1,8 @@
 package com.github.yiuman.citrus.system.rest;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.security.authorize.Authorize;
+import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.query.QueryParamHandler;
 import com.github.yiuman.citrus.support.crud.query.QueryParamMeta;
 import com.github.yiuman.citrus.support.crud.query.annotations.Like;
@@ -130,7 +130,6 @@ public class UserController extends BaseCrudController<UserDto, Long> {
         return ResponseEntity.ok(userService.getCurrentUserOnlineInfo());
     }
 
-
     /**
      * 修改个人信息
      *
@@ -185,7 +184,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
 
             @SuppressWarnings("unchecked")
             @Override
-            public void handle(QueryParamMeta queryParamMeta, Object object, QueryWrapper<?> queryWrapper) {
+            public void handle(QueryParamMeta queryParamMeta, Object object, Query query) {
                 Field field = queryParamMeta.getField();
                 ReflectionUtils.makeAccessible(field);
                 List<Long> roleIds = (List<Long>) ReflectionUtils.getField(field, object);
@@ -202,7 +201,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
 
                 }
 
-                queryWrapper.in(true, "user_id", userRoles);
+                query.in("user_id", userRoles);
             }
         }
 

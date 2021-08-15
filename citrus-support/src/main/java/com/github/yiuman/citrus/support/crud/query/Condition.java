@@ -1,8 +1,7 @@
 package com.github.yiuman.citrus.support.crud.query;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-
 import javax.servlet.http.HttpServletRequest;
+
 
 /**
  * 查询条件接口
@@ -10,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author yiuman
  * @date 2020/7/23
  */
-public interface Condition<T> {
+public interface Condition {
 
     /**
      * 根据当前请求获取查询条件Wrapper
@@ -19,7 +18,7 @@ public interface Condition<T> {
      * @return 查询条件QueryWrapper
      * @throws Exception 可能为反射异常
      */
-    QueryWrapper<T> getQueryWrapper(HttpServletRequest request) throws Exception;
+    Query getQueryCondition(HttpServletRequest request) throws Exception;
 
     /**
      * 根据当前请求获取请求参数实例

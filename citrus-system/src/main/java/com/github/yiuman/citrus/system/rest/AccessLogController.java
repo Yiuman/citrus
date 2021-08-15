@@ -24,14 +24,14 @@ import java.util.List;
 public class AccessLogController extends BaseQueryController<AccessLog, Long> {
 
     public AccessLogController() {
-        addSortBy("createdTime", true);
+        addSortBy("created_time", true);
         setParamClass(AccessLogQuery.class);
     }
 
     @Data
     static class AccessLogQuery {
 
-        @Equals
+        @Equals(mapping = "user_id")
         private Long userId;
 
         @In(mapping = "resource_type")

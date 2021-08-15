@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.support.crud.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.model.Tree;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,11 +78,11 @@ public interface TreeOperation<T extends Tree<K>, K extends Serializable> {
     /**
      * 树查询
      *
-     * @param wrapper 查询Wrapper
+     * @param query 查询条件
      * @return 树结构
      * @throws Exception 一般为数据库异常或反射异常
      */
-    T treeQuery(Wrapper<T> wrapper) throws Exception;
+    T treeQuery(Query query) throws Exception;
 
     /**
      * 加载某个节点下所有数据

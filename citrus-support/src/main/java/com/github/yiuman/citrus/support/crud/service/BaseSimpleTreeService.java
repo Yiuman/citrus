@@ -1,8 +1,8 @@
 package com.github.yiuman.citrus.support.crud.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.model.BaseTree;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.beans.BeanUtils;
@@ -40,8 +40,8 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
     }
 
     @Override
-    public E treeQuery(Wrapper<E> wrapper) {
-        return initSimpleTreeByList(list(wrapper));
+    public E treeQuery(Query query) {
+        return initSimpleTreeByList(list(query));
     }
 
     protected E initSimpleTreeByList(List<E> list) {
@@ -81,7 +81,7 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
     @Override
     public List<E> loadByParent(K parentKey) {
         QueryWrapper<E> queryWrapper = Wrappers.query();
-        return parentKey == null ? list(queryWrapper.isNull(getParentField())) : list(queryWrapper.eq(getParentField(), parentKey));
+        return parentKey == null ? getMapper().selectList(queryWrapper.isNull(getParentField())) : getMapper().selectList(queryWrapper.eq(getParentField(), parentKey));
     }
 
     @Transactional(rollbackFor = Exception.class)

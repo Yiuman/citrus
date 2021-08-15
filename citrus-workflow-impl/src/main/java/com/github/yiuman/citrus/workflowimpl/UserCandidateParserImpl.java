@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.workflowimpl;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.service.UserService;
 import com.github.yiuman.citrus.workflow.model.CandidateModel;
@@ -35,7 +35,8 @@ public class UserCandidateParserImpl implements CandidateParser {
 
     @Override
     public <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext, T candidateModel) {
-        List<UserDto> userDtos = userService.list(Wrappers.<UserDto>query().in("uuid", candidateModel.getValues()));
+        List<UserDto> userDtos = userService.list(Query.of().in("uuid", candidateModel.getValues()));
+        //List<UserDto> userDtos = userService.list(Wrappers.<UserDto>query().in("uuid", candidateModel.getValues()));
         if (CollectionUtils.isEmpty(userDtos)) {
             return null;
         }

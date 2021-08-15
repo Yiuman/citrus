@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.workflow.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.service.BaseService;
 import com.github.yiuman.citrus.support.utils.ConvertUtils;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
@@ -64,8 +65,8 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
     }
 
     @Override
-    public List<E> list(Wrapper<E> wrapper) {
-        return super.list(wrapper);
+    public List<E> list(Query query) {
+        return super.list(query);
     }
 
     @Override

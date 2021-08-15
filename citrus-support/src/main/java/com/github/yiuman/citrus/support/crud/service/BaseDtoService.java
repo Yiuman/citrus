@@ -1,20 +1,19 @@
 package com.github.yiuman.citrus.support.crud.service;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yiuman.citrus.support.crud.CrudHelper;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
+import com.github.yiuman.citrus.support.crud.query.ConditionInfo;
+import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.utils.ConvertUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * 复杂实体类型（需传输转化的逻辑基类）
@@ -120,19 +120,23 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         return beforeRemove(entity) && getService().remove(dtoToEntity().apply(entity));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public boolean remove(Wrapper<D> wrapper) {
-        assertWrapper(wrapper);
-        return getService().remove((Wrapper<E>) wrapper);
+    public boolean remove(Query query)  {
+        Assert.notNull(query, "remove condition cannot be null");
+        return getService().remove(query);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchRemove(Iterable<K> keys) {
-        List<K> keyList = new ArrayList<>();
-        keys.forEach(keyList::add);
-        List<D> list = list(Wrappers.<D>query().in(getKeyColumn(), keyList));
+        List<K> ids = StreamSupport.stream(keys.spliterator(), false).collect(Collectors.toList());
+        ConditionInfo keyIds = ConditionInfo.builder()
+                .value(ids)
+                .parameter(getKeyProperty())
+                .mapping(getKeyColumn())
+                .type(ids.getClass())
+                .build();
+        List<D> list = list(Query.of().add(keyIds));
         if (CollectionUtil.isNotEmpty(list)) {
             list.forEach(this::beforeRemove);
         }
@@ -150,11 +154,9 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         return entityToDto().apply(getService().get(key));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public D get(Wrapper<D> wrapper) {
-        assertWrapper(wrapper);
-        return entityToDto().apply(getBaseMapper().selectOne((Wrapper<E>) wrapper));
+    public D get(Query query) {
+        return entityToDto().apply(getService().get(query));
     }
 
     @Override
@@ -162,20 +164,17 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         return ConvertUtils.listConvert(dtoClass, getService().list());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public List<D> list(Wrapper<D> wrapper) {
-        assertWrapper(wrapper);
-        return ConvertUtils.listConvert(dtoClass, getService().list((Wrapper<E>) wrapper));
+    public List<D> list(Query query) {
+        return ConvertUtils.listConvert(dtoClass, getService().list(query));
     }
 
     @Override
-    public <P extends IPage<D>> P page(P page, Wrapper<D> queryWrapper) {
-        assertWrapper(queryWrapper);
+    public <P extends IPage<D>> P page(P page, Query query) {
         //拷贝
         Page<E> entityPage = new Page<>();
         BeanUtils.copyProperties(page, entityPage);
-        getService().page(entityPage, (QueryWrapper<E>) queryWrapper);
+        getService().page(entityPage, query);
         //反拷贝
         BeanUtils.copyProperties(entityPage, page);
         page.setRecords(ConvertUtils.listConvert(dtoClass, entityPage.getRecords()));
@@ -189,17 +188,17 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         field.set(entity, key);
     }
 
-    /**
-     * 断言当前的Wrapper是否使用了Lambda的实现，如果是则抛出异常。
-     * 因为DTO并没有映射数据库表信息，Lambda实现会反射找到DTO实体类对应的数据表信息，找不到会出异常
-     * 所以DTO服务类中使用普通的wrapper
-     *
-     * @param wrapper Wrapper
-     */
-    private void assertWrapper(Wrapper<D> wrapper) {
-        if (wrapper instanceof AbstractLambdaWrapper) {
-            throw new RuntimeException(String.format("DTO's service class cannot use LambdaWrapper:[%s]", wrapper.getClass()));
-        }
-    }
+//    /**
+//     * 断言当前的Wrapper是否使用了Lambda的实现，如果是则抛出异常。
+//     * 因为DTO并没有映射数据库表信息，Lambda实现会反射找到DTO实体类对应的数据表信息，找不到会出异常
+//     * 所以DTO服务类中使用普通的wrapper
+//     *
+//     * @param wrapper Wrapper
+//     */
+//    private void assertWrapper(Wrapper<D> wrapper) {
+//        if (wrapper instanceof AbstractLambdaWrapper) {
+//            throw new RuntimeException(String.format("DTO's service class cannot use LambdaWrapper:[%s]", wrapper.getClass()));
+//        }
+//    }
 
 }

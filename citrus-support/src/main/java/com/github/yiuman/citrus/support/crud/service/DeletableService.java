@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.support.crud.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.github.yiuman.citrus.support.crud.query.Query;
 
 /**
  * 可删除的Service接口
@@ -30,11 +30,11 @@ public interface DeletableService<E, K> {
     /**
      * 删除
      *
-     * @param wrappers 删除的条件
+     * @param query 删除的条件
      * @return 是否删除成功true/false
      * @throws Exception 一般为数据库操作异常，或实体操作过程中的异常
      */
-    boolean remove(Wrapper<E> wrappers) throws Exception;
+    boolean remove(Query query) throws Exception;
 
     /**
      * 删除全部记录

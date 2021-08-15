@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.system.service;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.security.authenticate.NoPermissionException;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
@@ -91,15 +92,18 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
 
         organIds.forEach(LambdaUtils.consumerWrapper(organId -> {
             userOrganMapper.saveEntity(new UserOrgan(entity.getUserId(), organId));
-            //保存组织机构角色数据
-            List<UserRole> userRoles = entity.getRoleIds().stream().map(roleId -> {
-                UserRole userRole = new UserRole();
-                userRole.setUserId(entity.getUserId());
-                userRole.setRoleId(roleId);
-                userRole.setOrganId(organId);
-                return userRole;
-            }).collect(Collectors.toList());
-            userRoleMapper.saveBatch(userRoles);
+            if (CollUtil.isNotEmpty(entity.getRoleIds())) {
+                //保存组织机构角色数据
+                List<UserRole> userRoles = entity.getRoleIds().stream().map(roleId -> {
+                    UserRole userRole = new UserRole();
+                    userRole.setUserId(entity.getUserId());
+                    userRole.setRoleId(roleId);
+                    userRole.setOrganId(organId);
+                    return userRole;
+                }).collect(Collectors.toList());
+                userRoleMapper.saveBatch(userRoles);
+            }
+
         }));
     }
 
@@ -218,14 +222,14 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
         return userOrganMapper.getUsersByDeptIds(deptIds);
     }
 
-	@Override
-	public boolean beforeRemove(UserDto entity) {
-		
-		userOrganMapper.delete(Wrappers.<UserOrgan>lambdaQuery().eq(UserOrgan::getUserId, entity.getUserId()));
-		userRoleMapper.delete(Wrappers.<UserRole>lambdaQuery().eq(UserRole::getUserId, entity.getUserId()));
-		
-		return super.beforeRemove(entity);
-	}
-    
-    
+    @Override
+    public boolean beforeRemove(UserDto entity) {
+
+        userOrganMapper.delete(Wrappers.<UserOrgan>lambdaQuery().eq(UserOrgan::getUserId, entity.getUserId()));
+        userRoleMapper.delete(Wrappers.<UserRole>lambdaQuery().eq(UserRole::getUserId, entity.getUserId()));
+
+        return super.beforeRemove(entity);
+    }
+
+
 }

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.github.yiuman.citrus.support.crud.CrudHelper;
 import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
+import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.model.BasePreOrderTree;
 import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * 左右值预遍历树逻辑层
@@ -111,16 +113,14 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean remove(Wrapper<E> wrappers) {
-        return getService().remove(wrappers);
+    public boolean remove(Query query) {
+        return getService().remove(query);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchRemove(Iterable<K> keys) {
-        List<K> keyList = new ArrayList<>();
-        keys.forEach(keyList::add);
-        getTreeMapper().deleteBatch(list(Wrappers.<E>query().in(getKeyColumn(), keyList)));
+        getTreeMapper().deleteBatchIds(StreamSupport.stream(keys.spliterator(), false).collect(Collectors.toList()));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -135,8 +135,8 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     }
 
     @Override
-    public E get(Wrapper<E> wrapper) {
-        return getService().get(wrapper);
+    public E get(Query query) {
+        return getService().get(query);
     }
 
     @Override
@@ -145,13 +145,13 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     }
 
     @Override
-    public List<E> list(Wrapper<E> wrapper) {
-        return getService().list(wrapper);
+    public List<E> list(Query query) {
+        return getService().list(query);
     }
 
     @Override
-    public <P extends IPage<E>> P page(P page, Wrapper<E> queryWrapper) {
-        return getService().page(page, queryWrapper);
+    public <P extends IPage<E>> P page(P page, Query query) {
+        return getService().page(page, query);
     }
 
     @Override
@@ -185,12 +185,12 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     }
 
     @Override
-    public E treeQuery(Wrapper<E> wrapper) {
-        if (wrapper == null) {
+    public E treeQuery(Query query) {
+        if (query == null) {
             return load(false);
         }
         //查询符合条件的列表
-        List<E> list = list(wrapper);
+        List<E> list = list(query);
         if (CollectionUtils.isEmpty(list)) {
             return null;
         }
@@ -246,7 +246,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
 
     @Override
     public List<E> loadByParent(K parentKey) {
-        return list(Wrappers.<E>query().eq(getParentField(), parentKey));
+        return getTreeMapper().selectList(Wrappers.<E>query().eq(getParentField(), parentKey));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -268,14 +268,14 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     @Override
     public List<E> children(E current) {
         // target.left > this.left  and target.right < this.right
-        return list(Wrappers.<E>query()
+        return getTreeMapper().selectList(Wrappers.<E>query()
                 .gt(getLeftField(), current.getLeftValue())
                 .lt(getRightField(), current.getRightValue()));
     }
 
     @Override
     public List<E> children(E current, int deep) {
-        return list(Wrappers.<E>query()
+        return getTreeMapper().selectList(Wrappers.<E>query()
                 .gt(getLeftField(), current.getLeftValue())
                 .lt(getRightField(), current.getRightValue())
                 .eq(getDeepField(), deep));
@@ -283,7 +283,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
 
     @Override
     public List<E> parents(E current) {
-        return list(Wrappers.<E>query()
+        return getTreeMapper().selectList(Wrappers.<E>query()
                 .gt(getRightField(), current.getRightValue())
                 .le(getLeftField(), current.getLeftValue()));
     }
@@ -298,7 +298,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
 
     @Override
     public List<E> siblings(E current) {
-        return list(Wrappers.<E>query().eq(getParentField(), current.getParentId()));
+        return getTreeMapper().selectList(Wrappers.<E>query().eq(getParentField(), current.getParentId()));
     }
 
     /**

@@ -1,9 +1,7 @@
 package com.github.yiuman.citrus.support.crud.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import org.apache.ibatis.annotations.Param;
+import com.github.yiuman.citrus.support.crud.query.Query;
 
 import java.util.List;
 
@@ -26,10 +24,10 @@ public interface SelectService<E, K> {
     /**
      * 根据条件查询单个
      *
-     * @param wrapper 查询条件
+     * @param query 查询条件
      * @return 单个实体
      */
-    E get(Wrapper<E> wrapper);
+    E get(Query query);
 
     /**
      * 获取全部数据列表
@@ -41,18 +39,18 @@ public interface SelectService<E, K> {
     /**
      * 根据查询条件获取对应的数据列表
      *
-     * @param wrapper 查询条件
+     * @param query 查询条件
      * @return List
      */
-    List<E> list(Wrapper<E> wrapper);
+    List<E> list(Query query);
 
     /**
      * 根据 entity 条件，查询全部记录（并翻页）
      *
-     * @param page         分页查询条件（可以为 RowBounds.DEFAULT）
-     * @param queryWrapper 实体对象封装操作类（可以为 null）
+     * @param page  分页查询条件（可以为 RowBounds.DEFAULT）
+     * @param query 实体对象封装操作类（可以为 null）
      * @return 实现了IPage接口的页面对象
      */
-    <P extends IPage<E>> P page(P page, @Param(Constants.WRAPPER) Wrapper<E> queryWrapper);
+    <P extends IPage<E>> P page(P page, Query query);
 
 }

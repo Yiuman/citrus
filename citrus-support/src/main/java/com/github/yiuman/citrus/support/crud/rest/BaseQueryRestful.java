@@ -1,11 +1,11 @@
 package com.github.yiuman.citrus.support.crud.rest;
 
+import cn.hutool.core.exceptions.ValidateException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.github.yiuman.citrus.support.crud.query.QueryWrapperHelper;
+import com.github.yiuman.citrus.support.crud.query.Query;
+import com.github.yiuman.citrus.support.crud.query.QueryHelper;
 import com.github.yiuman.citrus.support.crud.view.impl.SimpleTableView;
-import com.github.yiuman.citrus.support.exception.ValidateException;
 import com.github.yiuman.citrus.support.inject.InjectAnnotationParserHolder;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.model.SortBy;
@@ -70,15 +70,15 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
 
     @Override
     public Page<T> page(HttpServletRequest request) throws Exception {
-        QueryWrapper<T> queryWrapper = Optional.ofNullable(getQueryWrapper(request)).orElse(Wrappers.query());
-        handleSortWrapper(queryWrapper, request);
+        Query query = Optional.ofNullable(getQueryCondition(request)).orElse(Query.of());
+        handleSortQuery(query, request);
         //获取pageNo
         Page<T> page = new Page<>();
         //绑定页面参数
         WebUtils.requestDataBind(page, request);
 
         //这里需要调用了page方法查询后再进行设置ItemKey,原因是Service中的mapper为动态注入，调用查询才会初始化mapper构造表信息
-        Page<T> realPage = selectPage(page, queryWrapper);
+        Page<T> realPage = selectPage(page, query);
         if (StringUtils.isBlank(realPage.getItemKey())) {
             realPage.setItemKey(getService().getKeyProperty());
         }
@@ -91,12 +91,12 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
     /**
      * 根据分页条件，查询条件进行分页查询
      *
-     * @param page         分页对象
-     * @param queryWrapper 查询条件
+     * @param page  分页对象
+     * @param query 查询条件
      * @return 查询后的分页数据
      */
-    protected Page<T> selectPage(Page<T> page, QueryWrapper<T> queryWrapper) {
-        return getService().page(page, queryWrapper);
+    protected Page<T> selectPage(Page<T> page, Query query) {
+        return getService().page(page, query);
     }
 
     @Override
@@ -111,12 +111,15 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
             fileName = String.valueOf(System.currentTimeMillis());
         }
 
-        QueryWrapper<T> queryWrapper = Optional.ofNullable(getQueryWrapper(request)).orElse(Wrappers.query());
-        handleSortWrapper(queryWrapper, request);
+//        Query query = QueryHelper.buildQuery(request, paramClass);
+        Query query = Optional.ofNullable(getQueryCondition(request)).orElse(Query.of());
+        handleSortQuery(query, request);
+//        QueryWrapper<T> queryWrapper = Optional.ofNullable(getQueryWrapper(request)).orElse(Wrappers.query());
+//        handleSortWrapper(queryWrapper, request);
         Page<T> page = new Page<>();
 
         page.setSize(-1);
-        page = selectPage(page, queryWrapper);
+        page = selectPage(page, query);
         if (StringUtils.isBlank(page.getItemKey())) {
             page.setItemKey(getService().getKeyProperty());
         }
@@ -147,13 +150,13 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
     }
 
     /**
-     * 构造查询wrapper
+     * 构造查询
      *
-     * @return QueryWrapper
+     * @return Query
      */
     @Override
-    public QueryWrapper<T> getQueryWrapper(HttpServletRequest request) throws Exception {
-        return getQueryWrapper(getQueryParams(request));
+    public Query getQueryCondition(HttpServletRequest request) throws Exception {
+        return getQueryCondition(getQueryParams(request));
     }
 
     @Override
@@ -171,7 +174,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
         return params;
     }
 
-    protected QueryWrapper<T> getQueryWrapper(Object params) {
+    protected Query getQueryCondition(Object params) {
         if (Objects.isNull(params)) {
             return null;
         }
@@ -179,25 +182,24 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
         //检验参数
         ValidateUtils.validateEntityAndThrows(params, result -> new ValidateException(result.getMessage()));
 
-        QueryWrapper<T> wrapper = Wrappers.query();
+        Query query = Query.of();
         //拼接查询条件
-        handleQueryWrapper(wrapper, params);
-        if (!org.springframework.util.StringUtils.hasText(wrapper.getTargetSql())) {
-            return null;
-        }
-        return wrapper;
+        QueryHelper.doInjectQuery(query,params);
+        return query;
     }
 
-    /**
-     * 处理排序
-     *
-     * @param wrapper 查询wrapper
-     * @param request 当前的请求
-     * @throws Exception 绑定数据时发生的异常
-     */
-    protected void handleSortWrapper(QueryWrapper<T> wrapper, HttpServletRequest request) throws Exception {
-        final Consumer<SortBy> sortItemHandler = (sortBy) -> wrapper
-                .orderBy(true, !sortBy.getSortDesc(), StringUtils.camelToUnderline(sortBy.getSortBy()));
+//    /**
+//     * 处理排序
+//     *
+//     * @param wrapper 查询wrapper
+//     * @param request 当前的请求
+//     * @throws Exception 绑定数据时发生的异常
+//     */
+    protected void handleSortQuery(Query query, HttpServletRequest request) throws Exception {
+//        final Consumer<SortBy> sortItemHandler = (sortBy) -> query
+//                .orderBy(true, !sortBy.getSortDesc(), StringUtils.camelToUnderline(sortBy.getSortBy()));
+
+        final Consumer<SortBy> sortItemHandler = query::orderBy;
 
         //拼接排序条件
         SortBy sortBy = WebUtils.requestDataBind(SortBy.class, request);
@@ -214,14 +216,14 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
     }
 
 
-    /**
-     * 根据参数，处理查询wrapper
-     *
-     * @param wrapper QueryWrapper
-     * @param params  参数对象
-     */
-    protected void handleQueryWrapper(final QueryWrapper<T> wrapper, Object params) {
-        QueryWrapperHelper.doInjectQueryWrapper(wrapper, params);
-    }
+//    /**
+//     * 根据参数，处理查询wrapper
+//     *
+//     * @param wrapper QueryWrapper
+//     * @param params  参数对象
+//     */
+//    protected void handleQueryWrapper(final QueryWrapper<T> wrapper, Object params) {
+//        QueryWrapperHelper.doInjectQueryWrapper(wrapper, params);
+//    }
 
 }

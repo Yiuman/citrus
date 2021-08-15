@@ -33,7 +33,7 @@ public class OrganController extends BaseTreeController<Organization, Long> {
     @Data
     static class OrganQuery {
 
-        @Like
+        @Like(mapping = "organ_name")
         private String organName;
 
     }

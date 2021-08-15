@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.system.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.ScopeDto;
 import com.github.yiuman.citrus.system.entity.Scope;
@@ -29,8 +30,8 @@ public class ScopeService extends BaseDtoService<Scope, Long, ScopeDto> {
     }
 
     @Override
-    public <P extends IPage<ScopeDto>> P page(P page, Wrapper<ScopeDto> queryWrapper) {
-        P returnPage = super.page(page, queryWrapper);
+    public <P extends IPage<ScopeDto>> P page(P page, Query query) {
+        P returnPage = super.page(page, query);
         returnPage.getRecords().forEach(item -> item.setScopeDefines(scopeDefineMapper.selectList(Wrappers.<ScopeDefine>query().eq(getKeyColumn(), item.getScopeId()))));
         return returnPage;
     }

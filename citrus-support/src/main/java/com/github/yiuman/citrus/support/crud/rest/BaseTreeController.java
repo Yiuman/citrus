@@ -1,8 +1,8 @@
 package com.github.yiuman.citrus.support.crud.rest;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.service.BasePreOrderTreeService;
 import com.github.yiuman.citrus.support.crud.service.BaseSimpleTreeService;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -90,9 +91,10 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
     @GetMapping(Operations.Tree.TREE)
     public <R extends TreeView<T>> ResponseEntity<R> load(HttpServletRequest request) throws Exception {
         TreeView<T> treeView = Optional.ofNullable(createTreeView()).orElse(new PageTreeView<>());
-        QueryWrapper<T> queryWrapper = getQueryWrapper(request);
-        if (queryWrapper != null) {
-            treeView.setTree(getCrudService().treeQuery(queryWrapper));
+//        QueryWrapper<T> queryWrapper = getQueryWrapper(request);
+        Query query = getQueryCondition(request);
+        if (Objects.nonNull(query)) {
+            treeView.setTree(getCrudService().treeQuery(query));
             return (ResponseEntity<R>) ResponseEntity.ok(treeView);
         }
 

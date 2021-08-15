@@ -1,9 +1,8 @@
 package com.github.yiuman.citrus.system.service;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
 import com.github.yiuman.citrus.support.crud.rest.Operations;
@@ -19,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -50,13 +46,10 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
     }
 
     @Override
-    public List<Resource> list(Wrapper<Resource> wrapper) {
-        if (wrapper == null) {
-            wrapper = Wrappers.query();
-        }
+    public List<Resource> list(Query query) {
         //菜单为0
-        ((QueryWrapper<Resource>) wrapper).lambda().eq(Resource::getType, ResourceType.MENU);
-        return super.list(wrapper);
+//        ((QueryWrapper<Resource>) wrapper).lambda().eq(Resource::getType, ResourceType.MENU);
+        return super.list(Optional.ofNullable(query).orElse(Query.of()).eq("type", ResourceType.MENU));
     }
 
     @Override
@@ -89,7 +82,8 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
         Class<? extends QueryRestful> restBeanClass = targetClass.get();
         if (Objects.nonNull(restBeanClass)) {
             //这里只能用QueryWrapper不能用LambdaQuery实现，AbstractLambdaQuery会找表，ResourceDto没有对应的表
-            resourceService.remove(Wrappers.<ResourceDto>query().eq(getParentField(), entity.getResourceId()));
+
+            resourceService.remove(Query.of().eq(getParentField(), entity.getResourceId()));
             createQueryDefaultResource(entity);
 
             if (BaseCrudController.class.isAssignableFrom(restBeanClass)) {
@@ -122,7 +116,8 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
      * @return 操作资源列表
      */
     public List<Resource> getOperationByKey(Long key) {
-        return super.list(Wrappers.<Resource>query().eq(getParentField(), key).lambda().eq(Resource::getType, ResourceType.OPERATION));
+        return super.list( Query.of().eq("type", ResourceType.OPERATION));
+//        return super.list(Wrappers.<Resource>query().eq(getParentField(), key).lambda().eq(Resource::getType, ResourceType.OPERATION));
     }
 
     /**
