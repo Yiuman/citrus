@@ -1,7 +1,7 @@
 package com.github.yiuman.citrus.support.datasource;
 
+import cn.hutool.core.util.ObjectUtil;
 import org.springframework.core.NamedThreadLocal;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -46,7 +46,7 @@ public final class DynamicDataSourceHolder {
      * @param ds 数据源名称
      */
     public static void push(String ds) {
-        LOOKUP_KEY_HOLDER.get().push(StringUtils.isEmpty(ds) ? "" : ds);
+        LOOKUP_KEY_HOLDER.get().push(ObjectUtil.isEmpty(ds) ? "" : ds);
     }
 
     /**

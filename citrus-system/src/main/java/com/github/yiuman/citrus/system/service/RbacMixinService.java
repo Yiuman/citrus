@@ -122,7 +122,6 @@ public class RbacMixinService {
             }
 
             List<Resource> parentResources = menuService.list(Query.of().in(resourceService.getKeyColumn(), parentIds));
-//            List<Resource> parentResources = menuService.list(Wrappers.<Resource>query().in(resourceService.getKeyColumn(), parentIds));
             if (CollectionUtil.isNotEmpty(parentResources)) {
                 parentResources.addAll(getParentMenus(parentResources));
             }

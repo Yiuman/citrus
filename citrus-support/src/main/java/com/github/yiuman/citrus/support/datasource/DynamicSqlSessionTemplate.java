@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.support.datasource;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.cursor.Cursor;
@@ -11,7 +12,6 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -96,7 +96,7 @@ public class DynamicSqlSessionTemplate extends SqlSessionTemplate {
         String dataSourceKey = DynamicDataSourceHolder.peek();
         SqlSessionFactory targetSqlSessionFactory = targetSqlSessionFactories.get(dataSourceKey);
 
-        if (!StringUtils.isEmpty(dataSourceKey) && strict && targetSqlSessionFactory == null) {
+        if (ObjectUtil.isNotEmpty(dataSourceKey) && strict && targetSqlSessionFactory == null) {
             throw new IllegalArgumentException(String.format("can not find DataSource %s,please check your datasource settings", dataSourceKey));
         }
 

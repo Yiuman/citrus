@@ -1,7 +1,7 @@
 package com.github.yiuman.citrus.support.crud.rest;
 
 import cn.hutool.core.exceptions.ValidateException;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.query.QueryHelper;
@@ -107,15 +107,12 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
     @Override
     public void exp(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String fileName = WebUtils.getRequestParam("filename");
-        if (StringUtils.isBlank(fileName)) {
+        if (ObjectUtil.isEmpty(fileName)) {
             fileName = String.valueOf(System.currentTimeMillis());
         }
 
-//        Query query = QueryHelper.buildQuery(request, paramClass);
         Query query = Optional.ofNullable(getQueryCondition(request)).orElse(Query.of());
         handleSortQuery(query, request);
-//        QueryWrapper<T> queryWrapper = Optional.ofNullable(getQueryWrapper(request)).orElse(Wrappers.query());
-//        handleSortWrapper(queryWrapper, request);
         Page<T> page = new Page<>();
 
         page.setSize(-1);
@@ -145,6 +142,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
      *
      * @param column 列
      */
+    @SuppressWarnings({"unused", "RedundantSuppression"})
     protected void addSortBy(String column) {
         sortByList.add(new SortBy(column, false));
     }
@@ -184,23 +182,19 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
 
         Query query = Query.of();
         //拼接查询条件
-        QueryHelper.doInjectQuery(query,params);
+        QueryHelper.doInjectQuery(query, params);
         return query;
     }
 
-//    /**
-//     * 处理排序
-//     *
-//     * @param wrapper 查询wrapper
-//     * @param request 当前的请求
-//     * @throws Exception 绑定数据时发生的异常
-//     */
+    /**
+     * 处理排序
+     *
+     * @param query   查询构造
+     * @param request 当前的请求
+     * @throws Exception 绑定数据时发生的异常
+     */
     protected void handleSortQuery(Query query, HttpServletRequest request) throws Exception {
-//        final Consumer<SortBy> sortItemHandler = (sortBy) -> query
-//                .orderBy(true, !sortBy.getSortDesc(), StringUtils.camelToUnderline(sortBy.getSortBy()));
-
         final Consumer<SortBy> sortItemHandler = query::orderBy;
-
         //拼接排序条件
         SortBy sortBy = WebUtils.requestDataBind(SortBy.class, request);
         if (Objects.nonNull(sortBy) && org.springframework.util.StringUtils.hasText(sortBy.getSortBy())) {
@@ -214,16 +208,5 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
         }
 
     }
-
-
-//    /**
-//     * 根据参数，处理查询wrapper
-//     *
-//     * @param wrapper QueryWrapper
-//     * @param params  参数对象
-//     */
-//    protected void handleQueryWrapper(final QueryWrapper<T> wrapper, Object params) {
-//        QueryWrapperHelper.doInjectQueryWrapper(wrapper, params);
-//    }
 
 }

@@ -29,6 +29,7 @@ public interface CandidateParser {
      * @param candidateModel  维度候选人模型
      * @param <T>             维度候选人模型泛型
      * @return 候选人列表，如本框架下就是用户id
+     * @throws WorkflowException 工作流程运行时异常
      */
     <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext, T candidateModel) throws WorkflowException;
 }

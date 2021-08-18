@@ -48,7 +48,6 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
     @Override
     public List<Resource> list(Query query) {
         //菜单为0
-//        ((QueryWrapper<Resource>) wrapper).lambda().eq(Resource::getType, ResourceType.MENU);
         return super.list(Optional.ofNullable(query).orElse(Query.of()).eq("type", ResourceType.MENU));
     }
 

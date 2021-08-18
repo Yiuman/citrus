@@ -12,6 +12,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TableOperateMapper {
 
+    /**
+     * 创表操作
+     *
+     * @param entity 表信息实体
+     */
     @UpdateProvider(type = TableOperation.class)
     void createTable(TableEntity entity);
 }

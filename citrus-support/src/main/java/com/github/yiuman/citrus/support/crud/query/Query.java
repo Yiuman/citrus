@@ -47,8 +47,8 @@ public class Query {
         return this;
     }
 
-    public Query eq(String parameter, Object valUE) {
-        addConditionInfo(parameter, valUE, Operations.EQ);
+    public Query eq(String parameter, Object value) {
+        addConditionInfo(parameter, value, Operations.EQ);
         return this;
     }
 
