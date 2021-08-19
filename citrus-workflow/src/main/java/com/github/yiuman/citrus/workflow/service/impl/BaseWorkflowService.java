@@ -153,7 +153,6 @@ public abstract class BaseWorkflowService implements WorkflowService {
         if (flowElement instanceof UserTask) {
             UserTask userTask = (UserTask) flowElement;
             List<String> taskCandidateUsersDefine = userTask.getCandidateUsers();
-
             //没有负责人，则用解析器解析流程任务定义的候选人或参数传入来的候选人
             if (StringUtils.isBlank(task.getAssignee())) {
                 List<String> allCandidateOrAssigned = new ArrayList<>();

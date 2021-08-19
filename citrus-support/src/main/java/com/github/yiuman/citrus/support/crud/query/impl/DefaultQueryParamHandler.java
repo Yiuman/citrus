@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.support.crud.query.impl;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.query.QueryParamHandler;
 import com.github.yiuman.citrus.support.crud.query.QueryParamMeta;

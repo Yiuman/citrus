@@ -36,7 +36,7 @@ public class FileResourceService extends BaseService<FileResource, String> {
             identify = makeIdentify(file.getInputStream());
         }
 
-        FileResource fileResource = get(Query.of().eq("identify", identify));
+        FileResource fileResource = get(Query.create().eq("identify", identify));
         if (Objects.nonNull(fileResource)) {
             return fileResource.getFileId();
         }

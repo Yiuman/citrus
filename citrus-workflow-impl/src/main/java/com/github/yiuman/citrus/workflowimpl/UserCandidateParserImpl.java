@@ -35,7 +35,7 @@ public class UserCandidateParserImpl implements CandidateParser {
 
     @Override
     public <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext, T candidateModel) {
-        List<UserDto> userDtos = userService.list(Query.of().in("uuid", candidateModel.getValues()));
+        List<UserDto> userDtos = userService.list(Query.create().in("uuid", candidateModel.getValues()));
         if (CollectionUtils.isEmpty(userDtos)) {
             return null;
         }

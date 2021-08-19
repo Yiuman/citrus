@@ -19,7 +19,6 @@ import lombok.Data;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -66,7 +65,7 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
         List<Long> authIds = roleQuery.getAuthIds();
         //拼接权限ID筛选条件
         if (roleQuery != null && CollUtil.isNotEmpty(authIds)) {
-            query = Optional.ofNullable(query).orElse(Query.of());
+            query = Optional.ofNullable(query).orElse(Query.create());
 
             String inSql = String.format(
                     "select role_id from sys_role_auth where authority_id in (%s)"
@@ -103,7 +102,7 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
     }
 
     @Override
-    protected Object createEditableView() throws InvocationTargetException, IllegalAccessException {
+    protected Object createEditableView() {
         DialogView dialogView = new DialogView();
         dialogView.addEditField("角色名", "roleName").addRule("required");
         dialogView.addEditField("选择权限", "authIds", CrudUtils.getWidget(this, "getAuthorities"));

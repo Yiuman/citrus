@@ -70,7 +70,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
 
     @Override
     public Page<T> page(HttpServletRequest request) throws Exception {
-        Query query = Optional.ofNullable(getQueryCondition(request)).orElse(Query.of());
+        Query query = Optional.ofNullable(getQueryCondition(request)).orElse(Query.create());
         handleSortQuery(query, request);
         //获取pageNo
         Page<T> page = new Page<>();
@@ -111,7 +111,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
             fileName = String.valueOf(System.currentTimeMillis());
         }
 
-        Query query = Optional.ofNullable(getQueryCondition(request)).orElse(Query.of());
+        Query query = Optional.ofNullable(getQueryCondition(request)).orElse(Query.create());
         handleSortQuery(query, request);
         Page<T> page = new Page<>();
 
@@ -180,7 +180,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
         //检验参数
         ValidateUtils.validateEntityAndThrows(params, result -> new ValidateException(result.getMessage()));
 
-        Query query = Query.of();
+        Query query = Query.create();
         //拼接查询条件
         QueryHelper.doInjectQuery(query, params);
         return query;

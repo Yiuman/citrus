@@ -136,7 +136,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
                 .mapping(getKeyColumn())
                 .type(ids.getClass())
                 .build();
-        List<D> list = list(Query.of().add(keyIds));
+        List<D> list = list(Query.create().add(keyIds));
         if (CollectionUtil.isNotEmpty(list)) {
             list.forEach(this::beforeRemove);
         }
@@ -187,18 +187,5 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
         field.setAccessible(true);
         field.set(entity, key);
     }
-
-//    /**
-//     * 断言当前的Wrapper是否使用了Lambda的实现，如果是则抛出异常。
-//     * 因为DTO并没有映射数据库表信息，Lambda实现会反射找到DTO实体类对应的数据表信息，找不到会出异常
-//     * 所以DTO服务类中使用普通的wrapper
-//     *
-//     * @param wrapper Wrapper
-//     */
-//    private void assertWrapper(Wrapper<D> wrapper) {
-//        if (wrapper instanceof AbstractLambdaWrapper) {
-//            throw new RuntimeException(String.format("DTO's service class cannot use LambdaWrapper:[%s]", wrapper.getClass()));
-//        }
-//    }
 
 }

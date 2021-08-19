@@ -1,6 +1,12 @@
 package com.github.yiuman.citrus.support.crud.query;
 
+import cn.hutool.core.annotation.AnnotationUtil;
+import cn.hutool.core.util.ReflectUtil;
 import com.github.yiuman.citrus.support.model.SortBy;
+import com.github.yiuman.citrus.support.utils.ClassUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.util.ReflectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,7 +44,7 @@ public class Query {
         this.sorts = sorts;
     }
 
-    public static Query of() {
+    public static Query create() {
         return new Query();
     }
 

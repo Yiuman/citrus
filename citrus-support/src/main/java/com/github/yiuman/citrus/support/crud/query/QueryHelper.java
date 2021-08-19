@@ -7,13 +7,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.cache.Cache;
 import com.github.yiuman.citrus.support.crud.query.annotations.QueryParam;
-import com.github.yiuman.citrus.support.inject.InjectAnnotationParserHolder;
 import com.github.yiuman.citrus.support.model.SortBy;
-import com.github.yiuman.citrus.support.utils.*;
-import org.springframework.beans.BeanUtils;
+import com.github.yiuman.citrus.support.utils.CacheUtils;
+import com.github.yiuman.citrus.support.utils.ClassUtils;
+import com.github.yiuman.citrus.support.utils.LambdaUtils;
+import com.github.yiuman.citrus.support.utils.SpringUtils;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -33,21 +33,6 @@ public final class QueryHelper {
 
     private QueryHelper() {
     }
-
-    public static Query buildQuery(HttpServletRequest request, Class<?> paramClass) throws Exception {
-        //将请求转化成参数
-        Object params = WebUtils.requestDataBind(paramClass, request, true);
-        //注解注入
-        if (Objects.nonNull(paramClass)) {
-            if (Objects.isNull(params)) {
-                params = BeanUtils.instantiateClass(paramClass);
-            }
-            SpringUtils.getBean(InjectAnnotationParserHolder.class, true).inject(params);
-        }
-
-        return Query.of();
-    }
-
 
     /**
      * QueryParam注解转为QueryParamMeta

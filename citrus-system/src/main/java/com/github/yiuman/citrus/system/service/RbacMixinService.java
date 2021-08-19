@@ -121,7 +121,7 @@ public class RbacMixinService {
                 return Collections.emptySet();
             }
 
-            List<Resource> parentResources = menuService.list(Query.of().in(resourceService.getKeyColumn(), parentIds));
+            List<Resource> parentResources = menuService.list(Query.create().in(resourceService.getKeyColumn(), parentIds));
             if (CollectionUtil.isNotEmpty(parentResources)) {
                 parentResources.addAll(getParentMenus(parentResources));
             }
