@@ -1,7 +1,11 @@
 package com.github.yiuman.citrus.support.utils;
 
+import com.github.yiuman.citrus.support.crud.query.Fn;
 import com.github.yiuman.citrus.support.wrapper.*;
 
+import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.function.*;
 
 /**
@@ -13,6 +17,24 @@ import java.util.function.*;
 public final class LambdaUtils {
 
     private LambdaUtils() {
+    }
+
+    public static <T> SerializedLambda serialized(Fn<T, ?> fn) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method writeReplace = fn.getClass().getDeclaredMethod("writeReplace");
+        writeReplace.setAccessible(Boolean.TRUE);
+        return (SerializedLambda) writeReplace.invoke(fn);
+    }
+
+    @SuppressWarnings("AlibabaUndefineMagicConstant")
+    public static <T> String getPropertyName(Fn<T, ?> fn) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        SerializedLambda serialized = serialized(fn);
+        String implMethodName = serialized.getImplMethodName();
+        if (implMethodName.startsWith("is")) {
+            return implMethodName.substring(2);
+        } else if (implMethodName.startsWith("get") || implMethodName.startsWith("set")) {
+            return implMethodName.substring(3);
+        }
+        return null;
     }
 
     /**
