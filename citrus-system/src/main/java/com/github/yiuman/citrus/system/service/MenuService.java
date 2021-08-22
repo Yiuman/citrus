@@ -114,7 +114,7 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
      * @return 操作资源列表
      */
     public List<Resource> getOperationByKey(Long key) {
-        return super.list( Query.create().eq("type", ResourceType.OPERATION));
+        return super.list(Query.create().eq("type", ResourceType.OPERATION));
 //        return super.list(Wrappers.<Resource>query().eq(getParentField(), key).lambda().eq(Resource::getType, ResourceType.OPERATION));
     }
 

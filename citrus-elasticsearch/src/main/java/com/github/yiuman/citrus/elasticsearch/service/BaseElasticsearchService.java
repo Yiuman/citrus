@@ -39,13 +39,38 @@ import java.util.stream.Stream;
  */
 public abstract class BaseElasticsearchService<E, K extends Serializable> implements CrudService<E, K> {
 
+    private String keyProperty;
+
+    private String KeyColumn;
+
     private Field idField;
 
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
     public BaseElasticsearchService() {
+        init();
+    }
+
+    private void init() {
+        Field[] fields = ReflectUtil.getFields(getEntityType());
+        idField = Arrays.stream(fields).filter(field -> {
+            field.setAccessible(true);
+            return Objects.nonNull(AnnotationUtil.getAnnotation(field, Id.class));
+        }).findFirst().orElseThrow(() -> new RuntimeException(String.format("cannot find id for entity:%s", getEntityType())));
+        keyProperty = idField.getName();
+        org.springframework.data.elasticsearch.annotations.Field fieldAnnotation
+                = AnnotationUtil.getAnnotation(idField, org.springframework.data.elasticsearch.annotations.Field.class);
+        KeyColumn = Objects.nonNull(fieldAnnotation) ? fieldAnnotation.value() : keyProperty;
+
+
+        elasticsearchRestTemplate = SpringUtils.getBean(ElasticsearchRestTemplate.class, true);
     }
 
     public ElasticsearchRestTemplate getElasticsearchRestTemplate() {
-        return SpringUtils.getBean(ElasticsearchRestTemplate.class, true);
+        if (Objects.isNull(elasticsearchRestTemplate)) {
+
+        }
+        return elasticsearchRestTemplate;
     }
 
     @Override
@@ -68,7 +93,12 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
     @SuppressWarnings("unchecked")
     @Override
     public K getKey(E entity) {
-        return (K) ReflectUtil.getFieldValue(entity, getKeyProperty());
+        try {
+            return (K) idField.get(entity);
+        } catch (Exception exception) {
+            return null;
+        }
+
     }
 
     @Override
@@ -181,7 +211,8 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
 
         if (CollUtil.isNotEmpty(query.getSorts())) {
             query.getSorts().forEach(sortBy -> nativeSearchQueryBuilder
-                    .withSort(SortBuilders.fieldSort(sortBy.getSortBy())
+                    .withSort(SortBuilders
+                            .fieldSort(sortBy.getSortBy())
                             .order(sortBy.getSortDesc() ? SortOrder.DESC : SortOrder.ASC)));
         } else {
             nativeSearchQueryBuilder.withSort(SortBuilders.fieldSort(getKeyColumn()).order(SortOrder.ASC));
@@ -198,30 +229,11 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
 
     @Override
     public String getKeyProperty() {
-        if (Objects.nonNull(idField)) {
-            return idField.getName();
-        }
-
-        Field[] fields = ReflectUtil.getFields(getEntityType());
-        idField = Arrays.stream(fields).filter(field -> {
-            field.setAccessible(true);
-            return Objects.nonNull(AnnotationUtil.getAnnotation(field, Id.class));
-        }).findFirst().orElseThrow(() -> new RuntimeException(String.format("cannot find id for entity:%s", getEntityType())));
-        return idField.getName();
+        return keyProperty;
     }
 
     @Override
     public String getKeyColumn() {
-        if (Objects.isNull(idField)) {
-            getKeyProperty();
-        }
-
-        org.springframework.data.elasticsearch.annotations.Field fieldAnnotation
-                = AnnotationUtil.getAnnotation(idField, org.springframework.data.elasticsearch.annotations.Field.class);
-        if (Objects.nonNull(fieldAnnotation)) {
-            return fieldAnnotation.value();
-        }
-
-        return getKeyProperty();
+        return KeyColumn;
     }
 }

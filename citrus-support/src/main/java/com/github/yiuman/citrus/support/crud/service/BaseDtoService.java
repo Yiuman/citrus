@@ -121,7 +121,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
     }
 
     @Override
-    public boolean remove(Query query)  {
+    public boolean remove(Query query) {
         Assert.notNull(query, "remove condition cannot be null");
         return getService().remove(query);
     }

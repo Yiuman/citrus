@@ -29,7 +29,8 @@ public class ResourceServiceTest {
     }
 
     @Test
-    public void getByCode(){
-        Assertions.assertNotNull(resourceService.getKeyColumn());;
+    public void getByCode() {
+        Assertions.assertNotNull(resourceService.getKeyColumn());
+        ;
     }
 }

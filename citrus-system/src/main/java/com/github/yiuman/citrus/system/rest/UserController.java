@@ -104,7 +104,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
     }
 
     @Override
-    protected DialogView createEditableView() throws Exception {
+    protected DialogView createEditableView() {
         DialogView dialogView = new DialogView();
         dialogView.addEditField("登录名", "loginId").addRule("required");
         dialogView.addEditField("用户名", "username").addRule("required");

@@ -9,19 +9,19 @@ package com.github.yiuman.citrus.support.widget;
  */
 public class Switch extends BaseWidget<Boolean> {
 
-	@Override
-	public String getWidgetName() {
-		return "v-switch";
-	}
+    @Override
+    public String getWidgetName() {
+        return "v-switch";
+    }
 
-	/**
-	 * @param text
-	 * @param key
-	 * @param model
-	 */
-	public Switch(String text, String key) {
-		super(text, key, null);		
-	}
+    /**
+     * @param text
+     * @param key
+     * @param model
+     */
+    public Switch(String text, String key) {
+        super(text, key, null);
+    }
 
-	
+
 }

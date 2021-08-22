@@ -155,9 +155,9 @@ public final class CrudHelper {
         return getMapper(entityClass, TreeMapper.class);
     }
 
-    public static TableInfo getTableInfo(Class<?> entityClass){
+    public static TableInfo getTableInfo(Class<?> entityClass) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-        if(Objects.isNull(tableInfo) && Objects.isNull(MAPPER_CACHE.find(entityClass))){
+        if (Objects.isNull(tableInfo) && Objects.isNull(MAPPER_CACHE.find(entityClass))) {
             getCrudMapper(entityClass);
         }
         return TableInfoHelper.getTableInfo(entityClass);

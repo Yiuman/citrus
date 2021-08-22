@@ -26,7 +26,7 @@ public interface ExpressionResolver<T> {
      * @param execution     execution: The DelegateExecution that holds additional information about the ongoing execution. 执行时会从流程上下文传进来
      * @param expressionStr xml中一定的字符串
      * @return 解释后的模型
-     *  @throws WorkflowException 工作流程运行时异常
+     * @throws WorkflowException 工作流程运行时异常
      */
     T resolve(DelegateExecution execution, String expressionStr) throws WorkflowException;
 }
