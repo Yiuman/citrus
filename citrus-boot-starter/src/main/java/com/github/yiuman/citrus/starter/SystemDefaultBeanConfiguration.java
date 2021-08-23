@@ -88,6 +88,7 @@ public class SystemDefaultBeanConfiguration {
      * @param authorizeConfigProviders Spring Security授权配置提供者集合
      * @return 授权配置管理器
      */
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
     @ConditionalOnMissingBean(AuthorizeConfigManagerImpl.class)
     public AuthorizeConfigManager authorizeConfigManager(List<AuthorizeConfigProvider> authorizeConfigProviders, List<WebSecurityConfigProvider> webSecurityConfigProviders) {

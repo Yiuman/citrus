@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.security.authorize;
 
+import org.springframework.lang.Nullable;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
@@ -19,10 +20,11 @@ public class AuthorizeConfigManagerImpl implements AuthorizeConfigManager {
 
     private final List<WebSecurityConfigProvider> webSecurityConfigProviders;
 
-    public AuthorizeConfigManagerImpl(List<AuthorizeConfigProvider> authorizeConfigProviders, List<WebSecurityConfigProvider> webSecurityConfigProviders) {
+    public AuthorizeConfigManagerImpl(List<AuthorizeConfigProvider> authorizeConfigProviders, @Nullable List<WebSecurityConfigProvider> webSecurityConfigProviders) {
         this.authorizeConfigProviders = authorizeConfigProviders;
         this.webSecurityConfigProviders = webSecurityConfigProviders;
     }
+
 
     @Override
     public void config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
