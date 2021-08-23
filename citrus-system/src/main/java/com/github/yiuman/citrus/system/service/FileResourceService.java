@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.system.service;
 
-import com.github.yiuman.citrus.support.crud.query.Query;
+import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.support.crud.service.BaseService;
 import com.github.yiuman.citrus.support.file.FileStorageService;
 import com.github.yiuman.citrus.system.entity.FileResource;
@@ -35,8 +35,7 @@ public class FileResourceService extends BaseService<FileResource, String> {
         if (ObjectUtils.isEmpty(identify)) {
             identify = makeIdentify(file.getInputStream());
         }
-
-        FileResource fileResource = get(Query.create().eq("identify", identify));
+        FileResource fileResource = get(QueryBuilders.<FileResource>lambda().eq(FileResource::getIdentify, identify).toQuery());
         if (Objects.nonNull(fileResource)) {
             return fileResource.getFileId();
         }

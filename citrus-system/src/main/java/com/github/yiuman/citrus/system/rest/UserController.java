@@ -7,6 +7,7 @@ import com.github.yiuman.citrus.support.crud.query.QueryParamHandler;
 import com.github.yiuman.citrus.support.crud.query.QueryParamMeta;
 import com.github.yiuman.citrus.support.crud.query.annotations.Like;
 import com.github.yiuman.citrus.support.crud.query.annotations.QueryParam;
+import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
@@ -200,8 +201,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
                     userRoles = Collections.singletonList(0L);
 
                 }
-
-                query.in("user_id", userRoles);
+                QueryBuilders.wrapper(query).in("user_id", userRoles);
             }
         }
 

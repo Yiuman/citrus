@@ -1,7 +1,7 @@
 package com.github.yiuman.citrus.system.service;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.github.yiuman.citrus.support.crud.query.Query;
+import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.AuthorityResource;
 import com.github.yiuman.citrus.system.entity.Resource;
@@ -121,7 +121,7 @@ public class RbacMixinService {
                 return Collections.emptySet();
             }
 
-            List<Resource> parentResources = menuService.list(Query.create().in(resourceService.getKeyColumn(), parentIds));
+            List<Resource> parentResources = menuService.list(QueryBuilders.create().in(resourceService.getKeyColumn(), parentIds).toQuery());
             if (CollectionUtil.isNotEmpty(parentResources)) {
                 parentResources.addAll(getParentMenus(parentResources));
             }

@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.query.annotations.Like;
+import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
@@ -71,7 +72,7 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
                     "select role_id from sys_role_auth where authority_id in (%s)"
                     , authIds.parallelStream().map(String::valueOf).collect(Collectors.joining(","))
             );
-            query.inSql(getService().getKeyColumn(), inSql);
+            QueryBuilders.wrapper(query).inSql(getService().getKeyColumn(), inSql);
         }
 
 

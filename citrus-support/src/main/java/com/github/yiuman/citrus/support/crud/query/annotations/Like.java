@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * @author yiuman
  * @date 2021/6/13
  */
-@QueryParam(type = "like")
+@QueryParam(operator = "like")
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Like {

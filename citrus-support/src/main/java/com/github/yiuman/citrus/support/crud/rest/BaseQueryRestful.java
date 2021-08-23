@@ -5,6 +5,8 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.query.QueryHelper;
+import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
+import com.github.yiuman.citrus.support.crud.query.builder.SimpleQueryBuilder;
 import com.github.yiuman.citrus.support.crud.view.impl.SimpleTableView;
 import com.github.yiuman.citrus.support.inject.InjectAnnotationParserHolder;
 import com.github.yiuman.citrus.support.model.Page;
@@ -194,7 +196,8 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
      * @throws Exception 绑定数据时发生的异常
      */
     protected void handleSortQuery(Query query, HttpServletRequest request) throws Exception {
-        final Consumer<SortBy> sortItemHandler = query::orderBy;
+        SimpleQueryBuilder wrapper = QueryBuilders.wrapper(query);
+        final Consumer<SortBy> sortItemHandler = wrapper::orderBy;
         //拼接排序条件
         SortBy sortBy = WebUtils.requestDataBind(SortBy.class, request);
         if (Objects.nonNull(sortBy) && org.springframework.util.StringUtils.hasText(sortBy.getSortBy())) {

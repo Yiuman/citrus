@@ -21,7 +21,7 @@ public @interface QueryParam {
      *
      * @return 对应mybatis-plus中的wrapper类型
      */
-    String type() default "eq";
+    String operator() default "eq";
 
     /**
      * 用于映射查询名称

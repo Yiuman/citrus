@@ -39,7 +39,7 @@ public class QueryParamMeta {
     /**
      * 查询操作类型，如`=`、`like`、`in`等
      */
-    private String type;
+    private String operator;
 
     /**
      * 条件为空时，是否拼接SQL
@@ -73,14 +73,14 @@ public class QueryParamMeta {
         if (!Objects.equals(field, that.field)) {
             return false;
         }
-        return Objects.equals(type, that.type);
+        return Objects.equals(operator, that.operator);
     }
 
     @Override
     public int hashCode() {
         int result = metaClass != null ? metaClass.hashCode() : 0;
         result = 31 * result + (field != null ? field.hashCode() : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (operator != null ? operator.hashCode() : 0);
         return result;
     }
 }

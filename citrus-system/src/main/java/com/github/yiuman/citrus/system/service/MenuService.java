@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.system.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.github.yiuman.citrus.support.crud.query.Query;
+import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
 import com.github.yiuman.citrus.support.crud.rest.Operations;
@@ -17,7 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -47,7 +51,9 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
     @Override
     public List<Resource> list(Query query) {
         //菜单为0
-        return super.list(Optional.ofNullable(query).orElse(Query.create()).eq("type", ResourceType.MENU));
+        Query wrapperQuery = QueryBuilders.wrapper(query)
+                .<Resource>toLambda().eq(Resource::getType, ResourceType.MENU).toQuery();
+        return super.list(wrapperQuery);
     }
 
     @Override
@@ -81,7 +87,8 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
         if (Objects.nonNull(restBeanClass)) {
             //这里只能用QueryWrapper不能用LambdaQuery实现，AbstractLambdaQuery会找表，ResourceDto没有对应的表
 
-            resourceService.remove(Query.create().eq(getParentField(), entity.getResourceId()));
+
+            resourceService.remove(QueryBuilders.create().eq(getParentField(), entity.getResourceId()).toQuery());
             createQueryDefaultResource(entity);
 
             if (BaseCrudController.class.isAssignableFrom(restBeanClass)) {
@@ -114,7 +121,10 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
      * @return 操作资源列表
      */
     public List<Resource> getOperationByKey(Long key) {
-        return super.list(Query.create().eq("type", ResourceType.OPERATION));
+        return super.list(QueryBuilders.<Resource>lambda()
+                .eq(getParentField(), key)
+                .eq(Resource::getType, ResourceType.OPERATION)
+                .toQuery());
 //        return super.list(Wrappers.<Resource>query().eq(getParentField(), key).lambda().eq(Resource::getType, ResourceType.OPERATION));
     }
 

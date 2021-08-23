@@ -26,14 +26,19 @@ public final class LambdaUtils {
     }
 
     @SuppressWarnings("AlibabaUndefineMagicConstant")
-    public static <T> String getPropertyName(Fn<T, ?> fn) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        SerializedLambda serialized = serialized(fn);
-        String implMethodName = serialized.getImplMethodName();
-        if (implMethodName.startsWith("is")) {
-            return implMethodName.substring(2);
-        } else if (implMethodName.startsWith("get") || implMethodName.startsWith("set")) {
-            return implMethodName.substring(3);
+    public static <T> String getPropertyName(Fn<T, ?> fn) {
+        try {
+            SerializedLambda serialized = serialized(fn);
+            String implMethodName = serialized.getImplMethodName();
+            if (implMethodName.startsWith("is")) {
+                return implMethodName.substring(2);
+            } else if (implMethodName.startsWith("get") || implMethodName.startsWith("set")) {
+                return implMethodName.substring(3);
+            }
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
         }
+
         return null;
     }
 

@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yiuman.citrus.support.crud.CrudHelper;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
-import com.github.yiuman.citrus.support.crud.query.ConditionInfo;
 import com.github.yiuman.citrus.support.crud.query.Query;
+import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.support.utils.ConvertUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -130,13 +130,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
     @Override
     public void batchRemove(Iterable<K> keys) {
         List<K> ids = StreamSupport.stream(keys.spliterator(), false).collect(Collectors.toList());
-        ConditionInfo keyIds = ConditionInfo.builder()
-                .value(ids)
-                .parameter(getKeyProperty())
-                .mapping(getKeyColumn())
-                .type(ids.getClass())
-                .build();
-        List<D> list = list(Query.create().add(keyIds));
+        List<D> list = list(QueryBuilders.create().in(getKeyColumn(), ids).toQuery());
         if (CollectionUtil.isNotEmpty(list)) {
             list.forEach(this::beforeRemove);
         }

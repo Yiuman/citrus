@@ -1,9 +1,12 @@
 package com.github.yiuman.citrus.support.crud.query.impl;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.query.QueryParamHandler;
 import com.github.yiuman.citrus.support.crud.query.QueryParamMeta;
+import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
+import com.github.yiuman.citrus.support.crud.query.builder.SimpleQueryBuilder;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -29,15 +32,15 @@ public class DefaultQueryParamHandler implements QueryParamHandler {
         if (Objects.isNull(value)) {
             return;
         }
-
-        Method conditionMethod = query
+        SimpleQueryBuilder simpleQueryBuilder = QueryBuilders.wrapper(query);
+        Method conditionMethod = simpleQueryBuilder
                 .getClass()
-                .getMethod(paramMeta.getType(), String.class, getParameterClass(field));
+                .getMethod(paramMeta.getOperator(), String.class, getParameterClass(field));
         conditionMethod.setAccessible(true);
         String fieldName = ObjectUtil.isNotEmpty(paramMeta.getMapping())
                 ? paramMeta.getMapping()
                 : field.getName();
-        conditionMethod.invoke(query, fieldName, field.get(object));
+        conditionMethod.invoke(simpleQueryBuilder, fieldName, field.get(object));
     }
 
     private Class<?> getParameterClass(Field field) {

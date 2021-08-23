@@ -48,7 +48,7 @@ public final class QueryHelper {
                     .metaClass(metaClass)
                     .annotation(queryParam)
                     .field(field)
-                    .type(queryParam.type())
+                    .operator(queryParam.operator())
                     .condition(queryParam.condition())
                     .mapping(queryParam.mapping())
                     .handlerClass(queryParam.handler())

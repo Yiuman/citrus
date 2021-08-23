@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.workflowimpl;
 
 import com.github.yiuman.citrus.support.crud.query.Query;
+import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.service.UserService;
 import com.github.yiuman.citrus.workflow.model.CandidateModel;
@@ -35,7 +36,8 @@ public class UserCandidateParserImpl implements CandidateParser {
 
     @Override
     public <T extends CandidateModel> List<String> parse(WorkflowContext workflowContext, T candidateModel) {
-        List<UserDto> userDtos = userService.list(Query.create().in("uuid", candidateModel.getValues()));
+        QueryBuilders.<UserDto>lambda().in(UserDto::getUuid, candidateModel.getValues()).toQuery();
+        List<UserDto> userDtos = userService.list();
         if (CollectionUtils.isEmpty(userDtos)) {
             return null;
         }

@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * @author yiuman
  * @date 2021/6/13
  */
-@QueryParam(type = "in")
+@QueryParam(operator = "in")
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface In {
