@@ -91,18 +91,16 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
     @GetMapping(Operations.Tree.TREE)
     public <R extends TreeView<T>> ResponseEntity<R> load(HttpServletRequest request) throws Exception {
         TreeView<T> treeView = Optional.ofNullable(createTreeView()).orElse(new PageTreeView<>());
-//        QueryWrapper<T> queryWrapper = getQueryWrapper(request);
         Query query = getQueryCondition(request);
-        if (Objects.nonNull(query)) {
-            treeView.setTree(getCrudService().treeQuery(query));
-            return (ResponseEntity<R>) ResponseEntity.ok(treeView);
-        }
-
-        treeView.setTree(getCrudService().load(isLazy));
         if (treeView instanceof PageTreeView) {
             ((PageTreeView<T>) treeView).setEditableView(createEditableView());
         }
 
+        if (Objects.nonNull(query)) {
+            treeView.setTree(getCrudService().treeQuery(query));
+        } else {
+            treeView.setTree(getCrudService().load(isLazy));
+        }
         return (ResponseEntity<R>) ResponseEntity.ok(treeView);
     }
 

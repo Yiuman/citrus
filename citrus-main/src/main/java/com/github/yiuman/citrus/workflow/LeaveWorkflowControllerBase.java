@@ -34,7 +34,6 @@ public class LeaveWorkflowControllerBase extends BaseEntityWorkflowController<Le
         return workflowService;
     }
 
-
     @Override
     protected Object createView() {
         PageTableView<Leave> view = new PageTableView<>();
