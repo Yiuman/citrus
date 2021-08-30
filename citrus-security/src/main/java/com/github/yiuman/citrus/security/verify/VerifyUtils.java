@@ -57,6 +57,7 @@ public final class VerifyUtils {
      * @param height 高度
      * @param code   验证码字符串
      */
+    @SuppressWarnings("AlibabaUndefineMagicConstant")
     public static BufferedImage bufferedImage(int width, int height, String code) {
         int verifySize = code.length();
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -134,6 +135,7 @@ public final class VerifyUtils {
         return color;
     }
 
+    @SuppressWarnings("AlibabaUndefineMagicConstant")
     private static int[] getRandomRgb() {
         int[] rgb = new int[3];
         for (int i = 0; i < 3; i++) {
