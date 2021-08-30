@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public abstract class BaseWorkflowQueryController<E, K extends Serializable>
         extends BaseQueryController<E, K> implements KeyBasedService<E, K> {
+
+    private static final Predicate<String> IS_LIKE_METHOD = (methodName) -> methodName.endsWith("Like");
 
     private WorkflowService workflowService;
 
@@ -163,6 +166,9 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
 
                         } else {
                             method = query.getClass().getMethod(field.getName(), field.getType());
+                            if (IS_LIKE_METHOD.test(method.getName())) {
+                                methodAttr = "%" + methodAttr + "%";
+                            }
                             method.invoke(query, methodAttr);
                         }
 

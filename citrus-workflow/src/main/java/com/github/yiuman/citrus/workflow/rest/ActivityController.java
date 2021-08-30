@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2021/3/11
  */
 @RestController
-@RequestMapping("/rest/activitys")
+@RequestMapping("/rest/activities")
 public class ActivityController extends BaseWorkflowQueryController<HistoricActivityInstance, String> {
 
     public ActivityController() {
