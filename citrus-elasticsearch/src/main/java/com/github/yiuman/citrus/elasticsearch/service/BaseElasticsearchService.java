@@ -41,7 +41,7 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
 
     private String keyProperty;
 
-    private String KeyColumn;
+    private String keyColumn;
 
     private Field idField;
 
@@ -60,7 +60,7 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
         keyProperty = idField.getName();
         org.springframework.data.elasticsearch.annotations.Field fieldAnnotation
                 = AnnotationUtil.getAnnotation(idField, org.springframework.data.elasticsearch.annotations.Field.class);
-        KeyColumn = Objects.nonNull(fieldAnnotation) ? fieldAnnotation.value() : keyProperty;
+        keyColumn = Objects.nonNull(fieldAnnotation) ? fieldAnnotation.value() : keyProperty;
 
 
         elasticsearchRestTemplate = SpringUtils.getBean(ElasticsearchRestTemplate.class, true);
@@ -190,7 +190,7 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
         return (P) returnPage;
     }
 
-    protected org.springframework.data.elasticsearch.core.query.Query buildElasticsearchQuery(Query query) {
+    protected org.springframework.data.elasticsearch.core.query.Query   buildElasticsearchQuery(Query query) {
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
         if (Objects.nonNull(query) && CollUtil.isNotEmpty(query.getConditions())) {
             query.getConditions().forEach(conditionInfo -> {
@@ -234,6 +234,6 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
 
     @Override
     public String getKeyColumn() {
-        return KeyColumn;
+        return keyColumn;
     }
 }
