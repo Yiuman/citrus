@@ -15,6 +15,7 @@ import org.activiti.engine.delegate.DelegateExecution;
  * <p>
  * authenticatedUserId: The id of the user that is currently authenticated. If no user is authenticated, the variable is not available.
  *
+ * @param <T> 解析需返回的类型
  * @author yiuman
  * @date 2021/4/8
  */

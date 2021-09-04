@@ -3,6 +3,9 @@ package com.github.yiuman.citrus.support.wrapper;
 /**
  * BiConsumer接口的扩展，用于抛异常
  *
+ * @param <T> 第一入参类型
+ * @param <E> 第二入参类型
+ * @param <U> 异常类型
  * @author yiuman
  * @date 2020/4/3
  */

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserOnlineCache extends AbstractEnvironmentCache<String, UserOnlineInfo> {
 
-    private final static String USER_ONLINE_CACHE = "userOnlineCache";
+    private static final String USER_ONLINE_CACHE = "userOnlineCache";
 
     public UserOnlineCache() {
         super(USER_ONLINE_CACHE);

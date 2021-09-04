@@ -7,6 +7,7 @@ import com.github.yiuman.citrus.support.model.SortBy;
 import java.util.Collection;
 
 /**
+ * @param <Children> QueryBuilder子类
  * @author yiuman
  * @date 2021/8/22
  */

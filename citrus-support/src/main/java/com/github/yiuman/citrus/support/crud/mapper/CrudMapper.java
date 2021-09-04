@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 /**
  * 通用的CRUD-DAO
  *
+ * @param <T> 实体类型
  * @author yiuman
  * @date 2020/4/11
  */

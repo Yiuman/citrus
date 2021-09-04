@@ -8,6 +8,8 @@ import java.util.*;
 /**
  * redis缓存
  *
+ * @param <K> 缓存键类型
+ * @param <V> 值类型
  * @author yiuman
  * @date 2020/6/16
  */

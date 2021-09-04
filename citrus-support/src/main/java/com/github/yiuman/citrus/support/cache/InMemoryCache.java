@@ -10,6 +10,8 @@ import java.util.function.Consumer;
 /**
  * 内存缓存
  *
+ * @param <K> 键值对键类型
+ * @param <V> 键值对值类型
  * @author yiuman
  * @date 2020/4/6
  */
@@ -17,9 +19,9 @@ public class InMemoryCache<K, V> extends MapCache<K, V> {
 
     private final String namespace;
 
-    public final static String DEFAULT_NAMESPACE = "default";
+    public static final String DEFAULT_NAMESPACE = "default";
 
-    private final static Map<String, InMemoryCache<?, ?>> CACHE_MAP = new ConcurrentHashMap<>(256);
+    private static final Map<String, InMemoryCache<?, ?>> CACHE_MAP = new ConcurrentHashMap<>(256);
 
     static {
         addCache(new InMemoryCache<>(DEFAULT_NAMESPACE));

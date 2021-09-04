@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.support.crud.service;
 /**
  * 编辑环绕
  *
+ * @param <E> 实体类型
  * @author yiuman
  * @date 2021/7/6
  */

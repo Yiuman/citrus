@@ -5,6 +5,7 @@ import com.github.yiuman.citrus.support.model.BaseTree;
 /**
  * 树形控件
  *
+ * @param <M> 树模型类型
  * @author yiuman
  * @date 2020/6/1
  */

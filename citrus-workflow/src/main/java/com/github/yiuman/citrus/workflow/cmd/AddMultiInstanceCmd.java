@@ -28,12 +28,12 @@ public class AddMultiInstanceCmd implements Command<Void> {
     /**
      * 参数名：当前的任务实例
      */
-    protected final String NUMBER_OF_INSTANCES = "nrOfInstances";
+    protected static final String NUMBER_OF_INSTANCES = "nrOfInstances";
 
     /**
      * 参数名：执行中的任务实例
      */
-    protected final String NUMBER_OF_ACTIVE_INSTANCES = "nrOfActiveInstances";
+    protected static final String NUMBER_OF_ACTIVE_INSTANCES = "nrOfActiveInstances";
     /**
      * 任务ID，需要加签的任务
      */

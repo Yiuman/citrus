@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 /**
  * 验证接口,用于抽象系统中的验证（如图片验证码，短信验证码等）
  *
+ * @param <T> 验证码的类型
  * @author yiuman
  * @date 2020/3/22
  */

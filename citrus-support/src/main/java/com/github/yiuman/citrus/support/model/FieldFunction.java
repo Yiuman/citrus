@@ -5,6 +5,8 @@ import java.util.function.Function;
 /**
  * 字段处理执行器
  *
+ * @param <T> 实体类型
+ * @param <R> 返回类型
  * @author yiuman
  * @date 2020/5/11
  */

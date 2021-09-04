@@ -8,6 +8,7 @@ import java.util.Map;
 /**
  * 实体模型的流程
  *
+ * @param <E> 实体类型
  * @author yiuman
  * @date 2020/12/16
  */

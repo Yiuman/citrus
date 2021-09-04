@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
  * @author yiuman
  * @date 2020/7/20
  */
-public class JavassistUtils {
+public final class JavassistUtils {
 
     private static final ClassPool POOL = ClassPool.getDefault();
 

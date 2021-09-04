@@ -13,6 +13,7 @@ import java.util.*;
 /**
  * 分页页面对象
  *
+ * @param <T> 实体类型
  * @author yiuman
  * @date 2020/5/7
  */

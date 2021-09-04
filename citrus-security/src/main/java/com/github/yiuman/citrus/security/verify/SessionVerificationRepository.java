@@ -15,7 +15,7 @@ public class SessionVerificationRepository implements VerificationRepository {
     /**
      * session中key的前缀
      */
-    public final static String SESSION_VERIFICATION_PARAMETER = "SESSION_VERIFY_ID";
+    public static final String SESSION_VERIFICATION_PARAMETER = "SESSION_VERIFY_ID";
 
     public SessionVerificationRepository() {
     }

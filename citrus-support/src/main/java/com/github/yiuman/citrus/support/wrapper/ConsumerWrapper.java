@@ -3,6 +3,8 @@ package com.github.yiuman.citrus.support.wrapper;
 /**
  * 可抛异常的消费wrapper
  *
+ * @param <T> 消费入参类型
+ * @param <E> 异常类型
  * @author yiuman
  * @date 2020/4/3
  */

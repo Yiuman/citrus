@@ -13,6 +13,7 @@ import java.sql.SQLException;
 /**
  * 枚举数组的字段处理器
  *
+ * @param <E> 枚举类型
  * @author yiuman
  * @date 2020/5/29
  */

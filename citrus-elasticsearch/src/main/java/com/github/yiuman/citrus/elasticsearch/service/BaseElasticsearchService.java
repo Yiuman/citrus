@@ -34,6 +34,8 @@ import java.util.stream.Stream;
 /**
  * 基础ES逻辑层
  *
+ * @param <E> 实体类型
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2021/8/2
  */
@@ -67,9 +69,6 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
     }
 
     public ElasticsearchRestTemplate getElasticsearchRestTemplate() {
-        if (Objects.isNull(elasticsearchRestTemplate)) {
-
-        }
         return elasticsearchRestTemplate;
     }
 
@@ -79,9 +78,8 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
             return null;
         }
 
-        ElasticsearchRestTemplate elasticsearchRestTemplate = getElasticsearchRestTemplate();
         if (Objects.nonNull(entity)) {
-            elasticsearchRestTemplate.save(entity);
+            getElasticsearchRestTemplate().save(entity);
             //如果找不到主键就直接插入
             this.afterSave(entity);
             return getKey(entity);
@@ -103,9 +101,8 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
 
     @Override
     public boolean batchSave(Iterable<E> entityIterable) {
-        ElasticsearchRestTemplate elasticsearchRestTemplate = getElasticsearchRestTemplate();
         entityIterable.forEach(LambdaUtils.consumerWrapper(this::beforeSave));
-        elasticsearchRestTemplate.save(entityIterable);
+        getElasticsearchRestTemplate().save(entityIterable);
         entityIterable.forEach(LambdaUtils.consumerWrapper(this::afterSave));
         return true;
     }
@@ -142,14 +139,12 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
 
     @Override
     public E get(K key) {
-        ElasticsearchRestTemplate elasticsearchRestTemplate = getElasticsearchRestTemplate();
-        return elasticsearchRestTemplate.get(key.toString(), getEntityType());
+        return getElasticsearchRestTemplate().get(key.toString(), getEntityType());
     }
 
     @Override
     public E get(Query query) {
-        ElasticsearchRestTemplate elasticsearchRestTemplate = getElasticsearchRestTemplate();
-        return elasticsearchRestTemplate.searchOne(buildElasticsearchQuery(query), getEntityType()).getContent();
+        return getElasticsearchRestTemplate().searchOne(buildElasticsearchQuery(query), getEntityType()).getContent();
     }
 
 
@@ -175,11 +170,9 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
 
     @Override
     public <P extends IPage<E>> P page(P page, Query query) {
-        ElasticsearchRestTemplate elasticsearchRestTemplate = getElasticsearchRestTemplate();
         org.springframework.data.elasticsearch.core.query.Query elasticsearchQuery = buildElasticsearchQuery(query);
         elasticsearchQuery.setPageable(PageRequest.of((int) page.getCurrent(), (int) page.getSize()));
-        SearchHits<E> search = elasticsearchRestTemplate
-                .search(elasticsearchQuery, getEntityType());
+        SearchHits<E> search = getElasticsearchRestTemplate().search(elasticsearchQuery, getEntityType());
         Page<E> returnPage = new Page<>();
         returnPage.setCurrent(page.getCurrent());
         returnPage.setPages(page.getPages());
@@ -190,7 +183,7 @@ public abstract class BaseElasticsearchService<E, K extends Serializable> implem
         return (P) returnPage;
     }
 
-    protected org.springframework.data.elasticsearch.core.query.Query   buildElasticsearchQuery(Query query) {
+    protected org.springframework.data.elasticsearch.core.query.Query buildElasticsearchQuery(Query query) {
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
         if (Objects.nonNull(query) && CollUtil.isNotEmpty(query.getConditions())) {
             query.getConditions().forEach(conditionInfo -> {

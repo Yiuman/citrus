@@ -5,6 +5,7 @@ import java.util.List;
 /**
  * 树形结构
  *
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2020/4/7
  */

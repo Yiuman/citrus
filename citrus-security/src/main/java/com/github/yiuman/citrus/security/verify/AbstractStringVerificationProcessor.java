@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 /**
  * 字符串类型验证类型抽象处理器，字符串验证类公用的验证逻辑实现
  *
+ * @param <T> 继承自String类型的验证码类型
  * @author yiuman
  * @date 2020/3/22
  */

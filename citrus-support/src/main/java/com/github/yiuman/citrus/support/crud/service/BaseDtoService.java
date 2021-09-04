@@ -27,6 +27,9 @@ import java.util.stream.StreamSupport;
 /**
  * 复杂实体类型（需传输转化的逻辑基类）
  *
+ * @param <E> 实体类型
+ * @param <K> 主键类型
+ * @param <D> 转化类型DTO
  * @author yiuman
  * @date 2020/4/15
  */

@@ -8,6 +8,8 @@ import java.io.Serializable;
 /**
  * 集成CRUD与流程相关的顶层接口
  *
+ * @param <E> 实体类型
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2020/12/16
  */

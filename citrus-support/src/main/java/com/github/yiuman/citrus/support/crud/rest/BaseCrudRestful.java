@@ -20,6 +20,8 @@ import java.util.List;
 /**
  * 基础的RESTFUL
  *
+ * @param <T> 实体类型
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2020/5/11
  */

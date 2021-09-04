@@ -5,6 +5,7 @@ import com.github.yiuman.citrus.support.crud.view.EditableView;
 /**
  * 页面中有编辑器的表格视图
  *
+ * @param <T> 实体类型
  * @author yiuman
  * @date 2021/1/20
  */

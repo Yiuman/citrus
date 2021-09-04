@@ -26,8 +26,8 @@ public interface RoleMapper extends CrudMapper<Role> {
      * @param resourceId 资源ID
      * @return true/false
      */
-    @Select("select count(1) from sys_user_role ur where ur.role_id in (select ra.role_id from sys_role_auth ra where ra.authority_id in " +
-            "(select ar.authority_id from sys_authority_resource ar where ar.resource_id = #{resourceId}))")
+    @Select("select count(1) from sys_user_role ur where ur.role_id in (select ra.role_id from sys_role_auth ra where ra.authority_id in "
+            + "(select ar.authority_id from sys_authority_resource ar where ar.resource_id = #{resourceId}))")
     boolean hasPermission(@Param("userId") Long userId, @Param("resourceId") Long resourceId);
 
     /**
@@ -45,6 +45,7 @@ public interface RoleMapper extends CrudMapper<Role> {
      * @param userId 用户ID
      * @return 权限集合
      */
-    @Select("select * from sys_authority sa where sa.authority_id in (select distinct(ra.authority_id) from sys_role_auth ra where ra.role_id in (select ur.role_id from sys_user_role ur where ur.user_ID = #{userId})")
+    @Select("select * from sys_authority sa where sa.authority_id in (select distinct(ra.authority_id) "
+            + "from sys_role_auth ra where ra.role_id in (select ur.role_id from sys_user_role ur where ur.user_ID = #{userId})")
     Set<Authority> selectAuthoritiesByUserId(@Param("userId") Long userId);
 }

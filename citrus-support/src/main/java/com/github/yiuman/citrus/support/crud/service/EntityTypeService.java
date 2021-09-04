@@ -5,6 +5,7 @@ import cn.hutool.core.util.TypeUtil;
 /**
  * 实体类型接口
  *
+ * @param <E> 实体类型
  * @author yiuman
  * @date 2020/4/15
  */

@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.support.crud.query.builder;
 
 
-import cn.hutool.core.util.TypeUtil;
 import com.github.yiuman.citrus.support.crud.query.Fn;
 import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
@@ -11,6 +10,7 @@ import java.util.Collection;
 /**
  * lambda方式的查询拼接
  *
+ * @param <T> 实体类型
  * @author yiuman
  * @date 2021/8/20
  */

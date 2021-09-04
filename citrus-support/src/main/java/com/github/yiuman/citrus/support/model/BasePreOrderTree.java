@@ -4,6 +4,8 @@ package com.github.yiuman.citrus.support.model;
 /**
  * 预排序树形结构，左右值算法
  *
+ * @param <T> 实体类型
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2020/3/30
  */

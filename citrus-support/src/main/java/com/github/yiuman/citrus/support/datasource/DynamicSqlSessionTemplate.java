@@ -54,8 +54,8 @@ public class DynamicSqlSessionTemplate extends SqlSessionTemplate {
 
     public DynamicSqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType) {
         this(sqlSessionFactory, executorType, new MyBatisExceptionTranslator(
-                sqlSessionFactory.getConfiguration().getEnvironment().getDataSource()
-                , true
+                sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                true
         ));
     }
 
@@ -268,8 +268,7 @@ public class DynamicSqlSessionTemplate extends SqlSessionTemplate {
 
     @Override
     public Configuration getConfiguration() {
-        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
-        Configuration configuration = sqlSessionFactory.getConfiguration();
+        Configuration configuration = getSqlSessionFactory().getConfiguration();
         //Spring初始化Bean只会给默认的一个Configuration进行Mapper扫描及注入
         // 这里如果调用了其他的数据源，是没有初始化MappedStatement的，需要从默认的进行初始化后再调用
         //不然会出现 Invalid bound statement (not found) 异常

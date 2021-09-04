@@ -16,6 +16,7 @@ import java.util.function.Function;
 /**
  * 基本的表格
  *
+ * @param <T> 视图实体类型
  * @author yiuman
  * @date 2021/1/19
  */

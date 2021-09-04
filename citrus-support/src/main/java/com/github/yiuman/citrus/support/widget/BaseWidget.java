@@ -5,6 +5,7 @@ import java.util.Objects;
 /**
  * 控件基类
  *
+ * @param <M> 小部件值模型类型
  * @author yiuman
  * @date 2020/5/6
  */

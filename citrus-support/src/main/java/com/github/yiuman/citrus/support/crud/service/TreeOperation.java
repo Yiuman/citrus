@@ -10,6 +10,8 @@ import java.util.List;
 /**
  * 树形操作接口
  *
+ * @param <T> 树类型
+ * @param <K> 主键
  * @author yiuman
  * @date 2020/4/15
  */

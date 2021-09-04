@@ -10,8 +10,6 @@ import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.model.BasePreOrderTree;
 import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -25,16 +23,16 @@ import java.util.stream.StreamSupport;
 /**
  * 左右值预遍历树逻辑层
  *
+ * @param <E> 实体类型
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2020/4/15
  */
 public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, K extends Serializable> implements TreeCrudService<E, K> {
 
-    protected static final Logger log = LoggerFactory.getLogger(BasePreOrderTreeService.class);
+    private static final String UPDATE_ADD_FORMAT = "%s=%s+%s";
 
-    private final static String UPDATE_ADD_FORMAT = "%s=%s+%s";
-
-    private final static String UPDATE_REDUCTION_FORMAT = "%s=%s-%s";
+    private static final String UPDATE_REDUCTION_FORMAT = "%s=%s-%s";
 
 
     protected BaseService<E, K> getService() {

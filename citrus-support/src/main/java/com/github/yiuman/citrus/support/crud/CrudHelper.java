@@ -35,13 +35,13 @@ public final class CrudHelper {
     /**
      * 字节码动态CrudService缓存
      */
-    private final static InMemoryCache<Class<?>, CrudService<?, ? extends Serializable>> SERVICE_CACHE
+    private static final InMemoryCache<Class<?>, CrudService<?, ? extends Serializable>> SERVICE_CACHE
             = CacheUtils.newInMemoryCache("SERVICE_CACHE");
 
     /**
      * 实体类型与mapper接口的映射信息
      */
-    private final static InMemoryCache<Class<?>, Class<? extends BaseMapper<?>>> MAPPER_CACHE
+    private static final InMemoryCache<Class<?>, Class<? extends BaseMapper<?>>> MAPPER_CACHE
             = CacheUtils.newInMemoryCache("MAPPER_CACHE");
 
     private CrudHelper() {

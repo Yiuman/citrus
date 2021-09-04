@@ -13,6 +13,8 @@ import java.util.Objects;
 /**
  * 基于主键的Service
  *
+ * @param <E> 实体类型
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2020/4/15
  */

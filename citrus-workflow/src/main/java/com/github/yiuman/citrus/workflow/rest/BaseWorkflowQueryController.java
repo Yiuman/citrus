@@ -31,6 +31,8 @@ import java.util.stream.Collectors;
 /**
  * 流程基础的查询控制器
  *
+ * @param <E> 实体类型
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2021/3/8
  */
@@ -45,7 +47,7 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
     /**
      * 对应实体匹配的查询器
      */
-    private final Map<Class<?>, Supplier<? extends Query<?, ?>>> QUERY_MAPPING = new HashMap<>(8);
+    private static final Map<Class<?>, Supplier<? extends Query<?, ?>>> QUERY_MAPPING = new HashMap<>(8);
 
     public BaseWorkflowQueryController() {
         initQueryMapping();

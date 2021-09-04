@@ -5,6 +5,7 @@ import com.github.yiuman.citrus.support.model.Tree;
 /**
  * 树形视图
  *
+ * @param <T> 树类型
  * @author yiuman
  * @date 2021/1/20
  */

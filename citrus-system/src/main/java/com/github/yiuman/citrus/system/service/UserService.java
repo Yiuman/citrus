@@ -37,7 +37,7 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
     /**
      * 匿名登录的认证对象principal
      */
-    private final static String ANONYMOUS = "anonymousUser";
+    private static final String ANONYMOUS = "anonymousUser";
 
     private final PasswordEncoder passwordEncoder;
 

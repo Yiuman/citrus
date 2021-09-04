@@ -7,6 +7,8 @@ import java.util.List;
 /**
  * CrudRestful接口 用于定义Rest的操作
  *
+ * @param <T> 实体类型
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2020/5/8
  */

@@ -10,7 +10,7 @@ import org.springframework.security.core.AuthenticationException;
  */
 public class NoPermissionException extends AuthenticationException {
 
-    private final static String DEFAULT_MESSAGE = "No permission";
+    private static final String DEFAULT_MESSAGE = "No permission";
 
     public NoPermissionException(String msg, Throwable t) {
         super(msg, t);

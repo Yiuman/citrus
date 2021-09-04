@@ -26,11 +26,11 @@ public interface AuthorityResourceMapper extends CrudMapper<AuthorityResource> {
      * @param userId 用户ID
      * @return 权限资源集合
      */
-    @Select(" select * from sys_auth_resource ar where ar.authority_id in " +
-            " (select sa.authority_id from sys_authority sa " +
-            " where sa.authority_id in " +
-            " (select distinct(ra.authority_id) from sys_role_auth ra where ra.role_id in " +
-            " (select ur.role_id from sys_user_role ur where ur.user_ID = #{userId})))")
+    @Select(" select * from sys_auth_resource ar where ar.authority_id in "
+            + " (select sa.authority_id from sys_authority sa "
+            + " where sa.authority_id in "
+            + " (select distinct(ra.authority_id) from sys_role_auth ra where ra.role_id in "
+            + " (select ur.role_id from sys_user_role ur where ur.user_ID = #{userId})))")
     Set<AuthorityResource> getAuthorityResourceByUserIdAndResourceId(Long userId);
 
 
@@ -40,11 +40,11 @@ public interface AuthorityResourceMapper extends CrudMapper<AuthorityResource> {
      * @param userId 用户ID
      * @return 资源集合
      */
-    @Select(" select * from sys_resource where resource_id in( select distinct(sar.resource_id)\n" +
-            " from (select * from sys_authority sa " +
-            " where sa.authority_id in (select distinct(ra.authority_id)" +
-            " from sys_role_auth ra where ra.role_id in (select ur.role_id from sys_user_role ur where ur.user_ID = #{userId})))" +
-            " auth left join sys_auth_resource sar on auth.authority_id = sar.authority_id )")
+    @Select(" select * from sys_resource where resource_id in( select distinct(sar.resource_id)"
+            + " from (select * from sys_authority sa "
+            + " where sa.authority_id in (select distinct(ra.authority_id)"
+            + " from sys_role_auth ra where ra.role_id in (select ur.role_id from sys_user_role ur where ur.user_ID = #{userId})))"
+            + " auth left join sys_auth_resource sar on auth.authority_id = sar.authority_id )")
     Set<Resource> getResourcesByUserId(Long userId);
 
     /**
@@ -53,8 +53,8 @@ public interface AuthorityResourceMapper extends CrudMapper<AuthorityResource> {
      * @param userId 用户ID
      * @return 权限集合
      */
-    @Select(" select * from sys_authority sa " +
-            " where sa.authority_id in " +
-            " (select distinct(ra.authority_id) from sys_role_auth ra where ra.role_id in (select ur.role_id from sys_user_role ur where ur.user_ID = #{userId}))")
+    @Select(" select * from sys_authority sa "
+            + " where sa.authority_id in "
+            + " (select distinct(ra.authority_id) from sys_role_auth ra where ra.role_id in (select ur.role_id from sys_user_role ur where ur.user_ID = #{userId}))")
     Set<Authority> getAuthoritiesByUserId(Long userId);
 }

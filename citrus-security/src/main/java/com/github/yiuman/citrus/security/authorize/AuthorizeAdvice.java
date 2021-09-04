@@ -33,8 +33,8 @@ public class AuthorizeAdvice {
      * 1.方法上有使用@Authorize
      * 2.类上有使用@Authorize
      */
-    @Pointcut("@annotation(com.github.yiuman.citrus.security.authorize.Authorize) " +
-            "|| @within(com.github.yiuman.citrus.security.authorize.Authorize) ")
+    @Pointcut("@annotation(com.github.yiuman.citrus.security.authorize.Authorize) "
+            + "|| @within(com.github.yiuman.citrus.security.authorize.Authorize) ")
     public void authorizePointCut() {
     }
 
@@ -50,11 +50,11 @@ public class AuthorizeAdvice {
      * 拦截请求的方法
      */
     @Pointcut
-            ("@annotation(org.springframework.web.bind.annotation.RequestMapping)" +
-                    "||@annotation(org.springframework.web.bind.annotation.GetMapping)" +
-                    "|| @annotation(org.springframework.web.bind.annotation.PostMapping)" +
-                    "|| @annotation(org.springframework.web.bind.annotation.PutMapping) " +
-                    "|| @annotation(org.springframework.web.bind.annotation.DeleteMapping) )"
+            ("@annotation(org.springframework.web.bind.annotation.RequestMapping)"
+                    + "||@annotation(org.springframework.web.bind.annotation.GetMapping)"
+                    + "|| @annotation(org.springframework.web.bind.annotation.PostMapping)"
+                    + "|| @annotation(org.springframework.web.bind.annotation.PutMapping) "
+                    + "|| @annotation(org.springframework.web.bind.annotation.DeleteMapping) )"
             )
     public void requestPointCut() {
 

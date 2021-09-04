@@ -12,6 +12,7 @@ import java.util.List;
 /**
  * CRUD操作时显示的页面树形结构以及页面组件
  *
+ * @param <T> 树形视图的树形实体类型
  * @author yiuman
  * @date 2020/5/13
  */

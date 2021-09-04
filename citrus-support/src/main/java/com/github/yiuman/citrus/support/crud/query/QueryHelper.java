@@ -29,7 +29,7 @@ public final class QueryHelper {
     /**
      * 参数类中需要处理查询字段的缓存，提高处理速度
      */
-    private final static Cache<Class<?>, Set<QueryParamMeta>> CLASS_QUERY_META_CACHE = CacheUtils.newInMemoryCache("CLASS_QUERY_META_CACHE");
+    private static final Cache<Class<?>, Set<QueryParamMeta>> CLASS_QUERY_META_CACHE = CacheUtils.newInMemoryCache("CLASS_QUERY_META_CACHE");
 
     private QueryHelper() {
     }
@@ -95,8 +95,8 @@ public final class QueryHelper {
             query.getConditions().forEach(LambdaUtils.consumerWrapper(conditionInfo -> {
                 Class<?> lastParameterType = Operations.IN_SQL.getType().equals(conditionInfo.getOperator())
                         || Operations.NOT_IN.getType().equals(conditionInfo.getOperator())
-                        ? String.class :
-                        getParameterClass(conditionInfo.getType());
+                        ? String.class
+                        : getParameterClass(conditionInfo.getType());
                 Method conditionMethod = queryWrapper
                         .getClass()
                         .getMethod(conditionInfo.getOperator(), boolean.class, Object.class, lastParameterType);

@@ -5,6 +5,7 @@ import java.lang.annotation.Annotation;
 /**
  * 注解注入解析器
  *
+ * @param <A> 注解类型
  * @author yiuman
  * @date 2020/7/23
  */

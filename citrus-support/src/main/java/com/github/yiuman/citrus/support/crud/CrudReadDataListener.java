@@ -12,13 +12,15 @@ import java.util.List;
 /**
  * 数据读取监听器
  *
+ * @param <T> 实体类型
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2020/4/8
  */
 @Slf4j
 public class CrudReadDataListener<T, K extends Serializable> extends AnalysisEventListener<T> {
 
-    private final static int BATCH_COUNT = 3000;
+    private static final int BATCH_COUNT = 3000;
 
     private final List<T> list = new ArrayList<>();
 

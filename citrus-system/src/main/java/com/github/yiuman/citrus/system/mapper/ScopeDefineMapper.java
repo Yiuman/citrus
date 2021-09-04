@@ -36,9 +36,9 @@ public interface ScopeDefineMapper extends CrudMapper<ScopeDefine> {
      * @param resourceId 资源ID
      * @return 数据范围定义集合
      */
-    @Select("select sd.* from " +
-            "(select sc.* from sys_auth_resource sa , sys_scope sc where sc.scope_Id = sa.scope_Id and sa.resource_Id = #{resourceId}) scope " +
-            "left join sys_scope_define sd on scope.scope_id = sd.scope_id order by sd.scope_id")
+    @Select("select sd.* from "
+            + "(select sc.* from sys_auth_resource sa , sys_scope sc where sc.scope_Id = sa.scope_Id and sa.resource_Id = #{resourceId}) scope "
+            + "left join sys_scope_define sd on scope.scope_id = sd.scope_id order by sd.scope_id")
     @Results({
             @Result(property = "scopeTypes", column = "scope_types", typeHandler = EnumArrayHandler.class)
     })

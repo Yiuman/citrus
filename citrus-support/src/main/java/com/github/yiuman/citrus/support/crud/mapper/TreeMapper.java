@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * 树形结构Mapper,用于预遍历排序树（左右值）
  *
+ * @param <T> 实体类型
  * @author yiuman
  * @date 2020/4/10
  */

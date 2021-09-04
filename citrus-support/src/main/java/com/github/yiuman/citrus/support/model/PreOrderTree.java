@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.support.model;
 /**
  * 预遍历排序树，左右值算法
  *
+ * @param <K> 树主键类型
  * @author yiuman
  * @date 2020/5/22
  */

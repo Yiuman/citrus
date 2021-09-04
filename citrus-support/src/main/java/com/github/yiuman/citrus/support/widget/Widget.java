@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.support.widget;
 /**
  * 控件/小部件
  *
+ * @param <M> 小部件模型类型
  * @author yiuman
  * @date 2020/5/6
  */

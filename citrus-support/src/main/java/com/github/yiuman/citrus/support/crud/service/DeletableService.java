@@ -5,6 +5,8 @@ import com.github.yiuman.citrus.support.crud.query.Query;
 /**
  * 可删除的Service接口
  *
+ * @param <E> 实体类型
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2020/4/15
  */

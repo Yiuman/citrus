@@ -17,8 +17,8 @@ public final class QueryBuilders {
         return new SimpleQueryBuilder();
     }
 
-    public static  SimpleQueryBuilder wrapper(Query query){
-        return  new SimpleQueryBuilder(Optional.ofNullable(query).orElse(Query.create()));
+    public static SimpleQueryBuilder wrapper(Query query) {
+        return new SimpleQueryBuilder(Optional.ofNullable(query).orElse(Query.create()));
     }
 
     public static <T> LambdaQueryBuilder<T> lambda() {

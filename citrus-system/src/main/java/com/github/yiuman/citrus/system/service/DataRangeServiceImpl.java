@@ -82,9 +82,8 @@ public class DataRangeServiceImpl implements DataRangeService {
                     //包含
                     if (scopeDefine.getScopeRule() == null || scopeDefine.getScopeRule() == 0) {
                         authDeptIds.addAll(currentOrganIds);
-                    }
-                    //排除
-                    else {
+                    } else {
+                        //排除
                         authDeptIds.removeAll(currentOrganIds);
                     }
                 }

@@ -13,6 +13,8 @@ import java.util.Optional;
  *
  * @author yiuman
  * @date 2020/6/16
+ * @param <K> 键
+ * @param <V> 值
  */
 public abstract class AbstractEnvironmentCache<K, V> implements Cache<K, V> {
 

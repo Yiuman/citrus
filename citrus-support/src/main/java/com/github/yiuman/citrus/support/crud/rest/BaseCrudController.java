@@ -22,6 +22,8 @@ import java.util.Optional;
 /**
  * 基础的RestfulCrud控制器
  *
+ * @param <T> 实体类型
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2020/4/4
  */

@@ -6,6 +6,7 @@ import java.util.function.Function;
 /**
  * 记录扩展器，用于扩展记录
  *
+ * @param <T> 记录实体类型
  * @author yiuman
  * @date 2021/1/20
  */

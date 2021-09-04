@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 查询Restful接口定义
  *
+ * @param <T> 实体类型
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2020/10/1
  */

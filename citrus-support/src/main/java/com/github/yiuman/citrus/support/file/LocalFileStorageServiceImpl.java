@@ -23,7 +23,7 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
     /**
      * 日期格式化
      */
-    private final static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     public LocalFileStorageServiceImpl() {
     }

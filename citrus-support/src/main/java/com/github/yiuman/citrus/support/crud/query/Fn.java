@@ -6,6 +6,8 @@ import java.util.function.Function;
 /**
  * 可序列化的FunctionalInterface
  *
+ * @param <T> 实体类型
+ * @param <R> 返回类型
  * @author yiuman
  * @date 2021/8/20
  */

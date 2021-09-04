@@ -33,7 +33,10 @@ public class AuthorizeConfigManagerImpl implements AuthorizeConfigManager {
         for (AuthorizeConfigProvider authorizeConfigProvider : authorizeConfigProviders) {
             boolean currentIsAnyRequestConfig = authorizeConfigProvider.config(config);
             if (existAnyRequestConfig && currentIsAnyRequestConfig) {
-                String tips = String.format("Duplicate configuration for org.springframework.security.config.annotation.web.AbstractRequestMatcherRegistry.anyRequest:%s,%s", existAnyRequestConfigName, authorizeConfigProvider.getClass().getName());
+                String tips = String
+                        .format("Duplicate configuration for org.springframework.security.config.annotation.web.AbstractRequestMatcherRegistry.anyRequest:%s,%s",
+                                existAnyRequestConfigName,
+                                authorizeConfigProvider.getClass().getName());
                 throw new RuntimeException(tips);
             } else if (currentIsAnyRequestConfig) {
                 existAnyRequestConfig = true;

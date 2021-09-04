@@ -119,12 +119,5 @@ public final class ValidateUtils {
             this.errorMsg = errorMsg;
         }
 
-        @Override
-        public String toString() {
-            return "ValidationResult{" +
-                    "hasErrors=" + hasErrors +
-                    ", errorMsg=" + errorMsg +
-                    '}';
-        }
     }
 }

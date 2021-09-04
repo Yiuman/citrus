@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ExceptionAdvice {
 
-    private final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     /**
      * Rest异常处理
@@ -66,7 +66,7 @@ public class ExceptionAdvice {
 
         private String message;
 
-        public ErrorResult(String field, String message) {
+        ErrorResult(String field, String message) {
             this.field = field;
             this.message = message;
         }
@@ -87,13 +87,6 @@ public class ExceptionAdvice {
             this.message = message;
         }
 
-        @Override
-        public String toString() {
-            return "ErrorResult{" +
-                    "field='" + field + '\'' +
-                    ", message='" + message + '\'' +
-                    '}';
-        }
     }
 
     /**

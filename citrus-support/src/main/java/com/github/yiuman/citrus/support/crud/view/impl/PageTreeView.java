@@ -6,6 +6,7 @@ import com.github.yiuman.citrus.support.model.Tree;
 /**
  * 页面中拥有编辑器的树形视图
  *
+ * @param <T> 页面树形实体类型
  * @author yiuman
  * @date 2021/1/20
  */

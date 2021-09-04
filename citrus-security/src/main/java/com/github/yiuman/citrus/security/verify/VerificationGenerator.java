@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 验证码构造器
  *
+ * @param <T> 验证码实例类型
  * @author yiuman
  * @date 2020/3/22
  */

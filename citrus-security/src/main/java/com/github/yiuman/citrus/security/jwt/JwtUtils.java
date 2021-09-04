@@ -32,7 +32,7 @@ public final class JwtUtils {
 
     private static final String JWT_CACHE_NAMESPACE = "JWT";
 
-    protected static final Logger log = LoggerFactory.getLogger(JwtUtils.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(JwtUtils.class);
 
     /**
      * 从缓存里边获取JWT命名空间配置，若没有则使用默认值
@@ -68,13 +68,13 @@ public final class JwtUtils {
             getClaims(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT signature.");
+            LOG.info("Invalid JWT signature.");
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token.");
+            LOG.info("Expired JWT token.");
         } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT token.");
+            LOG.info("Unsupported JWT token.");
         } catch (IllegalArgumentException e) {
-            log.info("JWT token compact of handler are invalid.");
+            LOG.info("JWT token compact of handler are invalid.");
         }
         return false;
     }

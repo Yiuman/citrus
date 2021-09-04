@@ -3,6 +3,9 @@ package com.github.yiuman.citrus.support.wrapper;
 /**
  * 可抛异常的Function
  *
+ * @param <T> 入参类型
+ * @param <R> 返回类型
+ * @param <E> 异常类型
  * @author yiuman
  * @date 2020/4/3
  */

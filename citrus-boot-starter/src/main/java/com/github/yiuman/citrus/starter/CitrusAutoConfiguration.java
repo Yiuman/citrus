@@ -68,7 +68,10 @@ public class CitrusAutoConfiguration {
          */
         private final AuthorizeConfigManager authorizeConfigManager;
 
-        public SecurityConfiguration(AuthenticationEntryPoint authenticationEntryPoint, JwtSecurityConfigurerAdapter jwtSecurityConfigurerAdapter, AuthorizeConfigManager authorizeConfigManager, AccessDeniedHandler accessDeniedHandler) {
+        public SecurityConfiguration(AuthenticationEntryPoint authenticationEntryPoint,
+                                     JwtSecurityConfigurerAdapter jwtSecurityConfigurerAdapter,
+                                     AuthorizeConfigManager authorizeConfigManager,
+                                     AccessDeniedHandler accessDeniedHandler) {
             this.authenticationEntryPoint = authenticationEntryPoint;
             this.jwtSecurityConfigurerAdapter = jwtSecurityConfigurerAdapter;
             this.authorizeConfigManager = authorizeConfigManager;

@@ -3,6 +3,8 @@ package com.github.yiuman.citrus.support.model;
 /**
  * 找主键接口
  *
+ * @param <E> 实体类型
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2020/4/4
  */

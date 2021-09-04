@@ -26,7 +26,6 @@ import java.lang.reflect.Proxy;
  * @author yiuman
  * @date 2020/11/30
  */
-@SuppressWarnings("NullableProblems")
 public class DynamicDataSourceAnnotationAdvisor extends AbstractPointcutAdvisor implements BeanFactoryAware {
 
     private final Advice advice;
@@ -68,7 +67,7 @@ public class DynamicDataSourceAnnotationAdvisor extends AbstractPointcutAdvisor 
 
         private final Class<? extends Annotation> annotationType;
 
-        public AnnotationMethodPoint(Class<? extends Annotation> annotationType) {
+        AnnotationMethodPoint(Class<? extends Annotation> annotationType) {
             Assert.notNull(annotationType, "Annotation type must not be null");
             this.annotationType = annotationType;
         }
@@ -86,7 +85,7 @@ public class DynamicDataSourceAnnotationAdvisor extends AbstractPointcutAdvisor 
         private static class AnnotationMethodMatcher extends StaticMethodMatcher {
             private final Class<? extends Annotation> annotationType;
 
-            public AnnotationMethodMatcher(Class<? extends Annotation> annotationType) {
+            AnnotationMethodMatcher(Class<? extends Annotation> annotationType) {
                 this.annotationType = annotationType;
             }
 

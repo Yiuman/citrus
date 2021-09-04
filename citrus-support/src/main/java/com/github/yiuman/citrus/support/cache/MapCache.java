@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * @param <K> 键值对键类型
+ * @param <V> 键值对值类型
  * @author yiuman
  * @date 2020/4/6
  */

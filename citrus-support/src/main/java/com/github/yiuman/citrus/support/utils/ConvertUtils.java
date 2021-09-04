@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  */
 public final class ConvertUtils {
 
-    private final static ExpressionParser EXPRESSION_PARSER = new SpelExpressionParser();
+    private static final  ExpressionParser EXPRESSION_PARSER = new SpelExpressionParser();
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true)

@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.support.http;
 
 /**
+ * @param <T> 返回数据类型
  * @author yiuman
  * @date 2020/3/30
  */

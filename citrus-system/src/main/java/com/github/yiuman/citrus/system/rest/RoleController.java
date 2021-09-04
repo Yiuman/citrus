@@ -69,8 +69,8 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
             query = Optional.ofNullable(query).orElse(Query.create());
 
             String inSql = String.format(
-                    "select role_id from sys_role_auth where authority_id in (%s)"
-                    , authIds.parallelStream().map(String::valueOf).collect(Collectors.joining(","))
+                    "select role_id from sys_role_auth where authority_id in (%s)",
+                    authIds.parallelStream().map(String::valueOf).collect(Collectors.joining(","))
             );
             QueryBuilders.wrapper(query).inSql(getService().getKeyColumn(), inSql);
         }

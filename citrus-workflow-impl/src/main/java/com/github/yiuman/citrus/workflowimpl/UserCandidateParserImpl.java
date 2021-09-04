@@ -1,6 +1,5 @@
 package com.github.yiuman.citrus.workflowimpl;
 
-import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.service.UserService;

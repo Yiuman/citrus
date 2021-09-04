@@ -179,7 +179,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
 
             private final UserRoleMapper userRoleMapper;
 
-            public UserQueryHandler(UserRoleMapper userRoleMapper) {
+            UserQueryHandler(UserRoleMapper userRoleMapper) {
                 this.userRoleMapper = userRoleMapper;
             }
 

@@ -9,8 +9,6 @@ import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.query.QueryHelper;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -23,12 +21,12 @@ import java.util.stream.StreamSupport;
 /**
  * 基础的Service
  *
+ * @param <E> 实体类型
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2020/4/15
  */
 public abstract class BaseService<E, K extends Serializable> implements CrudService<E, K> {
-
-    protected static final Logger log = LoggerFactory.getLogger(BaseService.class);
 
     public BaseService() {
     }

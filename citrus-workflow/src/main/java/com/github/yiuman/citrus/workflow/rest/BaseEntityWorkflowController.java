@@ -20,6 +20,8 @@ import java.util.Map;
 /**
  * 实例业务类型的通用流程控制器
  *
+ * @param <E> 实体类型
+ * @param <K> 主键类型
  * @author yiuman
  * @date 2020/12/14
  */
