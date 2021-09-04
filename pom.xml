@@ -181,6 +181,31 @@
                 </executions>
             </plugin>
 
+            <!--checkstyle代码规约检查-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <encoding>UTF-8</encoding>
+                    <failOnViolation>true</failOnViolation>
+                    <linkXRef>false</linkXRef>
+                    <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                    <maxAllowedViolations>0</maxAllowedViolations>
+                    <violationSeverity>warning</violationSeverity>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!--GPG_TTY=$(tty) -->
             <!--export GPG_TTY-->
             <!--mvn install -Dgpg.skip-->
