@@ -166,10 +166,10 @@
             <property name="excludedClasses" value=".*[Application,Test]$"/>
         </module>
         <!-- 禁止使用System.out.println -->
-        <module name="Regexp">
-            <property name="format" value="System\.out\.println"/>
-            <property name="illegalPattern" value="true"/>
-        </module>
+<!--        <module name="Regexp">-->
+<!--            <property name="format" value="System\.out\.println"/>-->
+<!--            <property name="illegalPattern" value="true"/>-->
+<!--        </module>-->
         <!-- return个数 3个-->
         <!--        <module name="ReturnCount">-->
         <!--            <property name="max" value="5"/>-->

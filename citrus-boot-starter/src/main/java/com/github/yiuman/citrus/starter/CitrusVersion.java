@@ -21,7 +21,7 @@ public class CitrusVersion {
     }
 
     public static void printBanner() {
-        System.out.print(BANNER);
+        System.out.println(BANNER);
         System.out.printf(CITRUS + "v%s%n", getVersion());
     }
 
