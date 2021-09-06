@@ -18,7 +18,7 @@ public final class DynamicDataSourceHolder {
     /**
      * 后进先出
      */
-    private static final  ThreadLocal<Deque<String>> LOOKUP_KEY_HOLDER = new NamedThreadLocal<Deque<String>>("dynamic-datasource") {
+    private static final ThreadLocal<Deque<String>> LOOKUP_KEY_HOLDER = new NamedThreadLocal<Deque<String>>("dynamic-datasource") {
         @Override
         protected Deque<String> initialValue() {
             return new ArrayDeque<>();

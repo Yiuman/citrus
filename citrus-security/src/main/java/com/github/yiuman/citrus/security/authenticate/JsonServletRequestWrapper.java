@@ -28,7 +28,7 @@ public class JsonServletRequestWrapper extends HttpServletRequestWrapper {
 
     private byte[] bytes;
 
-    private static final  ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     /**
      * Constructs a request object wrapping the given request.

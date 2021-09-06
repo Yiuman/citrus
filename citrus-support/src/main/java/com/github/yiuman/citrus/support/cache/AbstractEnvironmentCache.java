@@ -11,10 +11,10 @@ import java.util.Optional;
  * 若使用了redis则用redis缓存
  * 没有则使用内存缓存
  *
- * @author yiuman
- * @date 2020/6/16
  * @param <K> 键
  * @param <V> 值
+ * @author yiuman
+ * @date 2020/6/16
  */
 public abstract class AbstractEnvironmentCache<K, V> implements Cache<K, V> {
 

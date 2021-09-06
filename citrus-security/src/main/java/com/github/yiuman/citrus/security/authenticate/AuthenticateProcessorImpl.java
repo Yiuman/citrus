@@ -31,7 +31,7 @@ public class AuthenticateProcessorImpl implements AuthenticateProcessor {
     /**
      * 认证模式参数KEY
      */
-    private static final  String AUTHENTICATION_MODE_PARAMETER_KEY = "mode";
+    private static final String AUTHENTICATION_MODE_PARAMETER_KEY = "mode";
 
     /**
      * 认证服务类

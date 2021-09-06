@@ -39,12 +39,12 @@ public abstract class BaseEntityWorkflowService<E extends ProcessBusinessModel, 
     /**
      * 流程参数，当前用户
      */
-    private static final  String CURRENT_USER_ID = "currentUserId";
+    private static final String CURRENT_USER_ID = "currentUserId";
 
     /**
      * 流程参数，业务主键
      */
-    private static final  String BUSINESS_KEY = "businessKey";
+    private static final String BUSINESS_KEY = "businessKey";
 
     /**
      * 流程服务类
