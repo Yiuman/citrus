@@ -95,7 +95,7 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
 
     @Override
     public List<E> children(E current) {
-        return loadByParent(current.getParentId());
+        return loadByParent(current.getId());
     }
 
     /**
