@@ -11,6 +11,7 @@ import com.github.yiuman.citrus.system.entity.UserRole;
 import com.github.yiuman.citrus.system.mapper.RoleAuthorityMapper;
 import com.github.yiuman.citrus.system.mapper.RoleMapper;
 import com.github.yiuman.citrus.system.mapper.UserRoleMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
  * @date 2020/3/31
  */
 @Service
+@RequiredArgsConstructor
 public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
 
     private final RoleMapper roleMapper;
@@ -31,13 +33,6 @@ public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
     private final RoleAuthorityMapper roleAuthorityMapper;
 
     private final UserRoleMapper userRoleMapper;
-
-
-    public RoleService(RoleMapper roleMapper, RoleAuthorityMapper roleAuthorityMapper, UserRoleMapper userRoleMapper) {
-        this.roleMapper = roleMapper;
-        this.roleAuthorityMapper = roleAuthorityMapper;
-        this.userRoleMapper = userRoleMapper;
-    }
 
     @Override
     public void afterSave(RoleDto entity) {

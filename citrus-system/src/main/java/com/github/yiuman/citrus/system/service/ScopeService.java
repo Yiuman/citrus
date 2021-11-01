@@ -8,6 +8,7 @@ import com.github.yiuman.citrus.system.dto.ScopeDto;
 import com.github.yiuman.citrus.system.entity.Scope;
 import com.github.yiuman.citrus.system.entity.ScopeDefine;
 import com.github.yiuman.citrus.system.mapper.ScopeDefineMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -20,13 +21,10 @@ import java.util.List;
  * @date 2020/6/1
  */
 @Service
+@RequiredArgsConstructor
 public class ScopeService extends BaseDtoService<Scope, Long, ScopeDto> {
 
     private final ScopeDefineMapper scopeDefineMapper;
-
-    public ScopeService(ScopeDefineMapper scopeDefineMapper) {
-        this.scopeDefineMapper = scopeDefineMapper;
-    }
 
     @Override
     public <P extends IPage<ScopeDto>> P page(P page, Query query) {

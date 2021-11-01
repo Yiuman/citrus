@@ -7,6 +7,7 @@ import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.ScopeDefine;
 import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.enums.ScopeType;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -25,13 +26,10 @@ import java.util.stream.Collectors;
  */
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class DataRangeServiceImpl implements DataRangeService {
 
     private final RbacMixinService rbacMixinService;
-
-    public DataRangeServiceImpl(RbacMixinService rbacMixinService) {
-        this.rbacMixinService = rbacMixinService;
-    }
 
     @Override
     public Collection<Long> getDeptIds(String code) {

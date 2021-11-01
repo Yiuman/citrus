@@ -15,7 +15,6 @@ import java.util.*;
  */
 public class BaseActionableView implements ActionableView {
 
-
     /**
      * 控件,如搜索框、下拉选择等，用于页面的搜索等操作
      *

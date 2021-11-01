@@ -18,9 +18,6 @@ import java.util.List;
 @Service
 public class ResourceService extends BaseDtoService<Resource, Long, ResourceDto> {
 
-    public ResourceService() {
-    }
-
     public Resource selectByUri(String requestUri, String method) {
         List<Resource> resources = getBaseMapper()
                 .selectList(Wrappers.<Resource>lambdaQuery()

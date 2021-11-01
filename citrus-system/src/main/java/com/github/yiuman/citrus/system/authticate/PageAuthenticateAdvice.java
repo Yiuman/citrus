@@ -8,6 +8,7 @@ import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.enums.ResourceType;
 import com.github.yiuman.citrus.system.hook.RbacHook;
 import com.github.yiuman.citrus.system.service.RbacMixinService;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -30,13 +31,10 @@ import java.util.stream.Collectors;
  */
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class PageAuthenticateAdvice {
 
     private final RbacMixinService rbacMixinService;
-
-    public PageAuthenticateAdvice(RbacMixinService rbacMixinService) {
-        this.rbacMixinService = rbacMixinService;
-    }
 
     @Pointcut("execution(* com.github.yiuman.citrus.support.crud.rest.QueryRestful.page(javax.servlet.http.HttpServletRequest)))")
     public void queryRestful() {

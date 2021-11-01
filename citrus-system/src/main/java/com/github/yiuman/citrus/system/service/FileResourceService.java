@@ -4,6 +4,7 @@ import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.support.crud.service.BaseService;
 import com.github.yiuman.citrus.support.file.FileStorageService;
 import com.github.yiuman.citrus.system.entity.FileResource;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -21,13 +22,10 @@ import java.util.Objects;
  * @date 2021/3/16
  */
 @Service
+@RequiredArgsConstructor
 public class FileResourceService extends BaseService<FileResource, String> {
 
     private final FileStorageService fileStorageService;
-
-    public FileResourceService(FileStorageService fileStorageService) {
-        this.fileStorageService = fileStorageService;
-    }
 
     public String upload(String identify, MultipartFile file) throws Exception {
 

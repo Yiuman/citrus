@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.system.inject;
 
 import com.github.yiuman.citrus.support.inject.InjectAnnotationParser;
 import com.github.yiuman.citrus.system.service.DataRangeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,13 +12,10 @@ import org.springframework.stereotype.Component;
  * @date 2020/7/23
  */
 @Component
+@RequiredArgsConstructor
 public class AuthDeptIdsInjectAnnotationParserImpl implements InjectAnnotationParser<AuthDeptIds> {
 
     private final DataRangeService dataRangeService;
-
-    public AuthDeptIdsInjectAnnotationParserImpl(DataRangeService dataRangeService) {
-        this.dataRangeService = dataRangeService;
-    }
 
     @Override
     public Object parse(AuthDeptIds annotation) {

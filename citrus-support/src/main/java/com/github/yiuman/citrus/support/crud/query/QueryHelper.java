@@ -5,10 +5,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.github.yiuman.citrus.support.cache.Cache;
 import com.github.yiuman.citrus.support.crud.query.annotations.QueryParam;
 import com.github.yiuman.citrus.support.model.SortBy;
-import com.github.yiuman.citrus.support.utils.CacheUtils;
 import com.github.yiuman.citrus.support.utils.ClassUtils;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
@@ -18,6 +16,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
@@ -29,7 +28,7 @@ public final class QueryHelper {
     /**
      * 参数类中需要处理查询字段的缓存，提高处理速度
      */
-    private static final Cache<Class<?>, Set<QueryParamMeta>> CLASS_QUERY_META_CACHE = CacheUtils.newInMemoryCache("CLASS_QUERY_META_CACHE");
+    private static final Map<Class<?>, Set<QueryParamMeta>> CLASS_QUERY_META_CACHE = new ConcurrentHashMap<>(256);
 
     private QueryHelper() {
     }
@@ -59,7 +58,7 @@ public final class QueryHelper {
 
     public static void doInjectQuery(final Query query, Object params) {
         Class<?> paramsClass = ClassUtils.getRealClass(params.getClass());
-        final Set<QueryParamMeta> needHandlerFields = Optional.ofNullable(CLASS_QUERY_META_CACHE.find(paramsClass)).orElse(new HashSet<>());
+        final Set<QueryParamMeta> needHandlerFields = Optional.ofNullable(CLASS_QUERY_META_CACHE.get(paramsClass)).orElse(new HashSet<>());
         if (CollectionUtil.isEmpty(needHandlerFields)) {
             Arrays.stream(paramsClass.getDeclaredFields()).forEach(field -> {
                 field.setAccessible(true);
@@ -69,7 +68,7 @@ public final class QueryHelper {
                 }
 
             });
-            CLASS_QUERY_META_CACHE.save(paramsClass, needHandlerFields);
+            CLASS_QUERY_META_CACHE.put(paramsClass, needHandlerFields);
         }
 
         //遍历处理参数

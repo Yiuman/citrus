@@ -8,13 +8,13 @@ import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.support.exception.RestException;
 import com.github.yiuman.citrus.support.http.ResponseStatusCode;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
-import com.github.yiuman.citrus.system.cache.UserOnlineCache;
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.*;
 import com.github.yiuman.citrus.system.mapper.UserMapper;
 import com.github.yiuman.citrus.system.mapper.UserOrganMapper;
 import com.github.yiuman.citrus.system.mapper.UserRoleMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
  * @date 2020/3/31
  */
 @Service
+@RequiredArgsConstructor
 public class UserService extends BaseDtoService<User, Long, UserDto> {
 
     /**
@@ -52,20 +53,6 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
      * 用户组织机构mapper
      */
     private final UserOrganMapper userOrganMapper;
-
-    private final UserOnlineCache userOnlineCache;
-
-    public UserService(PasswordEncoder passwordEncoder, UserMapper userMapper, UserRoleMapper userRoleMapper, UserOrganMapper userOrganMapper, UserOnlineCache userOnlineCache) {
-        this.passwordEncoder = passwordEncoder;
-        this.userMapper = userMapper;
-        this.userRoleMapper = userRoleMapper;
-        this.userOrganMapper = userOrganMapper;
-        this.userOnlineCache = userOnlineCache;
-    }
-
-    public UserOnlineCache getUserOnlineCache() {
-        return userOnlineCache;
-    }
 
     @Override
     public boolean beforeSave(UserDto entity) {
@@ -158,10 +145,8 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
     }
 
     public UserOnlineInfo getCurrentUserOnlineInfo() {
-        User currentUser = getCurrentUser()
-                .orElseThrow(NoPermissionException::new);
-
-        return userOnlineCache.find(currentUser.getUuid());
+        User currentUser = getCurrentUser().orElseThrow(NoPermissionException::new);
+        return UserOnlineInfo.newInstance(currentUser);
 
     }
 
@@ -211,7 +196,6 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
     public void resetUserOnlineInfo() {
         UserOnlineInfo currentUserOnlineInfo = getCurrentUserOnlineInfo();
         BeanUtils.copyProperties(get(currentUserOnlineInfo.getUserId()), currentUserOnlineInfo);
-        userOnlineCache.save(currentUserOnlineInfo.getUuid(), currentUserOnlineInfo);
     }
 
     public List<User> getUsersByRoleIds(Collection<Long> roleIds) {

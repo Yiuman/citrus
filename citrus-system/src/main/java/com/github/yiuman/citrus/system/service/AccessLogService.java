@@ -8,6 +8,7 @@ import com.github.yiuman.citrus.system.entity.AccessLog;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.enums.ResourceType;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,16 +20,12 @@ import java.util.Objects;
  * @date 2020/9/24
  */
 @Service
+@RequiredArgsConstructor
 public class AccessLogService extends BaseService<AccessLog, Long> {
 
     private final ObjectMapper objectMapper;
 
     private final ResourceService resourceService;
-
-    public AccessLogService(ObjectMapper objectMapper, ResourceService resourceService) {
-        this.objectMapper = objectMapper;
-        this.resourceService = resourceService;
-    }
 
     public void pointAccess(HttpServletRequest request, User user, Resource resource) throws Exception {
         AccessLog accessLog = new AccessLog();

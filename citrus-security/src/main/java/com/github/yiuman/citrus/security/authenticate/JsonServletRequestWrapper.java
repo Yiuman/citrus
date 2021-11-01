@@ -80,26 +80,34 @@ public class JsonServletRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public ServletInputStream getInputStream() {
-        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-        return new ServletInputStream() {
-            @Override
-            public boolean isFinished() {
-                return byteArrayInputStream.available() <= 0;
-            }
+        return new ServletInputStreamImpl(bytes);
+    }
 
-            @Override
-            public boolean isReady() {
-                return byteArrayInputStream.available() > 0;
-            }
+    static class ServletInputStreamImpl extends ServletInputStream {
 
-            @Override
-            public void setReadListener(ReadListener listener) {
-            }
+        private final ByteArrayInputStream byteArrayInputStream;
 
-            @Override
-            public int read() {
-                return byteArrayInputStream.read();
-            }
-        };
+        ServletInputStreamImpl(byte[] bytes) {
+            this.byteArrayInputStream = new ByteArrayInputStream(bytes);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return byteArrayInputStream.available() <= 0;
+        }
+
+        @Override
+        public boolean isReady() {
+            return byteArrayInputStream.available() > 0;
+        }
+
+        @Override
+        public void setReadListener(ReadListener listener) {
+        }
+
+        @Override
+        public int read() {
+            return byteArrayInputStream.read();
+        }
     }
 }

@@ -86,8 +86,6 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
         Class<? extends QueryRestful> restBeanClass = targetClass.get();
         if (Objects.nonNull(restBeanClass)) {
             //这里只能用QueryWrapper不能用LambdaQuery实现，AbstractLambdaQuery会找表，ResourceDto没有对应的表
-
-
             resourceService.remove(QueryBuilders.create().eq(getParentField(), entity.getResourceId()).toQuery());
             createQueryDefaultResource(entity);
 
@@ -121,11 +119,12 @@ public class MenuService extends BaseSimpleTreeService<Resource, Long> {
      * @return 操作资源列表
      */
     public List<Resource> getOperationByKey(Long key) {
-        return super.list(QueryBuilders.<Resource>lambda()
-                .eq(getParentField(), key)
-                .eq(Resource::getType, ResourceType.OPERATION)
-                .toQuery());
-//        return super.list(Wrappers.<Resource>query().eq(getParentField(), key).lambda().eq(Resource::getType, ResourceType.OPERATION));
+        return super.list(
+                QueryBuilders.<Resource>lambda()
+                        .eq(getParentField(), key)
+                        .eq(Resource::getType, ResourceType.OPERATION)
+                        .toQuery()
+        );
     }
 
     /**

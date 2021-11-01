@@ -6,6 +6,7 @@ import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.service.RbacMixinService;
 import com.github.yiuman.citrus.system.service.ResourceService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.Optional;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class RbacHook implements AuthorizeServiceHook {
 
     public static final String CURRENT_RESOURCE_ATTR = "CURRENT_RESOURCE_ID";
@@ -31,11 +33,6 @@ public class RbacHook implements AuthorizeServiceHook {
     private final RbacMixinService mixinService;
 
     private final AccessPointer accessPointer;
-
-    public RbacHook(RbacMixinService mixinService, AccessPointer accessPointer) {
-        this.mixinService = mixinService;
-        this.accessPointer = accessPointer;
-    }
 
     /**
      * 系统级权限数据范围处理

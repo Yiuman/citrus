@@ -6,13 +6,11 @@ import cn.hutool.core.util.TypeUtil;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.github.yiuman.citrus.support.cache.InMemoryCache;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.crud.mapper.TreeMapper;
 import com.github.yiuman.citrus.support.crud.service.BaseService;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.model.Tree;
-import com.github.yiuman.citrus.support.utils.CacheUtils;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.utils.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +19,9 @@ import org.apache.ibatis.binding.MapperRegistry;
 import org.mybatis.spring.SqlSessionTemplate;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Crud辅助类，用于动态创建Service、Mapper
@@ -35,14 +35,12 @@ public final class CrudHelper {
     /**
      * 字节码动态CrudService缓存
      */
-    private static final InMemoryCache<Class<?>, CrudService<?, ? extends Serializable>> SERVICE_CACHE
-            = CacheUtils.newInMemoryCache("SERVICE_CACHE");
+    private static final Map<Class<?>, CrudService<?, ? extends Serializable>> SERVICE_CACHE = new ConcurrentHashMap<>(256);
 
     /**
      * 实体类型与mapper接口的映射信息
      */
-    private static final InMemoryCache<Class<?>, Class<? extends BaseMapper<?>>> MAPPER_CACHE
-            = CacheUtils.newInMemoryCache("MAPPER_CACHE");
+    private static final Map<Class<?>, Class<? extends BaseMapper<?>>> MAPPER_CACHE = new ConcurrentHashMap<>(256);
 
     private CrudHelper() {
     }
@@ -61,7 +59,7 @@ public final class CrudHelper {
     public static <E, K extends Serializable, S extends CrudService<E, K>> S getCrudService(
             Class<E> entityClass,
             Class<K> keyClass) {
-        CrudService<?, ? extends Serializable> crudService = SERVICE_CACHE.find(entityClass);
+        CrudService<?, ? extends Serializable> crudService = SERVICE_CACHE.get(entityClass);
         if (Objects.nonNull(crudService)) {
             return (S) crudService;
         }
@@ -71,7 +69,7 @@ public final class CrudHelper {
             log.error("Cannot auto create baseService for entity {}", TypeUtil.getTypeArgument(entityClass, 0), e);
             throw new RuntimeException(e);
         }
-        SERVICE_CACHE.save(entityClass, crudService);
+        SERVICE_CACHE.put(entityClass, crudService);
         return (S) crudService;
     }
 
@@ -108,7 +106,7 @@ public final class CrudHelper {
             //多线程的使用 线程安全的SqlSessionTemplate
             SqlSessionTemplate sqlSessionTemplate = SpringUtils.getBean(SqlSessionTemplate.class);
             //先看下Mapper与实体映射的缓存是否为空,为空则初始化已注册的实体缓存信息
-            if (CollectionUtil.isEmpty(MAPPER_CACHE.keys())) {
+            if (CollectionUtil.isEmpty(MAPPER_CACHE.keySet())) {
                 //找到Mapper注册器
                 MapperRegistry mapperRegistry = sqlSessionTemplate.getConfiguration().getMapperRegistry();
                 mapperRegistry.getMappers().stream().filter(mapperInterface -> {
@@ -116,18 +114,18 @@ public final class CrudHelper {
                     //找到是CrudMapper的实现
                     return ArrayUtil.isNotEmpty(interfaces) && interfaces[0].isAssignableFrom(CrudMapper.class);
                 }).forEach(baseMapperInterface ->
-                        MAPPER_CACHE.save(
+                        MAPPER_CACHE.put(
                                 (Class<?>) TypeUtil.getTypeArgument(baseMapperInterface, 0),
                                 (Class<? extends BaseMapper<?>>) baseMapperInterface
                         )
                 );
             }
 
-            Class<? extends BaseMapper<?>> mapperClass = MAPPER_CACHE.find(entityClass);
+            Class<? extends BaseMapper<?>> mapperClass = MAPPER_CACHE.get(entityClass);
 
             if (Objects.isNull(mapperClass)) {
                 mapperClass = CrudUtils.getMapperInterface(entityClass, baseMapperClass);
-                MAPPER_CACHE.save(entityClass, mapperClass);
+                MAPPER_CACHE.put(entityClass, mapperClass);
             }
 
             M mapper;
@@ -157,7 +155,7 @@ public final class CrudHelper {
 
     public static TableInfo getTableInfo(Class<?> entityClass) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-        if (Objects.isNull(tableInfo) && Objects.isNull(MAPPER_CACHE.find(entityClass))) {
+        if (Objects.isNull(tableInfo) && Objects.isNull(MAPPER_CACHE.get(entityClass))) {
             getCrudMapper(entityClass);
         }
         return TableInfoHelper.getTableInfo(entityClass);

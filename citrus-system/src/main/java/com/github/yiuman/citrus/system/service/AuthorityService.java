@@ -9,7 +9,7 @@ import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.RoleAuthority;
 import com.github.yiuman.citrus.system.mapper.AuthorityResourceMapper;
 import com.github.yiuman.citrus.system.mapper.RoleAuthorityMapper;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -24,10 +24,11 @@ import java.util.Set;
  * @date 2020/4/11
  */
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthorityService extends BaseDtoService<Authority, Long, AuthorityDto> {
 
     private final AuthorityResourceMapper authorityResourceMapper;
+
     private final RoleAuthorityMapper roleAuthorityMapper;
 
     @Override

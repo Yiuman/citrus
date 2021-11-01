@@ -7,8 +7,8 @@ import com.github.yiuman.citrus.system.entity.AuthorityResource;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.enums.ResourceType;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * @date 2020/6/17
  */
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class RbacMixinService {
 
@@ -49,7 +49,7 @@ public class RbacMixinService {
      * @return true/false
      */
     public boolean hasPermission(User user, Resource resource) {
-        UserOnlineInfo userOnlineInfo = userService.getUserOnlineCache().find(user.getUuid());
+        UserOnlineInfo userOnlineInfo = userService.getCurrentUserOnlineInfo();
         if (userOnlineInfo.getAdmin()) {
             return true;
         }

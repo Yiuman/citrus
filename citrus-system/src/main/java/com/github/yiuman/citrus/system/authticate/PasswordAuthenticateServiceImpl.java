@@ -5,13 +5,13 @@ import com.github.yiuman.citrus.security.authenticate.AuthenticateService;
 import com.github.yiuman.citrus.security.verify.VerificationProcessor;
 import com.github.yiuman.citrus.security.verify.captcha.Captcha;
 import com.github.yiuman.citrus.support.utils.WebUtils;
-import com.github.yiuman.citrus.system.cache.UserOnlineCache;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.entity.User;
 import com.github.yiuman.citrus.system.hook.AccessPointer;
 import com.github.yiuman.citrus.system.service.RbacMixinService;
 import com.github.yiuman.citrus.system.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -35,6 +36,7 @@ import java.util.Optional;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PasswordAuthenticateServiceImpl implements AuthenticateService, UserDetailsService {
 
     private static final String SUPPORT_MODE = "password";
@@ -46,18 +48,6 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService, Use
     private final PasswordEncoder passwordEncoder;
 
     private final VerificationProcessor<Captcha> verificationProcessor;
-
-    public PasswordAuthenticateServiceImpl(
-            RbacMixinService rbacMixinService,
-            AccessPointer accessPointer,
-            PasswordEncoder passwordEncoder,
-            VerificationProcessor<Captcha> verificationProcessor
-    ) {
-        this.rbacMixinService = rbacMixinService;
-        this.accessPointer = accessPointer;
-        this.passwordEncoder = passwordEncoder;
-        this.verificationProcessor = verificationProcessor;
-    }
 
     @Override
     public Authentication authenticate(HttpServletRequest request) {
@@ -82,7 +72,6 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService, Use
             throw new BadCredentialsException("此用户目前不存在密匙");
         }
 
-        saveUserOnlineInfo(user);
         try {
             accessPointer.doPoint(request, user, new Resource("登录"));
         } catch (Exception ignore) {
@@ -95,19 +84,12 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService, Use
     @Override
     public Optional<Authentication> resolve(String token, String identity) {
         UserService userService = rbacMixinService.getUserService();
-        UserOnlineCache userOnlineCache = userService.getUserOnlineCache();
-        User user = userOnlineCache.find(identity);
-        if (user == null) {
-            user = userService.getUserByUuid(identity);
-            saveUserOnlineInfo(user);
-        }
+        User user = userService.getUserByUuid(identity);
         return Optional.of(new UsernamePasswordAuthenticationToken(user, token, null));
     }
 
     @Override
     public void logout(Authentication authentication) {
-        final UserService userService = rbacMixinService.getUserService();
-        userService.getUser(authentication).ifPresent(user -> userService.getUserOnlineCache().remove(user.getUuid()));
         //Nothing to do
     }
 
@@ -116,18 +98,12 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService, Use
         return SUPPORT_MODE;
     }
 
-    private void saveUserOnlineInfo(User user) {
-        UserOnlineInfo userOnlineInfo = UserOnlineInfo.newInstance(user);
-        rbacMixinService.setUserOwnedInfo(userOnlineInfo);
-        rbacMixinService.getUserService()
-                .getUserOnlineCache()
-                .save(user.getUuid(), userOnlineInfo);
-    }
-
     @Override
     public UserDetails loadUserByUsername(String uuid) throws UsernameNotFoundException {
-        UserOnlineInfo userOnlineInfo = Optional.ofNullable(rbacMixinService.getUserService().getUserOnlineCache().find(uuid))
-                .orElse(UserOnlineInfo.anonymous());
+        User userByUuid = rbacMixinService.getUserService().getUserByUuid(uuid);
+        UserOnlineInfo userOnlineInfo = Objects.nonNull(userByUuid)
+                ? UserOnlineInfo.newInstance(userByUuid)
+                : UserOnlineInfo.anonymous();
         return new org.springframework.security.core.userdetails.User(userOnlineInfo.getUsername(), userOnlineInfo.getPassword(), Collections.emptyList());
     }
 }
