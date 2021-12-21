@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.system.service;
 
+import cn.hutool.core.io.FileUtil;
 import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.support.crud.service.BaseService;
 import com.github.yiuman.citrus.support.file.FileStorageService;
@@ -42,11 +43,11 @@ public class FileResourceService extends BaseService<FileResource, String> {
         fileResource.setIdentify(identify);
         String originalFilename = file.getOriginalFilename();
 
-        String uploadFilePath = fileStorageService.save(originalFilename, file.getInputStream());
+        String uploadFilePath = fileStorageService.save(FileUtil.getPrefix(originalFilename), file.getInputStream());
         fileResource.setFilename(originalFilename);
         fileResource.setPath(uploadFilePath);
         fileResource.setSize(file.getSize());
-        fileResource.setFileType(originalFilename.substring(originalFilename.lastIndexOf(".")));
+        fileResource.setFileType(FileUtil.getSuffix(originalFilename));
         return save(fileResource);
     }
 
