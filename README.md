@@ -34,7 +34,7 @@
 
 **前端仓库地址**：https://github.com/Yiuman/citrus-vuetify
 
-:smile:  [我是一个活生生的例子](http://42.192.95.146/#/login)
+:smile:  [我是一个活生生的例子](http://42.192.95.146:8088/#/login)
 
 欢迎issues、PR~~  如果此项目对你有所帮助，麻烦动动小手给个小星星:star:
 

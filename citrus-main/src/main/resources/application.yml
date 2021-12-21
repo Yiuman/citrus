@@ -10,3 +10,7 @@ spring:
   activiti:
     db-history-used: true
     history-level: audit
+
+citrus:
+  jwt:
+    token-validate-in-seconds: 60

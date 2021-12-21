@@ -215,5 +215,4 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
         return super.beforeRemove(entity);
     }
 
-
 }
