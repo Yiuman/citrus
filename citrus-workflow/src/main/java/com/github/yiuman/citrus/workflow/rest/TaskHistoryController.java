@@ -8,6 +8,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -25,7 +26,7 @@ public class TaskHistoryController extends BaseWorkflowQueryController<HistoricT
     }
 
     @Override
-    protected Object createView() {
+    protected Object createView(List<HistoricTaskVo> records) {
         PageTableView<HistoricTaskInstance> view = new PageTableView<>();
         view.addWidget("处理人或候选人", "taskCandidateOrAssigned");
         view.addHeader("任务名称", "name");

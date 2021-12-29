@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.system.rest;
 
+import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
@@ -18,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 数据范围CRUD
@@ -44,15 +48,18 @@ public class ScopeController extends BaseCrudController<ScopeDto, Long> {
     }
 
     @Override
-    protected Object createView() {
+    protected Object createView(List<ScopeDto> scopeDtos) {
+        Set<Long> organIds = scopeDtos.stream().map(ScopeDto::getOrganId).collect(Collectors.toSet());
+        Map<Long, Organization> organizationMap = organService.list(QueryBuilders.<Organization>lambda().in(Organization::getOrganId, organIds).toQuery())
+                .stream().collect(Collectors.toMap(Organization::getOrganId, organization -> organization));
         PageTableView<ScopeDto> view = new PageTableView<>();
         view.addHeader("数据范围名称", "scopeName");
         view.addHeader("所属组织", "organName", (entity) -> {
             if (-1 == entity.getOrganId()) {
                 return "系统通用数据范围";
             }
-            Organization organization = organService.get(entity.getOrganId());
-            return organization == null ? "" : organization.getOrganName();
+            Organization organization = organizationMap.get(entity.getOrganId());
+            return Objects.nonNull(organization) ? organization.getOrganName() : " - ";
         });
 
         view.addButton(Buttons.defaultButtonsWithMore());

@@ -8,6 +8,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -25,7 +26,7 @@ public class TaskInfoController extends BaseWorkflowQueryController<TaskInfoVo, 
     }
 
     @Override
-    protected Object createView() {
+    protected Object createView(List<TaskInfoVo> records) {
         PageTableView<Task> view = new PageTableView<>();
         view.addWidget("处理人或候选人", "taskCandidateOrAssigned");
         view.addHeader("任务名称", "name");

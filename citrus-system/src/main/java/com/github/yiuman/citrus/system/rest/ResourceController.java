@@ -12,6 +12,8 @@ import lombok.Data;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * 资源控制器
  *
@@ -45,7 +47,7 @@ public class ResourceController extends BaseCrudController<ResourceDto, Long> {
     }
 
     @Override
-    protected Object createView() {
+    protected Object createView(List<ResourceDto> resourceDtos) {
         PageTableView<ResourceDto> view = new PageTableView<>();
         view.addHeader("资源名", "resourceName");
         view.addHeader("资源类型", "typeText", (entity) -> {

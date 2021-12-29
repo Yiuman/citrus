@@ -1,6 +1,8 @@
 package com.github.yiuman.citrus.system.service;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.yiuman.citrus.support.crud.CrudHelper;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.system.dto.RoleDto;
@@ -15,7 +17,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -29,9 +34,7 @@ import java.util.stream.Collectors;
 public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
 
     private final RoleMapper roleMapper;
-
     private final RoleAuthorityMapper roleAuthorityMapper;
-
     private final UserRoleMapper userRoleMapper;
 
     @Override
@@ -56,8 +59,27 @@ public class RoleService extends BaseDtoService<Role, Long, RoleDto> {
         return roleMapper.selectAuthoritiesByRoleId(roleId);
     }
 
-    public List<RoleAuthority> getRoleAuthorityByAuthAuthIds(List<Long> authIds) {
+    public List<RoleAuthority> getRoleAuthorityByAuthIds(List<Long> authIds) {
         return roleAuthorityMapper.selectList(Wrappers.<RoleAuthority>lambdaQuery().in(RoleAuthority::getAuthorityId, authIds));
+    }
+
+    public List<RoleAuthority> getRoleAuthorityByRoleIds(Collection<Long> roleIds) {
+        List<RoleAuthority> roleAuthorities = roleAuthorityMapper.selectList(Wrappers.<RoleAuthority>lambdaQuery().in(RoleAuthority::getRoleId, roleIds));
+        if (CollUtil.isEmpty(roleAuthorities)) {
+            return CollUtil.newArrayList();
+        }
+
+        Set<Long> authIds = roleAuthorities.stream().map(RoleAuthority::getAuthorityId).collect(Collectors.toSet());
+        CrudMapper<Authority> crudMapper = CrudHelper.getCrudMapper(Authority.class);
+        Map<Long, Authority> authorityMap = crudMapper.selectBatchIds(authIds).stream().collect(Collectors.toMap(Authority::getAuthorityId, authority -> authority));
+        Map<Long, Role> roleMap = roleMapper.selectBatchIds(roleIds)
+                .stream().collect(Collectors.toMap(Role::getRoleId, role -> role));
+        roleAuthorities.forEach(roleAuthority -> {
+            roleAuthority.setAuthority(authorityMap.get(roleAuthority.getAuthorityId()));
+            roleAuthority.setRole(roleMap.get(roleAuthority.getRoleId()));
+        });
+
+        return roleAuthorities;
     }
 
     @Override

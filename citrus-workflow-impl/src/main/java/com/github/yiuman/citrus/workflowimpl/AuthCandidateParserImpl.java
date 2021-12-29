@@ -42,7 +42,7 @@ public class AuthCandidateParserImpl implements CandidateParser {
                 .collect(Collectors.toList());
 
         List<RoleAuthority> roleAuthorityByAuthAuthIds = rbacMixinService
-                .getRoleService().getRoleAuthorityByAuthAuthIds(authIds);
+                .getRoleService().getRoleAuthorityByAuthIds(authIds);
 
         List<String> roleIds = roleAuthorityByAuthAuthIds.stream()
                 .map(RoleAuthority::getRoleId)

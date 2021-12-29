@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -47,6 +48,15 @@ public interface UserMapper extends CrudMapper<User> {
     List<Role> getRolesByUserId(Long userId);
 
     /**
+     * 获取用户的所属角色
+     *
+     * @param userIds 用户ID
+     * @return 角色集合
+     */
+    @Select("select * from sys_role role where role.role_id in (select ur.role_id from sys_user_role ur where ur.user_id in #{userId})")
+    List<Role> getRolesByUserIds(Collection<Long> userIds);
+
+    /**
      * 获取用户的所属机构
      *
      * @param userId 用户ID
@@ -54,4 +64,13 @@ public interface UserMapper extends CrudMapper<User> {
      */
     @Select("select * from sys_organ organ where organ.organ_id in (select ur.organ_id from sys_user_role ur where ur.user_id = #{userId})")
     List<Organization> getOrgansByUserId(Long userId);
+
+    /**
+     * 获取用户的所属机构
+     *
+     * @param userIds 用户ID
+     * @return 机构集合
+     */
+    @Select("select * from sys_organ organ where organ.organ_id in (select ur.organ_id from sys_user_role ur where ur.user_id in #{userId})")
+    List<Organization> getOrgansByUserIds(Collection<Long> userIds);
 }

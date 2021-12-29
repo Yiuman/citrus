@@ -5,6 +5,8 @@ import org.activiti.engine.history.HistoricActivityInstance;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * 流程历史活动控制器
  *
@@ -19,7 +21,7 @@ public class ActivityController extends BaseWorkflowQueryController<HistoricActi
     }
 
     @Override
-    protected Object createView() {
+    protected Object createView(List<HistoricActivityInstance> records) {
         PageTableView<HistoricActivityInstance> view = new PageTableView<>();
         view.addHeader("ID", "activityId");
         view.addHeader("活动名称", "activityName");

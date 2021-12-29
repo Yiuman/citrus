@@ -24,8 +24,7 @@ import com.github.yiuman.citrus.system.dto.PasswordUpdateDto;
 import com.github.yiuman.citrus.system.dto.RoleDto;
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
-import com.github.yiuman.citrus.system.entity.Organization;
-import com.github.yiuman.citrus.system.entity.Role;
+import com.github.yiuman.citrus.system.entity.UserOrgan;
 import com.github.yiuman.citrus.system.entity.UserRole;
 import com.github.yiuman.citrus.system.hook.HasLoginHook;
 import com.github.yiuman.citrus.system.inject.AuthDeptIds;
@@ -44,6 +43,7 @@ import org.springframework.web.bind.annotation.*;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -78,24 +78,22 @@ public class UserController extends BaseCrudController<UserDto, Long> {
     }
 
     @Override
-    protected Object createView() {
+    protected Object createView(List<UserDto> records) {
+        //找到关联
+        Set<Long> userIds = records.stream().map(UserDto::getUserId).collect(Collectors.toSet());
+        List<UserRole> userRoles = userService.getUserRolesByUserIds(userIds);
+        List<UserOrgan> userOrgans = userService.getUserOrgansByUserIds(userIds);
+
         PageTableView<UserDto> view = new PageTableView<>();
         view.addHeader("ID", "userId").setAlign(Header.Align.start);
         view.addHeader("用户名", "username", true);
         view.addHeader("手机号码", "mobile");
         view.addHeader("邮箱", "email");
-        view.addHeader("所属角色", (entity) -> {
-            List<Role> roleByUser = userService.getRoleByUser(entity);
-            entity.setRoleIds(roleByUser.parallelStream().map(Role::getRoleId).collect(Collectors.toList()));
-            return roleByUser.parallelStream().map(Role::getRoleName).collect(Collectors.joining(","));
-        });
-
-        view.addHeader("所属机构", (entity) -> {
-            List<Organization> organByUser = userService.getOrganByUser(entity.getUserId());
-            entity.setOrganIds(organByUser.parallelStream().map(Organization::getOrganId).collect(Collectors.toList()));
-            return organByUser.parallelStream().map(Organization::getOrganName).collect(Collectors.joining(","));
-        });
-
+        view.addHeader("所属角色", (entity) -> userRoles.stream()
+                .filter(userRole -> userRole.getUserId().equals(entity.getUserId()))
+                .map(UserRole::getRoleName).filter(Objects::nonNull).collect(Collectors.joining(",")));
+        view.addHeader("所属机构", (entity) -> userOrgans.stream().filter(userOrgan -> userOrgan.getUserId().equals(entity.getUserId()))
+                .map(UserOrgan::getOrganName).filter(Objects::nonNull).collect(Collectors.joining(",")));
         view.addWidget(new Inputs("用户名", "username"));
         //添加默认按钮
         view.addButton(Buttons.defaultButtonsWithMore());

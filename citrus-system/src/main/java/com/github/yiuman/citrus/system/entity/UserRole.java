@@ -1,10 +1,14 @@
 package com.github.yiuman.citrus.system.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Objects;
 
 /**
  * 用户角色映射
@@ -15,6 +19,7 @@ import lombok.Data;
  */
 @Data
 @TableName("sys_user_role")
+@NoArgsConstructor
 public class UserRole {
 
     @TableId
@@ -29,10 +34,14 @@ public class UserRole {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long organId;
 
-    public UserRole() {
-    }
+    @TableField(exist = false)
+    private Role role;
 
     public String getId() {
         return String.format("%s-%s-%s", userId, roleId, organId);
+    }
+
+    public String getRoleName() {
+        return Objects.nonNull(role) ? role.getRoleName() : null;
     }
 }

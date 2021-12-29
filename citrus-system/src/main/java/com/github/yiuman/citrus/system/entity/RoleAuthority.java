@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
+import java.util.Objects;
+
 /**
  * 角色权限映射
  *
@@ -39,5 +41,13 @@ public class RoleAuthority {
 
     public String getId() {
         return String.format("%s-%s", role, authorityId);
+    }
+
+    public String getAuthorityName() {
+        return Objects.nonNull(authority) ? authority.getAuthorityName() : null;
+    }
+
+    public String getRoleName() {
+        return Objects.nonNull(role) ? role.getRoleName() : null;
     }
 }

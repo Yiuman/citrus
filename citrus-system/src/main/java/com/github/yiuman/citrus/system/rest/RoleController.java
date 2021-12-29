@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.system.rest;
 
 import cn.hutool.core.collection.CollUtil;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.query.annotations.Like;
 import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
@@ -13,7 +12,7 @@ import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.widget.Selects;
 import com.github.yiuman.citrus.system.dto.AuthorityDto;
 import com.github.yiuman.citrus.system.dto.RoleDto;
-import com.github.yiuman.citrus.system.entity.Authority;
+import com.github.yiuman.citrus.system.entity.RoleAuthority;
 import com.github.yiuman.citrus.system.service.AuthorityService;
 import com.github.yiuman.citrus.system.service.RoleService;
 import lombok.Data;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -80,17 +80,18 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
     }
 
     @Override
-    protected Object createView() {
+    protected Object createView(List<RoleDto> roleDtos) {
+        List<RoleAuthority> roleAuthorities = roleService.getRoleAuthorityByRoleIds(roleDtos.stream().map(RoleDto::getRoleId).collect(Collectors.toSet()));
         PageTableView<RoleDto> view = new PageTableView<>();
         view.addHeader("ID", "roleId");
         view.addHeader("角色名", "roleName");
         view.addHeader("拥有权限", "authNames", (entity) -> {
-            List<Authority> authorities = roleService.getAuthoritiesByRoleId(entity.getRoleId());
-            if (CollectionUtils.isEmpty(authorities)) {
-                return "-";
-            }
-            entity.setAuthIds(authorities.parallelStream().map(Authority::getAuthorityId).collect(Collectors.toList()));
-            return authorities.parallelStream().map(Authority::getAuthorityName).collect(Collectors.joining(","));
+            Set<RoleAuthority> roleAuthoritySet = roleAuthorities.stream().filter(roleAuthority -> roleAuthority.getRoleId().equals(entity.getRoleId()))
+                    .collect(Collectors.toSet());
+
+            return CollUtil.isEmpty(roleAuthoritySet)
+                    ? " - "
+                    : roleAuthoritySet.stream().map(RoleAuthority::getAuthorityName).collect(Collectors.joining(","));
         });
 
         view.addWidget("角色名", "roleName");

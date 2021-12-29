@@ -49,7 +49,6 @@ public class AuthenticateController {
         /**
          * 异常处理
          */
-
         @ExceptionHandler(value = {AuthenticationException.class, VerificationException.class})
         @ResponseBody
         public ResponseEntity<Void> exceptionHandler(AuthenticationException e) {

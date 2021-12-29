@@ -78,7 +78,7 @@ public class ProcessDefinitionController extends BaseWorkflowQueryController<Pro
     }
 
     @Override
-    protected Object createView() {
+    protected Object createView(List<ProcessDefinitionController.ProcessDefinitionInfo> records) {
         PageTableView<Deployment> view = new PageTableView<>(false);
         view.addWidget("流程定义Key", "processDefinitionKeyLike");
         view.addWidget("名称", "processDefinitionNameLike");

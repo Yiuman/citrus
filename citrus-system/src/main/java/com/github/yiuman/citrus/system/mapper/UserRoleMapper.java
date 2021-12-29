@@ -38,4 +38,5 @@ public interface UserRoleMapper extends CrudMapper<UserRole> {
      */
     @Select("select * from sys_user su , sys_user_role sur where su.user_id = sur.user_id and sur.role_id in #{roleIds}")
     List<User> getUsersByRoleIds(Collection<Long> roleIds);
+
 }

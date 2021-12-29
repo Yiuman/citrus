@@ -10,6 +10,8 @@ import lombok.Data;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * 权限控制器
  *
@@ -40,7 +42,7 @@ public class AuthorityController extends BaseCrudController<AuthorityDto, Long> 
     }
 
     @Override
-    protected Object createView() {
+    protected Object createView(List<AuthorityDto> records) {
         PageTableView<AuthorityDto> view = new PageTableView<>();
         view.addHeader("权限名称", "authorityName");
         view.addHeader("描述", "remark");

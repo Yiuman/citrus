@@ -8,6 +8,8 @@ import com.github.yiuman.citrus.system.entity.Dictionary;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * 字典管理
  *
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DictionaryController extends BaseCrudController<Dictionary, Long> {
 
     @Override
-    protected Object createView() {
+    protected Object createView(List<Dictionary> records) {
         PageTableView<Dictionary> view = new PageTableView<>();
         view.addHeader("名称", "dictName");
         view.addHeader("编码", "dictCode");

@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.support.crud.rest;
 import cn.hutool.core.exceptions.ValidateException;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.github.yiuman.citrus.support.crud.query.Fn;
 import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.query.QueryHelper;
 import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
@@ -11,10 +12,7 @@ import com.github.yiuman.citrus.support.crud.view.impl.SimpleTableView;
 import com.github.yiuman.citrus.support.inject.InjectAnnotationParserHolder;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.model.SortBy;
-import com.github.yiuman.citrus.support.utils.CrudUtils;
-import com.github.yiuman.citrus.support.utils.SpringUtils;
-import com.github.yiuman.citrus.support.utils.ValidateUtils;
-import com.github.yiuman.citrus.support.utils.WebUtils;
+import com.github.yiuman.citrus.support.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.ReflectionUtils;
@@ -63,7 +61,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
      *
      * @return 分页页面对象
      */
-    protected Object createView() {
+    protected Object createView(List<T> records) {
         SimpleTableView<T> view = new SimpleTableView<>();
         //构造页面小部件
         CrudUtils.getCrudWidgets(this).forEach(widget -> view.addWidget(widget, true));
@@ -87,7 +85,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
             realPage.setItemKey(getService().getKeyProperty());
         }
 
-        realPage.setView(createView());
+        realPage.setView(createView(realPage.getRecords()));
 
         return realPage;
     }
@@ -125,7 +123,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
             page.setItemKey(getService().getKeyProperty());
         }
 
-        page.setView(createView());
+        page.setView(createView(page.getRecords()));
         WebUtils.exportExcel(response, page, fileName);
     }
 
@@ -149,6 +147,14 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
     @SuppressWarnings({"unused", "RedundantSuppression"})
     protected void addSortBy(String column) {
         sortByList.add(new SortBy(column, false));
+    }
+
+    protected void addSortBy(Fn<T, ?> fn, boolean isDesc) {
+        sortByList.add(new SortBy(LambdaUtils.getPropertyName(fn), isDesc));
+    }
+
+    protected void addSortBy(Fn<T, ?> fn) {
+        sortByList.add(new SortBy(LambdaUtils.getPropertyName(fn), false));
     }
 
     /**

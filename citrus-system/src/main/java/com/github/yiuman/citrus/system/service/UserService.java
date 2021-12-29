@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.security.authenticate.NoPermissionException;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
+import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.support.crud.service.BaseDtoService;
 import com.github.yiuman.citrus.support.exception.RestException;
 import com.github.yiuman.citrus.support.http.ResponseStatusCode;
@@ -11,6 +12,7 @@ import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.*;
+import com.github.yiuman.citrus.system.mapper.RoleMapper;
 import com.github.yiuman.citrus.system.mapper.UserMapper;
 import com.github.yiuman.citrus.system.mapper.UserOrganMapper;
 import com.github.yiuman.citrus.system.mapper.UserRoleMapper;
@@ -39,20 +41,12 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
      * 匿名登录的认证对象principal
      */
     private static final String ANONYMOUS = "anonymousUser";
-
     private final PasswordEncoder passwordEncoder;
-
     private final UserMapper userMapper;
-
-    /**
-     * 用户角色mapper
-     */
+    private final RoleMapper roleMapper;
     private final UserRoleMapper userRoleMapper;
-
-    /**
-     * 用户组织机构mapper
-     */
     private final UserOrganMapper userOrganMapper;
+    private final OrganService organService;
 
     @Override
     public boolean beforeSave(UserDto entity) {
@@ -156,7 +150,7 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
      * @param userId 用户ID
      * @return 组织机构的集合
      */
-    public List<Organization> getOrganByUser(Long userId) {
+    public List<Organization> getOrgansByUser(Long userId) {
         return userMapper.getOrgansByUserId(userId);
     }
 
@@ -170,7 +164,11 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
     }
 
     public List<Role> getRolesByUserId(Long userId) {
-        return userRoleMapper.getRolesByUserId(userId);
+        return userMapper.getRolesByUserId(userId);
+    }
+
+    public List<Role> getRolesByUserIds(Collection<Long> userIds) {
+        return userMapper.getRolesByUserIds(userIds);
     }
 
     public List<Organization> getUserOrgansByUserId(Long userId) {
@@ -208,11 +206,29 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
 
     @Override
     public boolean beforeRemove(UserDto entity) {
-
         userOrganMapper.delete(Wrappers.<UserOrgan>lambdaQuery().eq(UserOrgan::getUserId, entity.getUserId()));
         userRoleMapper.delete(Wrappers.<UserRole>lambdaQuery().eq(UserRole::getUserId, entity.getUserId()));
-
         return super.beforeRemove(entity);
     }
 
+    public List<Organization> getOrgansByUserIds(Set<Long> userIds) {
+        return userMapper.getOrgansByUserIds(userIds);
+    }
+
+    public List<UserRole> getUserRolesByUserIds(Set<Long> userIds) {
+        List<UserRole> userRoles = userRoleMapper.selectList(Wrappers.<UserRole>lambdaQuery().in(UserRole::getUserId, userIds));
+        Set<Long> roleIds = userRoles.stream().map(UserRole::getRoleId).collect(Collectors.toSet());
+        Map<Long, Role> roleMap = roleMapper.selectBatchIds(roleIds).stream().collect(Collectors.toMap(Role::getRoleId, role -> role));
+        userRoles.forEach(userRole -> userRole.setRole(roleMap.get(userRole.getRoleId())));
+        return userRoles;
+    }
+
+    public List<UserOrgan> getUserOrgansByUserIds(Set<Long> userIds) {
+        List<UserOrgan> userOrgans = userOrganMapper.selectList(Wrappers.<UserOrgan>lambdaQuery().in(UserOrgan::getUserId, userIds));
+        Set<Long> organIds = userOrgans.stream().map(UserOrgan::getOrganId).collect(Collectors.toSet());
+        Map<Long, Organization> organizationMap = organService.list(QueryBuilders.<Organization>lambda().in(Organization::getOrganId, organIds).toQuery())
+                .stream().collect(Collectors.toMap(Organization::getOrganId, organization -> organization));
+        userOrgans.forEach(userOrgan -> userOrgan.setOrgan(organizationMap.get(userOrgan.getOrganId())));
+        return userOrgans;
+    }
 }

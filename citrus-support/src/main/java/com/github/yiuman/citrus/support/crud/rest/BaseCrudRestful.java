@@ -34,7 +34,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> extends BaseQue
      * @return 分页页面对象
      */
     @Override
-    protected Object createView() {
+    protected Object createView(List<T> records) {
         PageTableView<T> view = new PageTableView<>();
         //构造页面小部件
         CrudUtils.getCrudWidgets(this).forEach(widget -> view.addWidget(widget, true));

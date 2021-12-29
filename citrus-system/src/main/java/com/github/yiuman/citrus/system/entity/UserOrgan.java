@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
+import java.util.Objects;
+
 /**
  * 用户与组织机构映射
  *
@@ -39,5 +41,9 @@ public class UserOrgan {
 
     public String getId() {
         return String.format("%s-%s", userId, organId);
+    }
+
+    public String getOrganName() {
+        return Objects.nonNull(organ) ? organ.getOrganName() : null;
     }
 }
