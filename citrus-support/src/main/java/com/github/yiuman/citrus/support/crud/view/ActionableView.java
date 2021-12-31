@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.support.crud.view;
 
-import com.github.yiuman.citrus.support.model.Button;
+
+import com.github.yiuman.citrus.support.widget.Button;
 
 import java.util.List;
 

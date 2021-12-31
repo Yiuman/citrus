@@ -1,8 +1,9 @@
 package com.github.yiuman.citrus.support.crud.view.impl;
 
+import cn.hutool.core.util.IdUtil;
 import com.github.yiuman.citrus.support.crud.view.TreeView;
-import com.github.yiuman.citrus.support.model.Button;
 import com.github.yiuman.citrus.support.model.Tree;
+import com.github.yiuman.citrus.support.widget.Button;
 import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.support.widget.Widget;
 
@@ -173,9 +174,8 @@ public class SimpleTreeView<T extends Tree<?>> extends BaseActionableView implem
     }
 
     public void addAction(String text, String action) {
-        Button button = new Button(text, action);
-        button.setScript(true);
-        actions.add(button);
+        actions.add(Button.builder().key(IdUtil.simpleUUID()).text(text).model(action)
+                .script(true).build());
     }
 
 }

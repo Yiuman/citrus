@@ -9,7 +9,7 @@ import com.github.yiuman.citrus.support.model.BaseTree;
  * @author yiuman
  * @date 2020/6/1
  */
-public class TreeNode<M extends BaseTree<?, ?>> extends BaseWidget<M> {
+public class TreeNode<M extends BaseTree<?, ?>> extends BaseWidget<TreeNode<M>, M> {
 
     private boolean multipleSelect;
 

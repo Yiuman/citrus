@@ -1,8 +1,8 @@
 package com.github.yiuman.citrus.system.authticate;
 
 import com.github.yiuman.citrus.support.crud.view.ActionableView;
-import com.github.yiuman.citrus.support.model.Button;
 import com.github.yiuman.citrus.support.model.Page;
+import com.github.yiuman.citrus.support.widget.Button;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.enums.ResourceType;
@@ -75,7 +75,7 @@ public class PageAuthenticateAdvice {
 
                 //过滤操作资源
                 actionableView.setButtons(newButtons);
-                actionableView.setActions(actions.stream().filter(action -> resources.contains(action.getAction())).collect(Collectors.toList()));
+                actionableView.setActions(actions.stream().filter(action -> resources.contains(action.getKey())).collect(Collectors.toList()));
             }
 
         }
@@ -92,7 +92,7 @@ public class PageAuthenticateAdvice {
             }
 
         } else {
-            if (operationResources.contains(button.getAction())) {
+            if (operationResources.contains(button.getKey())) {
                 buttons.add(button);
             }
         }

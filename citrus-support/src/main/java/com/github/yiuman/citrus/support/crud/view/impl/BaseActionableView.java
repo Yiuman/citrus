@@ -1,7 +1,7 @@
 package com.github.yiuman.citrus.support.crud.view.impl;
 
 import com.github.yiuman.citrus.support.crud.view.ActionableView;
-import com.github.yiuman.citrus.support.model.Button;
+import com.github.yiuman.citrus.support.widget.Button;
 import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.support.widget.Widget;
 

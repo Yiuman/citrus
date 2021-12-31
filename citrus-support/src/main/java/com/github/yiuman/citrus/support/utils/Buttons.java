@@ -1,9 +1,12 @@
 package com.github.yiuman.citrus.support.utils;
 
-import com.github.yiuman.citrus.support.model.Button;
+
+import com.github.yiuman.citrus.support.widget.Button;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author yiuman
@@ -11,19 +14,20 @@ import java.util.List;
  */
 public final class Buttons {
 
-    private static final Button ADD = new Button("新增", "add", "primary", "plus");
+    private static final Button ADD = Button.builder().key("ADD").model("add()").text("新增").build();
 
-    private static final Button EDIT = new Button("编辑", "edit", "#81b90c", "pencil");
+    private static final Button EDIT = Button.builder().key("EDIT").model("edit()").text("编辑").build();
 
-    private static final Button DELETE = new Button("删除", "delete", "error", "delete-circle");
+    private static final Button DELETE = Button.builder().key("DELETE").model("delete()").text("删除").build();
 
-    private static final Button DELETE_BATCH = new Button("删除", "batchDelete", "error", "trash-can");
+    private static final Button DELETE_BATCH = Button.builder().key("BATCH_DELETE").model("batchDelete()").text("批量删除").build();
 
-    private static final Button IMPORT = new Button("导入", "import", "", "file-upload");
+    private static final Button IMPORT = Button.builder().key("IMPORT").model("imp()").text("导入").build();
 
-    private static final Button EXPORT = new Button("导出", "export", "", "download");
+    private static final Button EXPORT = Button.builder().key("EXPORT").model("exp()").text("导出").build();
 
-    private static final Button MORE = new Button("更多操作", "primary", "chevron-down", IMPORT, EXPORT, DELETE_BATCH);
+    private static final Button MORE = Button.builder().key("SHOW_MORE").text("更多操作")
+            .actions(Stream.of(IMPORT, EXPORT, DELETE_BATCH).collect(Collectors.toList())).build();
 
     private Buttons() {
     }
