@@ -33,7 +33,7 @@ public abstract class BaseWidget<W extends Propertied<W>, M> implements Widget<M
      */
     private M model;
 
-    private Map<String, Object> properties = new HashMap<>();
+    private final Map<String, Object> properties = new HashMap<>();
 
     public BaseWidget() {
     }
