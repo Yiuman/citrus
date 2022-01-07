@@ -70,8 +70,8 @@ public class AuthenticateProcessorImpl implements AuthenticateProcessor {
             try {
                 //此处非Multipart就构造一个Json的RequestWrapper 用与适配多种请求方式
                 actualRequest = new JsonServletRequestWrapper(request);
-            } catch (Exception e) {
-                throw new AuthenticationServiceException("BAD REQUEST");
+            } catch (Exception exception) {
+                throw new AuthenticationServiceException("BAD REQUEST", exception);
             }
         }
 
