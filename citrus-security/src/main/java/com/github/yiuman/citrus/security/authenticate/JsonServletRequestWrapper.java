@@ -1,5 +1,8 @@
 package com.github.yiuman.citrus.security.authenticate;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.catalina.util.ParameterMap;
@@ -43,9 +46,11 @@ public class JsonServletRequestWrapper extends HttpServletRequestWrapper {
 
     private void parseRequest(HttpServletRequest request) throws IOException {
         String body = IOUtils.toString(request.getInputStream(), Charset.defaultCharset());
-        this.bytes = body.getBytes();
-        OBJECT_MAPPER.readValue(body, new TypeReference<Map<String, Object>>() {
-        }).forEach((key, value) -> getParameterMap().put(key, new String[]{String.valueOf(value)}));
+        if (StrUtil.isNotBlank(body)) {
+            this.bytes = body.getBytes();
+            OBJECT_MAPPER.readValue(body, new TypeReference<Map<String, Object>>() {
+            }).forEach((key, value) -> getParameterMap().put(key, new String[]{String.valueOf(value)}));
+        }
     }
 
     @Override
@@ -59,8 +64,12 @@ public class JsonServletRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public String getParameter(String name) {
+        if (CollUtil.isEmpty(parameterMap)) {
+            return null;
+        }
+
         String[] results = parameterMap.get(name);
-        return (results == null || results.length <= 0) ? null : results[0];
+        return ArrayUtil.isEmpty(results) ? null : results[0];
     }
 
     @Override

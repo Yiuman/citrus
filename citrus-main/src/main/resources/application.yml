@@ -12,5 +12,7 @@ spring:
     history-level: audit
 
 citrus:
+  verify:
+    enable: false
   jwt:
     token-validate-in-seconds: 60

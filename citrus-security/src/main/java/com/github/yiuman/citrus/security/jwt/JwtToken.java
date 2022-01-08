@@ -26,7 +26,7 @@ public class JwtToken {
     /**
      * 扩展信息
      */
-    private Map<String, Object> extend;
+    private Map<String, Object> extension;
 
     public JwtToken(String token, Long expireTimestamp) {
         this.token = token;

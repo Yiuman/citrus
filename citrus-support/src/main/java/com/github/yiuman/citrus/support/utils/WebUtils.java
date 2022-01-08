@@ -1,11 +1,7 @@
 package com.github.yiuman.citrus.support.utils;
 
 import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.converters.Converter;
-import com.alibaba.excel.enums.CellDataTypeEnum;
-import com.alibaba.excel.metadata.CellData;
-import com.alibaba.excel.metadata.GlobalConfiguration;
-import com.alibaba.excel.metadata.property.ExcelContentProperty;
+import com.alibaba.excel.converters.localdatetime.LocalDateTimeDateConverter;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -48,7 +44,6 @@ import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -269,7 +264,7 @@ public final class WebUtils {
         addExportFilenameHeaders(response, name + ".xls");
         response.setContentType(APPLICATION_VND_MS_EXCEL);
         EasyExcel.write(response.getOutputStream())
-                .registerConverter(new LocalDateExportConvertor())
+                .registerConverter(new LocalDateTimeDateConverter())
                 .head(headers)
                 .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
                 .sheet("sheet1")
@@ -524,43 +519,6 @@ public final class WebUtils {
             setValue(LocalDate.parse(text));
         }
     }
-
-
-    /**
-     * LocalDate类型导出转换器
-     */
-    static class LocalDateExportConvertor implements Converter<LocalDate> {
-
-        @Override
-        public Class<?> supportJavaTypeKey() {
-            return LocalDate.class;
-        }
-
-        @Override
-        public CellDataTypeEnum supportExcelTypeKey() {
-            return CellDataTypeEnum.STRING;
-        }
-
-        @Override
-        public LocalDate convertToJavaData(CellData cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
-            if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-                return LocalDate.parse(cellData.getStringValue());
-            } else {
-                return LocalDate.parse(cellData.getStringValue(), DateTimeFormatter.ofPattern(contentProperty.getDateTimeFormatProperty().getFormat()));
-            }
-        }
-
-        @Override
-        public CellData<?> convertToExcelData(LocalDate value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
-            if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-
-                return new CellData<>(DateTimeFormatter.ISO_DATE.format(value));
-            } else {
-                return new CellData<>(DateTimeFormatter.ofPattern(contentProperty.getDateTimeFormatProperty().getFormat()).format(value));
-            }
-        }
-    }
-
 
     interface IpHeaders {
         String UNKNOWN = "unknown";

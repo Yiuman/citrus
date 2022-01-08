@@ -13,6 +13,7 @@ import com.github.yiuman.citrus.system.service.RbacMixinService;
 import com.github.yiuman.citrus.system.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,9 +50,14 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService, Use
 
     private final VerificationProcessor<Captcha> verificationProcessor;
 
+    @Value("${citrus.verify.enable:true}")
+    private boolean enableVerify;
+
     @Override
     public Authentication authenticate(HttpServletRequest request) {
-        verificationProcessor.validate(request);
+        if (enableVerify) {
+            verificationProcessor.validate(request);
+        }
 
         PasswordLoginEntity passwordLoginEntity;
         try {
