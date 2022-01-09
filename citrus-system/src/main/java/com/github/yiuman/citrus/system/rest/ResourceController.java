@@ -33,10 +33,8 @@ public class ResourceController extends BaseCrudController<ResourceDto, Long> {
 
     @Data
     static class ResourceQuery {
-
         @Like(mapping = "resource_name")
         private String resourceName;
-
         @Equals(mapping = "parent_id")
         private Long parentId;
     }

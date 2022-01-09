@@ -46,10 +46,8 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
 
     @Data
     static class RoleQuery {
-
         @Like(mapping = "role_name")
         private String roleName;
-
         private List<Long> authIds;
     }
 

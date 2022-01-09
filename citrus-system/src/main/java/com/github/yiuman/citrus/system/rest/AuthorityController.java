@@ -31,7 +31,6 @@ public class AuthorityController extends BaseCrudController<AuthorityDto, Long> 
 
     @Data
     static class AuthorityQuery {
-
         @Like
         private String authorityName;
     }

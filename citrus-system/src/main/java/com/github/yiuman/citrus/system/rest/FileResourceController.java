@@ -7,6 +7,7 @@ import com.github.yiuman.citrus.support.utils.WebUtils;
 import com.github.yiuman.citrus.system.entity.FileResource;
 import com.github.yiuman.citrus.system.hook.HasLoginHook;
 import com.github.yiuman.citrus.system.service.FileResourceService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,13 +20,10 @@ import java.io.IOException;
 @Authorize(HasLoginHook.class)
 @RestController
 @RequestMapping("/rest/files")
+@RequiredArgsConstructor
 public class FileResourceController extends BaseQueryRestful<FileResource, String> {
 
     private final FileResourceService fileResourceService;
-
-    public FileResourceController(FileResourceService fileResourceService) {
-        this.fileResourceService = fileResourceService;
-    }
 
     @Override
     protected CrudService<FileResource, String> getService() {

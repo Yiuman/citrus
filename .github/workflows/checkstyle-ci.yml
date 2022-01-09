@@ -14,16 +14,16 @@ jobs:
 
     strategy:
       matrix:
-        os: [ ubuntu-latest ]     
+        os: [ ubuntu-latest ]
         java-version: [ 8.0.192, 8 ]
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java-version }} ${{ matrix.os }}
-      uses: actions/setup-java@v2
-      with:
-        java-version: ${{ matrix.java-version }}
-        distribution: 'zulu'
-        cache: maven
-    - name: Checkstyle with Maven
-      run: mvn checkstyle:check
+      - uses: actions/checkout@v2
+      - name: Set up JDK ${{ matrix.java-version }} ${{ matrix.os }}
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'zulu'
+          cache: maven
+      - name: Checkstyle with Maven
+        run: mvn checkstyle:check

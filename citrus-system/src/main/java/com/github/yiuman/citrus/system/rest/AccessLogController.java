@@ -30,10 +30,8 @@ public class AccessLogController extends BaseQueryController<AccessLog, Long> {
 
     @Data
     static class AccessLogQuery {
-
         @Equals(mapping = "user_id")
         private Long userId;
-
         @In(mapping = "resource_type")
         private List<Long> resourceType;
     }

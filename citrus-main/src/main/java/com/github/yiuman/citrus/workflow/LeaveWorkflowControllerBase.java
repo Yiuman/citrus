@@ -59,7 +59,7 @@ public class LeaveWorkflowControllerBase extends BaseEntityWorkflowController<Le
     }
 
     @Override
-    protected Object createEditableView()  {
+    protected Object createEditableView() {
         DialogView view = new DialogView();
         view.addEditField(new Inputs("请假天数", "leaveDay").type("number")).addRule("required");
         return view;
