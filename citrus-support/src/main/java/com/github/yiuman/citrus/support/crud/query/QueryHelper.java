@@ -5,6 +5,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
 import com.github.yiuman.citrus.support.crud.query.annotations.QueryParam;
 import com.github.yiuman.citrus.support.model.SortBy;
 import com.github.yiuman.citrus.support.utils.ClassUtils;
@@ -86,9 +87,9 @@ public final class QueryHelper {
 
     }
 
-    public static <E> QueryWrapper<E> getQueryWrapper(Query query) {
+    public static <E> QueryWrapper<E> getQueryWrapper(Query query, Class<E> entityClass) {
         QueryWrapper<E> queryWrapper = Wrappers.query();
-
+        queryWrapper.setEntityClass(entityClass);
         //拼接查询条件
         if (CollUtil.isNotEmpty(query.getConditions())) {
             query.getConditions().forEach(LambdaUtils.consumerWrapper(conditionInfo -> {
@@ -103,7 +104,14 @@ public final class QueryHelper {
                 String fieldName = ObjectUtil.isNotEmpty(conditionInfo.getMapping())
                         ? conditionInfo.getMapping()
                         : conditionInfo.getParameter();
-                conditionMethod.invoke(queryWrapper, true, fieldName, conditionInfo.getValue());
+                Map<String, ColumnCache> columnMap = com.baomidou.mybatisplus.core.toolkit.LambdaUtils.getColumnMap(entityClass);
+                ColumnCache columnCache = columnMap.get(com.baomidou.mybatisplus.core.toolkit.LambdaUtils.formatKey(fieldName));
+                conditionMethod.invoke(
+                        queryWrapper,
+                        true,
+                        Objects.nonNull(columnCache) ? columnCache.getColumn() : fieldName,
+                        conditionInfo.getValue()
+                );
             }));
         }
 

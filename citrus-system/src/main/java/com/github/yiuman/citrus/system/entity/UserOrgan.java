@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
@@ -17,6 +18,7 @@ import java.util.Objects;
  */
 @Data
 @TableName("sys_user_organ")
+@NoArgsConstructor
 public class UserOrgan {
 
     @TableId

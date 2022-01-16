@@ -31,15 +31,23 @@ public final class LambdaUtils {
             SerializedLambda serialized = serialized(fn);
             String implMethodName = serialized.getImplMethodName();
             if (implMethodName.startsWith("is")) {
-                return implMethodName.substring(2);
+                return lowerFirstCase(implMethodName.substring(2));
             } else if (implMethodName.startsWith("get") || implMethodName.startsWith("set")) {
-                return implMethodName.substring(3);
+                return lowerFirstCase(implMethodName.substring(3));
             }
         } catch (Exception exception) {
             throw new RuntimeException(exception);
         }
 
         return null;
+    }
+
+    public static String lowerFirstCase(String str) {
+        char[] chars = str.toCharArray();
+        //首字母小写方法，大写会变成小写，如果小写首字母会消失
+        //32为是char类型大小写的差数，-32是小写变大写，+32是大写变小写
+        chars[0] += 32;
+        return String.valueOf(chars);
     }
 
     /**

@@ -14,11 +14,21 @@ import java.util.List;
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class Query {
 
+    private Class<?> entityClass;
+
     private List<ConditionInfo> conditions = new ArrayList<>();
 
     private List<SortBy> sorts = new ArrayList<>();
 
     public Query() {
+    }
+
+    public Class<?> getEntityClass() {
+        return entityClass;
+    }
+
+    public void setEntityClass(Class<?> entityClass) {
+        this.entityClass = entityClass;
     }
 
     public List<ConditionInfo> getConditions() {

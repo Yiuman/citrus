@@ -114,7 +114,7 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
 
     @Override
     public E get(Query query) {
-        return getMapper().selectOne(QueryHelper.getQueryWrapper(query));
+        return getMapper().selectOne(QueryHelper.getQueryWrapper(query, getEntityType()));
     }
 
     @Override
@@ -124,17 +124,17 @@ public abstract class BaseService<E, K extends Serializable> implements CrudServ
 
     @Override
     public List<E> list(Query query) {
-        return getMapper().selectList(QueryHelper.getQueryWrapper(query));
+        return getMapper().selectList(QueryHelper.getQueryWrapper(query, getEntityType()));
     }
 
     @Override
     public <P extends IPage<E>> P page(P page, Query query) {
-        return getMapper().selectPage(page, QueryHelper.getQueryWrapper(query));
+        return getMapper().selectPage(page, QueryHelper.getQueryWrapper(query, getEntityType()));
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean remove(Query query) {
-        return getMapper().delete(QueryHelper.getQueryWrapper(query)) >= 0;
+        return getMapper().delete(QueryHelper.getQueryWrapper(query, getEntityType())) >= 0;
     }
 }
