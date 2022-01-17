@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.security.authenticate;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.github.yiuman.citrus.security.jwt.JwtToken;
 import com.github.yiuman.citrus.security.jwt.JwtUtils;
 import io.jsonwebtoken.Claims;
@@ -75,10 +76,21 @@ public class AuthenticateProcessorImpl implements AuthenticateProcessor {
             }
         }
 
-        Map<String, Object> claims = new HashMap<>(16);
+        Map<String, Object> claims = new HashMap<>(8);
         claims.put(AUTHENTICATION_MODE_PARAMETER_KEY, actualRequest.getParameter(AUTHENTICATION_MODE_PARAMETER_KEY));
         Authentication authenticate = authenticate(actualRequest);
-        return JwtUtils.generateToken((String) authenticate.getCredentials(), claims);
+        String credentials = (String) authenticate.getCredentials();
+        JwtToken jwtToken = JwtUtils.generateToken(credentials, claims);
+        jwtToken.setExtension(BeanUtil.beanToMap(generateRefreshToken(credentials, jwtToken)));
+        return jwtToken;
+    }
+
+    private RefreshTokenVM generateRefreshToken(String credentials, JwtToken sourceToken) {
+        Map<String, Object> claims = new HashMap<>(2);
+        claims.put(AUTHENTICATION_MODE_PARAMETER_KEY, "refreshToken");
+        return RefreshTokenVM.builder()
+                .refreshToken(JwtUtils.generateToken(credentials, sourceToken.getExpireTimestamp() + 3600 * 1000, claims).getToken())
+                .build();
     }
 
     @Override
