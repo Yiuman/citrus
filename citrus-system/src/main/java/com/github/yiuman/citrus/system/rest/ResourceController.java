@@ -47,18 +47,18 @@ public class ResourceController extends BaseCrudController<ResourceDto, Long> {
     @Override
     protected Object createView(List<ResourceDto> resourceDtos) {
         PageTableView<ResourceDto> view = new PageTableView<>();
-        view.addHeader("资源名", "resourceName");
-        view.addHeader("资源类型", "typeText", (entity) -> {
+        view.addColumn("资源名", "resourceName");
+        view.addColumn("资源类型", "typeText", (entity) -> {
             String typeString = "";
             if (entity.getType() != null && entity.getType() == 0) {
                 typeString = "菜单";
             }
             return typeString;
         });
-        view.addHeader("资源路径", "path");
+        view.addColumn("资源路径", "path");
         view.addWidget("资源名", "resourceName");
         view.addButton(Buttons.defaultButtonsWithMore());
-        view.addAction(Buttons.defaultActions());
+//        view.addAction(Buttons.defaultActions());
         return view;
     }
 

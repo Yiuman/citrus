@@ -16,7 +16,7 @@ import java.util.Set;
  */
 @SuperBuilder
 @SuppressWarnings("unchecked")
-public abstract class BaseWidget<W extends Propertied<W>, M> implements Widget<M>, Propertied<W> {
+public abstract class BaseWidgetModel<W extends Propertied<W>, M> implements Widget<W, M> {
 
     /**
      * 文本
@@ -35,10 +35,10 @@ public abstract class BaseWidget<W extends Propertied<W>, M> implements Widget<M
 
     private final Map<String, Object> properties = new HashMap<>();
 
-    public BaseWidget() {
+    public BaseWidgetModel() {
     }
 
-    public BaseWidget(String text, String key, M model) {
+    public BaseWidgetModel(String text, String key, M model) {
         this.text = text;
         this.key = key;
         this.model = model;

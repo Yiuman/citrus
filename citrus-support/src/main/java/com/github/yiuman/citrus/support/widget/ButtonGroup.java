@@ -5,23 +5,22 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 /**
+ * 按钮组
+ *
  * @author yiuman
- * @date 2021/12/31
+ * @date 2022/1/20
  */
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
-@Data
 @NoArgsConstructor
-public class Button extends BaseWidgetModel<Button, String> {
-
-    /**
-     * 是否脚本，若为脚本，action将动态构建执行
-     */
-    private boolean script = false;
+@Data
+public class ButtonGroup extends BaseWidgetModel<ButtonGroup, List<Button>> {
 
     @Override
     public String getWidgetName() {
-        return "button";
+        return "button-group";
     }
 }

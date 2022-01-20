@@ -43,11 +43,11 @@ public class AuthorityController extends BaseCrudController<AuthorityDto, Long> 
     @Override
     protected Object createView(List<AuthorityDto> records) {
         PageTableView<AuthorityDto> view = new PageTableView<>();
-        view.addHeader("权限名称", "authorityName");
-        view.addHeader("描述", "remark");
         view.addWidget("权限名称", "authorityName");
+
+        view.addColumn("权限名称", "authorityName");
+        view.addColumn("描述", "remark");
         view.addButton(Buttons.defaultButtonsWithMore());
-        view.addAction(Buttons.defaultActions());
         return view;
     }
 

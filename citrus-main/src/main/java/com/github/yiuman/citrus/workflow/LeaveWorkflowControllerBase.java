@@ -49,12 +49,12 @@ public class LeaveWorkflowControllerBase extends BaseEntityWorkflowController<Le
                 .stream().collect(Collectors.toMap(UserDto::getUserId, UserDto::getUsername));
 
         PageTableView<Leave> view = new PageTableView<>();
-        view.addHeader("ID", "leaveId");
-        view.addHeader("请假天数", "leaveDay");
-        view.addHeader("申请人", "username", entity -> usernameMap.get(entity.getUserId()));
-        view.addHeader("流程ID", "processInstanceId");
+        view.addColumn("ID", "leaveId");
+        view.addColumn("请假天数", "leaveDay");
+        view.addColumn("申请人", "username", entity -> usernameMap.get(entity.getUserId()));
+        view.addColumn("流程ID", "processInstanceId");
         view.addButton(Buttons.defaultButtonsWithMore());
-        view.addAction(Buttons.defaultActions());
+//        view.addAction(Buttons.defaultActions());
         return view;
     }
 

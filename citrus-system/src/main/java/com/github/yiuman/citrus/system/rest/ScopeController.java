@@ -53,8 +53,8 @@ public class ScopeController extends BaseCrudController<ScopeDto, Long> {
         Map<Long, Organization> organizationMap = organService.list(QueryBuilders.<Organization>lambda().in(Organization::getOrganId, organIds).toQuery())
                 .stream().collect(Collectors.toMap(Organization::getOrganId, organization -> organization));
         PageTableView<ScopeDto> view = new PageTableView<>();
-        view.addHeader("数据范围名称", "scopeName");
-        view.addHeader("所属组织", "organName", (entity) -> {
+        view.addColumn("数据范围名称", "scopeName");
+        view.addColumn("所属组织", "organName", (entity) -> {
             if (-1 == entity.getOrganId()) {
                 return "系统通用数据范围";
             }
@@ -63,7 +63,7 @@ public class ScopeController extends BaseCrudController<ScopeDto, Long> {
         });
 
         view.addButton(Buttons.defaultButtonsWithMore());
-        view.addAction(Buttons.defaultActions());
+//        view.addAction(Buttons.defaultActions());
         return view;
     }
 

@@ -83,10 +83,10 @@ public class ProcessDefinitionController extends BaseWorkflowQueryController<Pro
         view.addWidget("流程定义Key", "processDefinitionKeyLike");
         view.addWidget("名称", "processDefinitionNameLike");
         view.addWidget("目录", "processDefinitionCategoryLike");
-        view.addHeader("ID", "id");
-        view.addHeader("流程定义名称", "name");
-        view.addHeader("目录", "category");
-        view.addHeader("版本号", "version");
+        view.addColumn("ID", "id");
+        view.addColumn("流程定义名称", "name");
+        view.addColumn("目录", "category");
+        view.addColumn("版本号", "version");
         return view;
     }
 

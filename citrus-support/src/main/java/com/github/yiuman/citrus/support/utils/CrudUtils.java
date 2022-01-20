@@ -10,6 +10,7 @@ import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.widget.Selections;
 import com.github.yiuman.citrus.support.widget.Selects;
 import com.github.yiuman.citrus.support.widget.Widget;
+import com.github.yiuman.citrus.support.widget.WidgetModel;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -166,7 +167,7 @@ public final class CrudUtils {
      * @param restful Crud
      * @return 小部件集合
      */
-    public static <W extends Widget<?>> List<W> getCrudWidgets(QueryRestful<?, ?> restful) {
+    public static <W extends Widget<W, ?>> List<W> getCrudWidgets(QueryRestful<?, ?> restful) {
         final List<W> widgets = new LinkedList<>();
         ReflectionUtils.doWithMethods(restful.getClass(), method -> {
             try {
@@ -180,7 +181,7 @@ public final class CrudUtils {
     }
 
 
-    public static <W extends Widget<?>> W getWidget(CrudRestful<?, ?> restful, String methodName) {
+    public static <W extends WidgetModel<?>> W getWidget(CrudRestful<?, ?> restful, String methodName) {
         Method method = ReflectionUtils.findMethod(restful.getClass(), methodName);
         try {
             return getWidget(restful, method);
@@ -191,7 +192,7 @@ public final class CrudUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <W extends Widget<?>> W getWidget(Object object, Method method) throws InvocationTargetException, IllegalAccessException {
+    public static <W extends WidgetModel<?>> W getWidget(Object object, Method method) throws InvocationTargetException, IllegalAccessException {
         if (method == null) {
             return null;
         }

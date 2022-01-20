@@ -81,9 +81,9 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
     protected Object createView(List<RoleDto> roleDtos) {
         List<RoleAuthority> roleAuthorities = roleService.getRoleAuthorityByRoleIds(roleDtos.stream().map(RoleDto::getRoleId).collect(Collectors.toSet()));
         PageTableView<RoleDto> view = new PageTableView<>();
-        view.addHeader("ID", "roleId");
-        view.addHeader("角色名", "roleName");
-        view.addHeader("拥有权限", "authNames", (entity) -> {
+        view.addColumn("ID", "roleId");
+        view.addColumn("角色名", "roleName");
+        view.addColumn("拥有权限", "authNames", (entity) -> {
             Set<RoleAuthority> roleAuthoritySet = roleAuthorities.stream().filter(roleAuthority -> roleAuthority.getRoleId().equals(entity.getRoleId()))
                     .collect(Collectors.toSet());
 
@@ -97,7 +97,7 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
         //添加默认按钮
         view.addButton(Buttons.defaultButtonsWithMore());
         //添加默认行内操作
-        view.addAction(Buttons.defaultActions());
+//        view.addAction(Buttons.defaultActions());
         return view;
     }
 

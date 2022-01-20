@@ -43,7 +43,7 @@ public class MenuController extends BaseTreeController<Resource, Long> {
         PageTreeView<Resource> view = new PageTreeView<>();
         view.setItemText("resourceName");
         view.addWidget("菜单名称", "resourceName");
-        view.addAction("操作资源", "this.$router.push(`/rest/resources?parentId=${this.currentItem.id}`)");
+//        view.addAction("操作资源", "this.$router.push(`/rest/resources?parentId=${this.currentItem.id}`)");
         view.addButton(Buttons.defaultButtonsWithMore());
         return view;
     }

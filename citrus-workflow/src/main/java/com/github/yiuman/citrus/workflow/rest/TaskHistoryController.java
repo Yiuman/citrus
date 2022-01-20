@@ -29,10 +29,10 @@ public class TaskHistoryController extends BaseWorkflowQueryController<HistoricT
     protected Object createView(List<HistoricTaskVo> records) {
         PageTableView<HistoricTaskInstance> view = new PageTableView<>();
         view.addWidget("处理人或候选人", "taskCandidateOrAssigned");
-        view.addHeader("任务名称", "name");
-        view.addHeader("处理人", "assignee");
-        view.addHeader("创建时间", "createTime");
-        view.addHeader("结束时间", "endTime");
+        view.addColumn("任务名称", "name");
+        view.addColumn("处理人", "assignee");
+        view.addColumn("创建时间", "createTime");
+        view.addColumn("结束时间", "endTime");
         return view;
     }
 

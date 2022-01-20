@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.github.yiuman.citrus.support.crud.view.TableView;
 import com.github.yiuman.citrus.support.http.JsonServletRequestWrapper;
-import com.github.yiuman.citrus.support.model.Header;
+import com.github.yiuman.citrus.support.model.Column;
 import com.github.yiuman.citrus.support.model.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -283,27 +283,27 @@ public final class WebUtils {
         addExportFilenameHeaders(response, name + ".xls");
         response.setContentType(APPLICATION_VND_MS_EXCEL);
         List<?> records = page.getRecords();
-        List<Header> pageHeaders = null;
+        List<Column> pageColumns = null;
         Object view = page.getView();
         if (view instanceof TableView) {
             TableView tableView = (TableView) view;
-            pageHeaders = tableView.getHeaders();
+            pageColumns = tableView.getHeaders();
         }
 
 
         List<List<Object>> data = new ArrayList<>(records.size());
         Map<String, Map<String, Object>> recordExtend = page.getRecordExtend();
-        List<List<String>> headers = new ArrayList<>(pageHeaders.size());
-        pageHeaders.forEach(header -> headers.add(Collections.singletonList(header.getText())));
+        List<List<String>> headers = new ArrayList<>(pageColumns.size());
+        pageColumns.forEach(header -> headers.add(Collections.singletonList(header.getText())));
         //这里记录字段与表头的对应关系，方便后边操作，遍历一次后之后不需要重新取
         final Class<?> recordClass = records.get(0).getClass();
         Field recordKeyField = ReflectionUtils.findField(recordClass, page.getItemKey());
         recordKeyField.setAccessible(true);
         final Map<String, Field> fieldMap = new HashMap<>(256);
-        List<Header> finalPageHeaders = pageHeaders;
+        List<Column> finalPageColumns = pageColumns;
         records.forEach(record -> {
-            List<Object> objects = new ArrayList<>(finalPageHeaders.size());
-            finalPageHeaders.forEach(header -> {
+            List<Object> objects = new ArrayList<>(finalPageColumns.size());
+            finalPageColumns.forEach(header -> {
                 Object fieldValue;
                 String fieldName = header.getValue();
                 try {

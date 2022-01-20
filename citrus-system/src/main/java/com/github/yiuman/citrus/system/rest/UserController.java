@@ -15,7 +15,7 @@ import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.exception.RestException;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.http.ResponseStatusCode;
-import com.github.yiuman.citrus.support.model.Header;
+import com.github.yiuman.citrus.support.model.Column;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.widget.Inputs;
@@ -85,20 +85,20 @@ public class UserController extends BaseCrudController<UserDto, Long> {
         List<UserOrgan> userOrgans = userService.getUserOrgansByUserIds(userIds);
 
         PageTableView<UserDto> view = new PageTableView<>();
-        view.addHeader("ID", "userId").setAlign(Header.Align.start);
-        view.addHeader("用户名", "username", true);
-        view.addHeader("手机号码", "mobile");
-        view.addHeader("邮箱", "email");
-        view.addHeader("所属角色", (entity) -> userRoles.stream()
+        view.addColumn("ID", "userId").setAlign(Column.Align.start);
+        view.addColumn("用户名", "username", true);
+        view.addColumn("手机号码", "mobile");
+        view.addColumn("邮箱", "email");
+        view.addColumn("所属角色", (entity) -> userRoles.stream()
                 .filter(userRole -> userRole.getUserId().equals(entity.getUserId()))
                 .map(UserRole::getRoleName).filter(Objects::nonNull).collect(Collectors.joining(",")));
-        view.addHeader("所属机构", (entity) -> userOrgans.stream().filter(userOrgan -> userOrgan.getUserId().equals(entity.getUserId()))
+        view.addColumn("所属机构", (entity) -> userOrgans.stream().filter(userOrgan -> userOrgan.getUserId().equals(entity.getUserId()))
                 .map(UserOrgan::getOrganName).filter(Objects::nonNull).collect(Collectors.joining(",")));
         view.addWidget(new Inputs("用户名", "username"));
         //添加默认按钮
         view.addButton(Buttons.defaultButtonsWithMore());
         //添加默认行内操作
-        view.addAction(Buttons.defaultActions());
+//        view.addAction(Buttons.defaultActions());
         return view;
     }
 

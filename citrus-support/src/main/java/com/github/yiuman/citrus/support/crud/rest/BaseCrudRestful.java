@@ -39,7 +39,7 @@ public abstract class BaseCrudRestful<T, K extends Serializable> extends BaseQue
         //构造页面小部件
         CrudUtils.getCrudWidgets(this).forEach(widget -> view.addWidget(widget, true));
         //构造默认表头
-        ReflectionUtils.doWithFields(modelClass, field -> view.addHeader(field.getName(), field.getName()));
+        ReflectionUtils.doWithFields(modelClass, field -> view.addColumn(field.getName(), field.getName()));
         return view;
     }
 

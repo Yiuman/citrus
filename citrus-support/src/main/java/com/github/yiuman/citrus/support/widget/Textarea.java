@@ -17,6 +17,6 @@ public class Textarea extends Inputs {
 
     @Override
     public String getWidgetName() {
-        return "v-textarea";
+        return "textarea";
     }
 }

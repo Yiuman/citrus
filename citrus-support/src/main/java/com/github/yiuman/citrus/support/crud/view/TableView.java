@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.support.crud.view;
 
-import com.github.yiuman.citrus.support.model.Header;
+import com.github.yiuman.citrus.support.model.Column;
 
 import java.util.List;
 
@@ -17,5 +17,5 @@ public interface TableView extends View {
      *
      * @return 表格信息集合
      */
-    List<Header> getHeaders();
+    List<Column> getHeaders();
 }

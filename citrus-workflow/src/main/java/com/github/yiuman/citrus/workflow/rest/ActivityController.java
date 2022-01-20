@@ -23,11 +23,11 @@ public class ActivityController extends BaseWorkflowQueryController<HistoricActi
     @Override
     protected Object createView(List<HistoricActivityInstance> records) {
         PageTableView<HistoricActivityInstance> view = new PageTableView<>();
-        view.addHeader("ID", "activityId");
-        view.addHeader("活动名称", "activityName");
-        view.addHeader("类型", "activityType");
-        view.addHeader("开始时间", "startTime");
-        view.addHeader("结束时间", "endTime");
+        view.addColumn("ID", "activityId");
+        view.addColumn("活动名称", "activityName");
+        view.addColumn("类型", "activityType");
+        view.addColumn("开始时间", "startTime");
+        view.addColumn("结束时间", "endTime");
         return view;
     }
 

@@ -23,10 +23,10 @@ public class DictionaryController extends BaseCrudController<Dictionary, Long> {
     @Override
     protected Object createView(List<Dictionary> records) {
         PageTableView<Dictionary> view = new PageTableView<>();
-        view.addHeader("名称", "dictName");
-        view.addHeader("编码", "dictCode");
+        view.addColumn("名称", "dictName");
+        view.addColumn("编码", "dictCode");
         view.addButton(Buttons.defaultButtonsWithMore());
-        view.addAction(Buttons.defaultActions());
+//        view.addAction(Buttons.defaultActions());
         return view;
     }
 

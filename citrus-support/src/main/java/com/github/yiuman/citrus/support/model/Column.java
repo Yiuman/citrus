@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.support.model;
 
+import com.github.yiuman.citrus.support.widget.WidgetModel;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ import lombok.Data;
  */
 @Builder(toBuilder = true)
 @Data
-public class Header {
+public class Column {
 
     /**
      * 文本
@@ -32,6 +33,11 @@ public class Header {
     private Integer width;
 
     private boolean hidden;
+
+    /**
+     * 小部件
+     */
+    private WidgetModel<?> widgetModel;
 
     /**
      * 排列格式

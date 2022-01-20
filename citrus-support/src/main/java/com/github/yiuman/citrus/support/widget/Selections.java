@@ -8,7 +8,7 @@ import java.util.List;
  * @author yiuman
  * @date 2020/5/6
  */
-public class Selections extends BaseWidget<Selections, List<Selections.SelectItem>> {
+public class Selections extends BaseWidgetModel<Selections, List<Selections.SelectItem>> {
 
     /**
      * 是否多选
@@ -89,6 +89,6 @@ public class Selections extends BaseWidget<Selections, List<Selections.SelectIte
 
     @Override
     public String getWidgetName() {
-        return "v-select";
+        return "select";
     }
 }

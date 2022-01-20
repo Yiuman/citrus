@@ -2,6 +2,8 @@ package com.github.yiuman.citrus.support.utils;
 
 
 import com.github.yiuman.citrus.support.widget.Button;
+import com.github.yiuman.citrus.support.widget.ButtonGroup;
+import com.github.yiuman.citrus.support.widget.Widget;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,8 +28,8 @@ public final class Buttons {
 
     private static final Button EXPORT = Button.builder().key("EXPORT").model("exp()").text("导出").build();
 
-    private static final Button MORE = Button.builder().key("SHOW_MORE").text("更多操作")
-            .actions(Stream.of(IMPORT, EXPORT, DELETE_BATCH).collect(Collectors.toList())).build();
+    private static final ButtonGroup MORE = ButtonGroup.builder().key("SHOW_MORE").text("更多操作")
+            .model(Stream.of(IMPORT, EXPORT, DELETE_BATCH).collect(Collectors.toList())).build();
 
     private Buttons() {
     }
@@ -60,7 +62,7 @@ public final class Buttons {
         return Arrays.asList(ADD, DELETE_BATCH, IMPORT, EXPORT);
     }
 
-    public static List<Button> defaultButtonsWithMore() {
+    public static List<Widget<?, ?>> defaultButtonsWithMore() {
         return Arrays.asList(ADD, MORE);
     }
 
