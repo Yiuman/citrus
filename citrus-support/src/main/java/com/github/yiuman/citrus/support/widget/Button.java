@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Data
 @NoArgsConstructor
-public class Button extends BaseWidgetModel<Button, String> {
+public class Button extends BaseWidget<Button, String> {
 
     /**
      * 是否脚本，若为脚本，action将动态构建执行

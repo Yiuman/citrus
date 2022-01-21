@@ -7,16 +7,13 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 控件基类
- *
  * @param <W> 控件本身
  * @param <M> 小部件值模型类型
  * @author yiuman
- * @date 2020/5/6
+ * @date 2022/1/21
  */
 @SuperBuilder
-@SuppressWarnings("unchecked")
-public abstract class BaseWidgetModel<W extends Propertied<W>, M> implements Widget<W, M> {
+public abstract class BaseWidget<W extends Propertied<W>, M> implements Widget<W, M> {
 
     /**
      * 文本
@@ -35,10 +32,10 @@ public abstract class BaseWidgetModel<W extends Propertied<W>, M> implements Wid
 
     private final Map<String, Object> properties = new HashMap<>();
 
-    public BaseWidgetModel() {
+    public BaseWidget() {
     }
 
-    public BaseWidgetModel(String text, String key, M model) {
+    public BaseWidget(String text, String key, M model) {
         this.text = text;
         this.key = key;
         this.model = model;
@@ -71,6 +68,7 @@ public abstract class BaseWidgetModel<W extends Propertied<W>, M> implements Wid
         this.model = model;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public W setProperty(String name, Object value) {
         properties.put(name, value);
@@ -91,5 +89,4 @@ public abstract class BaseWidgetModel<W extends Propertied<W>, M> implements Wid
     public Set<String> getProperties() {
         return properties.keySet();
     }
-
 }

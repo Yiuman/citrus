@@ -17,7 +17,7 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @Data
-public class ButtonGroup extends BaseWidgetModel<ButtonGroup, List<Button>> {
+public class ButtonGroup extends BaseWidget<ButtonGroup, List<Button>> {
 
     @Override
     public String getWidgetName() {

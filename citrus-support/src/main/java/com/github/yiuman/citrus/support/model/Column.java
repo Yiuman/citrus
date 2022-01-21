@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.support.model;
 
-import com.github.yiuman.citrus.support.widget.WidgetModel;
+import com.github.yiuman.citrus.support.widget.Widget;
 import lombok.Builder;
 import lombok.Data;
 
@@ -37,7 +37,7 @@ public class Column {
     /**
      * 小部件
      */
-    private WidgetModel<?> widgetModel;
+    private Widget<?, ?> widget;
 
     /**
      * 排列格式

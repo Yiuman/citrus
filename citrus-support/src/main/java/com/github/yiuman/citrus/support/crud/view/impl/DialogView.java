@@ -1,7 +1,7 @@
 package com.github.yiuman.citrus.support.crud.view.impl;
 
 import com.github.yiuman.citrus.support.model.EditField;
-import com.github.yiuman.citrus.support.widget.WidgetModel;
+import com.github.yiuman.citrus.support.widget.Widget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,14 +113,14 @@ public class DialogView {
         return editField;
     }
 
-    public EditField addEditField(String text, String name, WidgetModel<?> widgetModel) {
-        EditField editField = new EditField(text, name, widgetModel);
+    public EditField addEditField(String text, String name, Widget<?, ?> widget) {
+        EditField editField = new EditField(text, name, widget);
         this.editFields.add(editField);
         return editField;
     }
 
-    public EditField addEditField(WidgetModel<?> widgetModel) {
-        EditField editField = new EditField(widgetModel.getText(), widgetModel.getKey(), widgetModel);
+    public EditField addEditField(Widget<?, ?> widget) {
+        EditField editField = new EditField(widget.getText(), widget.getKey(), widget);
         this.editFields.add(editField);
         return editField;
     }

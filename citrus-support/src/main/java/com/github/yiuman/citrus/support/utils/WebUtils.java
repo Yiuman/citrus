@@ -290,9 +290,8 @@ public final class WebUtils {
             pageColumns = tableView.getHeaders();
         }
 
-
         List<List<Object>> data = new ArrayList<>(records.size());
-        Map<String, Map<String, Object>> recordExtend = page.getRecordExtend();
+        Map<String, Map<String, Object>> recordExtend = page.getExtension();
         List<List<String>> headers = new ArrayList<>(pageColumns.size());
         pageColumns.forEach(header -> headers.add(Collections.singletonList(header.getText())));
         //这里记录字段与表头的对应关系，方便后边操作，遍历一次后之后不需要重新取

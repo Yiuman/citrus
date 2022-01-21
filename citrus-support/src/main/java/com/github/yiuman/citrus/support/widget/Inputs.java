@@ -6,7 +6,7 @@ package com.github.yiuman.citrus.support.widget;
  * @author yiuman
  * @date 2020/5/6
  */
-public class Inputs extends BaseWidgetModel<Inputs, String> {
+public class Inputs extends BaseWidget<Inputs, String> {
 
     private boolean clearable = true;
 
