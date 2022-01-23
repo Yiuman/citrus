@@ -19,6 +19,8 @@ public interface Operations {
 
     String LIST = Operations.DEFAULT;
 
+    String VIEW = DEFAULT + "view";
+
     /**
      * 单个更新删除获取
      */
@@ -50,6 +52,8 @@ public interface Operations {
         String DEFAULT_PREFIX = "/tree";
 
         String TREE = DEFAULT_PREFIX;
+
+        String VIEW = DEFAULT_PREFIX + "_view";
 
         String MOVE = DEFAULT_PREFIX + "/move";
 

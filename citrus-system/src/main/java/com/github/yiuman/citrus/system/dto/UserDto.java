@@ -23,7 +23,6 @@ public class UserDto {
 
     private String loginId;
 
-    @NotBlank
     private String username;
 
     @NotBlank

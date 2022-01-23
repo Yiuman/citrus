@@ -2,8 +2,9 @@ package com.github.yiuman.citrus.support.crud.view.impl;
 
 import com.github.yiuman.citrus.support.crud.view.CheckboxTableView;
 import com.github.yiuman.citrus.support.crud.view.RecordExtender;
-import com.github.yiuman.citrus.support.model.FieldFunction;
 import com.github.yiuman.citrus.support.model.Column;
+import com.github.yiuman.citrus.support.model.FieldFunction;
+import com.github.yiuman.citrus.support.model.Page;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ import java.util.function.Function;
 public class SimpleTableView<T> extends BaseActionableView implements CheckboxTableView, RecordExtender<T> {
 
     private boolean checkable = true;
+
+    private Page<T> data;
 
     /**
      * 表头、列
@@ -46,8 +49,16 @@ public class SimpleTableView<T> extends BaseActionableView implements CheckboxTa
         return checkable;
     }
 
+    public Page<T> getData() {
+        return data;
+    }
+
+    public void setData(Page<T> data) {
+        this.data = data;
+    }
+
     @Override
-    public List<Column> getHeaders() {
+    public List<Column> getColumns() {
         return columns;
     }
 

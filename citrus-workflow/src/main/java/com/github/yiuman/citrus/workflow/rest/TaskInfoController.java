@@ -1,14 +1,13 @@
 package com.github.yiuman.citrus.workflow.rest;
 
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
+import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.workflow.vo.TaskInfoVo;
 import com.github.yiuman.citrus.workflow.vo.TaskQueryParams;
-import org.activiti.engine.task.Task;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -26,8 +25,9 @@ public class TaskInfoController extends BaseWorkflowQueryController<TaskInfoVo, 
     }
 
     @Override
-    protected Object createView(List<TaskInfoVo> records) {
-        PageTableView<Task> view = new PageTableView<>();
+    public Object showPageView(Page<TaskInfoVo> data) {
+        PageTableView<TaskInfoVo> view = new PageTableView<>();
+        view.setData(data);
         view.addWidget("处理人或候选人", "taskCandidateOrAssigned");
         view.addColumn("任务名称", "name");
         view.addColumn("处理人", "assignee");

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.github.yiuman.citrus.support.crud.view.TableView;
+import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.http.JsonServletRequestWrapper;
 import com.github.yiuman.citrus.support.model.Column;
 import com.github.yiuman.citrus.support.model.Page;
@@ -279,16 +279,12 @@ public final class WebUtils {
      * @param name     文件 名
      * @throws IOException IO异常
      */
-    public static void exportExcel(HttpServletResponse response, Page<?> page, String name) throws Exception {
+    public static <T> void exportExcel(HttpServletResponse response, PageTableView<T> view, String name) throws Exception {
         addExportFilenameHeaders(response, name + ".xls");
         response.setContentType(APPLICATION_VND_MS_EXCEL);
-        List<?> records = page.getRecords();
-        List<Column> pageColumns = null;
-        Object view = page.getView();
-        if (view instanceof TableView) {
-            TableView tableView = (TableView) view;
-            pageColumns = tableView.getHeaders();
-        }
+        List<Column> pageColumns = view.getColumns();
+        Page<T> page = view.getData();
+        List<T> records = page.getRecords();
 
         List<List<Object>> data = new ArrayList<>(records.size());
         Map<String, Map<String, Object>> recordExtend = page.getExtension();
@@ -299,10 +295,9 @@ public final class WebUtils {
         Field recordKeyField = ReflectionUtils.findField(recordClass, page.getItemKey());
         recordKeyField.setAccessible(true);
         final Map<String, Field> fieldMap = new HashMap<>(256);
-        List<Column> finalPageColumns = pageColumns;
         records.forEach(record -> {
-            List<Object> objects = new ArrayList<>(finalPageColumns.size());
-            finalPageColumns.forEach(header -> {
+            List<Object> objects = new ArrayList<>(pageColumns.size());
+            pageColumns.forEach(header -> {
                 Object fieldValue;
                 String fieldName = header.getValue();
                 try {

@@ -2,10 +2,6 @@ package com.github.yiuman.citrus.support.widget;
 
 import lombok.experimental.SuperBuilder;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * @param <W> 控件本身
  * @param <M> 小部件值模型类型
@@ -13,7 +9,7 @@ import java.util.Set;
  * @date 2022/1/21
  */
 @SuperBuilder
-public abstract class BaseWidget<W extends Propertied<W>, M> implements Widget<W, M> {
+public abstract class BaseWidget<W extends Propertied<W>, M> extends BasePropertied<W> implements Widget<W, M> {
 
     /**
      * 文本
@@ -29,8 +25,6 @@ public abstract class BaseWidget<W extends Propertied<W>, M> implements Widget<W
      * 值
      */
     private M model;
-
-    private final Map<String, Object> properties = new HashMap<>();
 
     public BaseWidget() {
     }
@@ -66,27 +60,5 @@ public abstract class BaseWidget<W extends Propertied<W>, M> implements Widget<W
 
     public void setModel(M model) {
         this.model = model;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public W setProperty(String name, Object value) {
-        properties.put(name, value);
-        return (W) this;
-    }
-
-    @Override
-    public Object getProperty(String name) {
-        return properties.get(name);
-    }
-
-    @Override
-    public boolean containsProperty(String name) {
-        return properties.containsKey(name);
-    }
-
-    @Override
-    public Set<String> getProperties() {
-        return properties.keySet();
     }
 }

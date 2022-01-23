@@ -17,5 +17,5 @@ public interface TableView extends View {
      *
      * @return 表格信息集合
      */
-    List<Column> getHeaders();
+    List<Column> getColumns();
 }

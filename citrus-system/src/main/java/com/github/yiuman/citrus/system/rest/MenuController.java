@@ -3,7 +3,6 @@ package com.github.yiuman.citrus.system.rest;
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
 import com.github.yiuman.citrus.support.crud.view.TreeView;
-import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTreeView;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.utils.Buttons;
@@ -39,8 +38,9 @@ public class MenuController extends BaseTreeController<Resource, Long> {
     }
 
     @Override
-    protected TreeView<Resource> createTreeView() {
+    public TreeView<Resource> showTreeView(Resource tree) {
         PageTreeView<Resource> view = new PageTreeView<>();
+        view.setTree(tree);
         view.setItemText("resourceName");
         view.addWidget("菜单名称", "resourceName");
 //        view.addAction("操作资源", "this.$router.push(`/rest/resources?parentId=${this.currentItem.id}`)");
@@ -48,15 +48,15 @@ public class MenuController extends BaseTreeController<Resource, Long> {
         return view;
     }
 
-    @Override
-    protected Object createEditableView() {
-        DialogView view = new DialogView();
-        view.addEditField("菜单名称", "resourceName").addRule("required");
-        view.addEditField("路径", "path");
-        view.addEditField("组件", "component");
-        view.addEditField("图标代码", "icon");
-        return view;
-    }
+//    @Override
+//    protected Object createEditableView() {
+//        DialogView view = new DialogView();
+//        view.addEditField("菜单名称", "resourceName").addRule("required");
+//        view.addEditField("路径", "path");
+//        view.addEditField("组件", "component");
+//        view.addEditField("图标代码", "icon");
+//        return view;
+//    }
 
     @GetMapping("/operation/{key}")
     public ResponseEntity<List<Resource>> getOperationByKey(@PathVariable Long key) {

@@ -10,6 +10,7 @@ import javax.validation.groups.Default;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -33,9 +34,9 @@ public final class ValidateUtils {
     /**
      * 校验实体，返回实体所有属性的校验结果
      */
-    public static <T> ValidationResult validateEntity(T obj) {
+    public static <T> ValidationResult validateEntity(T obj, Class<?>... groups) {
         //解析校验结果
-        Set<ConstraintViolation<T>> validateSet = VALIDATOR.validate(obj, Default.class);
+        Set<ConstraintViolation<T>> validateSet = VALIDATOR.validate(obj, Optional.ofNullable(groups).orElse(new Class<?>[]{Default.class}));
         return buildValidationResult(validateSet);
     }
 
@@ -43,21 +44,36 @@ public final class ValidateUtils {
     /**
      * 校验实体，返回实体所有属性的校验结果
      */
+    public static <T> void defaultValidateEntity(T obj, Class<?>... groups) {
+        //解析校验结果
+        validateEntityAndThrows(obj, result -> new RuntimeException(result.getMessage()), groups);
+    }
+
+    /**
+     * 校验实体，返回实体所有属性的校验结果
+     */
     public static <T> void defaultValidateEntity(T obj) {
         //解析校验结果
-        validateEntityAndThrows(obj, result -> new RuntimeException(result.getMessage()));
+        validateEntityAndThrows(obj, result -> new RuntimeException(result.getMessage()), Default.class);
     }
 
     /**
      * 校验指定实体的指定属性是否存在异常
      */
     public static <T> ValidationResult validateProperty(T obj, String propertyName) {
-        Set<ConstraintViolation<T>> validateSet = VALIDATOR.validateProperty(obj, propertyName, Default.class);
+        return validateProperty(obj, propertyName, null);
+    }
+
+    /**
+     * 校验指定实体的指定属性是否存在异常
+     */
+    public static <T> ValidationResult validateProperty(T obj, String propertyName, Class<?>... groups) {
+        Set<ConstraintViolation<T>> validateSet = VALIDATOR.validateProperty(obj, propertyName, Optional.ofNullable(groups).orElse(new Class<?>[]{Default.class}));
         return buildValidationResult(validateSet);
     }
 
-    public static <T, E extends Exception> void validateEntityAndThrows(T obj, Function<ValidationResult, E> func) throws E {
-        ValidationResult validationResult = validateEntity(obj);
+    public static <T, E extends Exception> void validateEntityAndThrows(T obj, Function<ValidationResult, E> func, Class<?>... groups) throws E {
+        ValidationResult validationResult = validateEntity(obj, groups);
         if (validationResult.isHasErrors()) {
             throw func.apply(validationResult);
         }

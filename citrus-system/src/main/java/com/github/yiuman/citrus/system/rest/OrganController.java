@@ -4,7 +4,6 @@ import com.github.yiuman.citrus.support.crud.query.annotations.Like;
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
 import com.github.yiuman.citrus.support.crud.view.TreeView;
-import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTreeView;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.system.entity.Organization;
@@ -41,22 +40,22 @@ public class OrganController extends BaseTreeController<Organization, Long> {
         return organService;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    protected TreeView<Organization> createTreeView() {
+    public <VIEW extends TreeView<Organization>> VIEW showTreeView(Organization data) {
         PageTreeView<Organization> view = new PageTreeView<>();
         view.setItemText("organName");
         view.addWidget("组织名称", "organName");
         view.addButton(Buttons.defaultButtonsWithMore());
-        return view;
+        return (VIEW) view;
     }
 
-
-    @Override
-    protected DialogView createEditableView() {
-        DialogView dialogView = new DialogView();
-        dialogView.addEditField("组织机构名称", "organName").addRule("required");
-        dialogView.addEditField("组织机构代码", "organCode").addRule("required");
-        dialogView.addEditField("备注", "remark");
-        return dialogView;
-    }
+//    @Override
+//    protected DialogView createEditableView() {
+//        DialogView dialogView = new DialogView();
+//        dialogView.addEditField("组织机构名称", "organName").addRule("required");
+//        dialogView.addEditField("组织机构代码", "organCode").addRule("required");
+//        dialogView.addEditField("备注", "remark");
+//        return dialogView;
+//    }
 }

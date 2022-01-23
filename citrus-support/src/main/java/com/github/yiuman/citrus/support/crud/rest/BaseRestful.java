@@ -46,4 +46,12 @@ public abstract class BaseRestful<T, K extends Serializable> {
     protected CrudService<T, K> getService() {
         return CrudHelper.getCrudService(modelClass, keyClass);
     }
+
+    public Class<T> getModelClass() {
+        return modelClass;
+    }
+
+    public Class<K> getKeyClass() {
+        return keyClass;
+    }
 }
