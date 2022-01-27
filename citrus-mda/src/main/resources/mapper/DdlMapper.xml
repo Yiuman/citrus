@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yiuman.citrus.com.github.yiuman.citrus.mda.mapper.DdlMapper">
+
+    <!--是否存在某表-->
+    <select id="exist" resultType="boolean">
+        <if test="_databaseId=='mysql' || _databaseId==null">
+            SELECT count(1) FROM information_schema.TABLES WHERE table_name =#{tableName}
+            <if test="namespace!=null">AND TABLE_SCHEMA = #{namespace}</if>
+        </if>
+        <if test="_databaseId=='oracle'">
+            select count(1) from
+            <if test="namespace!=null">${namespace}+"."</if>
+            user_tables where table_name =upper(#{tableName})
+        </if>
+    </select>
+
+    <select id="getTableRows" resultType="Integer">
+        <if test="_databaseId=='mysql' || _databaseId==null">
+            SELECT sum(table_rows) FROM information_schema.TABLES WHERE table_name =#{tableName}
+            <if test="namespace!=null">AND TABLE_SCHEMA = #{namespace}</if>
+        </if>
+    </select>
+
+    <select id="getGenerateSql">
+        <if test="_databaseId=='mysql' || _databaseId==null">
+            SHOW CREATE TABLE ${tableName}
+        </if>
+        <if test="oracle">
+
+        </if>
+    </select>
+
+    <update id="rename">
+        ALTER TABLE
+        <if test="namespace!=null">
+            ${namespace}.
+        </if>
+        ${tableName} RENAME TO ${newName}
+    </update>
+
+    <!--创表-->
+    <update id="createTable" parameterType="com.github.yiuman.citrus.com.github.yiuman.citrus.mda.meta.TableMeta">
+        CREATE TABLE
+        <if test="namespace!=null">
+            ${namespace}.
+        </if>
+        ${tableName}
+        (
+        <foreach collection="columns" item="column" index="index" separator=",">
+            ${column.columnName} ${column.jdbcType}
+            <if test="column.precisions!=null">
+                (${column.precisions}
+                <if test="column.scales!=null">,${column.scales}</if>
+                )
+            </if>
+            <if test="column.defaultValue!=null">DEFAULT #{column.defaultValue}</if>
+            <if test="column.notNull!=null and column.notNull">NOT NULL</if>
+            <if test="column.comments!=null">COMMENT #{column.comments}</if>
+        </foreach>
+
+        <foreach collection="constraints" item="constraint" index="index" open="," separator=",">
+            <if test="constraint.typeName=='primary'">
+                primary key (
+                <foreach collection="constraint.columns" item="column" index="index" separator=",">
+                    ${column.columnName}
+                </foreach>
+                )
+            </if>
+            <if test="constraint.typeName=='foreign'">
+                constraint FK_${indexInfo.foreignTable}_${indexInfo.column}
+                foreign key (${indexInfo.column}) references ${indexInfo.foreignTable} (${indexInfo.column})
+                on delete cascade,
+            </if>
+            <if test="constraint.typeName=='unique'">
+                constraint UK_${tableName}_${constraint.constraintName}
+                unique (
+                <foreach collection="constraint.columns" item="column" index="index" separator=",">
+                    ${column.columnName}
+                </foreach>
+                )
+            </if>
+        </foreach>
+        )
+        DEFAULT CHARSET=utf8
+        <if test="comments!=null">COMMENT=#{comments}</if>
+    </update>
+
+    <!--删表-->
+    <update id="dropTable" parameterType="com.github.yiuman.citrus.com.github.yiuman.citrus.mda.meta.TableMeta">
+        DROP TABLE IF EXISTS  ${tableName}
+    </update>
+
+    <!--创建索引-->
+    <update id="createIndex" parameterType="com.github.yiuman.citrus.com.github.yiuman.citrus.mda.meta.IndexMeta">
+        CREATE INDEX IX_${table.tableName}_${indexName}
+        ON ${table.tableName} (
+        <foreach collection="columns" item="column" index="index" separator=",">
+            ${column.columnName}
+        </foreach>
+        )
+    </update>
+
+    <!--删除索引-->
+    <update id="dropIndex" parameterType="com.github.yiuman.citrus.com.github.yiuman.citrus.mda.meta.IndexMeta">
+        DROP INDEX IX_${table.tableName}_${indexName} on ${table.tableName}
+    </update>
+
+    <!--添加列-->
+    <update id="createColumn">
+        ALTER TABLE ${table.tableName} ADD ${columnName} ${jdbcType}
+        <if test="precisions!=null">
+            (${column.precisions}
+            <if test="scales!=null">,${column.scales}</if>
+            )
+        </if>
+        <if test="defaultValue!=null">DEFAULT #{column.defaultValue}</if>
+        <if test="notNull!=null and notNull">NOT NULL</if>
+        <if test="comments!=null">COMMENT #{column.comments}</if>
+    </update>
+
+    <!--修改列-->
+    <update id="updateColumn">
+        <if test="_databaseId==null || _databaseId=='mysql'">
+            ALTER TABLE ${table.tableName} CHANGE ${oldColumnName} ${columnName} ${jdbcType}
+            <if test="precisions!=null">
+                (${column.precisions}
+                <if test="scales!=null">,${column.scales}</if>
+                )
+            </if>
+            <if test="defaultValue!=null">DEFAULT #{column.defaultValue}</if>
+            <if test="notNull!=null and notNull">NOT NULL</if>
+            <if test="comments!=null">COMMENT #{column.comments}</if>
+        </if>
+        <if test="_databaseId=='oracle'">
+            alter table ${table.tableName} rename column ${oldColumnName} to #{columnName};
+            alter table ${table.tableName} modify #{columnName} ${jdbcType}
+            <if test="precisions!=null">
+                (${column.precisions}
+                <if test="scales!=null">,${column.scales}</if>
+                )
+            </if>
+            <if test="defaultValue!=null">DEFAULT #{column.defaultValue}</if>
+            <if test="notNull!=null and notNull">NOT NULL</if>
+            <if test="comments!=null">COMMENT #{column.comments}</if>;
+        </if>
+
+    </update>
+    <!--删除列-->
+    <update id="deleteColumn">
+        ALTER TABLE ${table.tableName} DROP COLUMN ${columnName}
+    </update>
+
+</mapper>

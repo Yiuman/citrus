@@ -87,6 +87,10 @@ public final class QueryHelper {
 
     }
 
+    public static QueryWrapper<?> getQueryWrapper(Query query) {
+        return getQueryWrapper(query, query.getEntityClass());
+    }
+
     public static <E> QueryWrapper<E> getQueryWrapper(Query query, Class<E> entityClass) {
         QueryWrapper<E> queryWrapper = Wrappers.query();
         queryWrapper.setEntityClass(entityClass);

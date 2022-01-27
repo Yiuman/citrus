@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yiuman.citrus.com.github.yiuman.citrus.mda.mapper.DmlMapper">
+
+    <!--插入数据-->
+    <insert id="insert">
+        INSERT INTO <if test="namespace!=null">${namespace}.</if>${tableName}
+        <foreach collection="entity.keySet()" item="columnName" separator="," open="(" close=")">
+            ${columnName}
+        </foreach>
+        VALUES
+        <foreach collection="entity.values()" item="valueItem" separator="," open="(" close=")">
+            #{valueItem}
+        </foreach>
+    </insert>
+
+    <!--更新-->
+    <update id="update">
+        UPDATE <if test="meta.namespace!=null">${meta.namespace}.</if>${meta.tableName} SET
+        <foreach collection="meta.entity" index="key" item="value" separator=",">
+            ${key} = #{value}
+        </foreach>
+        ${ew.customSqlSegment}
+    </update>
+
+    <!--删除-->
+    <delete id="delete">
+        DELETE FROM <if test="meta.namespace!=null">${meta.namespace}.</if>${meta.tableName} ${ew.customSqlSegment}
+    </delete>
+
+    <sql id="normalSelect">
+        SELECT
+        <foreach collection="meta.columns" item="column" separator=",">
+            ${column.columnName}
+        </foreach>
+        FROM <if test="meta.namespace!=null">${meta.namespace}.</if>${meta.tableName}
+        ${ew.customSqlSegment}
+    </sql>
+    <!--分页查询查询-->
+    <select id="selectPage" resultType="Map">
+        <include refid="normalSelect"/>
+    </select>
+
+    <!--列表-->
+    <select id="selectList" resultType="Map">
+        <include refid="normalSelect"/>
+    </select>
+
+</mapper>

@@ -35,7 +35,6 @@ import java.util.Optional;
 @Slf4j
 public abstract class BaseCrudController<T, K extends Serializable> extends BaseCrudRestful<T, K> implements PageViewable<T> {
 
-
     @Override
     public Object showPageView(Page<T> data) {
         return ViewHelper.createPageView(this, data);
