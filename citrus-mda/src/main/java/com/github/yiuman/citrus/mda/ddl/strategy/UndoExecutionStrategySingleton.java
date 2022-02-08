@@ -10,7 +10,7 @@ import com.github.yiuman.citrus.mda.ddl.MetadataContext;
  */
 public final class UndoExecutionStrategySingleton {
 
-    private  static final UndoExecutionStrategy<?> STRATEGY = new UndoExecutionStrategy<>();
+    private static final UndoExecutionStrategy<?> STRATEGY = new UndoExecutionStrategy<>();
 
     private UndoExecutionStrategySingleton() {
     }
