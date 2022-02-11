@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.support.crud.view;
 
-import com.github.yiuman.citrus.support.model.Column;
+
+import com.github.yiuman.citrus.support.widget.Column;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ public interface TableView extends View {
      *
      * @return 表格信息集合
      */
-    List<Column> getColumns();
+    List<? extends Column> getColumns();
 }

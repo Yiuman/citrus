@@ -14,8 +14,8 @@ import java.util.List;
  * @date 2022/1/20
  */
 @EqualsAndHashCode(callSuper = true)
-@SuperBuilder
 @NoArgsConstructor
+@SuperBuilder
 @Data
 public class ButtonGroup extends BaseWidget<ButtonGroup, List<Button>> {
 

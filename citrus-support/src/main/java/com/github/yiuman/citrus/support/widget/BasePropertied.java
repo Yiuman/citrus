@@ -1,13 +1,11 @@
 package com.github.yiuman.citrus.support.widget;
 
 import cn.hutool.core.util.ReflectUtil;
+import lombok.Builder;
 import lombok.experimental.SuperBuilder;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @param <T> 拥有属性的对象本身
@@ -18,15 +16,19 @@ import java.util.Set;
 @SuperBuilder
 public abstract class BasePropertied<T extends Propertied<T>> implements Propertied<T> {
 
-    private static final String FIELD_TO_PROPERTIES_FIELD_NAME = "fieldToProperties";
-    private static final String PROPERTIES_FIELD_NAME = "properties";
+    private static final Set<String> EXCLUDE_PROPERTIES_FIELD_NAME = new HashSet<String>() {{
+        add("fieldToProperties");
+        add("properties");
+        add("EXCLUDE_PROPERTIES_FIELD_NAME");
+    }};
 
     /**
      * 字段转到属性MAP
      */
+    @Builder.Default
     private Boolean fieldToProperties = Boolean.TRUE;
 
-    protected Map<String, Object> properties = new HashMap<>();
+    protected final Map<String, Object> properties = new HashMap<>();
 
     public BasePropertied() {
     }
@@ -58,14 +60,13 @@ public abstract class BasePropertied<T extends Propertied<T>> implements Propert
 
     @Override
     public Map<String, Object> getProperties() {
-        if (fieldToProperties) {
+        if (Objects.nonNull(fieldToProperties) && fieldToProperties) {
             Field[] fields = ReflectUtil.getFields(getClass());
             for (Field field : fields) {
                 try {
                     field.setAccessible(true);
                     String fieldName = field.getName();
-                    if (fieldName.equals(FIELD_TO_PROPERTIES_FIELD_NAME)
-                            || fieldName.equals(PROPERTIES_FIELD_NAME)
+                    if (EXCLUDE_PROPERTIES_FIELD_NAME.contains(fieldName)
                             || Objects.isNull(field.get(this))) {
                         continue;
                     }

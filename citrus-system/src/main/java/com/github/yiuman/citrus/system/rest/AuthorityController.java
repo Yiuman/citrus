@@ -43,7 +43,6 @@ public class AuthorityController extends BaseCrudController<AuthorityDto, Long> 
     public Object showPageView(Page<AuthorityDto> data) {
         PageTableView<AuthorityDto> view = new PageTableView<>();
         view.addWidget("权限名称", "authorityName");
-
         view.addColumn("权限名称", "authorityName");
         view.addColumn("描述", "remark");
         view.addButton(Buttons.defaultButtonsWithMore());

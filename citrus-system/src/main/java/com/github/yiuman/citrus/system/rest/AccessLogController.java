@@ -5,8 +5,9 @@ import com.github.yiuman.citrus.support.crud.query.annotations.Equals;
 import com.github.yiuman.citrus.support.crud.query.annotations.In;
 import com.github.yiuman.citrus.support.crud.rest.BaseQueryController;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
-import com.github.yiuman.citrus.support.model.Column;
 import com.github.yiuman.citrus.support.model.Page;
+import com.github.yiuman.citrus.support.widget.BaseColumn;
+import com.github.yiuman.citrus.support.widget.Column;
 import com.github.yiuman.citrus.system.entity.AccessLog;
 import lombok.Data;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,7 +42,7 @@ public class AccessLogController extends BaseQueryController<AccessLog, Long> {
     public Object showPageView(Page<AccessLog> records) {
         PageTableView<AccessLog> view = new PageTableView<>(false);
         view.setData(records);
-        view.addColumn(Column.builder().text("用户").value("username").align(Column.Align.center).build());
+        view.addColumn(BaseColumn.builder().text("用户").model("username").align(Column.Align.center).build());
         view.addColumn("IP地址", "ipAddress");
         view.addColumn("请求", "method_url", entity -> String.format("%s  %s", entity.getRequestMethod(), entity.getUrl()));
         view.addColumn("参数", "params");

@@ -2,6 +2,7 @@ package com.github.yiuman.citrus.support.crud.rest;
 
 import com.github.yiuman.citrus.support.crud.groups.Modify;
 import com.github.yiuman.citrus.support.crud.groups.Save;
+import com.github.yiuman.citrus.support.crud.view.DataView;
 import com.github.yiuman.citrus.support.crud.view.PageViewable;
 import com.github.yiuman.citrus.support.crud.view.ViewHelper;
 import com.github.yiuman.citrus.support.exception.ValidateException;
@@ -22,7 +23,6 @@ import javax.validation.groups.Default;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * 基础的RestfulCrud控制器
@@ -40,10 +40,16 @@ public abstract class BaseCrudController<T, K extends Serializable> extends Base
         return ViewHelper.createPageView(this, data);
     }
 
+    @SuppressWarnings("unchecked")
     @GetMapping(Operations.VIEW)
     public ResponseEntity<?> getPageView(HttpServletRequest request) throws Exception {
         Page<T> page = page(request);
-        return ResponseEntity.ok(Optional.ofNullable(showPageView(page)).orElse(page));
+        Object pageView = showPageView(page);
+        if (Objects.nonNull(pageView) && pageView instanceof DataView) {
+            ((DataView<Page<T>>) pageView).setData(page);
+            return ResponseEntity.ok(pageView);
+        }
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping

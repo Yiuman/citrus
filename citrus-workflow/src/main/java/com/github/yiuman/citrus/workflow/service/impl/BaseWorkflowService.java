@@ -143,7 +143,7 @@ public abstract class BaseWorkflowService implements WorkflowService {
      * @param task  当前的任务
      * @param model 流程人员模型
      */
-    protected void setCandidateOrAssigned(Task task, ProcessPersonalModel model) throws Exception {
+    protected void setCandidateOrAssigned(Task task, ProcessPersonalModel model) {
         task.getProcessInstanceId();
         TaskService taskService = getProcessEngine().getTaskService();
         //查询当前任务是否已经有候选人或办理人
@@ -186,7 +186,8 @@ public abstract class BaseWorkflowService implements WorkflowService {
                             if (resolvedCandidates.size() == 1) {
                                 taskService.setAssignee(task.getId(), resolvedCandidates.get(1));
                             } else {
-                                resolvedCandidates.stream().filter(Objects::nonNull).forEach(realUserId -> taskService.addCandidateUser(task.getId(), realUserId));
+                                resolvedCandidates.stream().filter(Objects::nonNull)
+                                        .forEach(realUserId -> taskService.addCandidateUser(task.getId(), realUserId));
                             }
                         });
             }

@@ -66,7 +66,9 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
         //绑定页面参数
         WebUtils.requestDataBind(page, request);
         //这里需要调用了page方法查询后再进行设置ItemKey,原因是Service中的mapper为动态注入，调用查询才会初始化mapper构造表信息
-        return selectPage(page, query);
+        Page<T> returnPage = selectPage(page, query);
+        returnPage.setItemKey(getService().getKeyProperty());
+        return returnPage;
     }
 
     /**

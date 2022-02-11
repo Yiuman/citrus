@@ -1,16 +1,16 @@
 package com.github.yiuman.citrus.support.crud.view.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.github.yiuman.citrus.support.crud.view.CheckboxTableView;
+import com.github.yiuman.citrus.support.crud.view.DataView;
 import com.github.yiuman.citrus.support.crud.view.RecordExtender;
-import com.github.yiuman.citrus.support.model.Column;
 import com.github.yiuman.citrus.support.model.FieldFunction;
 import com.github.yiuman.citrus.support.model.Page;
+import com.github.yiuman.citrus.support.widget.BaseColumn;
+import com.github.yiuman.citrus.support.widget.Column;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -21,7 +21,7 @@ import java.util.function.Function;
  * @author yiuman
  * @date 2021/1/19
  */
-public class SimpleTableView<T> extends BaseActionableView implements CheckboxTableView, RecordExtender<T> {
+public class SimpleTableView<T> extends BaseActionableView implements CheckboxTableView, RecordExtender<T>, DataView<Page<T>> {
 
     private boolean checkable = true;
 
@@ -49,16 +49,29 @@ public class SimpleTableView<T> extends BaseActionableView implements CheckboxTa
         return checkable;
     }
 
+    @Override
     public Page<T> getData() {
+        if (Objects.nonNull(data) && CollUtil.isNotEmpty(data.getRecords())) {
+            Map<String, Map<String, Object>> extension = new HashMap<>();
+            data.getRecords().forEach(record -> {
+                Map<String, Object> result = apply(record);
+                if (Objects.nonNull(result)) {
+                    extension.put(data.key(record), result);
+                }
+            });
+            data.setExtension(extension);
+        }
+
         return data;
     }
 
+    @Override
     public void setData(Page<T> data) {
         this.data = data;
     }
 
     @Override
-    public List<Column> getColumns() {
+    public List<? extends Column> getColumns() {
         return columns;
     }
 
@@ -69,11 +82,11 @@ public class SimpleTableView<T> extends BaseActionableView implements CheckboxTa
     }
 
     public Column addColumn(String text, String field) {
-        return addColumn(Column.builder().text(text).value(field).build());
+        return addColumn(BaseColumn.builder().text(text).model(field).build());
     }
 
     public Column addColumn(String text, String field, boolean sortable) {
-        return addColumn(Column.builder().text(text).value(field).sortable(sortable).build());
+        return addColumn(BaseColumn.builder().text(text).model(field).sortable(sortable).build());
     }
 
     public Column addColumn(String text, Function<T, ?> func) {

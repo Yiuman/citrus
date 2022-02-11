@@ -14,9 +14,9 @@ import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.exception.RestException;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.http.ResponseStatusCode;
-import com.github.yiuman.citrus.support.model.Column;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.Buttons;
+import com.github.yiuman.citrus.support.widget.Column;
 import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.support.widget.Selects;
 import com.github.yiuman.citrus.system.dto.PasswordUpdateDto;
@@ -28,7 +28,6 @@ import com.github.yiuman.citrus.system.entity.UserRole;
 import com.github.yiuman.citrus.system.hook.HasLoginHook;
 import com.github.yiuman.citrus.system.inject.AuthDeptIds;
 import com.github.yiuman.citrus.system.mapper.UserRoleMapper;
-import com.github.yiuman.citrus.system.service.OrganService;
 import com.github.yiuman.citrus.system.service.RoleService;
 import com.github.yiuman.citrus.system.service.UserService;
 import lombok.Data;
@@ -62,12 +61,9 @@ public class UserController extends BaseCrudController<UserDto, Long> {
 
     private final RoleService roleService;
 
-    private final OrganService organService;
-
-    public UserController(UserService userService, RoleService roleService, OrganService organService) {
+    public UserController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
-        this.organService = organService;
         setParamClass(UserQuery.class);
     }
 
@@ -85,7 +81,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
         List<UserOrgan> userOrgans = userService.getUserOrgansByUserIds(userIds);
 
         PageTableView<UserDto> view = new PageTableView<>();
-        view.addColumn("ID", "userId").setAlign(Column.Align.start);
+        view.addColumn("ID", "userId").align(Column.Align.start);
         view.addColumn("用户名", "username", true);
         view.addColumn("手机号码", "mobile");
         view.addColumn("邮箱", "email");
