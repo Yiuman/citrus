@@ -3,6 +3,8 @@ package com.github.yiuman.citrus.system.authticate;
 import com.github.yiuman.citrus.support.crud.view.ActionableView;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.widget.Button;
+import com.github.yiuman.citrus.support.widget.ButtonGroup;
+import com.github.yiuman.citrus.support.widget.Widget;
 import com.github.yiuman.citrus.system.dto.UserOnlineInfo;
 import com.github.yiuman.citrus.system.entity.Resource;
 import com.github.yiuman.citrus.system.enums.ResourceType;
@@ -43,7 +45,6 @@ public class PageAuthenticateAdvice {
 
     @Around("queryRestful()")
     public Page<?> returnPageObject(ProceedingJoinPoint joinPoint) throws Throwable {
-
         Page<?> proceed = (Page<?>) joinPoint.proceed();
         Object view = proceed.getView();
         if (view instanceof ActionableView) {
@@ -51,17 +52,15 @@ public class PageAuthenticateAdvice {
             final Resource currentResource = (Resource) request.getAttribute(RbacHook.CURRENT_RESOURCE_ATTR);
             if (Objects.nonNull(currentResource)) {
                 UserOnlineInfo currentUserOnlineInfo = rbacMixinService.getUserService().getCurrentUserOnlineInfo();
+                rbacMixinService.setUserOwnedInfo(currentUserOnlineInfo);
                 ActionableView actionableView = (ActionableView) view;
-                List<Button> buttons = actionableView.getButtons();
-                List<Button> actions = actionableView.getActions();
-                boolean isOperationEmpty = CollectionUtils.isEmpty(buttons) && CollectionUtils.isEmpty(actions);
-                if (currentUserOnlineInfo.getAdmin()
-                        || isOperationEmpty) {
+                List<Widget<?, ?>> buttons = actionableView.getButtons();
+                boolean isOperationEmpty = CollectionUtils.isEmpty(buttons);
+                if (currentUserOnlineInfo.getAdmin() || isOperationEmpty) {
                     return proceed;
                 }
 
                 //根据当前用户的资源查出当前请求的相关操作资源
-
                 final Set<String> resources = currentUserOnlineInfo.getResources()
                         .parallelStream().filter(
                                 resource -> resource.getType() == ResourceType.OPERATION
@@ -69,34 +68,30 @@ public class PageAuthenticateAdvice {
                         .map(Resource::getResourceCode)
                         .collect(Collectors.toSet());
 
-
-                final List<Button> newButtons = new ArrayList<>();
+                final List<Widget<?, ?>> newButtons = new ArrayList<>();
                 buttons.forEach(button -> filterOperation(newButtons, button, resources));
 
                 //过滤操作资源
                 actionableView.setButtons(newButtons);
-                actionableView.setActions(actions.stream().filter(action -> resources.contains(action.getKey())).collect(Collectors.toList()));
             }
 
         }
         return proceed;
     }
 
-    private void filterOperation(List<Button> buttons, Button button, Set<String> operationResources) {
-        if (button.isGroup()) {
-            List<Button> groupActions = new ArrayList<>();
-            button.getActions().forEach(button1 -> filterOperation(groupActions, button1, operationResources));
+    private void filterOperation(List<Widget<?, ?>> buttons, Widget<?, ?> button, Set<String> operationResources) {
+        if (button instanceof ButtonGroup) {
+            ButtonGroup buttonGroup = (ButtonGroup) button;
+            List<Widget<?, ?>> groupActions = new ArrayList<>();
+            buttonGroup.getModel().forEach(button1 -> filterOperation(groupActions, button1, operationResources));
             if (!CollectionUtils.isEmpty(groupActions)) {
-                button.setActions(groupActions);
+                buttonGroup.setModel(groupActions.stream().map(widget -> ((Button) widget)).collect(Collectors.toList()));
                 buttons.add(button);
             }
-
         } else {
-            if (operationResources.contains(button.getKey())) {
+            if (operationResources.contains(button.getKey().toLowerCase())) {
                 buttons.add(button);
             }
         }
-
-
     }
 }

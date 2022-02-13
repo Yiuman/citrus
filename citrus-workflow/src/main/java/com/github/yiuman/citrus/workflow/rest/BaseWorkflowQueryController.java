@@ -106,9 +106,6 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
                     )
             );
         }
-
-        page.setView(createView(page.getRecords()));
-        page.setItemKey("id");
         return page;
     }
 

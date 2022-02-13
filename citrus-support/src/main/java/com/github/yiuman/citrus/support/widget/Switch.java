@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.github.yiuman.citrus.support.widget;
 
 /**
@@ -11,7 +8,7 @@ public class Switch extends BaseWidget<Switch, Boolean> {
 
     @Override
     public String getWidgetName() {
-        return "v-switch";
+        return "switch";
     }
 
     /**

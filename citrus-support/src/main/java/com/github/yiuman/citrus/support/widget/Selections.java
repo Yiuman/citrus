@@ -89,6 +89,6 @@ public class Selections extends BaseWidget<Selections, List<Selections.SelectIte
 
     @Override
     public String getWidgetName() {
-        return "v-select";
+        return "select";
     }
 }

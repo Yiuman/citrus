@@ -113,13 +113,13 @@ public class DialogView {
         return editField;
     }
 
-    public EditField addEditField(String text, String name, Widget<?> widget) {
+    public EditField addEditField(String text, String name, Widget<?, ?> widget) {
         EditField editField = new EditField(text, name, widget);
         this.editFields.add(editField);
         return editField;
     }
 
-    public EditField addEditField(Widget<?> widget) {
+    public EditField addEditField(Widget<?, ?> widget) {
         EditField editField = new EditField(widget.getText(), widget.getKey(), widget);
         this.editFields.add(editField);
         return editField;

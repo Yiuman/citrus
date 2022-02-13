@@ -34,7 +34,7 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     /**
      * 记录的扩展属性，key为记录主键值，value则是需要扩展的属性，
      */
-    private Map<String, Map<String, Object>> recordExtend;
+    private Map<String, Map<String, Object>> extension;
 
     /**
      * 一个视图的描述对象，如表格
@@ -56,28 +56,28 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
         this.itemKey = itemKey;
     }
 
-    public Map<String, Map<String, Object>> getRecordExtend() {
-        return recordExtend;
+    public Map<String, Map<String, Object>> getExtension() {
+        return extension;
     }
 
-    public void setRecordExtend(Map<String, Map<String, Object>> recordExtend) {
-        this.recordExtend = recordExtend;
+    public void setExtension(Map<String, Map<String, Object>> extension) {
+        this.extension = extension;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<T> getRecords() {
         List<T> records = super.getRecords();
-        if (this.recordExtend == null
+        if (Objects.isNull(extension)
                 && !ObjectUtils.isEmpty(itemKey)
                 && Objects.nonNull(view)
                 && view instanceof RecordExtender) {
-            this.recordExtend = new HashMap<>(records.size());
+            this.extension = new HashMap<>(records.size());
             RecordExtender<T> recordExtender = (RecordExtender<T>) view;
             records.forEach(record -> {
                 Map<String, Object> result = recordExtender.apply(record);
                 if (Objects.nonNull(result)) {
-                    recordExtend.put(key(record), result);
+                    extension.put(key(record), result);
                 }
 
             });

@@ -8,8 +8,8 @@ import com.github.yiuman.citrus.support.crud.service.BaseSimpleTreeService;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
 import com.github.yiuman.citrus.support.crud.view.TreeView;
-import com.github.yiuman.citrus.support.crud.view.impl.PageTreeView;
-import com.github.yiuman.citrus.support.crud.view.impl.SimpleTreeView;
+import com.github.yiuman.citrus.support.crud.view.TreeViewable;
+import com.github.yiuman.citrus.support.crud.view.ViewHelper;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.BasePreOrderTree;
 import com.github.yiuman.citrus.support.model.Tree;
@@ -26,7 +26,6 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * 基础树结构控制器
@@ -37,7 +36,7 @@ import java.util.Optional;
  * @date 2020/4/9
  */
 public abstract class BaseTreeController<T extends Tree<K>, K extends Serializable>
-        extends BaseCrudController<T, K> {
+        extends BaseCrudController<T, K> implements TreeViewable<T> {
 
     private boolean isLazy = false;
 
@@ -72,38 +71,37 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
 
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <VIEW extends TreeView<T>> VIEW showTreeView(T data) {
+        return (VIEW) ViewHelper.createTreeView(this, data);
+    }
+
+    @GetMapping(Operations.Tree.VIEW)
+    public ResponseEntity<?> getTreeView(HttpServletRequest request) throws Exception {
+        T treeData = treeRequest(request);
+        Object treeView = showTreeView(treeData);
+        return ResponseEntity.ok(Objects.nonNull(treeView) ? treeView : treeData);
+    }
+
     @Override
     protected CrudService<T, K> getService() {
         return getCrudService();
     }
 
     /**
-     * 创建树形显示视图
-     *
-     * @return 树形结构的显示视图
-     */
-    protected TreeView<T> createTreeView() {
-        return null;
-    }
-
-    /**
      * 加载树,支持查询
      */
-    @SuppressWarnings("unchecked")
     @GetMapping(Operations.Tree.TREE)
-    public <R extends TreeView<T>> ResponseEntity<R> load(HttpServletRequest request) throws Exception {
-        TreeView<T> treeView = Optional.ofNullable(createTreeView()).orElse(new PageTreeView<>());
-        Query query = getQueryCondition(request);
-        if (treeView instanceof PageTreeView) {
-            ((PageTreeView<T>) treeView).setEditableView(createEditableView());
-        }
+    public ResponseEntity<T> load(HttpServletRequest request) throws Exception {
+        return ResponseEntity.ok(treeRequest(request));
+    }
 
-        if (Objects.nonNull(query)) {
-            treeView.setTree(getCrudService().treeQuery(query));
-        } else {
-            treeView.setTree(getCrudService().load(isLazy));
-        }
-        return (ResponseEntity<R>) ResponseEntity.ok(treeView);
+    protected T treeRequest(HttpServletRequest request) throws Exception {
+        Query query = getQueryCondition(request);
+        return Objects.nonNull(query)
+                ? getCrudService().treeQuery(query)
+                : getCrudService().load(isLazy);
     }
 
     /**
@@ -139,11 +137,11 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
 
     @Override
     public void exp(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ResponseEntity<SimpleTreeView<T>> load = this.load(request);
+        ResponseEntity<T> load = this.load(request);
         String fileName = WebUtils.getRequestParam("fileName");
         if (StringUtils.isBlank(fileName)) {
             fileName = String.valueOf(System.currentTimeMillis());
         }
-        WebUtils.exportJson(response, load.getData().getTree(), fileName);
+        WebUtils.exportJson(response, load.getData(), fileName);
     }
 }

@@ -10,14 +10,13 @@ import com.github.yiuman.citrus.support.crud.query.annotations.QueryParam;
 import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
-import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.exception.RestException;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.http.ResponseStatusCode;
-import com.github.yiuman.citrus.support.model.Header;
+import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.Buttons;
-import com.github.yiuman.citrus.support.utils.CrudUtils;
+import com.github.yiuman.citrus.support.widget.Column;
 import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.support.widget.Selects;
 import com.github.yiuman.citrus.system.dto.PasswordUpdateDto;
@@ -29,7 +28,6 @@ import com.github.yiuman.citrus.system.entity.UserRole;
 import com.github.yiuman.citrus.system.hook.HasLoginHook;
 import com.github.yiuman.citrus.system.inject.AuthDeptIds;
 import com.github.yiuman.citrus.system.mapper.UserRoleMapper;
-import com.github.yiuman.citrus.system.service.OrganService;
 import com.github.yiuman.citrus.system.service.RoleService;
 import com.github.yiuman.citrus.system.service.UserService;
 import lombok.Data;
@@ -63,12 +61,9 @@ public class UserController extends BaseCrudController<UserDto, Long> {
 
     private final RoleService roleService;
 
-    private final OrganService organService;
-
-    public UserController(UserService userService, RoleService roleService, OrganService organService) {
+    public UserController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
-        this.organService = organService;
         setParamClass(UserQuery.class);
     }
 
@@ -78,41 +73,42 @@ public class UserController extends BaseCrudController<UserDto, Long> {
     }
 
     @Override
-    protected Object createView(List<UserDto> records) {
+    public Object showPageView(Page<UserDto> page) {
+        List<UserDto> records = page.getRecords();
         //找到关联
         Set<Long> userIds = records.stream().map(UserDto::getUserId).collect(Collectors.toSet());
         List<UserRole> userRoles = userService.getUserRolesByUserIds(userIds);
         List<UserOrgan> userOrgans = userService.getUserOrgansByUserIds(userIds);
 
         PageTableView<UserDto> view = new PageTableView<>();
-        view.addHeader("ID", "userId").setAlign(Header.Align.start);
-        view.addHeader("用户名", "username", true);
-        view.addHeader("手机号码", "mobile");
-        view.addHeader("邮箱", "email");
-        view.addHeader("所属角色", (entity) -> userRoles.stream()
+        view.addColumn("ID", "userId").align(Column.Align.start);
+        view.addColumn("用户名", "username", true);
+        view.addColumn("手机号码", "mobile");
+        view.addColumn("邮箱", "email");
+        view.addColumn("所属角色", (entity) -> userRoles.stream()
                 .filter(userRole -> userRole.getUserId().equals(entity.getUserId()))
                 .map(UserRole::getRoleName).filter(Objects::nonNull).collect(Collectors.joining(",")));
-        view.addHeader("所属机构", (entity) -> userOrgans.stream().filter(userOrgan -> userOrgan.getUserId().equals(entity.getUserId()))
+        view.addColumn("所属机构", (entity) -> userOrgans.stream().filter(userOrgan -> userOrgan.getUserId().equals(entity.getUserId()))
                 .map(UserOrgan::getOrganName).filter(Objects::nonNull).collect(Collectors.joining(",")));
         view.addWidget(new Inputs("用户名", "username"));
         //添加默认按钮
         view.addButton(Buttons.defaultButtonsWithMore());
         //添加默认行内操作
-        view.addAction(Buttons.defaultActions());
+//        view.addAction(Buttons.defaultActions());
         return view;
     }
 
-    @Override
-    protected DialogView createEditableView() {
-        DialogView dialogView = new DialogView();
-        dialogView.addEditField("登录名", "loginId").addRule("required");
-        dialogView.addEditField("用户名", "username").addRule("required");
-        dialogView.addEditField("手机号码", "mobile").addRule("required", "phone");
-        dialogView.addEditField("邮箱", "email");
-        dialogView.addEditField("选择角色", "roleIds", CrudUtils.getWidget(this, "getRoleSelects"));
-        dialogView.addEditField("选择机构", "organIds", organService.getOrganTree("选择机构", "organIds", true));
-        return dialogView;
-    }
+//    @Override
+//    protected DialogView createEditableView() {
+//        DialogView dialogView = new DialogView();
+//        dialogView.addEditField("登录名", "loginId").addRule("required");
+//        dialogView.addEditField("用户名", "username").addRule("required");
+//        dialogView.addEditField("手机号码", "mobile").addRule("required", "phone");
+//        dialogView.addEditField("邮箱", "email");
+//        dialogView.addEditField("选择角色", "roleIds", CrudUtils.getWidget(this, "getRoleSelects"));
+//        dialogView.addEditField("选择机构", "organIds", organService.getOrganTree("选择机构", "organIds", true));
+//        return dialogView;
+//    }
 
     @Selects(bind = "roleIds", key = "roleId", label = "roleName", text = "所属角色", multiple = true)
     public List<RoleDto> getRoleSelects() {

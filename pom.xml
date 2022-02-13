@@ -44,6 +44,7 @@
         <module>citrus-workflow</module>
         <module>citrus-workflow-impl</module>
         <module>citrus-elasticsearch</module>
+        <module>citrus-mda</module>
     </modules>
 
     <properties>
@@ -63,6 +64,7 @@
         <javassist.version>3.25.0-GA</javassist.version>
         <druid.version>1.2.3</druid.version>
         <activiti.version>7.1.0.M6</activiti.version>
+        <mvel2.version>2.4.12.Final</mvel2.version>
     </properties>
 
     <dependencies>

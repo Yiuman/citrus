@@ -3,16 +3,14 @@ package com.github.yiuman.citrus.system.rest;
 import com.github.yiuman.citrus.support.crud.query.annotations.Equals;
 import com.github.yiuman.citrus.support.crud.query.annotations.Like;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
-import com.github.yiuman.citrus.support.crud.view.impl.DialogView;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
+import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.system.dto.ResourceDto;
 import com.github.yiuman.citrus.system.service.ResourceService;
 import lombok.Data;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * 资源控制器
@@ -45,30 +43,29 @@ public class ResourceController extends BaseCrudController<ResourceDto, Long> {
     }
 
     @Override
-    protected Object createView(List<ResourceDto> resourceDtos) {
+    public Object showPageView(Page<ResourceDto> data) {
         PageTableView<ResourceDto> view = new PageTableView<>();
-        view.addHeader("资源名", "resourceName");
-        view.addHeader("资源类型", "typeText", (entity) -> {
+        view.addColumn("资源名", "resourceName");
+        view.addColumn("资源类型", "typeText", (entity) -> {
             String typeString = "";
             if (entity.getType() != null && entity.getType() == 0) {
                 typeString = "菜单";
             }
             return typeString;
         });
-        view.addHeader("资源路径", "path");
+        view.addColumn("资源路径", "path");
         view.addWidget("资源名", "resourceName");
         view.addButton(Buttons.defaultButtonsWithMore());
-        view.addAction(Buttons.defaultActions());
+        //        view.addAction(Buttons.defaultActions());
         return view;
     }
 
-
-    @Override
-    protected Object createEditableView() {
-        DialogView dialogView = new DialogView();
-        dialogView.addEditField("资源名", "resourceName");
-        dialogView.addEditField("资源路径", "path");
-        return dialogView;
-    }
+//    @Override
+//    protected Object createEditableView() {
+//        DialogView dialogView = new DialogView();
+//        dialogView.addEditField("资源名", "resourceName");
+//        dialogView.addEditField("资源路径", "path");
+//        return dialogView;
+//    }
 
 }

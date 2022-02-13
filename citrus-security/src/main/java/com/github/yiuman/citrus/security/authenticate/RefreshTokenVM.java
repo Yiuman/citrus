@@ -15,5 +15,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RefreshTokenVM {
-   private String refreshToken;
+    private String refreshToken;
 }

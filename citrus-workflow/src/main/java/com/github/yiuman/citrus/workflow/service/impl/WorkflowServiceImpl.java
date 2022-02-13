@@ -7,7 +7,4 @@ package com.github.yiuman.citrus.workflow.service.impl;
  * @date 2020/12/14
  */
 public class WorkflowServiceImpl extends BaseWorkflowService {
-
-    public WorkflowServiceImpl() {
-    }
 }

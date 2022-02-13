@@ -30,8 +30,7 @@ public class SystemAuthorizeConfigProvider implements AuthorizeConfigProvider {
         ).permitAll();
         Arrays.stream(citrusProperties.getSecurity().getExcludedUris())
                 .forEach(uri -> config.antMatchers(uri).permitAll());
-        config
-                .anyRequest()
+        config.anyRequest()
                 .access("@authorizeChainManager.hasPermission(request, authentication)");
         return true;
     }

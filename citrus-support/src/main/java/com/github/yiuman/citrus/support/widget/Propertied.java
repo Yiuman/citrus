@@ -1,12 +1,13 @@
 package com.github.yiuman.citrus.support.widget;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
  * 拥有属性的对象
  *
  * @param <T> 拥有属性的对象本身
- * @author camel
+ * @author yiuman
  * @date 2021-12-31
  */
 public interface Propertied<T extends Propertied<T>> {
@@ -41,5 +42,12 @@ public interface Propertied<T extends Propertied<T>> {
      *
      * @return 所有属性的名称的集合，如果没有定义任何属性，返回一个空集合
      */
-    Set<String> getProperties();
+    Set<String> getPropertyNames();
+
+    /**
+     * 获取所有的属性
+     *
+     * @return 属性MAP
+     */
+    Map<String, ?> getProperties();
 }

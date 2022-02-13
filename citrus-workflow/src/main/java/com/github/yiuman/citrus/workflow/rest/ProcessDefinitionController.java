@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.workflow.rest;
 import com.github.yiuman.citrus.support.crud.rest.Operations;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
+import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.WebUtils;
 import lombok.Data;
 import org.activiti.engine.RepositoryService;
@@ -77,16 +78,18 @@ public class ProcessDefinitionController extends BaseWorkflowQueryController<Pro
         setParamClass(ProcessDefinitionQueryParams.class);
     }
 
+
     @Override
-    protected Object createView(List<ProcessDefinitionController.ProcessDefinitionInfo> records) {
-        PageTableView<Deployment> view = new PageTableView<>(false);
+    public Object showPageView(Page<ProcessDefinitionController.ProcessDefinitionInfo> records) {
+        PageTableView<ProcessDefinitionController.ProcessDefinitionInfo> view = new PageTableView<>(false);
+        view.setData(records);
         view.addWidget("流程定义Key", "processDefinitionKeyLike");
         view.addWidget("名称", "processDefinitionNameLike");
         view.addWidget("目录", "processDefinitionCategoryLike");
-        view.addHeader("ID", "id");
-        view.addHeader("流程定义名称", "name");
-        view.addHeader("目录", "category");
-        view.addHeader("版本号", "version");
+        view.addColumn("ID", "id");
+        view.addColumn("流程定义名称", "name");
+        view.addColumn("目录", "category");
+        view.addColumn("版本号", "version");
         return view;
     }
 

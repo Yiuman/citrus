@@ -2,20 +2,21 @@ package com.github.yiuman.citrus.support.crud.rest;
 
 import cn.hutool.core.exceptions.ValidateException;
 import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yiuman.citrus.support.crud.query.Fn;
 import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.query.QueryHelper;
 import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.support.crud.query.builder.SimpleQueryBuilder;
-import com.github.yiuman.citrus.support.crud.view.impl.SimpleTableView;
+import com.github.yiuman.citrus.support.crud.view.ViewHelper;
 import com.github.yiuman.citrus.support.inject.InjectAnnotationParserHolder;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.model.SortBy;
-import com.github.yiuman.citrus.support.utils.*;
+import com.github.yiuman.citrus.support.utils.LambdaUtils;
+import com.github.yiuman.citrus.support.utils.SpringUtils;
+import com.github.yiuman.citrus.support.utils.ValidateUtils;
+import com.github.yiuman.citrus.support.utils.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.util.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,20 +57,6 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
         this.paramClass = paramClass;
     }
 
-    /**
-     * 创建列表分页页面
-     *
-     * @return 分页页面对象
-     */
-    protected Object createView(List<T> records) {
-        SimpleTableView<T> view = new SimpleTableView<>();
-        //构造页面小部件
-        CrudUtils.getCrudWidgets(this).forEach(widget -> view.addWidget(widget, true));
-        //构造默认表头
-        ReflectionUtils.doWithFields(modelClass, field -> view.addHeader(field.getName(), field.getName()));
-        return view;
-    }
-
     @Override
     public Page<T> page(HttpServletRequest request) throws Exception {
         Query query = Optional.ofNullable(getQueryCondition(request)).orElse(Query.create());
@@ -78,16 +65,10 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
         Page<T> page = new Page<>();
         //绑定页面参数
         WebUtils.requestDataBind(page, request);
-
         //这里需要调用了page方法查询后再进行设置ItemKey,原因是Service中的mapper为动态注入，调用查询才会初始化mapper构造表信息
-        Page<T> realPage = selectPage(page, query);
-        if (StringUtils.isBlank(realPage.getItemKey())) {
-            realPage.setItemKey(getService().getKeyProperty());
-        }
-
-        realPage.setView(createView(realPage.getRecords()));
-
-        return realPage;
+        Page<T> returnPage = selectPage(page, query);
+        returnPage.setItemKey(getService().getKeyProperty());
+        return returnPage;
     }
 
     /**
@@ -119,12 +100,7 @@ public abstract class BaseQueryRestful<T, K extends Serializable> extends BaseRe
 
         page.setSize(-1);
         page = selectPage(page, query);
-        if (StringUtils.isBlank(page.getItemKey())) {
-            page.setItemKey(getService().getKeyProperty());
-        }
-
-        page.setView(createView(page.getRecords()));
-        WebUtils.exportExcel(response, page, fileName);
+        WebUtils.exportExcel(response, ViewHelper.createPageView(this, page), fileName);
     }
 
     /**

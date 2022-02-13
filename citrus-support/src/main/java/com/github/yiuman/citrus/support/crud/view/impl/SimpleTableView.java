@@ -1,15 +1,16 @@
 package com.github.yiuman.citrus.support.crud.view.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.github.yiuman.citrus.support.crud.view.CheckboxTableView;
+import com.github.yiuman.citrus.support.crud.view.DataView;
 import com.github.yiuman.citrus.support.crud.view.RecordExtender;
 import com.github.yiuman.citrus.support.model.FieldFunction;
-import com.github.yiuman.citrus.support.model.Header;
+import com.github.yiuman.citrus.support.model.Page;
+import com.github.yiuman.citrus.support.widget.BaseColumn;
+import com.github.yiuman.citrus.support.widget.Column;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -20,14 +21,16 @@ import java.util.function.Function;
  * @author yiuman
  * @date 2021/1/19
  */
-public class SimpleTableView<T> extends BaseActionableView implements CheckboxTableView, RecordExtender<T> {
+public class SimpleTableView<T> extends BaseActionableView implements CheckboxTableView, RecordExtender<T>, DataView<Page<T>> {
 
     private boolean checkable = true;
+
+    private Page<T> data;
 
     /**
      * 表头、列
      */
-    private List<Header> headers;
+    private List<Column> columns;
 
     /**
      * 处理字段的Function集合
@@ -47,33 +50,54 @@ public class SimpleTableView<T> extends BaseActionableView implements CheckboxTa
     }
 
     @Override
-    public List<Header> getHeaders() {
-        return headers;
+    public Page<T> getData() {
+        if (Objects.nonNull(data) && CollUtil.isNotEmpty(data.getRecords())) {
+            Map<String, Map<String, Object>> extension = new HashMap<>();
+            data.getRecords().forEach(record -> {
+                Map<String, Object> result = apply(record);
+                if (Objects.nonNull(result)) {
+                    extension.put(data.key(record), result);
+                }
+            });
+            data.setExtension(extension);
+        }
+
+        return data;
     }
 
-    public Header addHeader(Header header) {
-        this.headers = Optional.ofNullable(this.headers).orElse(new ArrayList<>());
-        this.headers.add(header);
-        return header;
+    @Override
+    public void setData(Page<T> data) {
+        this.data = data;
     }
 
-    public Header addHeader(String text, String field) {
-        return addHeader(Header.builder().text(text).value(field).build());
+    @Override
+    public List<? extends Column> getColumns() {
+        return columns;
     }
 
-    public Header addHeader(String text, String field, boolean sortable) {
-        return addHeader(Header.builder().text(text).value(field).sortable(sortable).build());
+    public Column addColumn(Column column) {
+        this.columns = Optional.ofNullable(this.columns).orElse(new ArrayList<>());
+        this.columns.add(column);
+        return column;
     }
 
-    public Header addHeader(String text, Function<T, ?> func) {
+    public Column addColumn(String text, String field) {
+        return addColumn(BaseColumn.builder().text(text).model(field).build());
+    }
+
+    public Column addColumn(String text, String field, boolean sortable) {
+        return addColumn(BaseColumn.builder().text(text).model(field).sortable(sortable).build());
+    }
+
+    public Column addColumn(String text, Function<T, ?> func) {
         String defaultExtendFieldName = getDefaultExtendFieldName();
         addFieldFunctions(defaultExtendFieldName, func);
-        return addHeader(text, defaultExtendFieldName);
+        return addColumn(text, defaultExtendFieldName);
     }
 
-    public Header addHeader(String text, String field, Function<T, ?> func) {
+    public Column addColumn(String text, String field, Function<T, ?> func) {
         addFieldFunctions(field, func);
-        return addHeader(text, field);
+        return addColumn(text, field);
     }
 
     public void addFieldFunctions(String name, Function<T, ?> func) {

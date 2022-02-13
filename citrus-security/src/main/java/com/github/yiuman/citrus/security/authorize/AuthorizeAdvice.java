@@ -43,7 +43,6 @@ public class AuthorizeAdvice {
      */
     @Pointcut("!execution(* com.github.yiuman.citrus.security..*.*(..))")
     public void excludesSecurity() {
-
     }
 
     /**
@@ -57,7 +56,6 @@ public class AuthorizeAdvice {
                     + "|| @annotation(org.springframework.web.bind.annotation.DeleteMapping) )"
             )
     public void requestPointCut() {
-
     }
 
     /**
@@ -68,7 +66,6 @@ public class AuthorizeAdvice {
      */
     @Pointcut("authorizePointCut() || (excludesSecurity() && requestPointCut()))")
     public void combination() {
-
     }
 
     @Around("combination()")
