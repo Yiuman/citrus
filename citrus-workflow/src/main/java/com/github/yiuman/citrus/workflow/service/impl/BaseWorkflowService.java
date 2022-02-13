@@ -225,10 +225,12 @@ public abstract class BaseWorkflowService implements WorkflowService {
                         active().singleResult()).orElseThrow(() -> new WorkflowException("This ProcessInstance is not active,cannot do jump"));
 
         //构建跳转命令并执行
-        getProcessEngine().getManagementService().executeCommand(JumpTaskCmd.builder()
-                .executionId(task.getExecutionId())
-                .targetTaskKey(targetTaskKey)
-                .build());
+        getProcessEngine().getManagementService().executeCommand(
+                JumpTaskCmd.builder()
+                        .executionId(task.getExecutionId())
+                        .targetTaskKey(targetTaskKey)
+                        .build()
+        );
 
     }
 

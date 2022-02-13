@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.security.jwt;
 
+import cn.hutool.core.codec.Base64Encoder;
+import cn.hutool.core.util.IdUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -119,7 +121,7 @@ public class JwtProperties {
 
         String TOKEN_PREFIX = "Bearer ";
 
-        String SECRET = "ZmQ0ZGI5NjQ0MDQwY2I4MjMxY2Y3ZmI3MjdhN2ZmMjNhODViOTg1ZGE0NTBjMGM4NDA5NzYxMjdjOWMwYWRmZTBlZjlhNGY3ZTg4Y2U3YTE1ODVkZDU5Y2Y3OGYwZWE1NzUzNWQ2YjFjZDc0NGMxZWU2MmQ3MjY1NzJmNTE0MzI";
+        String SECRET = Base64Encoder.encode(IdUtil.fastUUID() + IdUtil.fastUUID());
 
         String IDENTITY_KEY = "Identity";
 
@@ -127,21 +129,6 @@ public class JwtProperties {
 
         Long REMEMBER_ME_VALIDATE_IN_SECONDS = 10080L;
 
-
-        interface Attribute {
-
-            String SECRET = "secret";
-
-            String HEADER = "tokenHeader";
-
-            String PARAM_NAME = "tokenParamName";
-
-            String PREFIX = "tokenPrefix";
-
-            String IDENTITY = "identityKey";
-
-            String VALIDATE_IN_SECONDS = "tokenValidateInSeconds";
-        }
     }
 
 }

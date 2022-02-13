@@ -61,11 +61,12 @@ public class TaskCandidateResolverImpl implements TaskCandidateResolver {
                         //找到就进行解释,没找到直接加入
                         realUserIds.addAll(candidateParser.isPresent()
                                 ? candidateParser.get().parse(workflowContext, candidateModel)
-                                : (candidateModel
+                                : candidateModel
                                 .getValues()
                                 .stream()
                                 .map(dimensionValue -> String.format("%s#%s", candidateModel.getDimension(), dimensionValue))
-                                .collect(Collectors.toList())));
+                                .collect(Collectors.toList())
+                        );
 
                     } catch (JsonProcessingException exception) {
                         log.info(String.format("%s resolver exception:", getClass().getName()), exception);
