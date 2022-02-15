@@ -4,7 +4,6 @@ import com.github.yiuman.citrus.support.crud.query.annotations.Equals;
 import com.github.yiuman.citrus.support.crud.query.annotations.Like;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
-import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.system.dto.ResourceDto;
 import com.github.yiuman.citrus.system.service.ResourceService;
@@ -43,7 +42,7 @@ public class ResourceController extends BaseCrudController<ResourceDto, Long> {
     }
 
     @Override
-    public Object showPageView(Page<ResourceDto> data) {
+    public Object createPageView() {
         PageTableView<ResourceDto> view = new PageTableView<>();
         view.addColumn("资源名", "resourceName");
         view.addColumn("资源类型", "typeText", (entity) -> {

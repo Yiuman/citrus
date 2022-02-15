@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.support.crud.view.impl;
 
+import com.github.yiuman.citrus.support.crud.view.DataView;
 import com.github.yiuman.citrus.support.model.EditField;
 import com.github.yiuman.citrus.support.widget.Widget;
 
@@ -7,21 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 对话框
+ * 表单视图
  *
  * @author yiuman
  * @date 2020/5/9
  */
-public class DialogView {
+public class FormView extends BaseActionableView implements DataView<Object> {
 
     private String title;
-
-    private String color = "primary lighten-3 ";
-
-    /**
-     * 宽度
-     */
-    private Integer width = 800;
 
     /**
      * 是否全屏
@@ -34,24 +28,26 @@ public class DialogView {
      */
     private boolean reGet;
 
+    private Object data;
+
     /**
      * 编辑的字段
      * Key：为字段名，Value为对应的组件
      */
     private List<EditField> editFields = new ArrayList<>();
 
-    public DialogView() {
+    public FormView() {
     }
 
-    public DialogView(boolean reGet) {
+    public FormView(boolean reGet) {
         setReGet(reGet);
     }
 
-    public DialogView(String title) {
+    public FormView(String title) {
         this.title = title;
     }
 
-    public DialogView(List<EditField> editFields) {
+    public FormView(List<EditField> editFields) {
         this.editFields = editFields;
     }
 
@@ -61,22 +57,6 @@ public class DialogView {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public Integer getWidth() {
-        return width;
-    }
-
-    public void setWidth(Integer width) {
-        this.width = width;
     }
 
     public boolean isFullscreen() {
@@ -125,4 +105,13 @@ public class DialogView {
         return editField;
     }
 
+    @Override
+    public Object getData() {
+        return data;
+    }
+
+    @Override
+    public void setData(Object data) {
+        this.data = data;
+    }
 }

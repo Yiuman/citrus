@@ -2,14 +2,18 @@ package com.github.yiuman.citrus.support.crud.view;
 
 import com.github.yiuman.citrus.support.crud.rest.BaseQueryRestful;
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
+import com.github.yiuman.citrus.support.crud.view.impl.FormView;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTreeView;
+import com.github.yiuman.citrus.support.model.EditField;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author yiuman
@@ -36,5 +40,14 @@ public final class ViewHelper {
         CrudUtils.getCrudWidgets(crud).forEach(widget -> pageTreeView.addWidget(widget, true));
         //构造默认表头
         return pageTreeView;
+    }
+
+    public static <T, K extends Serializable, CRUD extends BaseQueryRestful<T, K>> FormView createFormView(CRUD crud, T viewData) {
+        FormView formView = new FormView();
+        List<EditField> fieldList = new ArrayList<>();
+        ReflectionUtils.doWithFields(crud.getModelClass(), field -> fieldList.add(new EditField(field.getName(), field.getName())));
+        formView.setEditFields(fieldList);
+        formView.setData(viewData);
+        return formView;
     }
 }
