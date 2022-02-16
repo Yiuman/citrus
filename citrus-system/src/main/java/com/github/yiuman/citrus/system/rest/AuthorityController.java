@@ -3,7 +3,6 @@ package com.github.yiuman.citrus.system.rest;
 import com.github.yiuman.citrus.support.crud.query.annotations.Like;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
-import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.system.dto.AuthorityDto;
 import com.github.yiuman.citrus.system.service.AuthorityService;
@@ -40,7 +39,7 @@ public class AuthorityController extends BaseCrudController<AuthorityDto, Long> 
     }
 
     @Override
-    public Object showPageView(Page<AuthorityDto> data) {
+    public Object createPageView() {
         PageTableView<AuthorityDto> view = new PageTableView<>();
         view.addWidget("权限名称", "authorityName");
         view.addColumn("权限名称", "authorityName");

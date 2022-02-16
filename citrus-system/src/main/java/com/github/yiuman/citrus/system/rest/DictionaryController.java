@@ -2,7 +2,6 @@ package com.github.yiuman.citrus.system.rest;
 
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
-import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.system.entity.Dictionary;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DictionaryController extends BaseCrudController<Dictionary, Long> {
 
     @Override
-    public Object showPageView(Page<Dictionary> records) {
+    public Object createPageView() {
         PageTableView<Dictionary> view = new PageTableView<>();
         view.addColumn("名称", "dictName");
         view.addColumn("编码", "dictCode");

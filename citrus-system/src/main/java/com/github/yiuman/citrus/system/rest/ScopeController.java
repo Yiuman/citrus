@@ -3,6 +3,7 @@ package com.github.yiuman.citrus.system.rest;
 import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
+import com.github.yiuman.citrus.support.crud.view.impl.FormView;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.Page;
@@ -48,8 +49,9 @@ public class ScopeController extends BaseCrudController<ScopeDto, Long> {
     }
 
     @Override
-    public Object showPageView(Page<ScopeDto> data) {
-        List<ScopeDto> records = data.getRecords();
+    public Object createPageView() {
+        Page<ScopeDto> viewData = getPageViewData();
+        List<ScopeDto> records = viewData.getRecords();
         Set<Long> organIds = records.stream().map(ScopeDto::getOrganId).collect(Collectors.toSet());
         Map<Long, Organization> organizationMap = organService.list(QueryBuilders.<Organization>lambda().in(Organization::getOrganId, organIds).toQuery())
                 .stream().collect(Collectors.toMap(Organization::getOrganId, organization -> organization));
@@ -64,17 +66,16 @@ public class ScopeController extends BaseCrudController<ScopeDto, Long> {
         });
 
         view.addButton(Buttons.defaultButtonsWithMore());
-        //        view.addAction(Buttons.defaultActions());
         return view;
     }
 
-//    @Override
-//    protected Object createEditableView() {
-//        DialogView dialogView = new DialogView();
-//        dialogView.addEditField("数据范围名称", "scopeName");
-//        dialogView.addEditField("所属组织", "organId", organService.getOrganTree("选择机构", "organId", false));
-//        return dialogView;
-//    }
+    @Override
+    public Object createFormView() {
+        FormView dialogView = new FormView();
+        dialogView.addEditField("数据范围名称", "scopeName");
+        dialogView.addEditField("所属组织", "organId", organService.getOrganTree("选择机构", "organId", false));
+        return dialogView;
+    }
 
     @GetMapping("/types")
     public ResponseEntity<List<Map<String, ?>>> getScopeTypes() {

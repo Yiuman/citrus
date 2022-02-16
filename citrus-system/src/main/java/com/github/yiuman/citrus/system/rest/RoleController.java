@@ -78,8 +78,9 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
     }
 
     @Override
-    public Object showPageView(Page<RoleDto> page) {
-        List<RoleDto> records = page.getRecords();
+    public Object createPageView() {
+        Page<RoleDto> viewData = getPageViewData();
+        List<RoleDto> records = viewData.getRecords();
         List<RoleAuthority> roleAuthorities = roleService.getRoleAuthorityByRoleIds(records.stream().map(RoleDto::getRoleId).collect(Collectors.toSet()));
         PageTableView<RoleDto> view = new PageTableView<>();
         view.addColumn("ID", "roleId");

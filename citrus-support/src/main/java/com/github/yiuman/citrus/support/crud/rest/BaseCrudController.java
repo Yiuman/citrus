@@ -1,8 +1,11 @@
 package com.github.yiuman.citrus.support.crud.rest;
 
+import cn.hutool.core.thread.threadlocal.NamedThreadLocal;
+import cn.hutool.core.util.ObjectUtil;
 import com.github.yiuman.citrus.support.crud.groups.Modify;
 import com.github.yiuman.citrus.support.crud.groups.Save;
 import com.github.yiuman.citrus.support.crud.view.DataView;
+import com.github.yiuman.citrus.support.crud.view.FormViewable;
 import com.github.yiuman.citrus.support.crud.view.PageViewable;
 import com.github.yiuman.citrus.support.crud.view.ViewHelper;
 import com.github.yiuman.citrus.support.exception.ValidateException;
@@ -33,23 +36,67 @@ import java.util.Objects;
  * @date 2020/4/4
  */
 @Slf4j
-public abstract class BaseCrudController<T, K extends Serializable> extends BaseCrudRestful<T, K> implements PageViewable<T> {
+public abstract class BaseCrudController<T, K extends Serializable> extends BaseCrudRestful<T, K> implements PageViewable, FormViewable {
+
+    /**
+     * 视图数据
+     */
+    protected static final ThreadLocal<Object> VIEW_DATA = new NamedThreadLocal<>("view-data");
+    private static final String PAGE_ACTION = "page";
 
     @Override
-    public Object showPageView(Page<T> data) {
-        return ViewHelper.createPageView(this, data);
+    public Object createPageView() {
+        return ViewHelper.createPageView(this, getPageViewData());
+    }
+
+    @Override
+    public Object createFormView() {
+        return ViewHelper.createFormView(this, getFormViewData());
+    }
+
+    protected Object getViewData() {
+        return VIEW_DATA.get();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Page<T> getPageViewData() {
+        return (Page<T>) getViewData();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected T getFormViewData() {
+        return (T) getViewData();
     }
 
     @SuppressWarnings("unchecked")
     @GetMapping(Operations.VIEW)
-    public ResponseEntity<?> getPageView(HttpServletRequest request) throws Exception {
-        Page<T> page = page(request);
-        Object pageView = showPageView(page);
-        if (Objects.nonNull(pageView) && pageView instanceof DataView) {
-            ((DataView<Page<T>>) pageView).setData(page);
-            return ResponseEntity.ok(pageView);
+    public ResponseEntity<?> getPageView(
+            @RequestParam(value = "action", defaultValue = PAGE_ACTION) String action,
+            HttpServletRequest request) throws Exception {
+        try {
+            Object view;
+            if (PAGE_ACTION.equals(action)) {
+                VIEW_DATA.set(page(request));
+                view = createPageView();
+            } else {
+                K key = (K) request.getParameter("key");
+                if (ObjectUtil.isNotEmpty(key)) {
+                    VIEW_DATA.set(get(key));
+                }
+
+                view = createFormView();
+            }
+
+            if (view instanceof DataView) {
+                ((DataView<Object>) view).setData(getViewData());
+            }
+
+            return ResponseEntity.ok(view);
+
+        } finally {
+            VIEW_DATA.remove();
         }
-        return ResponseEntity.ok(page);
+
     }
 
     @GetMapping

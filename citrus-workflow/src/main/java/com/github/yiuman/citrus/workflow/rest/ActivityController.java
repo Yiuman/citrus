@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.workflow.rest;
 
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
-import com.github.yiuman.citrus.support.model.Page;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,9 +19,8 @@ public class ActivityController extends BaseWorkflowQueryController<HistoricActi
     }
 
     @Override
-    public Object showPageView(Page<HistoricActivityInstance> data) {
+    public Object createPageView() {
         PageTableView<HistoricActivityInstance> view = new PageTableView<>();
-        view.setData(data);
         view.addColumn("ID", "activityId");
         view.addColumn("活动名称", "activityName");
         view.addColumn("类型", "activityType");

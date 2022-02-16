@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.workflow.rest;
 
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
-import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.workflow.vo.HistoricTaskVo;
 import com.github.yiuman.citrus.workflow.vo.TaskQueryParams;
 import org.springframework.beans.BeanUtils;
@@ -25,9 +24,8 @@ public class TaskHistoryController extends BaseWorkflowQueryController<HistoricT
     }
 
     @Override
-    public Object showPageView(Page<HistoricTaskVo> data) {
+    public Object createPageView() {
         PageTableView<HistoricTaskVo> view = new PageTableView<>();
-        view.setData(data);
         view.addWidget("处理人或候选人", "taskCandidateOrAssigned");
         view.addColumn("任务名称", "name");
         view.addColumn("处理人", "assignee");
