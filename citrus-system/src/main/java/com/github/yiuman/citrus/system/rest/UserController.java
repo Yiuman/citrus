@@ -18,6 +18,7 @@ import com.github.yiuman.citrus.support.http.ResponseStatusCode;
 import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
+import com.github.yiuman.citrus.support.widget.ButtonGroup;
 import com.github.yiuman.citrus.support.widget.Column;
 import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.support.widget.Selects;
@@ -42,10 +43,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -88,20 +86,25 @@ public class UserController extends BaseCrudController<UserDto, Long> {
         List<UserOrgan> userOrgans = userService.getUserOrgansByUserIds(userIds);
 
         PageTableView<UserDto> view = new PageTableView<>();
+        view.addWidget(new Inputs("用户名", "username"));
+
         view.addColumn("ID", "userId").align(Column.Align.start);
         view.addColumn("用户名", "username", true);
         view.addColumn("手机号码", "mobile");
         view.addColumn("邮箱", "email");
         view.addColumn("所属角色", (entity) -> userRoles.stream()
                 .filter(userRole -> userRole.getUserId().equals(entity.getUserId()))
-                .map(UserRole::getRoleName).filter(Objects::nonNull).collect(Collectors.joining(",")));
-        view.addColumn("所属机构", (entity) -> userOrgans.stream().filter(userOrgan -> userOrgan.getUserId().equals(entity.getUserId()))
-                .map(UserOrgan::getOrganName).filter(Objects::nonNull).collect(Collectors.joining(",")));
-        view.addWidget(new Inputs("用户名", "username"));
-        //添加默认按钮
-        view.addButton(Buttons.defaultButtonsWithMore());
-        //添加默认行内操作
-//        view.addAction(Buttons.defaultActions());
+                .map(UserRole::getRoleName).filter(Objects::nonNull).collect(Collectors.joining(","))
+        );
+        view.addColumn("所属机构", (entity) -> userOrgans.stream()
+                .filter(userOrgan -> userOrgan.getUserId().equals(entity.getUserId()))
+                .map(UserOrgan::getOrganName).filter(Objects::nonNull).collect(Collectors.joining(","))
+        );
+        view.addColumn("操作", (entity) -> ButtonGroup.builder()
+                .model(Arrays.asList(Buttons.edit(), Buttons.delete()))
+                .build()
+        );
+        view.defaultSetting();
         return view;
     }
 

@@ -5,9 +5,9 @@ import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.query.annotations.Like;
 import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
+import com.github.yiuman.citrus.support.crud.view.impl.FormView;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.model.Page;
-import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.widget.Selects;
 import com.github.yiuman.citrus.system.dto.AuthorityDto;
@@ -96,20 +96,18 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
 
         view.addWidget("角色名", "roleName");
         view.addWidget(CrudUtils.getWidget(this, "getAuthorities"));
-        //添加默认按钮
-        view.addButton(Buttons.defaultButtonsWithMore());
-        //添加默认行内操作
-//        view.addAction(Buttons.defaultActions());
+
+        view.defaultSetting();
         return view;
     }
 
-//    @Override
-//    protected Object createEditableView() {
-//        DialogView dialogView = new DialogView();
-//        dialogView.addEditField("角色名", "roleName").addRule("required");
-//        dialogView.addEditField("选择权限", "authIds", CrudUtils.getWidget(this, "getAuthorities"));
-//        return dialogView;
-//    }
+    @Override
+    public Object createFormView() {
+        FormView formView = new FormView();
+        formView.addEditField("角色名", "roleName").addRule("required");
+        formView.addEditField("选择权限", "authIds", CrudUtils.getWidget(this, "getAuthorities"));
+        return formView;
+    }
 
     @Selects(bind = "authIds", key = "authorityId", label = "authorityName", text = "选择权限", multiple = true)
     public List<AuthorityDto> getAuthorities() {

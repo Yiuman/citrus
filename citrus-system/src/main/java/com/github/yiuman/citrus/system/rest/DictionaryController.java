@@ -1,8 +1,8 @@
 package com.github.yiuman.citrus.system.rest;
 
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
+import com.github.yiuman.citrus.support.crud.view.impl.FormView;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
-import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.system.entity.Dictionary;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,16 +22,15 @@ public class DictionaryController extends BaseCrudController<Dictionary, Long> {
         PageTableView<Dictionary> view = new PageTableView<>();
         view.addColumn("名称", "dictName");
         view.addColumn("编码", "dictCode");
-        view.addButton(Buttons.defaultButtonsWithMore());
-//        view.addAction(Buttons.defaultActions());
+        view.defaultSetting();
         return view;
     }
 
-//    @Override
-//    protected Object createEditableView() {
-//        DialogView view = new DialogView();
-//        view.addEditField("名称", "dictName").addRule("required");
-//        view.addEditField("编码", "dictCode").addRule("required");
-//        return view;
-//    }
+    @Override
+    public Object createFormView() {
+        FormView view = new FormView();
+        view.addEditField("名称", "dictName").addRule("required");
+        view.addEditField("编码", "dictCode").addRule("required");
+        return view;
+    }
 }

@@ -7,7 +7,6 @@ import com.github.yiuman.citrus.support.crud.view.impl.FormView;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.Page;
-import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.support.utils.ConvertUtils;
 import com.github.yiuman.citrus.system.dto.ScopeDto;
 import com.github.yiuman.citrus.system.entity.Organization;
@@ -65,7 +64,7 @@ public class ScopeController extends BaseCrudController<ScopeDto, Long> {
             return Objects.nonNull(organization) ? organization.getOrganName() : " - ";
         });
 
-        view.addButton(Buttons.defaultButtonsWithMore());
+        view.defaultSetting();
         return view;
     }
 

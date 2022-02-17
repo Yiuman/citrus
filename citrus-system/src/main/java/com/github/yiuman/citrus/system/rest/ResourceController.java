@@ -3,8 +3,8 @@ package com.github.yiuman.citrus.system.rest;
 import com.github.yiuman.citrus.support.crud.query.annotations.Equals;
 import com.github.yiuman.citrus.support.crud.query.annotations.Like;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
+import com.github.yiuman.citrus.support.crud.view.impl.FormView;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
-import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.system.dto.ResourceDto;
 import com.github.yiuman.citrus.system.service.ResourceService;
 import lombok.Data;
@@ -54,17 +54,16 @@ public class ResourceController extends BaseCrudController<ResourceDto, Long> {
         });
         view.addColumn("资源路径", "path");
         view.addWidget("资源名", "resourceName");
-        view.addButton(Buttons.defaultButtonsWithMore());
-        //        view.addAction(Buttons.defaultActions());
+        view.defaultSetting();
         return view;
     }
 
-//    @Override
-//    protected Object createEditableView() {
-//        DialogView dialogView = new DialogView();
-//        dialogView.addEditField("资源名", "resourceName");
-//        dialogView.addEditField("资源路径", "path");
-//        return dialogView;
-//    }
+    @Override
+    public Object createFormView() {
+        FormView formView = new FormView();
+        formView.addEditField("资源名", "resourceName");
+        formView.addEditField("资源路径", "path");
+        return formView;
+    }
 
 }

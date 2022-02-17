@@ -1,6 +1,10 @@
 package com.github.yiuman.citrus.support.crud.view.impl;
 
 import com.github.yiuman.citrus.support.crud.view.EditableView;
+import com.github.yiuman.citrus.support.utils.Buttons;
+import com.github.yiuman.citrus.support.widget.ButtonGroup;
+
+import java.util.Arrays;
 
 /**
  * 页面中有编辑器的表格视图
@@ -31,5 +35,13 @@ public class PageTableView<T> extends SimpleTableView<T> implements EditableView
     @Override
     public void setEditableView(Object editableView) {
         this.editableView = editableView;
+    }
+
+    public void defaultSetting() {
+        addButton(Buttons.defaultButtonsWithMore());
+        addColumn("edit-column", (entity) -> ButtonGroup.builder()
+                .model(Arrays.asList(Buttons.edit(), Buttons.delete()))
+                .build()
+        );
     }
 }
