@@ -3,7 +3,6 @@ package com.github.yiuman.citrus.workflow;
 import com.github.yiuman.citrus.support.crud.query.builder.QueryBuilders;
 import com.github.yiuman.citrus.support.crud.view.impl.FormView;
 import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
-import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.system.dto.UserDto;
 import com.github.yiuman.citrus.system.entity.User;
@@ -54,7 +53,7 @@ public class LeaveWorkflowControllerBase extends BaseEntityWorkflowController<Le
         view.addColumn("请假天数", "leaveDay");
         view.addColumn("申请人", "username", entity -> usernameMap.get(entity.getUserId()));
         view.addColumn("流程ID", "processInstanceId");
-        view.addButton(Buttons.defaultButtonsWithMore());
+        view.defaultSetting();
         return view;
     }
 
