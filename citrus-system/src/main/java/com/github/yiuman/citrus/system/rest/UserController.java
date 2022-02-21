@@ -16,9 +16,7 @@ import com.github.yiuman.citrus.support.exception.RestException;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.http.ResponseStatusCode;
 import com.github.yiuman.citrus.support.model.Page;
-import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
-import com.github.yiuman.citrus.support.widget.ButtonGroup;
 import com.github.yiuman.citrus.support.widget.Column;
 import com.github.yiuman.citrus.support.widget.Inputs;
 import com.github.yiuman.citrus.support.widget.Selects;
@@ -31,8 +29,7 @@ import com.github.yiuman.citrus.system.entity.UserRole;
 import com.github.yiuman.citrus.system.hook.HasLoginHook;
 import com.github.yiuman.citrus.system.inject.AuthDeptIds;
 import com.github.yiuman.citrus.system.mapper.UserRoleMapper;
-import com.github.yiuman.citrus.system.service.OrganService;
-import com.github.yiuman.citrus.system.service.RoleService;
+import com.github.yiuman.citrus.system.service.RbacMixinService;
 import com.github.yiuman.citrus.system.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -58,28 +55,24 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserController extends BaseCrudController<UserDto, Long> {
 
-    private final UserService userService;
+    private final RbacMixinService rbacMixinService;
 
-    private final RoleService roleService;
-
-    private final OrganService organService;
-
-    public UserController(UserService userService, RoleService roleService, OrganService organService) {
-        this.userService = userService;
-        this.roleService = roleService;
-        this.organService = organService;
+    public UserController(RbacMixinService rbacMixinService) {
+        this.rbacMixinService = rbacMixinService;
         setParamClass(UserQuery.class);
     }
 
     @Override
     protected CrudService<UserDto, Long> getService() {
-        return userService;
+        return rbacMixinService.getUserService();
     }
 
     @Override
     public Object createPageView() {
+        UserService userService = rbacMixinService.getUserService();
         Page<UserDto> page = getPageViewData();
         List<UserDto> records = page.getRecords();
+
         //找到关联
         Set<Long> userIds = records.stream().map(UserDto::getUserId).collect(Collectors.toSet());
         List<UserRole> userRoles = userService.getUserRolesByUserIds(userIds);
@@ -89,7 +82,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
         view.addWidget(new Inputs("用户名", "username"));
 
         view.addColumn("ID", "userId").align(Column.Align.start);
-        view.addColumn("用户名", "username", true);
+        view.addColumn("用户名", "username").sortable(true);
         view.addColumn("手机号码", "mobile");
         view.addColumn("邮箱", "email");
         view.addColumn("所属角色", (entity) -> userRoles.stream()
@@ -99,10 +92,6 @@ public class UserController extends BaseCrudController<UserDto, Long> {
         view.addColumn("所属机构", (entity) -> userOrgans.stream()
                 .filter(userOrgan -> userOrgan.getUserId().equals(entity.getUserId()))
                 .map(UserOrgan::getOrganName).filter(Objects::nonNull).collect(Collectors.joining(","))
-        );
-        view.addColumn("操作", (entity) -> ButtonGroup.builder()
-                .model(Arrays.asList(Buttons.edit(), Buttons.delete()))
-                .build()
         );
         view.defaultSetting();
         return view;
@@ -116,13 +105,14 @@ public class UserController extends BaseCrudController<UserDto, Long> {
         dialogView.addEditField("手机号码", "mobile").addRule("required", "phone");
         dialogView.addEditField("邮箱", "email");
         dialogView.addEditField("选择角色", "roleIds", CrudUtils.getWidget(this, "getRoleSelects"));
-        dialogView.addEditField("选择机构", "organIds", organService.getOrganTree("选择机构", "organIds", true));
+        dialogView.addEditField("选择机构", "organIds", rbacMixinService.getOrganService()
+                .getOrganTree("选择机构", "organIds", true));
         return dialogView;
     }
 
     @Selects(bind = "roleIds", key = "roleId", label = "roleName", text = "所属角色", multiple = true)
     public List<RoleDto> getRoleSelects() {
-        return roleService.list();
+        return rbacMixinService.getRoleService().list();
     }
 
     /**
@@ -132,7 +122,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
      */
     @GetMapping("/current")
     public ResponseEntity<UserOnlineInfo> getCurrentUser() {
-        return ResponseEntity.ok(userService.getCurrentUserOnlineInfo());
+        return ResponseEntity.ok(rbacMixinService.getCurrentUserOnlineInfo());
     }
 
     /**
@@ -143,6 +133,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
      */
     @PostMapping("/profile")
     public ResponseEntity<Void> saveProfile(@Validated @RequestBody UserDto entity) {
+        UserService userService = rbacMixinService.getUserService();
         UserOnlineInfo currentUserOnlineInfo = userService.getCurrentUserOnlineInfo();
         if (!entity.getUserId().equals(currentUserOnlineInfo.getUserId())) {
             throw new RestException("You cannot modify non-personal data", ResponseStatusCode.BAD_REQUEST);
@@ -162,6 +153,7 @@ public class UserController extends BaseCrudController<UserDto, Long> {
      */
     @PostMapping("/password")
     public ResponseEntity<Void> updatePassword(@Validated @RequestBody PasswordUpdateDto passwordUpdate) throws Exception {
+        UserService userService = rbacMixinService.getUserService();
         userService.updatePassword(passwordUpdate.getOldPassword(), passwordUpdate.getNewPassword());
         return ResponseEntity.ok();
     }

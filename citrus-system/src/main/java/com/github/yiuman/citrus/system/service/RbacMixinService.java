@@ -131,4 +131,9 @@ public class RbacMixinService {
         return Collections.emptySet();
     }
 
+    public UserOnlineInfo getCurrentUserOnlineInfo() {
+        UserOnlineInfo currentUserOnlineInfo = userService.getCurrentUserOnlineInfo();
+        setUserOwnedInfo(currentUserOnlineInfo);
+        return currentUserOnlineInfo;
+    }
 }

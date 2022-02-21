@@ -139,9 +139,7 @@ public class UserService extends BaseDtoService<User, Long, UserDto> {
     }
 
     public UserOnlineInfo getCurrentUserOnlineInfo() {
-        User currentUser = getCurrentUser().orElseThrow(NoPermissionException::new);
-        return UserOnlineInfo.newInstance(currentUser);
-
+        return UserOnlineInfo.newInstance(getCurrentUser().orElseThrow(NoPermissionException::new));
     }
 
     /**

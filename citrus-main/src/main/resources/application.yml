@@ -14,5 +14,5 @@ spring:
 citrus:
   verify:
     enable: false
-#  jwt:
-#    token-validate-in-seconds: 60
+  jwt:
+    token-validate-in-seconds: 3600

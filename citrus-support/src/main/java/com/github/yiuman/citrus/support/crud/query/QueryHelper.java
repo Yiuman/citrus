@@ -95,6 +95,7 @@ public final class QueryHelper {
         QueryWrapper<E> queryWrapper = Wrappers.query();
         queryWrapper.setEntityClass(entityClass);
         //拼接查询条件
+        Map<String, ColumnCache> columnMap = com.baomidou.mybatisplus.core.toolkit.LambdaUtils.getColumnMap(entityClass);
         if (CollUtil.isNotEmpty(query.getConditions())) {
             query.getConditions().forEach(LambdaUtils.consumerWrapper(conditionInfo -> {
                 Class<?> lastParameterType = Operations.IN_SQL.getType().equals(conditionInfo.getOperator())
@@ -108,7 +109,6 @@ public final class QueryHelper {
                 String fieldName = ObjectUtil.isNotEmpty(conditionInfo.getMapping())
                         ? conditionInfo.getMapping()
                         : conditionInfo.getParameter();
-                Map<String, ColumnCache> columnMap = com.baomidou.mybatisplus.core.toolkit.LambdaUtils.getColumnMap(entityClass);
                 ColumnCache columnCache = columnMap.get(com.baomidou.mybatisplus.core.toolkit.LambdaUtils.formatKey(fieldName));
                 conditionMethod.invoke(
                         queryWrapper,
@@ -120,8 +120,10 @@ public final class QueryHelper {
         }
 
         if (CollUtil.isNotEmpty(query.getSorts())) {
-            final Consumer<SortBy> sortItemHandler = (sortBy) -> queryWrapper
-                    .orderBy(true, !sortBy.getSortDesc(), sortBy.getSortBy());
+            final Consumer<SortBy> sortItemHandler = (sortBy) -> {
+                ColumnCache columnCache = columnMap.get(com.baomidou.mybatisplus.core.toolkit.LambdaUtils.formatKey(sortBy.getSortBy()));
+                queryWrapper.orderBy(true, !sortBy.getSortDesc(), Objects.nonNull(columnCache) ? columnCache.getColumn() : sortBy.getSortBy());
+            };
             query.getSorts().forEach(sortItemHandler);
         }
 
