@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.support.model;
 
+import cn.hutool.core.collection.CollUtil;
 import com.github.yiuman.citrus.support.crud.view.RecordExtender;
 import com.github.yiuman.citrus.support.crud.view.TableView;
 import com.github.yiuman.citrus.support.crud.view.impl.SimpleTableView;
@@ -48,6 +49,14 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     public Page() {
     }
 
+    public static <T> Page<T> of(List<T> records) {
+        Page<T> page = new Page<>();
+        page.setRecords(records);
+        page.setCurrent(-1);
+        page.setSize(-1);
+        return page;
+    }
+
     public String getItemKey() {
         return itemKey;
     }
@@ -64,7 +73,6 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
         this.extension = extension;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<T> getRecords() {
         List<T> records = super.getRecords();
@@ -73,16 +81,29 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
                 && Objects.nonNull(view)
                 && view instanceof RecordExtender) {
             this.extension = new HashMap<>(records.size());
-            RecordExtender<T> recordExtender = (RecordExtender<T>) view;
-            records.forEach(record -> {
-                Map<String, Object> result = recordExtender.apply(record);
-                if (Objects.nonNull(result)) {
-                    extension.put(key(record), result);
-                }
-
-            });
+            extensionRecords(records, this.extension);
         }
         return records;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void extensionRecords(List<T> records, Map<String, Map<String, Object>> extensionCollect) {
+        if (CollUtil.isEmpty(records)) {
+            return;
+        }
+
+        RecordExtender<T> recordExtender = (RecordExtender<T>) view;
+        records.forEach(record -> {
+            Map<String, Object> result = recordExtender.apply(record);
+            if (Objects.nonNull(result)) {
+                extensionCollect.put(key(record), result);
+            }
+
+            if (record instanceof Tree) {
+                extensionRecords((List<T>) ((Tree<?>) record).getChildren(), extensionCollect);
+            }
+
+        });
     }
 
     public Object getView() {

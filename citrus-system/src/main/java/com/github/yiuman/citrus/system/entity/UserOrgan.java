@@ -22,6 +22,7 @@ import java.util.Objects;
 public class UserOrgan {
 
     @TableId
+    @TableField(exist = false)
     private String id;
 
     @JsonSerialize(using = ToStringSerializer.class)

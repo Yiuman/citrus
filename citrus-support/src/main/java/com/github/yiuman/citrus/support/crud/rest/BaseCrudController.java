@@ -42,7 +42,7 @@ public abstract class BaseCrudController<T, K extends Serializable> extends Base
      * 视图数据
      */
     protected static final ThreadLocal<Object> VIEW_DATA = new NamedThreadLocal<>("view-data");
-    private static final String PAGE_ACTION = "page";
+    protected static final String PAGE_ACTION = "page";
 
     @Override
     public Object createPageView() {
