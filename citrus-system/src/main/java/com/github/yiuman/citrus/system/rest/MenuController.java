@@ -2,8 +2,7 @@ package com.github.yiuman.citrus.system.rest;
 
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
-import com.github.yiuman.citrus.support.crud.view.TreeView;
-import com.github.yiuman.citrus.support.crud.view.impl.PageTreeView;
+import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.utils.Buttons;
 import com.github.yiuman.citrus.system.entity.Resource;
@@ -38,15 +37,30 @@ public class MenuController extends BaseTreeController<Resource, Long> {
     }
 
     @Override
-    public TreeView<Resource> showTreeView(Resource tree) {
-        PageTreeView<Resource> view = new PageTreeView<>();
-        view.setTree(tree);
-        view.setItemText("resourceName");
+    public Object createPageView() {
+        PageTableView<Resource> view = new PageTableView<>();
         view.addWidget("菜单名称", "resourceName");
+        view.addColumn("菜单名称", Resource::getResourceName);
+        view.addColumn("菜单类型编码", Resource::getType);
+        view.addColumn("图标编码", Resource::getIcon);
+        view.addColumn("菜单路径", Resource::getPath);
+        view.addColumn("组件", Resource::getComponent);
+//        view.addColumn("操作资源",W)
 //        view.addAction("操作资源", "this.$router.push(`/rest/resources?parentId=${this.currentItem.id}`)");
         view.addButton(Buttons.defaultButtonsWithMore());
         return view;
     }
+
+    //    @Override
+//    public TreeView<Resource> showTreeView(Resource tree) {
+//        PageTreeView<Resource> view = new PageTreeView<>();
+//        view.setTree(tree);
+//        view.setItemText("resourceName");
+//        view.addWidget("菜单名称", "resourceName");
+//        view.addAction("操作资源", "this.$router.push(`/rest/resources?parentId=${this.currentItem.id}`)");
+//        view.addButton(Buttons.defaultButtonsWithMore());
+//        return view;
+//    }
 
 //    @Override
 //    protected Object createEditableView() {

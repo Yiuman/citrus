@@ -20,6 +20,7 @@ import java.util.Objects;
 public class RoleAuthority {
 
     @TableId
+    @TableField(exist = false)
     private String id;
 
     @JsonSerialize(using = ToStringSerializer.class)
@@ -40,7 +41,7 @@ public class RoleAuthority {
     }
 
     public String getId() {
-        return String.format("%s-%s", role, authorityId);
+        return String.format("%s-%s", roleId, authorityId);
     }
 
     public String getAuthorityName() {

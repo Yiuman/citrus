@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.support.crud.rest;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yiuman.citrus.support.crud.query.Query;
@@ -7,18 +9,14 @@ import com.github.yiuman.citrus.support.crud.service.BasePreOrderTreeService;
 import com.github.yiuman.citrus.support.crud.service.BaseSimpleTreeService;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
-import com.github.yiuman.citrus.support.crud.view.TreeView;
-import com.github.yiuman.citrus.support.crud.view.TreeViewable;
-import com.github.yiuman.citrus.support.crud.view.ViewHelper;
+import com.github.yiuman.citrus.support.crud.view.DataView;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.BasePreOrderTree;
+import com.github.yiuman.citrus.support.model.Page;
 import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.utils.CrudUtils;
 import com.github.yiuman.citrus.support.utils.WebUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,7 +34,7 @@ import java.util.Objects;
  * @date 2020/4/9
  */
 public abstract class BaseTreeController<T extends Tree<K>, K extends Serializable>
-        extends BaseCrudController<T, K> implements TreeViewable<T> {
+        extends BaseCrudController<T, K> {
 
     private boolean isLazy = false;
 
@@ -56,33 +54,60 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
     protected TreeCrudService<T, K> getCrudService() {
         Class<? super T> superclass = modelClass.getSuperclass();
         try {
-            return superclass.isAssignableFrom(BasePreOrderTree.class)
-                    ? CrudUtils.getCrudService(
+            if (superclass.isAssignableFrom(BasePreOrderTree.class)) {
+                return CrudUtils.getCrudService(
+                        modelClass,
+                        (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 1),
+                        BasePreOrderTreeService.class
+                );
+            }
+
+            return CrudUtils.getCrudService(
                     modelClass,
                     (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 1),
-                    BasePreOrderTreeService.class)
-                    : CrudUtils.getCrudService(
-                    modelClass,
-                    (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 1),
-                    BaseSimpleTreeService.class);
+                    BaseSimpleTreeService.class
+            );
         } catch (Exception e) {
             return null;
         }
 
     }
 
+    @GetMapping(Operations.VIEW)
     @SuppressWarnings("unchecked")
     @Override
-    public <VIEW extends TreeView<T>> VIEW showTreeView(T data) {
-        return (VIEW) ViewHelper.createTreeView(this, data);
+    public ResponseEntity<?> getPageView(@RequestParam(value = "action", defaultValue = PAGE_ACTION) String action, HttpServletRequest request) throws Exception {
+        if ("tree".equals(action)) {
+            T treeEntity = treeRequest(request);
+            List<T> treeList = ObjectUtil.isEmpty(treeEntity.getId())
+                    ? (List<T>) treeEntity.getChildren()
+                    : CollUtil.newArrayList(treeEntity);
+
+            Page<T> treePage = Page.of(treeList);
+            treePage.setItemKey(getCrudService().getKeyProperty());
+            VIEW_DATA.set(treePage);
+            Object view = createPageView();
+            if (view instanceof DataView) {
+                ((DataView<Object>) view).setData(getViewData());
+            }
+            return ResponseEntity.ok(view);
+        }
+        return super.getPageView(action, request);
     }
 
-    @GetMapping(Operations.Tree.VIEW)
-    public ResponseEntity<?> getTreeView(HttpServletRequest request) throws Exception {
-        T treeData = treeRequest(request);
-        Object treeView = showTreeView(treeData);
-        return ResponseEntity.ok(Objects.nonNull(treeView) ? treeView : treeData);
-    }
+//}
+
+//    @Override
+//    public <VIEW extends TreeView<T>> VIEW showTreeView(T data) {
+//        return (VIEW) ViewHelper.createTreeView(this, data);
+//    }
+
+//    @GetMapping(Operations.Tree.VIEW)
+//    public ResponseEntity<?> getTreeView(HttpServletRequest request) throws Exception {
+//        T treeData = treeRequest(request);
+//        Object treeView = showTreeView(treeData);
+//        return ResponseEntity.ok(Objects.nonNull(treeView) ? treeView : treeData);
+//    }
 
     @Override
     protected CrudService<T, K> getService() {

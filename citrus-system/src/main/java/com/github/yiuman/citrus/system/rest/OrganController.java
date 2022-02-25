@@ -1,11 +1,11 @@
 package com.github.yiuman.citrus.system.rest;
 
+import cn.hutool.core.util.StrUtil;
 import com.github.yiuman.citrus.support.crud.query.annotations.Like;
 import com.github.yiuman.citrus.support.crud.rest.BaseTreeController;
 import com.github.yiuman.citrus.support.crud.service.TreeCrudService;
-import com.github.yiuman.citrus.support.crud.view.TreeView;
-import com.github.yiuman.citrus.support.crud.view.impl.PageTreeView;
-import com.github.yiuman.citrus.support.utils.Buttons;
+import com.github.yiuman.citrus.support.crud.view.impl.FormView;
+import com.github.yiuman.citrus.support.crud.view.impl.PageTableView;
 import com.github.yiuman.citrus.system.entity.Organization;
 import com.github.yiuman.citrus.system.service.OrganService;
 import lombok.Data;
@@ -40,22 +40,34 @@ public class OrganController extends BaseTreeController<Organization, Long> {
         return organService;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <VIEW extends TreeView<Organization>> VIEW showTreeView(Organization data) {
-        PageTreeView<Organization> view = new PageTreeView<>();
-        view.setItemText("organName");
+    public Object createPageView() {
+        PageTableView<Organization> view = new PageTableView<>();
         view.addWidget("组织名称", "organName");
-        view.addButton(Buttons.defaultButtonsWithMore());
-        return (VIEW) view;
+        view.addColumn("组织机构名称", Organization::getOrganName);
+        view.addColumn("组织机构代码", entity -> StrUtil.isBlank(entity.getOrganCode()) ? "-" : entity.getOrganCode());
+        view.addColumn("描述", Organization::getRemark);
+        view.defaultSetting();
+        return view;
     }
 
+    @SuppressWarnings("unchecked")
 //    @Override
-//    protected DialogView createEditableView() {
-//        DialogView dialogView = new DialogView();
-//        dialogView.addEditField("组织机构名称", "organName").addRule("required");
-//        dialogView.addEditField("组织机构代码", "organCode").addRule("required");
-//        dialogView.addEditField("备注", "remark");
-//        return dialogView;
+//    public <VIEW extends TreeView<Organization>> VIEW showTreeView(Organization data) {
+//        PageTreeView<Organization> view = new PageTreeView<>();
+//        view.setItemText("organName");
+//        view.addWidget("组织名称", "organName");
+//        view.addButton(Buttons.defaultButtonsWithMore());
+//        return (VIEW) view;
 //    }
+
+
+    @Override
+    public Object createFormView() {
+        FormView formView = new FormView();
+        formView.addEditField("组织机构名称", "organName").addRule("required");
+        formView.addEditField("组织机构代码", "organCode").addRule("required");
+        formView.addEditField("备注", "remark");
+        return formView;
+    }
 }

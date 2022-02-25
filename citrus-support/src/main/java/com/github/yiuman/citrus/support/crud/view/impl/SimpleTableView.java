@@ -6,6 +6,7 @@ import com.github.yiuman.citrus.support.crud.view.DataView;
 import com.github.yiuman.citrus.support.crud.view.RecordExtender;
 import com.github.yiuman.citrus.support.model.FieldFunction;
 import com.github.yiuman.citrus.support.model.Page;
+import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.widget.BaseColumn;
 import com.github.yiuman.citrus.support.widget.Column;
 import org.springframework.util.CollectionUtils;
@@ -53,16 +54,30 @@ public class SimpleTableView<T> extends BaseActionableView implements CheckboxTa
     public Page<T> getData() {
         if (Objects.nonNull(data) && CollUtil.isNotEmpty(data.getRecords())) {
             Map<String, Map<String, Object>> extension = new HashMap<>();
-            data.getRecords().forEach(record -> {
-                Map<String, Object> result = apply(record);
-                if (Objects.nonNull(result)) {
-                    extension.put(data.key(record), result);
-                }
-            });
+            extensionRecords(data.getRecords(), extension);
             data.setExtension(extension);
         }
 
         return data;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void extensionRecords(List<T> records, Map<String, Map<String, Object>> extensionCollect) {
+        if (CollUtil.isEmpty(records)) {
+            return;
+        }
+
+        records.forEach(record -> {
+            Map<String, Object> result = apply(record);
+            if (Objects.nonNull(result)) {
+                extensionCollect.put(data.key(record), result);
+            }
+
+            if (record instanceof Tree) {
+                extensionRecords((List<T>) ((Tree<?>) record).getChildren(), extensionCollect);
+            }
+
+        });
     }
 
     @Override
@@ -112,12 +127,22 @@ public class SimpleTableView<T> extends BaseActionableView implements CheckboxTa
 
     @Override
     public Map<String, Object> apply(T object) {
+        if (Objects.isNull(object)) {
+            return null;
+        }
         if (CollectionUtils.isEmpty(this.fieldFunctions)) {
             return null;
         }
         Map<String, Object> funcExecutedMap = new ConcurrentHashMap<>(fieldFunctions.size());
-        fieldFunctions.parallelStream().forEach(fieldFunc
-                -> funcExecutedMap.put(fieldFunc.getFiledName(), fieldFunc.getFunction().apply(object)));
+        fieldFunctions.parallelStream()
+                .filter(fieldFunc -> Objects.nonNull(fieldFunc) && Objects.nonNull(fieldFunc.getFunction()))
+                .forEach(fieldFunc -> {
+                    Object applyValue = fieldFunc.getFunction().apply(object);
+                    if (Objects.nonNull(applyValue)) {
+                        funcExecutedMap.put(fieldFunc.getFiledName(), applyValue);
+                    }
+
+                });
         return funcExecutedMap;
     }
 }

@@ -24,6 +24,7 @@ import java.util.List;
 public class AuthorityResource {
 
     @TableId
+    @TableField(exist = false)
     private String id;
 
     /**
