@@ -77,37 +77,28 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
     @SuppressWarnings("unchecked")
     @Override
     public ResponseEntity<?> getPageView(@RequestParam(value = "action", defaultValue = PAGE_ACTION) String action, HttpServletRequest request) throws Exception {
-        if ("tree".equals(action)) {
-            T treeEntity = treeRequest(request);
-            List<T> treeList = ObjectUtil.isEmpty(treeEntity.getId())
-                    ? (List<T>) treeEntity.getChildren()
-                    : CollUtil.newArrayList(treeEntity);
+        try {
+            if ("tree".equals(action)) {
+                T treeEntity = treeRequest(request);
+                List<T> treeList = ObjectUtil.isEmpty(treeEntity.getId())
+                        ? (List<T>) treeEntity.getChildren()
+                        : CollUtil.newArrayList(treeEntity);
 
-            Page<T> treePage = Page.of(treeList);
-            treePage.setItemKey(getCrudService().getKeyProperty());
-            VIEW_DATA.set(treePage);
-            Object view = createPageView();
-            if (view instanceof DataView) {
-                ((DataView<Object>) view).setData(getViewData());
+                Page<T> treePage = Page.of(treeList);
+                treePage.setItemKey(getCrudService().getKeyProperty());
+                VIEW_DATA.set(treePage);
+                Object view = createPageView();
+                if (view instanceof DataView) {
+                    ((DataView<Object>) view).setData(getViewData());
+                }
+                return ResponseEntity.ok(view);
             }
-            return ResponseEntity.ok(view);
+        } finally {
+            VIEW_DATA.remove();
         }
+
         return super.getPageView(action, request);
     }
-
-//}
-
-//    @Override
-//    public <VIEW extends TreeView<T>> VIEW showTreeView(T data) {
-//        return (VIEW) ViewHelper.createTreeView(this, data);
-//    }
-
-//    @GetMapping(Operations.Tree.VIEW)
-//    public ResponseEntity<?> getTreeView(HttpServletRequest request) throws Exception {
-//        T treeData = treeRequest(request);
-//        Object treeView = showTreeView(treeData);
-//        return ResponseEntity.ok(Objects.nonNull(treeView) ? treeView : treeData);
-//    }
 
     @Override
     protected CrudService<T, K> getService() {
