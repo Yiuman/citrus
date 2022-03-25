@@ -86,7 +86,7 @@ public final class CrudUtils {
             } catch (NotFoundException notFoundCtClass) {
                 ctClass = JavassistUtils.defaultPool().makeClass(formatName, JavassistUtils.getClass(superServiceClass));
                 JavassistUtils.addTypeArgument(ctClass, superServiceClass, new Class[]{entityClass, keyClass}, null, null);
-                serviceClass = ctClass.toClass();
+                serviceClass = ctClass.toClass(entityClass);
             }
         }
         return (Class<S>) serviceClass;
@@ -117,7 +117,7 @@ public final class CrudUtils {
             } catch (NotFoundException notFoundCtClass) {
                 ctClass = JavassistUtils.defaultPool().makeInterface(formatName, JavassistUtils.getClass(mapperClass));
                 JavassistUtils.addTypeArgument(ctClass, null, null, mapperClass, new Class[]{entityClass});
-                mapperInterface = ctClass.toClass();
+                mapperInterface = ctClass.toClass(entityClass);
             }
 
         }

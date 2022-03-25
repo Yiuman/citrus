@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.workflow.rest;
 
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import cn.hutool.core.util.TypeUtil;
 import com.github.yiuman.citrus.support.crud.rest.BaseCrudController;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
@@ -37,7 +37,7 @@ public abstract class BaseEntityWorkflowController<E extends ProcessBusinessMode
         try {
             return CrudUtils.getCrudService(
                     modelClass,
-                    (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 1),
+                    (Class<K>) TypeUtil.getTypeArgument(getClass(), 1),
                     BaseEntityWorkflowService.class);
         } catch (Exception e) {
             log.info("获取EntityCrudProcessService报错", e);

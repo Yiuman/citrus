@@ -1,7 +1,6 @@
 package com.github.yiuman.citrus.support.utils;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -111,7 +110,7 @@ public final class ValidateUtils {
          */
         public String getMessage() {
             if (errorMsg == null || errorMsg.isEmpty()) {
-                return StringUtils.EMPTY;
+                return "";
             }
             StringBuilder message = new StringBuilder();
             errorMsg.forEach((key, value) -> message.append(MessageFormat.format("{0}:{1} \r\n", key, value)));
