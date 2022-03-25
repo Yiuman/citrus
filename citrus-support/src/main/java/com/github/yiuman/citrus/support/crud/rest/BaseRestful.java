@@ -1,6 +1,6 @@
 package com.github.yiuman.citrus.support.crud.rest;
 
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import cn.hutool.core.util.TypeUtil;
 import com.github.yiuman.citrus.support.crud.CrudHelper;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,12 +30,12 @@ public abstract class BaseRestful<T, K extends Serializable> {
 
     @SuppressWarnings("unchecked")
     private Class<T> currentModelClass() {
-        return (Class<T>) ReflectionKit.getSuperClassGenericType(getClass(), 0);
+        return (Class<T>) TypeUtil.getTypeArgument(getClass(), 0);
     }
 
     @SuppressWarnings("unchecked")
     private Class<K> currentKeyClass() {
-        return (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 1);
+        return (Class<K>) TypeUtil.getTypeArgument(getClass(), 1);
     }
 
     /**

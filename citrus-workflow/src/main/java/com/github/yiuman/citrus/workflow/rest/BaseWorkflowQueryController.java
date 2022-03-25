@@ -8,7 +8,6 @@ import com.github.yiuman.citrus.support.utils.SpringUtils;
 import com.github.yiuman.citrus.workflow.exception.WorkflowException;
 import com.github.yiuman.citrus.workflow.service.WorkflowService;
 import com.github.yiuman.citrus.workflow.service.impl.WorkflowServiceImpl;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.history.HistoricActivityInstance;
@@ -110,22 +109,26 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
     }
 
 
-    @SneakyThrows
     @Override
     public E get(K key) {
-        Query<?, ?> query = getQuery();
-        Class<?> queryClass = query.getClass();
-        Method method = Optional.ofNullable(ReflectionUtils
-                .findMethod(queryClass, getKeyQueryField(), getKeyType()))
-                .orElseThrow(()
-                        -> new WorkflowException(
-                        String.format("cannot found key's field query method by %s,please check class %s",
-                                queryClass.getName(),
-                                queryClass.getName())
-                ));
-        method.setAccessible(true);
-        method.invoke(query, key);
-        return getTransformFunc().apply(query.singleResult());
+        try {
+            Query<?, ?> query = getQuery();
+            Class<?> queryClass = query.getClass();
+            Method method = Optional.ofNullable(ReflectionUtils
+                            .findMethod(queryClass, getKeyQueryField(), getKeyType()))
+                    .orElseThrow(()
+                            -> new WorkflowException(
+                            String.format("cannot found key's field query method by %s,please check class %s",
+                                    queryClass.getName(),
+                                    queryClass.getName())
+                    ));
+            method.setAccessible(true);
+            method.invoke(query, key);
+            return getTransformFunc().apply(query.singleResult());
+        } catch (Throwable throwable) {
+            throw new RuntimeException(throwable);
+        }
+
     }
 
     /**

@@ -2,7 +2,7 @@ package com.github.yiuman.citrus.support.crud.rest;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import cn.hutool.core.util.TypeUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.crud.service.BasePreOrderTreeService;
@@ -57,14 +57,14 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
             if (superclass.isAssignableFrom(BasePreOrderTree.class)) {
                 return CrudUtils.getCrudService(
                         modelClass,
-                        (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 1),
+                        (Class<K>) TypeUtil.getTypeArgument(getClass(), 1),
                         BasePreOrderTreeService.class
                 );
             }
 
             return CrudUtils.getCrudService(
                     modelClass,
-                    (Class<K>) ReflectionKit.getSuperClassGenericType(getClass(), 1),
+                    (Class<K>) TypeUtil.getTypeArgument(getClass(), 1),
                     BaseSimpleTreeService.class
             );
         } catch (Exception e) {

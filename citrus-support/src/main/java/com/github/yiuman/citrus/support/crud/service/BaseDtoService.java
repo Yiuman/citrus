@@ -1,8 +1,8 @@
 package com.github.yiuman.citrus.support.crud.service;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.TypeUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yiuman.citrus.support.crud.CrudHelper;
 import com.github.yiuman.citrus.support.crud.mapper.CrudMapper;
@@ -53,7 +53,7 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
 
     @SuppressWarnings("unchecked")
     private Class<D> currentDtoClass() {
-        return (Class<D>) ReflectionKit.getSuperClassGenericType(getClass(), 2);
+        return (Class<D>) TypeUtil.getTypeArgument(getClass(), 2);
     }
 
     protected Function<D, E> dtoToEntity() {

@@ -53,15 +53,15 @@
         <spring-boot.version>2.5.2</spring-boot.version>
         <lombok.version>1.18.16</lombok.version>
         <hutool.version>5.5.6</hutool.version>
-        <mybatis.plus.version>3.4.3</mybatis.plus.version>
+        <mybatis.plus.version>3.5.1</mybatis.plus.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
         <citrus.version>0.14.0</citrus.version>
         <alibaba.easyexcel.version>3.0.5</alibaba.easyexcel.version>
         <jjwt.version>0.11.0</jjwt.version>
         <commons.io.version>2.6</commons.io.version>
-        <javassist.version>3.25.0-GA</javassist.version>
+        <javassist.version>3.28.0-GA</javassist.version>
         <druid.version>1.2.3</druid.version>
         <activiti.version>7.1.0.M6</activiti.version>
         <mvel2.version>2.4.12.Final</mvel2.version>
@@ -143,8 +143,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>${project.build.jdk}</source>
-                    <target>${project.build.jdk}</target>
+                    <source>16</source>
+                    <target>16</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
