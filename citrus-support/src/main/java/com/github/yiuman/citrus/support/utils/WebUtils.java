@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.support.utils;
 
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.converters.localdatetime.LocalDateTimeDateConverter;
 import com.alibaba.excel.read.listener.ReadListener;
@@ -156,6 +157,7 @@ public final class WebUtils {
         if (request instanceof AbstractMultipartHttpServletRequest || request.getMethod().equals(HttpMethod.GET.name())) {
             WebRequestDataBinder dataBinder = new WebRequestDataBinder(object);
             dataBinder.registerCustomEditor(LocalDate.class, new LocalDateEditor());
+            dataBinder.registerCustomEditor(Date.class, new DateEditor());
             dataBinder.bind(new ServletWebRequest(request));
 
         } else {
@@ -511,6 +513,14 @@ public final class WebUtils {
         @Override
         public void setAsText(String text) throws IllegalArgumentException {
             setValue(LocalDate.parse(text));
+        }
+    }
+
+    static class DateEditor extends PropertyEditorSupport {
+
+        @Override
+        public void setAsText(String text) throws IllegalArgumentException {
+            setValue(DateUtil.parse(text));
         }
     }
 
