@@ -1,4 +1,3 @@
-
 <p align="center">
   <a href="https://github.com/Yiuman/citrus">
    <img alt="citrus-logo" src="./logo.png" />
@@ -21,24 +20,19 @@
     <img alt="maven" src="https://img.shields.io/maven-central/v/com.github.yiuman/citrus?style=flat">
 </p>
 
-
 ### 项目简介
 
 :rainbow:  低代码快速开发脚手架
 
-前后端分离架构，基于SpringBoot2.x + SpringSecurity + JWT + Mybatis-plus + Activiti7 
+前后端分离架构，基于SpringBoot2.x + SpringSecurity + JWT + Mybatis-plus + Activiti7
 
 灵活、高效，降低开发成本
-
-
 
 **前端仓库地址**：https://github.com/Yiuman/citrus-vuetify
 
 :smile:  [我是一个活生生的例子](http://42.192.95.146:8088/#/login)
 
 欢迎issues、PR~~  如果此项目对你有所帮助，麻烦动动小手给个小星星:star:
-
-
 
 ### 项目特性
 
@@ -51,33 +45,32 @@
 7. 动态数据源+多数据源事务管理
 8. 封装activiti7工作流，多实例加签，任务跳转
 
-
-
 ### 项目结构/模块设计及使用指南
 
 - `citrus-boot-starter` 项目自动配置相关
 - `citrus-main` 项目的运行入口（体验开箱即用的快感）
 - `citrus-security` 项目安全相关的代码，统一认证、验证码类型、鉴权、jwt等  [安全模块传送门](https://github.com/Yiuman/citrus/tree/master/doc/安全模块设计.md)
-- `citrus-support` 项目通用支持相关的代码，通用Service层、Controller层，工具类、缓存、异常、注入、数据结构、动态数据源及相关扩展 [通用CRUD指南](https://github.com/Yiuman/citrus/tree/master/doc/通用CRUD指南.md) 、[多数据源及事务](https://github.com/Yiuman/citrus/tree/master/doc/多数据源及事务.md)
-- `citrus-system` 项目系统设计的主要实现  包含用户、角色、权限、资源、菜单、数据范围等模块的实现与处理，数据范围注入也在这里 [权限数据范围设计](https://github.com/Yiuman/citrus/tree/master/doc/权限设计.md)
+- `citrus-support`
+  项目通用支持相关的代码，通用Service层、Controller层，工具类、缓存、异常、注入、数据结构、动态数据源及相关扩展 [通用CRUD指南](https://github.com/Yiuman/citrus/tree/master/doc/通用CRUD指南.md)
+  、[多数据源及事务](https://github.com/Yiuman/citrus/tree/master/doc/多数据源及事务.md)
+- `citrus-system` 项目系统设计的主要实现
+  包含用户、角色、权限、资源、菜单、数据范围等模块的实现与处理，数据范围注入也在这里 [权限数据范围设计](https://github.com/Yiuman/citrus/tree/master/doc/权限设计.md)
 - `citrus-workflow` 整合activiti7的工作流模块，实现多维度人员解析、加签、跳转功能  [acitivi模型设计器](http://42.192.95.146:18080/)
 - `citrus-workflow-impl` 系统模块与工作流模块结合的工作流相关实现
-
-
 
 ### 如何使用
 
 #### 方式一
 
- 1. springboot项目中引入最新的依赖 见readme顶部微章
+1. springboot项目中引入最新的依赖 见readme顶部微章
 
-    ```xml
-    <dependency>
-      <groupId>com.github.yiuman</groupId>
-      <artifactId>citrus-boot-starter</artifactId>
-      <version>${latest}</version>
-    </dependency>
-    ```
+   ```xml
+   <dependency>
+     <groupId>com.github.yiuman</groupId>
+     <artifactId>citrus-boot-starter</artifactId>
+     <version>${latest}</version>
+   </dependency>
+   ```
 
 2. 下载 https://github.com/Yiuman/citrus/tree/master/sql  中的sql文件，创建你的数据并执行（多数据源请见多数据源及事务使用指南）
 
@@ -93,13 +86,13 @@
     server:
       port: 8082
     ```
-    
+
 4. 启动项目
 
 #### 方式二
 
 1. 克隆项目 `git clone https://github.com/Yiuman/citrus.git`
-   
+
 2. 自行修改项目配置与代码
 
 3. 启动项目
