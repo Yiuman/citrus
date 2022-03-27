@@ -1,4 +1,5 @@
-use citrus;
+use
+citrus;
 
 -- 用户表
 INSERT INTO sys_user (user_id, login_id, password, username, email, mobile, uuid, status, created_time, created_by,
