@@ -41,7 +41,7 @@ public class PageTableView<T> extends SimpleTableView<T> implements EditableView
         //默认按钮
         addButton(Buttons.defaultButtonsWithMore());
         //编辑列
-        addColumn("EDIT-COLUMN", (entity) -> ButtonGroup.builder()
+        addColumn("OPTIONAL", (entity) -> ButtonGroup.builder()
                 .model(Arrays.asList(Buttons.edit(), Buttons.delete()))
                 .build()
         );

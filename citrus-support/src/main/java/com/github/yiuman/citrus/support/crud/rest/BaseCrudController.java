@@ -42,7 +42,6 @@ public abstract class BaseCrudController<T, K extends Serializable> extends Base
      * 视图数据
      */
     protected static final ThreadLocal<Object> VIEW_DATA = new NamedThreadLocal<>("view-data");
-    protected static final String PAGE_ACTION = "page";
 
     @Override
     public Object createPageView() {
@@ -71,11 +70,11 @@ public abstract class BaseCrudController<T, K extends Serializable> extends Base
     @SuppressWarnings("unchecked")
     @GetMapping(Operations.VIEW)
     public ResponseEntity<?> getPageView(
-            @RequestParam(value = "action", defaultValue = PAGE_ACTION) String action,
+            @RequestParam(defaultValue = PageAction.PAGE) String action,
             HttpServletRequest request) throws Exception {
         try {
             Object view;
-            if (PAGE_ACTION.equals(action)) {
+            if (PageAction.PAGE.equals(action)) {
                 VIEW_DATA.set(page(request));
                 view = createPageView();
             } else {
@@ -123,13 +122,11 @@ public abstract class BaseCrudController<T, K extends Serializable> extends Base
         return ResponseEntity.ok(getProxy().save(entity));
     }
 
-    @SuppressWarnings("MVCPathVariableInspection")
     @DeleteMapping(Operations.DELETE)
     public ResponseEntity<Boolean> deleteByKey(@PathVariable @NotNull K key) throws Exception {
         return ResponseEntity.ok(getProxy().delete(key));
     }
 
-    @SuppressWarnings("MVCPathVariableInspection")
     @GetMapping(Operations.GET)
     public ResponseEntity<T> getByKey(@PathVariable K key) {
         return ResponseEntity.ok(getProxy().get(key));

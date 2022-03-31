@@ -76,9 +76,9 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
     @GetMapping(Operations.VIEW)
     @SuppressWarnings("unchecked")
     @Override
-    public ResponseEntity<?> getPageView(@RequestParam(value = "action", defaultValue = PAGE_ACTION) String action, HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> getPageView(@RequestParam(defaultValue = PageAction.PAGE) String action, HttpServletRequest request) throws Exception {
         try {
-            if ("tree".equals(action)) {
+            if (PageAction.TREE.equals(action)) {
                 T treeEntity = treeRequest(request);
                 List<T> treeList = ObjectUtil.isEmpty(treeEntity.getId())
                         ? (List<T>) treeEntity.getChildren()

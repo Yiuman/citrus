@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.mda.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.github.yiuman.citrus.mda.ddl.DdlProcessor;
 import com.github.yiuman.citrus.mda.dml.DmlProcessor;
 import com.github.yiuman.citrus.mda.entity.Table;
@@ -7,7 +8,6 @@ import com.github.yiuman.citrus.mda.exception.MdaException;
 import com.github.yiuman.citrus.mda.meta.TableMeta;
 import com.github.yiuman.citrus.support.crud.service.CrudService;
 import com.github.yiuman.citrus.support.utils.WebUtils;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -58,7 +58,7 @@ public interface MdaService extends CrudService<Map<String, Object>, String> {
         String modelId = Optional
                 .ofNullable(request.getHeader(MODEL_ID_TAG))
                 .orElse(request.getParameter(MODEL_ID_TAG));
-        if (StringUtils.isEmpty(modelId)) {
+        if (StrUtil.isEmpty(modelId)) {
             throw new MdaException("The model ID cannot be empty!");
         }
         return modelId;

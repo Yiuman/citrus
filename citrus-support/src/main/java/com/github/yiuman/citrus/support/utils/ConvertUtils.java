@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.support.utils;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.ReflectUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -45,9 +46,9 @@ public final class ConvertUtils {
     }
 
     public static <S, T> T convert(Class<T> clazz, S source) throws Exception {
-        T t = clazz.newInstance();
-        org.springframework.beans.BeanUtils.copyProperties(source, t);
-        return t;
+        T instance = ReflectUtil.newInstance(clazz);
+        org.springframework.beans.BeanUtils.copyProperties(source, instance);
+        return instance;
     }
 
     public static <S, T> List<T> listConvert(Class<T> clazz, Collection<S> source) {

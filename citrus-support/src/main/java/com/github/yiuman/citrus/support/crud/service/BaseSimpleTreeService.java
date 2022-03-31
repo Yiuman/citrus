@@ -58,9 +58,9 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
     private void mountByList(E current, final Set<E> sets) {
         //这里的根节点肯定是虚拟节点，ID为空，第二级挂的父节点ID为空，所以需要这么判断
         List<E> children = sets.stream().filter(item -> (
-                item.getId() != null
-                        && !item.getId().equals(current.getId())
-                        && (current.getId() == item.getParentId() || (item.getParentId() != null && item.getParentId().equals(current.getId()))
+                !Objects.equals(item.getId(), current.getId())
+                        && (Objects.equals(current.getId(), item.getParentId())
+                        || (Objects.nonNull(item.getParentId()) && Objects.equals(item.getParentId(), current.getId()))
                 ))).collect(Collectors.toList());
         current.setChildren(children);
         children.parallelStream().forEach(item -> mountByList(item, sets));

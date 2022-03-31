@@ -30,7 +30,6 @@ public interface Operations {
 
     String DELETE = Operations.KEY;
 
-
     /**
      * 批量删除
      */
