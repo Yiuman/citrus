@@ -53,7 +53,7 @@ public class SimpleTableView<T> extends BaseActionableView implements CheckboxTa
     @Override
     public Page<T> getData() {
         if (Objects.nonNull(data) && CollUtil.isNotEmpty(data.getRecords())) {
-            Map<String, Map<String, Object>> extension = new HashMap<>();
+            Map<String, Map<String, Object>> extension = new HashMap<>(data.getRecords().size());
             extensionRecords(data.getRecords(), extension);
             data.setExtension(extension);
         }

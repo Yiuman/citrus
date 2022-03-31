@@ -1,5 +1,7 @@
 package com.github.yiuman.citrus.starter;
 
+import cn.hutool.core.io.IoUtil;
+
 /**
  * Citrus的版本号
  *
@@ -8,17 +10,8 @@ package com.github.yiuman.citrus.starter;
  */
 public class CitrusVersion {
 
-    public static final String BANNER =
-            " ____  _  _____  ____  _     ____ \n"
-                    + "/   _\\/ \\/__ __\\/  __\\/ \\ /\\/ ___\\\n"
-                    + "|  /  | |  / \\  |  \\/|| | |||    \\\n"
-                    + "|  \\__| |  | |  |    /| \\_/|\\___ |\n"
-                    + "\\____/\\_/  \\_/  \\_/\\_\\\\____/\\____/\n"
-                    + "                                  ";
+    public static final String BANNER = IoUtil.readUtf8(CitrusVersion.class.getClassLoader().getResourceAsStream("META-INF/banner.txt"));
     private static final String CITRUS = " :: Citrus :: ";
-
-    public CitrusVersion() {
-    }
 
     public static void printBanner() {
         System.out.println(BANNER);

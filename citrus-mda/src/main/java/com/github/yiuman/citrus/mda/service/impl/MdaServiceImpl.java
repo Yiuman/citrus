@@ -99,7 +99,7 @@ public class MdaServiceImpl implements MdaService {
 
         TableMeta tableMeta = entity2Meta(tableEntity);
         PrimaryKeyConstraint primaryKeyConstraint = tableMeta.getPrimaryKey();
-        final Map<ColumnMeta, Object> keyMap = new HashMap<>();
+        final Map<ColumnMeta, Object> keyMap = new HashMap<>(tableMeta.getColumns().size());
         if (Objects.nonNull(primaryKeyConstraint)) {
             //如果是组合主键必须主动赋值，否则抛异常
             if (isCombinePrimaryKeys(primaryKeyConstraint)) {

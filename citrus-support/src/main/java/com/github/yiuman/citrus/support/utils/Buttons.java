@@ -16,17 +16,17 @@ import java.util.stream.Stream;
  */
 public final class Buttons {
 
-    private static final Button ADD = Button.builder().key("ADD").model("add()").text("新增").build();
+    private static final Button ADD = Button.builder().key("ADD").model("add").text("新增").build();
 
-    private static final Button EDIT = Button.builder().key("EDIT").model("edit()").text("编辑").build();
+    private static final Button EDIT = Button.builder().key("EDIT").model("edit").text("编辑").build();
 
-    private static final Button DELETE = Button.builder().key("DELETE").model("delete()").text("删除").build();
+    private static final Button DELETE = Button.builder().key("DELETE").model("delete").text("删除").build();
 
-    private static final Button DELETE_BATCH = Button.builder().key("BATCH_DELETE").model("batchDelete()").text("批量删除").build();
+    private static final Button DELETE_BATCH = Button.builder().key("BATCH_DELETE").model("batchDelete").text("批量删除").build();
 
-    private static final Button IMPORT = Button.builder().key("IMPORT").model("imp()").text("导入").build();
+    private static final Button IMPORT = Button.builder().key("IMPORT").model("imp").text("导入").build();
 
-    private static final Button EXPORT = Button.builder().key("EXPORT").model("exp()").text("导出").build();
+    private static final Button EXPORT = Button.builder().key("EXPORT").model("exp").text("导出").build();
 
     private static final ButtonGroup MORE = ButtonGroup.builder().key("SHOW_MORE").text("更多操作")
             .model(Stream.of(IMPORT, EXPORT, DELETE_BATCH).collect(Collectors.toList())).build();

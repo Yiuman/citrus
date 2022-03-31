@@ -1,6 +1,7 @@
 package com.github.yiuman.citrus.support.crud.service;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.TypeUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -58,17 +59,17 @@ public abstract class BaseDtoService<E, K extends Serializable, D> implements Cr
 
     protected Function<D, E> dtoToEntity() {
         return LambdaUtils.functionWrapper(d -> {
-            E e = getService().getEntityType().newInstance();
-            BeanUtils.copyProperties(d, e);
-            return e;
+            E entity = ReflectUtil.newInstance(getService().getEntityType());
+            BeanUtils.copyProperties(d, entity);
+            return entity;
         });
     }
 
     protected Function<E, D> entityToDto() {
         return LambdaUtils.functionWrapper(e -> {
-            D d = dtoClass.newInstance();
-            BeanUtils.copyProperties(e, d);
-            return d;
+            D dto = ReflectUtil.newInstance(dtoClass);
+            BeanUtils.copyProperties(e, dto);
+            return dto;
         });
     }
 

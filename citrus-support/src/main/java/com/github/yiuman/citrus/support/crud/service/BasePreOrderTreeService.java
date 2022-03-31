@@ -16,6 +16,7 @@ import org.springframework.util.CollectionUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -47,7 +48,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean beforeSave(E entity) throws Exception {
-        if (entity.getId() != null) {
+        if (Objects.nonNull(entity.getId())) {
             return true;
         }
         //1.获取当前父节点
@@ -57,7 +58,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         int rightValue = 1;
         int deep = 1;
         //4.更新父节点
-        if (parent != null && entity.getId() != parent.getId()) {
+        if (!Objects.equals(entity.getId(), parent.getId())) {
             beforeSaveOrUpdate(parent);
             rightValue = parent.getRightValue();
             deep = parent.getDeep() + 1;
@@ -122,7 +123,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
 
     @Override
     public E treeQuery(Query query) {
-        if (query == null) {
+        if (Objects.isNull(query)) {
             return load(false);
         }
         //查询符合条件的列表
@@ -141,7 +142,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
         list.addAll(getTreeMapper().treeLink(table.getTableName(), Wrappers.<E>query().apply(parentSql).in("t1." + table.getKeyColumn(), ids)));
         final E root = getRoot();
         //传list进去前需要去重,并排除根节点
-        initTreeFromList(root, list.parallelStream().distinct().filter(item -> item != null && item.getId() != root.getId()).collect(Collectors.toList()));
+        initTreeFromList(root, list.parallelStream().distinct().filter(item -> !Objects.equals(item.getId(), root.getId())).collect(Collectors.toList()));
         return root;
     }
 
@@ -153,7 +154,7 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
      */
     protected void initTreeFromList(E start, List<E> list) {
         List<E> childrenOfStart = list.parallelStream()
-                .filter(current -> current.getParentId() != null && current.getParentId().equals(start.getId())).collect(Collectors.toList());
+                .filter(current -> Objects.equals(current.getParentId(), start.getId())).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(childrenOfStart)) {
             start.setChildren(childrenOfStart);
             childrenOfStart.parallelStream().forEach(next -> initTreeFromList(next, list));
