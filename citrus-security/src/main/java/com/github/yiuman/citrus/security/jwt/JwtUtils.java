@@ -90,7 +90,7 @@ public final class JwtUtils {
         return (String) getClaims(token).get(getIdentityKey());
     }
 
-    protected static Key signKey() {
+    public static Key signKey() {
         //对Secret进行Base64编码
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(JWT_PROPERTIES.getSecret()));
     }

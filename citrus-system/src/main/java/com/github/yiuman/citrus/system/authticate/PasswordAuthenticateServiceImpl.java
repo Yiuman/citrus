@@ -91,7 +91,9 @@ public class PasswordAuthenticateServiceImpl implements AuthenticateService, Use
     public Optional<Authentication> resolve(String token, String identity) {
         UserService userService = rbacMixinService.getUserService();
         User user = userService.getUserByUuid(identity);
-        return Optional.of(new UsernamePasswordAuthenticationToken(user, token, null));
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, identity, null);
+        authenticationToken.setDetails(token);
+        return Optional.of(authenticationToken);
     }
 
     @Override
