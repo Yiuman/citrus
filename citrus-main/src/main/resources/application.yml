@@ -10,6 +10,7 @@ spring:
   activiti:
     db-history-used: true
     history-level: audit
+    database-schema-update: true
 
 citrus:
   verify:
