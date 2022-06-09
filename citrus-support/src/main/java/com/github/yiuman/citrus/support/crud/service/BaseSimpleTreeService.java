@@ -4,12 +4,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.model.BaseTree;
+import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -43,27 +47,20 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
 
     @Override
     public E treeQuery(Query query) {
-        return initSimpleTreeByList(list(query));
+        return listToTree(list(query));
     }
 
-    protected E initSimpleTreeByList(List<E> list) {
+    protected E listToTree(List<E> list) {
         E root = getRoot();
-        final Set<E> existsEntity = Collections.synchronizedSet(new LinkedHashSet<>(list));
-        list.parallelStream().forEach(item -> existsEntity.addAll(parents(item)));
-        this.mountByList(root, existsEntity);
+        listToTree(root, list);
         return root;
 
     }
 
-    private void mountByList(E current, final Set<E> sets) {
-        //这里的根节点肯定是虚拟节点，ID为空，第二级挂的父节点ID为空，所以需要这么判断
-        List<E> children = sets.stream().filter(item -> (
-                !Objects.equals(item.getId(), current.getId())
-                        && (Objects.equals(current.getId(), item.getParentId())
-                        || (Objects.nonNull(item.getParentId()) && Objects.equals(item.getParentId(), current.getId()))
-                ))).collect(Collectors.toList());
-        current.setChildren(children);
-        children.parallelStream().forEach(item -> mountByList(item, sets));
+    private void listToTree(E current, final List<E> list) {
+        Map<K, List<E>> parentIdChildrenMap = list.stream().collect(Collectors.groupingBy(Tree::getParentId));
+        list.forEach(entity -> entity.setChildren(parentIdChildrenMap.get(entity.getId()).stream().distinct().collect(Collectors.toList())));
+        current.setChildren(list.stream().filter(entity -> Objects.equals(entity.getParentId(), current.getParentId())).collect(Collectors.toList()));
     }
 
     @Override
