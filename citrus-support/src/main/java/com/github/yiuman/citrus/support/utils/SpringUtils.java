@@ -1,11 +1,8 @@
 package com.github.yiuman.citrus.support.utils;
 
+import cn.hutool.extra.spring.SpringUtil;
 import org.springframework.aop.framework.AopContext;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -18,23 +15,8 @@ import java.util.Objects;
  * @date 2020/4/4
  */
 @Component
-public class SpringUtils implements ApplicationContextAware {
+public class SpringUtils extends SpringUtil {
 
-    private static ApplicationContext context;
-
-    public SpringUtils() {
-    }
-
-    @Override
-    public void setApplicationContext(@Nullable ApplicationContext applicationContext) throws BeansException {
-        if (context == null) {
-            context = applicationContext;
-        }
-    }
-
-    public static ApplicationContext getContext() {
-        return context;
-    }
 
     public static <T> T getBean(Class<T> clazz) {
         return getBean(clazz, false);
@@ -43,34 +25,34 @@ public class SpringUtils implements ApplicationContextAware {
     public static <T> T getBean(Class<T> clazz, boolean force) {
         T bean;
         try {
-            bean = context.getBean(clazz);
+            bean = getApplicationContext().getBean(clazz);
         } catch (NoSuchBeanDefinitionException ex) {
-            bean = force ? context.getAutowireCapableBeanFactory().createBean(clazz) : null;
+            bean = force ? getApplicationContext().getAutowireCapableBeanFactory().createBean(clazz) : null;
         }
         return bean;
     }
 
     public static <T> T getBean(Class<T> tClass, String name) {
-        return context.getBean(name, tClass);
+        return getApplicationContext().getBean(name, tClass);
     }
 
     public static <T> T getBean(Class<T> clazz, String name, boolean force) {
         T bean;
         try {
-            bean = context.getBean(name, clazz);
+            bean = getApplicationContext().getBean(name, clazz);
         } catch (NoSuchBeanDefinitionException ex) {
-            bean = force ? context.getAutowireCapableBeanFactory().createBean(clazz) : null;
+            bean = force ? getApplicationContext().getAutowireCapableBeanFactory().createBean(clazz) : null;
         }
         return bean;
     }
 
     public static <T> Map<String, T> getBeanOfType(Class<T> type) {
-        return context.getBeansOfType(type);
+        return getApplicationContext().getBeansOfType(type);
     }
 
 
     @SuppressWarnings("unchecked")
-    public static  <PROXY extends T, T> PROXY getProxy(T object) {
+    public static <PROXY extends T, T> PROXY getProxy(T object) {
         Object proxy = null;
         try {
             proxy = AopContext.currentProxy();
@@ -78,6 +60,5 @@ public class SpringUtils implements ApplicationContextAware {
         }
         return Objects.nonNull(proxy) ? (PROXY) proxy : (PROXY) object;
     }
-
 
 }
