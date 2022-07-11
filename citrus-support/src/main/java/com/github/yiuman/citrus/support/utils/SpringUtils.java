@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.support.utils;
 
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
@@ -8,6 +9,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Spring相关工具
@@ -65,5 +67,17 @@ public class SpringUtils implements ApplicationContextAware {
     public static <T> Map<String, T> getBeanOfType(Class<T> type) {
         return context.getBeansOfType(type);
     }
+
+
+    @SuppressWarnings("unchecked")
+    public static  <PROXY extends T, T> PROXY getProxy(T object) {
+        Object proxy = null;
+        try {
+            proxy = AopContext.currentProxy();
+        } catch (IllegalStateException ignore) {
+        }
+        return Objects.nonNull(proxy) ? (PROXY) proxy : (PROXY) object;
+    }
+
 
 }

@@ -43,7 +43,7 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
     @Override
     public String save(String filepath, InputStream stream) throws IOException {
         //文件目录
-        try {
+        try (stream) {
             String directoryPath = path + "/" + LocalDate.now().format(FORMATTER);
             //创建目录
             FileUtil.mkdir(directoryPath);
@@ -51,8 +51,6 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
             FileOutputStream fileOutputStream = new FileOutputStream(FileUtil.file(filePath));
             StreamUtils.copy(stream, fileOutputStream);
             return filePath;
-        } finally {
-            stream.close();
         }
 
     }

@@ -11,9 +11,9 @@ import com.github.yiuman.citrus.support.crud.view.ViewHelper;
 import com.github.yiuman.citrus.support.exception.ValidateException;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.Page;
+import com.github.yiuman.citrus.support.utils.SpringUtils;
 import com.github.yiuman.citrus.support.utils.ValidateUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.aop.framework.AopContext;
 import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -163,10 +163,8 @@ public abstract class BaseCrudController<T, K extends Serializable> extends Base
         getProxy().imp(file);
     }
 
-    @SuppressWarnings("unchecked")
     protected <CRUD extends BaseCrudController<T, K>> CRUD getProxy() {
-        Object proxy = AopContext.currentProxy();
-        return Objects.nonNull(proxy) ? (CRUD) proxy : (CRUD) this;
+        return SpringUtils.getProxy(this);
     }
 
 }
