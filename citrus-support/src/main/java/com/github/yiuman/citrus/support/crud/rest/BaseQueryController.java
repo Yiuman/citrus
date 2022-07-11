@@ -6,14 +6,13 @@ import com.github.yiuman.citrus.support.crud.view.PageViewable;
 import com.github.yiuman.citrus.support.crud.view.ViewHelper;
 import com.github.yiuman.citrus.support.http.ResponseEntity;
 import com.github.yiuman.citrus.support.model.Page;
-import org.springframework.aop.framework.AopContext;
+import com.github.yiuman.citrus.support.utils.SpringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
-import java.util.Optional;
 
 /**
  * 基本查询控制器
@@ -63,14 +62,12 @@ public abstract class BaseQueryController<T, K extends Serializable> extends Bas
 
     }
 
-    @SuppressWarnings("unchecked")
     @GetMapping
     public ResponseEntity<Page<T>> getPageList(HttpServletRequest request) throws Exception {
-        BaseQueryController<T, K> currentProxy = Optional.ofNullable((BaseQueryController<T, K>) AopContext.currentProxy()).orElse(this);
-        return ResponseEntity.ok(currentProxy.page(request));
+        BaseQueryController<T, K> proxy = SpringUtils.getProxy(this);
+        return ResponseEntity.ok(proxy.page(request));
     }
 
-    @SuppressWarnings("MVCPathVariableInspection")
     @GetMapping(Operations.GET)
     public ResponseEntity<T> getByKey(@PathVariable K key) {
         return ResponseEntity.ok(get(key));
