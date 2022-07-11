@@ -3,7 +3,6 @@ package com.github.yiuman.citrus.support.utils;
 import cn.hutool.extra.spring.SpringUtil;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -16,7 +15,6 @@ import java.util.Objects;
  * @date 2020/4/4
  */
 @Component
-@Order(Integer.MIN_VALUE)
 public class SpringUtils extends SpringUtil {
 
 
