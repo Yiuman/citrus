@@ -19,4 +19,5 @@ public class LambdaUtilsTest {
         SerializedLambda serialized = LambdaUtils.serialized(Query::getConditions);
         System.out.println(serialized);
     }
+
 }

@@ -52,20 +52,14 @@ public abstract class BaseTreeController<T extends Tree<K>, K extends Serializab
      */
     @SuppressWarnings("unchecked")
     protected TreeCrudService<T, K> getCrudService() {
-        Class<? super T> superclass = modelClass.getSuperclass();
         try {
-            if (superclass.isAssignableFrom(BasePreOrderTree.class)) {
-                return CrudUtils.getCrudService(
-                        modelClass,
-                        (Class<K>) TypeUtil.getTypeArgument(getClass(), 1),
-                        BasePreOrderTreeService.class
-                );
-            }
-
+            Class<?> treeServiceClass = BasePreOrderTree.class.isAssignableFrom(modelClass)
+                    ? BasePreOrderTreeService.class
+                    : BaseSimpleTreeService.class;
             return CrudUtils.getCrudService(
                     modelClass,
                     (Class<K>) TypeUtil.getTypeArgument(getClass(), 1),
-                    BaseSimpleTreeService.class
+                    (Class<? extends TreeCrudService<T, K>>) treeServiceClass
             );
         } catch (Exception e) {
             return null;
