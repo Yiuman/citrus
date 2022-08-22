@@ -1,10 +1,10 @@
 package com.github.yiuman.citrus.support.crud.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yiuman.citrus.support.crud.query.Query;
 import com.github.yiuman.citrus.support.model.BaseTree;
-import com.github.yiuman.citrus.support.model.Tree;
 import com.github.yiuman.citrus.support.utils.LambdaUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,9 +58,15 @@ public abstract class BaseSimpleTreeService<E extends BaseTree<E, K>, K extends 
     }
 
     private void listToTree(E current, final List<E> list) {
-        Map<K, List<E>> parentIdChildrenMap = list.stream().collect(Collectors.groupingBy(Tree::getParentId));
-        list.forEach(entity -> entity.setChildren(parentIdChildrenMap.get(entity.getId()).stream().distinct().collect(Collectors.toList())));
-        current.setChildren(list.stream().filter(entity -> Objects.equals(entity.getParentId(), current.getParentId())).collect(Collectors.toList()));
+        Map<String, List<E>> parentIdChildrenMap = list.stream()
+                .collect(Collectors.groupingBy(item -> StrUtil.toString(item.getParentId())));
+        list.forEach(entity -> entity.setChildren(parentIdChildrenMap.get(StrUtil.toString(entity.getId()))
+                .stream().distinct().collect(Collectors.toList())));
+        current.setChildren(
+                list.stream()
+                        .filter(entity -> Objects.equals(StrUtil.toString(entity.getParentId()), StrUtil.toString(current.getId())))
+                        .collect(Collectors.toList())
+        );
     }
 
     @Override

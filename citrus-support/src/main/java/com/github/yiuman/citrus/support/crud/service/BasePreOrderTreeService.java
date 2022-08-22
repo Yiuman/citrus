@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.support.crud.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
@@ -146,14 +147,19 @@ public abstract class BasePreOrderTreeService<E extends BasePreOrderTree<E, K>, 
     /**
      * 此处记得去重，实体记得重写equals&hasCode
      *
-     * @param start 挂载的节点
-     * @param list  节点列表
+     * @param current 挂载的节点
+     * @param list    节点列表
      */
-    protected void listToTree(E start, List<E> list) {
-        Map<K, List<E>> parentIdChildrenMap = list.stream().collect(Collectors.groupingBy(Tree::getParentId));
-        list.forEach(entity -> entity.setChildren(parentIdChildrenMap.get(entity.getId())));
-        start.setChildren(list.parallelStream()
-                .filter(current -> Objects.equals(current.getParentId(), start.getId())).collect(Collectors.toList()));
+    protected void listToTree(E current, List<E> list) {
+        Map<String, List<E>> parentIdChildrenMap = list.stream()
+                .collect(Collectors.groupingBy(item -> StrUtil.toString(item.getParentId())));
+        list.forEach(entity -> entity.setChildren(parentIdChildrenMap.get(StrUtil.toString(entity.getId()))
+                .stream().distinct().collect(Collectors.toList())));
+        current.setChildren(
+                list.stream()
+                        .filter(entity -> Objects.equals(StrUtil.toString(entity.getParentId()), StrUtil.toString(current.getId())))
+                        .collect(Collectors.toList())
+        );
     }
 
     @Override
