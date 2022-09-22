@@ -48,9 +48,9 @@
     </modules>
 
     <properties>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.jdk>${java.version}</project.build.jdk>
         <spring-boot.version>2.5.2</spring-boot.version>
@@ -63,7 +63,7 @@
         <alibaba.easyexcel.version>3.0.5</alibaba.easyexcel.version>
         <jjwt.version>0.11.0</jjwt.version>
         <commons.io.version>2.6</commons.io.version>
-        <javassist.version>3.28.0-GA</javassist.version>
+        <javassist.version>3.29.2-GA</javassist.version>
         <druid.version>1.2.3</druid.version>
         <activiti.version>7.1.0.M6</activiti.version>
         <mvel2.version>2.4.12.Final</mvel2.version>

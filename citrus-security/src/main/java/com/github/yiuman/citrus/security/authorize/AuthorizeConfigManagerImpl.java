@@ -25,7 +25,6 @@ public class AuthorizeConfigManagerImpl implements AuthorizeConfigManager {
         this.webSecurityConfigProviders = webSecurityConfigProviders;
     }
 
-
     @Override
     public void config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
         boolean existAnyRequestConfig = false;
