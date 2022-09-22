@@ -12,7 +12,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/history_tables")
 public class HistoricTableController extends BaseCrudController<HistoryTable, String> {
-
-    public HistoricTableController() {
-    }
 }
