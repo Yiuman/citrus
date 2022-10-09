@@ -37,4 +37,7 @@ public class ConditionInfo {
      * 操作符
      */
     private String operator;
+
+    @Builder.Default
+    private Clauses clauses = Clauses.AND;
 }

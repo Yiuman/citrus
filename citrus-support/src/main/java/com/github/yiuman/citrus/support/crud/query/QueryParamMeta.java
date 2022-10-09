@@ -42,6 +42,12 @@ public class QueryParamMeta {
     private String operator;
 
     /**
+     * 查询子句（and、or）
+     */
+    @Builder.Default
+    private Clauses clauses = Clauses.AND;
+
+    /**
      * 条件为空时，是否拼接SQL
      */
     private boolean condition;
