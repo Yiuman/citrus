@@ -49,6 +49,7 @@ public final class QueryHelper {
                     .annotation(queryParam)
                     .field(field)
                     .operator(queryParam.operator())
+                    .clauses(queryParam.clauses())
                     .condition(queryParam.condition())
                     .mapping(queryParam.mapping())
                     .handlerClass(queryParam.handler())

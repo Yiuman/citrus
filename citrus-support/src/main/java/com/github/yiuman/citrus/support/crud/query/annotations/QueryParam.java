@@ -1,5 +1,6 @@
 package com.github.yiuman.citrus.support.crud.query.annotations;
 
+import com.github.yiuman.citrus.support.crud.query.Clauses;
 import com.github.yiuman.citrus.support.crud.query.QueryParamHandler;
 import com.github.yiuman.citrus.support.crud.query.impl.DefaultQueryParamHandler;
 
@@ -38,6 +39,7 @@ public @interface QueryParam {
      */
     boolean condition() default true;
 
+    Clauses clauses() default Clauses.AND;
     /**
      * 查询参数处理器
      *
