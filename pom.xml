@@ -58,7 +58,6 @@
         <hutool.version>5.7.22</hutool.version>
         <mybatis.plus.version>3.5.1</mybatis.plus.version>
 
-
         <citrus.version>0.15.0</citrus.version>
         <alibaba.easyexcel.version>3.0.5</alibaba.easyexcel.version>
         <jjwt.version>0.11.0</jjwt.version>
