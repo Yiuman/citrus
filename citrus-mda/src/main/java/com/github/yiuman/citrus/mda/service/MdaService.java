@@ -23,6 +23,11 @@ public interface MdaService extends CrudService<Map<String, Object>, String> {
 
 
     /**
+     * 模型ID的请求头KEY值
+     */
+    String MODEL_ID_TAG = "model_id";
+
+    /**
      * 获取DDL操作处理器
      *
      * @return DDL操作处理器实现
@@ -42,11 +47,6 @@ public interface MdaService extends CrudService<Map<String, Object>, String> {
      * @return 表实体逻辑处理类
      */
     TableEntityService getTableEntityService();
-
-    /**
-     * 模型ID的请求头KEY值
-     */
-    String MODEL_ID_TAG = "model_id";
 
     /**
      * 根据请求获取当前的模型ID

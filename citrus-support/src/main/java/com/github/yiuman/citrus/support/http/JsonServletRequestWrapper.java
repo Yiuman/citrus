@@ -34,13 +34,9 @@ public class JsonServletRequestWrapper extends HttpServletRequestWrapper {
      * JSON字符串的结束
      */
     private static final String JSON_ARRAY_END = "]";
-
-    private Map<String, String[]> parameterMap;
-
-    private byte[] bytes;
-
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
+    private Map<String, String[]> parameterMap;
+    private byte[] bytes;
     private List<?> array;
 
     /**

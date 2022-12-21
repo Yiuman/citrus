@@ -21,14 +21,13 @@ import java.util.function.Function;
  */
 public final class ValidateUtils {
 
-    private ValidateUtils() {
-    }
-
     /**
      * 验证器
      */
     private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
+    private ValidateUtils() {
+    }
 
     /**
      * 校验实体，返回实体所有属性的校验结果

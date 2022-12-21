@@ -40,6 +40,7 @@ public @interface QueryParam {
     boolean condition() default true;
 
     Clauses clauses() default Clauses.AND;
+
     /**
      * 查询参数处理器
      *

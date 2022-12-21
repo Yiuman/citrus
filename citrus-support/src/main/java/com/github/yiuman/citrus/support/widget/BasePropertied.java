@@ -21,14 +21,12 @@ public abstract class BasePropertied<T extends Propertied<T>> implements Propert
         add("properties");
         add("EXCLUDE_PROPERTIES_FIELD_NAME");
     }};
-
+    protected final Map<String, Object> properties = new HashMap<>();
     /**
      * 字段转到属性MAP
      */
     @Builder.Default
     private Boolean fieldToProperties = Boolean.TRUE;
-
-    protected final Map<String, Object> properties = new HashMap<>();
 
     public BasePropertied() {
     }

@@ -48,6 +48,11 @@ public class Selections extends BaseWidget<Selections, List<Selections.SelectIte
         this.clearable = clearable;
     }
 
+    @Override
+    public String getWidgetName() {
+        return "select";
+    }
+
     public static class SelectItem {
 
         private String id;
@@ -85,10 +90,5 @@ public class Selections extends BaseWidget<Selections, List<Selections.SelectIte
         public void setValue(Object value) {
             this.value = value;
         }
-    }
-
-    @Override
-    public String getWidgetName() {
-        return "select";
     }
 }

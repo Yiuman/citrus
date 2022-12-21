@@ -61,6 +61,11 @@ public class SimpleTableView<T> extends BaseActionableView implements CheckboxTa
         return data;
     }
 
+    @Override
+    public void setData(Page<T> data) {
+        this.data = data;
+    }
+
     @SuppressWarnings("unchecked")
     private void extensionRecords(List<T> records, Map<String, Map<String, Object>> extensionCollect) {
         if (CollUtil.isEmpty(records)) {
@@ -78,11 +83,6 @@ public class SimpleTableView<T> extends BaseActionableView implements CheckboxTa
             }
 
         });
-    }
-
-    @Override
-    public void setData(Page<T> data) {
-        this.data = data;
     }
 
     @Override

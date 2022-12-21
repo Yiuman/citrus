@@ -27,14 +27,12 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public class InjectAnnotationParserHolderImpl implements InjectAnnotationParserHolder {
 
+    private static final Map<Class<? extends Annotation>, InjectAnnotationParser<? extends Annotation>> PARSER_MAP = new HashMap<>();
+    private static final Set<Class<? extends Annotation>> INJECT_ANNOTATIONS = new HashSet<>();
     /**
      * 从容器中注入
      */
     private final Set<InjectAnnotationParser<? extends Annotation>> parserSet;
-
-    private static final Map<Class<? extends Annotation>, InjectAnnotationParser<? extends Annotation>> PARSER_MAP = new HashMap<>();
-
-    private static final Set<Class<? extends Annotation>> INJECT_ANNOTATIONS = new HashSet<>();
 
     public InjectAnnotationParserHolderImpl(Set<InjectAnnotationParser<?>> parserSet) {
         this.parserSet = parserSet;

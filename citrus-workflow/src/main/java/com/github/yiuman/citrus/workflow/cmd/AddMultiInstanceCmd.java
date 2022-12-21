@@ -76,16 +76,16 @@ public class AddMultiInstanceCmd implements Command<Void> {
         //5.获取父执行实例（即流程的执行实例）
         ExecutionEntity parentExecutionEntity = multiExecutionEntity.getParent();
 
-        //6.创建一个新的子执行实例,设置处理人
-        ExecutionEntity newChildExecution = executionEntityManager.createChildExecution(parentExecutionEntity);
-        newChildExecution.setCurrentFlowElement(activityElement);
-        newChildExecution.setVariableLocal("assignee", assignee);
-
-        //7.当前的任务实例与当前执行中的实例都+1  因为已经加签
+        //6.当前的任务实例与当前执行中的实例都+1  因为已经加签
         Integer nrOfInstances = (Integer) parentExecutionEntity.getVariableLocal(NUMBER_OF_INSTANCES);
         Integer nrOfActiveInstances = (Integer) parentExecutionEntity.getVariableLocal(NUMBER_OF_ACTIVE_INSTANCES);
         parentExecutionEntity.setVariableLocal(NUMBER_OF_INSTANCES, nrOfInstances + 1);
         parentExecutionEntity.setVariableLocal(NUMBER_OF_ACTIVE_INSTANCES, nrOfActiveInstances + 1);
+
+        //7.创建一个新的子执行实例,设置处理人
+        ExecutionEntity newChildExecution = executionEntityManager.createChildExecution(parentExecutionEntity);
+        newChildExecution.setCurrentFlowElement(activityElement);
+        newChildExecution.setVariableLocal("assignee", assignee);
 
         //8.通知活动开始
         HistoryManager historyManager = commandContext.getHistoryManager();

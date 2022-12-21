@@ -336,7 +336,7 @@ public final class WebUtils {
      */
     public static void addExportFilenameHeaders(HttpServletResponse response, String filename) throws UnsupportedEncodingException {
         int lastPointIndex = filename.lastIndexOf(".");
-        addExportFilenameHeaders(response, filename.substring(0, lastPointIndex), filename.substring(lastPointIndex + 1, filename.length()));
+        addExportFilenameHeaders(response, filename.substring(0, lastPointIndex), filename.substring(lastPointIndex + 1));
     }
 
     /**
@@ -505,6 +505,15 @@ public final class WebUtils {
     }
 
 
+    interface IpHeaders {
+        String UNKNOWN = "unknown";
+        String X_FORWARDED_FOR = "x-forwarded-for";
+        String PROXY_CLIENT_IP = "Proxy-Client-IP";
+        String WL_PROXY_CLIENT_IP = "WL-Proxy-Client-IP";
+        String HTTP_CLIENT_IP = "HTTP_CLIENT_IP";
+        String HTTP_X_FORWARDED_FOR = "HTTP_X_FORWARDED_FOR";
+    }
+
     /**
      * LocalDate表单字段编辑器
      */
@@ -522,14 +531,5 @@ public final class WebUtils {
         public void setAsText(String text) throws IllegalArgumentException {
             setValue(DateUtil.parse(text));
         }
-    }
-
-    interface IpHeaders {
-        String UNKNOWN = "unknown";
-        String X_FORWARDED_FOR = "x-forwarded-for";
-        String PROXY_CLIENT_IP = "Proxy-Client-IP";
-        String WL_PROXY_CLIENT_IP = "WL-Proxy-Client-IP";
-        String HTTP_CLIENT_IP = "HTTP_CLIENT_IP";
-        String HTTP_X_FORWARDED_FOR = "HTTP_X_FORWARDED_FOR";
     }
 }

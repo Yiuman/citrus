@@ -133,9 +133,9 @@ public interface CrudMapper<T> extends BaseMapper<T> {
         }
         Class<?> realEntityClass = ClassUtils.getRealClass(entities.stream().findAny().get().getClass());
         return deleteBatchIds(entities.stream().map(item ->
-                (Serializable) ReflectionKit.getFieldValue(
-                        item,
-                        TableInfoHelper.getTableInfo(ClassUtils.getRealClass(realEntityClass)).getKeyProperty()))
+                        (Serializable) ReflectionKit.getFieldValue(
+                                item,
+                                TableInfoHelper.getTableInfo(ClassUtils.getRealClass(realEntityClass)).getKeyProperty()))
                 .filter(Objects::nonNull).collect(Collectors.toList()))
                 > 0;
     }

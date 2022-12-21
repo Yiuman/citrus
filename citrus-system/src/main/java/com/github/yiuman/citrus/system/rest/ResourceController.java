@@ -28,14 +28,6 @@ public class ResourceController extends BaseCrudController<ResourceDto, Long> {
         setParamClass(ResourceQuery.class);
     }
 
-    @Data
-    static class ResourceQuery {
-        @Like(mapping = "resource_name")
-        private String resourceName;
-        @Equals(mapping = "parent_id")
-        private Long parentId;
-    }
-
     @Override
     protected ResourceService getService() {
         return resourceService;
@@ -64,6 +56,14 @@ public class ResourceController extends BaseCrudController<ResourceDto, Long> {
         formView.addEditField("资源名", "resourceName");
         formView.addEditField("资源路径", "path");
         return formView;
+    }
+
+    @Data
+    static class ResourceQuery {
+        @Like(mapping = "resource_name")
+        private String resourceName;
+        @Equals(mapping = "parent_id")
+        private Long parentId;
     }
 
 }

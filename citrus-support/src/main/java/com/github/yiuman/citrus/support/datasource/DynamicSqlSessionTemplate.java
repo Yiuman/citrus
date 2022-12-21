@@ -31,19 +31,14 @@ import static org.mybatis.spring.SqlSessionUtils.*;
  */
 public class DynamicSqlSessionTemplate extends SqlSessionTemplate {
 
+    private final SqlSessionFactory sqlSessionFactory;
+    private final ExecutorType executorType;
+    private final SqlSession sqlSessionProxy;
+    private final PersistenceExceptionTranslator exceptionTranslator;
     /**
      * 是否使用严格模式
      */
     private Boolean strict = false;
-
-    private final SqlSessionFactory sqlSessionFactory;
-
-    private final ExecutorType executorType;
-
-    private final SqlSession sqlSessionProxy;
-
-    private final PersistenceExceptionTranslator exceptionTranslator;
-
     private Map<Object, SqlSessionFactory> targetSqlSessionFactories;
 
     private SqlSessionFactory defaultTargetSqlSessionFactory;
@@ -109,41 +104,6 @@ public class DynamicSqlSessionTemplate extends SqlSessionTemplate {
             Assert.notNull(defaultTargetSqlSessionFactory, "Property 'defaultTargetSqlSessionFactory' or 'targetSqlSessionFactories' are required");
         }
         return this.sqlSessionFactory;
-    }
-
-
-    /**
-     * 这个方法的实现和父类的实现是基本一致的，唯一不同的就是在getSqlSession方法传参中获取会话工厂的方式
-     */
-    private class SqlSessionInterceptor implements InvocationHandler {
-
-        @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            //在getSqlSession传参时候，用我们重写的getSqlSessionFactory获取当前数据源对应的会话工厂
-            final SqlSession sqlSession = getSqlSession(
-                    DynamicSqlSessionTemplate.this.getSqlSessionFactory(),
-                    DynamicSqlSessionTemplate.this.executorType,
-                    DynamicSqlSessionTemplate.this.exceptionTranslator);
-            try {
-                Object result = method.invoke(sqlSession, args);
-                if (!isSqlSessionTransactional(sqlSession, DynamicSqlSessionTemplate.this.getSqlSessionFactory())) {
-                    sqlSession.commit(true);
-                }
-                return result;
-            } catch (Throwable t) {
-                Throwable unwrapped = unwrapThrowable(t);
-                if (DynamicSqlSessionTemplate.this.exceptionTranslator != null && unwrapped instanceof PersistenceException) {
-                    Throwable translated = DynamicSqlSessionTemplate.this.exceptionTranslator
-                            .translateExceptionIfPossible((PersistenceException) unwrapped);
-                    if (translated != null) {
-                        unwrapped = translated;
-                    }
-                }
-                throw unwrapped;
-            } finally {
-                closeSqlSession(sqlSession, DynamicSqlSessionTemplate.this.getSqlSessionFactory());
-            }
-        }
     }
 
     @Override
@@ -290,6 +250,40 @@ public class DynamicSqlSessionTemplate extends SqlSessionTemplate {
     @Override
     public List<BatchResult> flushStatements() {
         return this.sqlSessionProxy.flushStatements();
+    }
+
+    /**
+     * 这个方法的实现和父类的实现是基本一致的，唯一不同的就是在getSqlSession方法传参中获取会话工厂的方式
+     */
+    private class SqlSessionInterceptor implements InvocationHandler {
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            //在getSqlSession传参时候，用我们重写的getSqlSessionFactory获取当前数据源对应的会话工厂
+            final SqlSession sqlSession = getSqlSession(
+                    DynamicSqlSessionTemplate.this.getSqlSessionFactory(),
+                    DynamicSqlSessionTemplate.this.executorType,
+                    DynamicSqlSessionTemplate.this.exceptionTranslator);
+            try {
+                Object result = method.invoke(sqlSession, args);
+                if (!isSqlSessionTransactional(sqlSession, DynamicSqlSessionTemplate.this.getSqlSessionFactory())) {
+                    sqlSession.commit(true);
+                }
+                return result;
+            } catch (Throwable t) {
+                Throwable unwrapped = unwrapThrowable(t);
+                if (DynamicSqlSessionTemplate.this.exceptionTranslator != null && unwrapped instanceof PersistenceException) {
+                    Throwable translated = DynamicSqlSessionTemplate.this.exceptionTranslator
+                            .translateExceptionIfPossible((PersistenceException) unwrapped);
+                    if (translated != null) {
+                        unwrapped = translated;
+                    }
+                }
+                throw unwrapped;
+            } finally {
+                closeSqlSession(sqlSession, DynamicSqlSessionTemplate.this.getSqlSessionFactory());
+            }
+        }
     }
 
 }

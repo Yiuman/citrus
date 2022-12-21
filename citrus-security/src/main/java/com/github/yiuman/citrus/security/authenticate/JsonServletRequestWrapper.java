@@ -27,11 +27,9 @@ import java.util.Map;
  */
 public class JsonServletRequestWrapper extends HttpServletRequestWrapper {
 
-    private Map<String, String[]> parameterMap;
-
-    private byte[] bytes;
-
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private Map<String, String[]> parameterMap;
+    private byte[] bytes;
 
     /**
      * Constructs a request object wrapping the given request.

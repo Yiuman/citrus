@@ -41,42 +41,9 @@ public class ProcessDefinitionController extends BaseWorkflowQueryController<Pro
         add("bar");
     }};
 
-    /**
-     * 防止序列化报错，重写getIdentityLinks
-     */
-    static class ProcessDefinitionInfo extends ProcessDefinitionEntityImpl {
-
-        @Override
-        public List<IdentityLinkEntity> getIdentityLinks() {
-            return null;
-        }
-    }
-
-    @Data
-    static class ProcessDefinitionQueryParams {
-
-        String processDefinitionKeyLike;
-
-        String processDefinitionNameLike;
-
-        String processDefinitionCategoryLike;
-
-        /**
-         * 活动的
-         */
-        Boolean active = true;
-
-        /**
-         * 最新的版本
-         */
-        Boolean latestVersion = true;
-    }
-
-
     public ProcessDefinitionController() {
         setParamClass(ProcessDefinitionQueryParams.class);
     }
-
 
     @Override
     public Object createPageView() {
@@ -154,6 +121,37 @@ public class ProcessDefinitionController extends BaseWorkflowQueryController<Pro
                 : processDefinition.getDiagramResourceName();
         InputStream resourceAsStream = repositoryService.getResourceAsStream(processDefinition.getDeploymentId(), resourceName);
         WebUtils.export(resourceAsStream, resourceName);
+    }
+
+    /**
+     * 防止序列化报错，重写getIdentityLinks
+     */
+    static class ProcessDefinitionInfo extends ProcessDefinitionEntityImpl {
+
+        @Override
+        public List<IdentityLinkEntity> getIdentityLinks() {
+            return null;
+        }
+    }
+
+    @Data
+    static class ProcessDefinitionQueryParams {
+
+        String processDefinitionKeyLike;
+
+        String processDefinitionNameLike;
+
+        String processDefinitionCategoryLike;
+
+        /**
+         * 活动的
+         */
+        Boolean active = true;
+
+        /**
+         * 最新的版本
+         */
+        Boolean latestVersion = true;
     }
 
 }

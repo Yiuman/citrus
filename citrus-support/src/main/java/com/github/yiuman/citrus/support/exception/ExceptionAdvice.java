@@ -60,6 +60,16 @@ public class ExceptionAdvice {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 异常处理
+     */
+    @ExceptionHandler(value = Exception.class)
+    @ResponseBody
+    public ResponseEntity<Void> exceptionHandler(Exception exception) {
+        log.error("未知异常", exception);
+        return ResponseEntity.error(ResponseStatusCode.SERVER_ERROR, "未知异常");
+    }
+
     private static class ErrorResult {
 
         private String field;
@@ -87,16 +97,6 @@ public class ExceptionAdvice {
             this.message = message;
         }
 
-    }
-
-    /**
-     * 异常处理
-     */
-    @ExceptionHandler(value = Exception.class)
-    @ResponseBody
-    public ResponseEntity<Void> exceptionHandler(Exception exception) {
-        log.error("未知异常", exception);
-        return ResponseEntity.error(ResponseStatusCode.SERVER_ERROR, "未知异常");
     }
 
 }

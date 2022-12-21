@@ -26,12 +26,6 @@ public class AuthorityController extends BaseCrudController<AuthorityDto, Long> 
         this.authorityService = authorityService;
     }
 
-    @Data
-    static class AuthorityQuery {
-        @Like
-        private String authorityName;
-    }
-
     @Override
     protected AuthorityService getService() {
         return authorityService;
@@ -45,5 +39,11 @@ public class AuthorityController extends BaseCrudController<AuthorityDto, Long> 
         view.addColumn("描述", "remark");
         view.defaultSetting();
         return view;
+    }
+
+    @Data
+    static class AuthorityQuery {
+        @Like
+        private String authorityName;
     }
 }

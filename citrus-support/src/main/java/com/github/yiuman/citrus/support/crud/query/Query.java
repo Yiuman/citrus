@@ -23,6 +23,10 @@ public class Query {
     public Query() {
     }
 
+    public static Query create() {
+        return new Query();
+    }
+
     public Class<?> getEntityClass() {
         return entityClass;
     }
@@ -45,10 +49,6 @@ public class Query {
 
     public void setSorts(List<SortBy> sorts) {
         this.sorts = sorts;
-    }
-
-    public static Query create() {
-        return new Query();
     }
 
     public void addConditionInfo(String parameter, Object value, Operations operations) {

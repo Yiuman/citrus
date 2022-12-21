@@ -37,10 +37,8 @@ public class RequestWrapperFilter extends OncePerRequestFilter {
     public static class RequestWrapper extends HttpServletRequestWrapper {
 
         private final byte[] body;
-
-        private BufferedReader reader;
-
         private final ServletInputStream inputStream;
+        private BufferedReader reader;
 
         public RequestWrapper(HttpServletRequest request) throws IOException {
             super(request);

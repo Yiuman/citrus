@@ -40,13 +40,11 @@ public abstract class BaseWorkflowQueryController<E, K extends Serializable>
         extends BaseQueryController<E, K> implements KeyBasedService<E, K> {
 
     private static final Predicate<String> IS_LIKE_METHOD = (methodName) -> methodName.endsWith("Like");
-
-    private WorkflowService workflowService;
-
     /**
      * 对应实体匹配的查询器
      */
     private static final Map<Class<?>, Supplier<? extends Query<?, ?>>> QUERY_MAPPING = new HashMap<>(8);
+    private WorkflowService workflowService;
 
     public BaseWorkflowQueryController() {
         initQueryMapping();

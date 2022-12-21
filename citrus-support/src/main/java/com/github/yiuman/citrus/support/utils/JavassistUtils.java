@@ -15,6 +15,21 @@ public final class JavassistUtils {
 
     private static final ClassPool POOL = ClassPool.getDefault();
 
+    static {
+        //添加当前线程的ClassPath
+        POOL.appendClassPath(new LoaderClassPath(Thread.currentThread().getContextClassLoader()));
+        StringTokenizer token = new StringTokenizer(System.getProperty("java.class.path"), System.getProperty("path.separator"));
+
+        while (token.hasMoreElements()) {
+            try {
+                String classPath = token.nextToken();
+                POOL.appendClassPath(classPath);
+            } catch (Throwable ignore) {
+            }
+        }
+
+    }
+
     private JavassistUtils() {
     }
 
@@ -81,20 +96,5 @@ public final class JavassistUtils {
             typeArguments[i] = new SignatureAttribute.TypeArgument(new SignatureAttribute.ClassType(classes[i].getName()));
         }
         return typeArguments;
-    }
-
-    static {
-        //添加当前线程的ClassPath
-        POOL.appendClassPath(new LoaderClassPath(Thread.currentThread().getContextClassLoader()));
-        StringTokenizer token = new StringTokenizer(System.getProperty("java.class.path"), System.getProperty("path.separator"));
-
-        while (token.hasMoreElements()) {
-            try {
-                String classPath = token.nextToken();
-                POOL.appendClassPath(classPath);
-            } catch (Throwable ignore) {
-            }
-        }
-
     }
 }

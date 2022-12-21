@@ -6,11 +6,6 @@ package com.github.yiuman.citrus.support.widget;
  */
 public class Switch extends BaseWidget<Switch, Boolean> {
 
-    @Override
-    public String getWidgetName() {
-        return "switch";
-    }
-
     /**
      * @param text
      * @param key
@@ -18,6 +13,11 @@ public class Switch extends BaseWidget<Switch, Boolean> {
      */
     public Switch(String text, String key) {
         super(text, key, null);
+    }
+
+    @Override
+    public String getWidgetName() {
+        return "switch";
     }
 
 

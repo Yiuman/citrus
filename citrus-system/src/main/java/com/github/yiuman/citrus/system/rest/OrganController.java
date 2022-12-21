@@ -29,12 +29,6 @@ public class OrganController extends BaseTreeController<Organization, Long> {
         this.organService = organService;
     }
 
-    @Data
-    static class OrganQuery {
-        @Like(mapping = "organ_name")
-        private String organName;
-    }
-
     @Override
     protected TreeCrudService<Organization, Long> getCrudService() {
         return organService;
@@ -69,5 +63,11 @@ public class OrganController extends BaseTreeController<Organization, Long> {
         formView.addEditField("组织机构代码", "organCode").addRule("required");
         formView.addEditField("备注", "remark");
         return formView;
+    }
+
+    @Data
+    static class OrganQuery {
+        @Like(mapping = "organ_name")
+        private String organName;
     }
 }

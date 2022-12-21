@@ -11,6 +11,19 @@ import java.util.LinkedHashSet;
 public interface Constraint {
 
     /**
+     * 主键约束
+     */
+    String PRIMARY = "primary";
+    /**
+     * 外键约束
+     */
+    String FOREIGN = "foreign";
+    /**
+     * 唯一约束
+     */
+    String UNIQUE = "unique";
+
+    /**
      * 约束名字
      *
      * @return 获取约束名字
@@ -30,21 +43,5 @@ public interface Constraint {
      * @return 获取约束的类型
      */
     String getTypeName();
-
-
-    /**
-     * 主键约束
-     */
-    String PRIMARY = "primary";
-
-    /**
-     * 外键约束
-     */
-    String FOREIGN = "foreign";
-
-    /**
-     * 唯一约束
-     */
-    String UNIQUE = "unique";
 
 }

@@ -18,12 +18,11 @@ import java.time.format.DateTimeFormatter;
  */
 public class LocalFileStorageServiceImpl implements FileStorageService {
 
-    private String path = "./temp";
-
     /**
      * 日期格式化
      */
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
+    private String path = "./temp";
 
     public LocalFileStorageServiceImpl() {
     }

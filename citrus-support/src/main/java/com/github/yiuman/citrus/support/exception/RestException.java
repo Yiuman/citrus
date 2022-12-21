@@ -14,10 +14,6 @@ public class RestException extends RuntimeException {
         this.code = code;
     }
 
-    public Integer getCode() {
-        return code;
-    }
-
     public RestException(String message, Integer code) {
         super(message);
         this.code = code;
@@ -36,5 +32,9 @@ public class RestException extends RuntimeException {
     protected RestException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, Integer code) {
         super(message, cause, enableSuppression, writableStackTrace);
         this.code = code;
+    }
+
+    public Integer getCode() {
+        return code;
     }
 }

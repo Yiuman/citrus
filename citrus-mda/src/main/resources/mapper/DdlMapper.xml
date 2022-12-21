@@ -88,7 +88,7 @@
 
     <!--删表-->
     <update id="dropTable" parameterType="com.github.yiuman.citrus.com.github.yiuman.citrus.mda.meta.TableMeta">
-        DROP TABLE IF EXISTS  ${tableName}
+        DROP TABLE IF EXISTS ${tableName}
     </update>
 
     <!--创建索引-->

@@ -45,12 +45,12 @@ public class Organization extends BasePreOrderTree<Organization, Long> {
      */
     private String remark;
 
+    public Organization() {
+    }
+
     @Override
     @JsonSerialize(using = ToStringSerializer.class)
     public Long getId() {
         return organId;
-    }
-
-    public Organization() {
     }
 }

@@ -44,14 +44,6 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
         setParamClass(RoleQuery.class);
     }
 
-    @Data
-    static class RoleQuery {
-        @Like(mapping = "role_name")
-        private String roleName;
-        private List<Long> authIds;
-    }
-
-
     @Override
     protected RoleService getService() {
         return roleService;
@@ -112,6 +104,13 @@ public class RoleController extends BaseCrudController<RoleDto, Long> {
     @Selects(bind = "authIds", key = "authorityId", label = "authorityName", text = "选择权限", multiple = true)
     public List<AuthorityDto> getAuthorities() {
         return authorityService.list();
+    }
+
+    @Data
+    static class RoleQuery {
+        @Like(mapping = "role_name")
+        private String roleName;
+        private List<Long> authIds;
     }
 
 }

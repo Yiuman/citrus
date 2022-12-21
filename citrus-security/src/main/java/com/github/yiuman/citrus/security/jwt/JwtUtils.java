@@ -23,10 +23,10 @@ import java.util.Optional;
 @Slf4j
 public final class JwtUtils {
 
+    private static final JwtProperties JWT_PROPERTIES = SpringUtils.getBean(JwtProperties.class, true);
+
     private JwtUtils() {
     }
-
-    private static final JwtProperties JWT_PROPERTIES = SpringUtils.getBean(JwtProperties.class, true);
 
     public static JwtToken generateToken(String identity, Map<String, Object> claims) {
         return generateToken(identity, null, claims);

@@ -14,9 +14,8 @@ import java.util.stream.Collectors;
  */
 public abstract class BaseColumnConstraint<T extends BaseColumnConstraint<T>> implements Constraint {
 
-    private String constraintName;
-
     protected final LinkedHashSet<ColumnMeta> columns = new LinkedHashSet<>();
+    private String constraintName;
 
     public BaseColumnConstraint() {
     }

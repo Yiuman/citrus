@@ -29,14 +29,6 @@ public class AccessLogController extends BaseQueryController<AccessLog, Long> {
         setParamClass(AccessLogQuery.class);
     }
 
-    @Data
-    static class AccessLogQuery {
-        @Equals(mapping = "user_id")
-        private Long userId;
-        @In(mapping = "resource_type")
-        private List<Long> resourceType;
-    }
-
     @Override
     public Object createPageView() {
         PageTableView<AccessLog> view = new PageTableView<>(false);
@@ -48,6 +40,14 @@ public class AccessLogController extends BaseQueryController<AccessLog, Long> {
         view.addColumn("时间", "createTime_", entity -> DateUtil.format(entity.getCreatedTime(), "yyyy-MM-dd hh:mm:ss"));
         view.addWidget("用户", "userId");
         return view;
+    }
+
+    @Data
+    static class AccessLogQuery {
+        @Equals(mapping = "user_id")
+        private Long userId;
+        @In(mapping = "resource_type")
+        private List<Long> resourceType;
     }
 
 }
