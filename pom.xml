@@ -55,7 +55,7 @@
         <project.build.jdk>${java.version}</project.build.jdk>
         <spring-boot.version>2.5.2</spring-boot.version>
         <lombok.version>1.18.22</lombok.version>
-        <hutool.version>5.7.22</hutool.version>
+        <hutool.version>5.8.21</hutool.version>
         <mybatis.plus.version>3.5.1</mybatis.plus.version>
 
         <citrus.version>0.15.0</citrus.version>
